@@ -1,5 +1,5 @@
 # LunarAtlas  
-A Provenance-Aware Lunar Scientific Data System  
+A Lunar Scientific Data System  
 (MVP Focus: Chandrayaan-3 LIBS)
 
 ---
