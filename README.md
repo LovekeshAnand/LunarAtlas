@@ -1,5 +1,5 @@
 # LunarAtlas  
-A Lunar Scientific Data System  
+An Lunar Scientific Data System  
 (MVP Focus: Chandrayaan-3 LIBS)
 
 ---

@@ -1,0 +1,224 @@
+.App {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.App-header {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.App-header h1 {
+  margin: 0 0 10px 0;
+  color: #1a237e;
+  font-size: 2.5em;
+}
+
+.App-header p {
+  margin: 0;
+  color: #666;
+  font-size: 1.1em;
+}
+
+.controls-panel {
+  background: white;
+  border-radius: 10px;
+  padding: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.control-group {
+  margin-bottom: 20px;
+}
+
+.control-group label {
+  display: block;
+  font-weight: bold;
+  color: #1a237e;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.control-group select,
+.control-group input {
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 5px;
+  font-size: 14px;
+  margin-right: 10px;
+  transition: border-color 0.3s;
+}
+
+.control-group select:focus,
+.control-group input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.control-group select {
+  width: 100%;
+  max-width: 600px;
+}
+
+.control-group input[type="number"] {
+  width: 120px;
+}
+
+.zoom-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.zoom-buttons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  font-size: 14px;
+}
+
+.zoom-buttons button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.zoom-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.stats-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #e0e0e0;
+}
+
+.stat {
+  background: #f5f5f5;
+  padding: 12px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.stat strong {
+  color: #1a237e;
+  display: block;
+  margin-bottom: 5px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.chart-container {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 20px 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  font-weight: bold;
+  color: #667eea;
+  font-size: 18px;
+}
+
+.info-panel {
+  background: white;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info-panel h3 {
+  color: #1a237e;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.info-panel ul {
+  margin: 0 0 20px 0;
+  padding-left: 25px;
+}
+
+.info-panel li {
+  margin-bottom: 10px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.info-panel li strong {
+  color: #667eea;
+}
+
+.algorithm-info {
+  background: #f0f4ff;
+  padding: 15px;
+  border-radius: 5px;
+  border-left: 4px solid #667eea;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #333;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .App {
+    padding: 10px;
+  }
+
+  .App-header h1 {
+    font-size: 1.8em;
+  }
+
+  .controls-panel {
+    padding: 15px;
+  }
+
+  .zoom-buttons {
+    flex-direction: column;
+  }
+
+  .zoom-buttons button {
+    width: 100%;
+  }
+
+  .stats-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-container {
+    padding: 10px;
+  }
+}
+
+/* AmCharts overrides */
+#chartdiv {
+  width: 100%;
+  height: 600px;
+}
