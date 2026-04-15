@@ -1,0 +1,183 @@
+/* ═══════════════════════════════════════════════════════
+   rangeSelector.css
+   Custom styles for elements that Tailwind can't handle:
+   - Native <select> appearance override
+   - Native <input type="range"> thumb + track
+   - Number input spinner removal
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Select wrapper ─────────────────────────────────── */
+.rs-select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.rs-select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 7px 32px 7px 10px;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #222;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s ease;
+  line-height: 1.4;
+}
+
+.rs-select:focus {
+  border-color: #999;
+}
+
+.rs-select:disabled {
+  color: #bbb;
+  cursor: not-allowed;
+  background: #fafafa;
+}
+
+.rs-select option {
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 12px;
+  color: #222;
+  background: #fff;
+}
+
+.rs-select-arrow {
+  position: absolute;
+  right: 10px;
+  font-size: 10px;
+  color: #999;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Number inputs ──────────────────────────────────── */
+.rs-num-wrap {
+  display: flex;
+  align-items: center;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0 10px;
+  transition: border-color 0.15s ease;
+}
+
+.rs-num-wrap:focus-within {
+  border-color: #999;
+}
+
+.rs-num-wrap--err {
+  border-color: #c44 !important;
+}
+
+.rs-num-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #222;
+  padding: 7px 0;
+  -moz-appearance: textfield;
+}
+
+.rs-num-input::-webkit-outer-spin-button,
+.rs-num-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.rs-num-hint {
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 9px;
+  color: #bbb;
+  margin-left: 4px;
+  flex-shrink: 0;
+  letter-spacing: 0.2px;
+}
+
+/* ── Range Slider ───────────────────────────────────── */
+.rs-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.rs-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  background: #333;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.rs-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.rs-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: #333;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+/* ── Export Buttons ─────────────────────────────────── */
+.rs-export-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  flex-shrink: 0;
+}
+
+.rs-export-btn:hover {
+  transform: scale(1.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.rs-export-btn:active {
+  transform: scale(0.96);
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  .rs-select,
+  .rs-num-input {
+    font-size: 13px;
+    padding: 9px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rs-select {
+    font-size: 14px;
+  }
+}
