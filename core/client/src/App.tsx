@@ -1,8 +1,8 @@
 import './App.css';
-import Header from './assets/components/header/Header';
-import Footer from './assets/components/footer/Footer';
-import RangeSelectorPanel from './assets/components/rangeSelector/rangeSelector';
-import SpectralGraph from './assets/components/graph/SpectralGraph';
+import Header from './components/header/Header';
+import Footer from './components/footer/Footer';
+import RangeSelectorPanel from './components/rangeSelector/rangeSelector';
+import SpectralGraph from './components/graph/SpectralGraph';
 
 const F = "'Helvetica', 'Helvetica Neue', Arial, sans-serif";
 

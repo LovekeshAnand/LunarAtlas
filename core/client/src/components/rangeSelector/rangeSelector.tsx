@@ -5,7 +5,7 @@ import {
   getTimesForDate,
   getUniqueMeasurementTypes,
   ELEMENTS,
-} from '../../../utils/mockData';
+} from '../../utils/mockData';
 import './rangeSelector.css';
 
 const F = "'Helvetica', 'Helvetica Neue', Arial, sans-serif";
