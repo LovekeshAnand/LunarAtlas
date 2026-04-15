@@ -1,15 +1,75 @@
-import './App.css'
+import './App.css';
+import Header from './assets/components/header/Header';
+import Footer from './assets/components/footer/Footer';
+import RangeSelectorPanel from './assets/components/rangeSelector/rangeSelector';
+import SpectralGraph from './assets/components/graph/SpectralGraph';
+
+const F = "'Helvetica', 'Helvetica Neue', Arial, sans-serif";
 
 function App() {
   return (
-    <div className="flex items-center justify-center min-h-screen flex-col gap-2">
-      <p className="font-helvetica font-light">Light</p>
-      <p className="font-helvetica">Regular</p>
-      <p className="font-helvetica italic">Italic</p>
-      <p className="font-helvetica font-bold">Bold</p>
-      <p className="font-helvetica font-bold italic">Bold Italic</p>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: '#ffffff',
+        fontFamily: F,
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* ── Navigation ──────────────── */}
+      <Header />
+
+      {/* ── Main content ────────────── */}
+      <main
+        style={{
+          flex: 1,
+          maxWidth: '1400px',
+          width: '100%',
+          margin: '0 auto',
+          padding: '28px 32px',
+          boxSizing: 'border-box',
+        }}
+      >
+        {/* Page heading */}
+        <div style={{ marginBottom: '20px' }}>
+          <h1
+            style={{
+              fontFamily: F,
+              fontSize: '13px',
+              fontWeight: '700',
+              letterSpacing: '2.5px',
+              color: '#111',
+              textTransform: 'uppercase',
+              margin: 0,
+            }}
+          >
+            Spectral Analysis
+          </h1>
+          <p
+            style={{
+              fontFamily: F,
+              fontSize: '11px',
+              color: '#999',
+              letterSpacing: '0.3px',
+              marginTop: '4px',
+            }}
+          >
+            Configure observation parameters and wavelength range below.
+          </p>
+        </div>
+
+        {/* ── Range Selector Panel ────── */}
+        <RangeSelectorPanel />
+
+        {/* ── Spectral Graph ──────────── */}
+        <SpectralGraph />
+      </main>
+
+      {/* ── Footer ──────────────────── */}
+      <Footer />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
