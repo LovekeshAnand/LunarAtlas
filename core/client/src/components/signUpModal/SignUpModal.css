@@ -1,0 +1,279 @@
+/* ═══════════════════════════════════════════════════════
+   SignUpModal.css
+   Styles for the researcher registration overlay modal.
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Backdrop ───────────────────────────────────────── */
+.su-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: su-fade-in 0.18s ease;
+}
+
+@keyframes su-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Card ───────────────────────────────────────────── */
+.su-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 460px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18), 0 4px 16px rgba(0, 0, 0, 0.08);
+  animation: su-slide-up 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: hidden;
+}
+
+@keyframes su-slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Card Header ────────────────────────────────────── */
+.su-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 24px 24px 0;
+}
+
+.su-title {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #111;
+  line-height: 1.2;
+}
+
+.su-subtitle {
+  font-size: 10px;
+  letter-spacing: 1.8px;
+  color: #999;
+  margin-top: 5px;
+  text-transform: uppercase;
+}
+
+.su-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #bbb;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.15s ease;
+  margin-top: -2px;
+  flex-shrink: 0;
+}
+
+.su-close:hover {
+  color: #111;
+}
+
+/* ── Divider ────────────────────────────────────────── */
+.su-divider {
+  height: 1px;
+  background: #eee;
+  margin: 20px 0 0;
+}
+
+/* ── Form ───────────────────────────────────────────── */
+.su-form {
+  padding: 20px 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Field wrapper */
+.su-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.su-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: #555;
+  text-transform: uppercase;
+}
+
+.su-optional {
+  font-weight: 400;
+  color: #bbb;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 10px;
+}
+
+/* Text inputs */
+.su-input {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 9px 12px;
+  font-size: 13px;
+  color: #111;
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.su-input:focus {
+  border-color: #999;
+  background: #fff;
+}
+
+.su-input::placeholder {
+  color: #ccc;
+}
+
+.su-input--err {
+  border-color: #c44 !important;
+}
+
+/* Textarea */
+.su-textarea {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 9px 12px;
+  font-size: 13px;
+  color: #111;
+  outline: none;
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  min-height: 70px;
+  line-height: 1.5;
+}
+
+.su-textarea:focus {
+  border-color: #999;
+  background: #fff;
+}
+
+.su-textarea::placeholder {
+  color: #ccc;
+}
+
+/* Error messages */
+.su-error {
+  font-size: 10px;
+  color: #c44;
+  letter-spacing: 0.2px;
+}
+
+.su-error--indent {
+  margin-top: -8px;
+  margin-left: 24px;
+}
+
+/* Checkbox row */
+.su-check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  transition: border-color 0.15s ease;
+}
+
+.su-check-row--err {
+  border-color: #c44;
+}
+
+.su-checkbox {
+  width: 14px;
+  height: 14px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: #111;
+  cursor: pointer;
+}
+
+.su-check-label {
+  font-size: 11px;
+  color: #555;
+  line-height: 1.55;
+  cursor: pointer;
+}
+
+.su-check-em {
+  font-weight: 700;
+  color: #111;
+}
+
+/* Submit button */
+.su-submit {
+  width: 100%;
+  padding: 12px 20px;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  margin-top: 4px;
+}
+
+.su-submit:hover:not(:disabled) {
+  background: #333;
+}
+
+.su-submit:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.su-submit:disabled {
+  background: #999;
+  cursor: not-allowed;
+}
+
+/* Footer note */
+.su-footnote {
+  padding: 14px 24px 20px;
+  font-size: 10px;
+  color: #bbb;
+  letter-spacing: 0.3px;
+  text-align: center;
+  border-top: 1px solid #f0f0f0;
+  margin-top: 16px;
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 480px) {
+  .su-card {
+    border-radius: 6px;
+  }
+  .su-card-header,
+  .su-form {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .su-footnote {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+}

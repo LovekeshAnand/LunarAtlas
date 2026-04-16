@@ -1,0 +1,519 @@
+/* ═══════════════════════════════════════════════════════
+   HomePage.css
+   Styles for the LunarAtlas research landing page.
+   Monochrome academic theme: Helvetica · #111 · #999 · #ddd
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Root wrapper ───────────────────────────────────── */
+.hp-root {
+  min-height: 100vh;
+  background: #fff;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  color: #111;
+}
+
+/* ── Shared section wrapper ─────────────────────────── */
+.hp-section {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 64px 48px;
+  box-sizing: border-box;
+}
+
+.hp-section-tag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: #bbb;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO
+══════════════════════════════════════════════════════ */
+.hp-hero {
+  border-bottom: 1px solid #eee;
+  background: #fff;
+  padding: 0;
+}
+
+/* Meta strip at very top */
+.hp-meta-strip {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 14px 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: #bbb;
+  text-transform: uppercase;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.hp-meta-dot {
+  color: #ddd;
+  font-size: 12px;
+}
+
+/* Hero body — wordmark + tagline + CTA */
+.hp-hero-body {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 72px 48px 40px;
+}
+
+.hp-wordmark {
+  font-size: clamp(52px, 8vw, 96px);
+  font-weight: 700;
+  letter-spacing: -2px;
+  color: #111;
+  line-height: 1;
+  margin: 0 0 20px 0;
+}
+
+.hp-wordmark-light {
+  font-weight: 300;
+}
+
+.hp-tagline {
+  font-size: clamp(14px, 2vw, 18px);
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.hp-hero-desc {
+  font-size: 13px;
+  color: #777;
+  line-height: 1.75;
+  max-width: 620px;
+  margin: 0 0 32px 0;
+  letter-spacing: 0.2px;
+}
+
+/* CTA buttons */
+.hp-cta-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.hp-btn-primary {
+  display: inline-block;
+  padding: 11px 24px;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.hp-btn-primary:hover {
+  background: #333;
+  transform: translateY(-1px);
+}
+
+.hp-btn-primary:active {
+  transform: translateY(0);
+}
+
+.hp-btn-secondary {
+  display: inline-block;
+  padding: 11px 24px;
+  background: transparent;
+  color: #444;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.hp-btn-secondary:hover {
+  border-color: #999;
+  color: #111;
+}
+
+/* Spectral waveform */
+.hp-wave-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 48px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+}
+
+.hp-wave-svg {
+  flex: 1;
+  height: 110px;
+  min-width: 0;
+}
+
+.hp-wave-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #bbb;
+  white-space: nowrap;
+  padding-bottom: 14px;
+  flex-shrink: 0;
+}
+
+.hp-wave-label--left { padding-right: 12px; }
+.hp-wave-label--right { padding-left: 12px; }
+
+.hp-wave-axis-label {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 6px 48px 20px;
+  text-align: center;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #ccc;
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════════════════
+   STATS BAR
+══════════════════════════════════════════════════════ */
+.hp-stats {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid #eee;
+  background: #fafafa;
+}
+
+.hp-stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 24px;
+  position: relative;
+  text-align: center;
+}
+
+.hp-stat-divider {
+  position: absolute;
+  left: 0;
+  top: 20%;
+  bottom: 20%;
+  width: 1px;
+  background: #e8e8e8;
+}
+
+.hp-stat-value {
+  font-size: clamp(24px, 3.5vw, 36px);
+  font-weight: 700;
+  letter-spacing: -1px;
+  color: #111;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.hp-stat-label {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  color: #aaa;
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════════════════
+   PROJECT ABSTRACT
+══════════════════════════════════════════════════════ */
+.hp-abstract {
+  border-bottom: 1px solid #eee;
+}
+
+.hp-abstract-grid {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 48px;
+  align-items: start;
+}
+
+.hp-abstract-text p {
+  font-size: 13.5px;
+  line-height: 1.85;
+  color: #444;
+  margin: 0 0 18px 0;
+  letter-spacing: 0.15px;
+}
+
+.hp-abstract-text p:last-child {
+  margin-bottom: 0;
+}
+
+.hp-abstract-text strong {
+  color: #111;
+  font-weight: 700;
+}
+
+/* Abstract sidebar */
+.hp-abstract-sidebar {
+  border-left: 1px solid #eee;
+  padding-left: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.hp-sidebar-item {
+  padding: 14px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.hp-sidebar-item:first-child {
+  padding-top: 0;
+}
+
+.hp-sidebar-item:last-child {
+  border-bottom: none;
+}
+
+.hp-sidebar-key {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #bbb;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.hp-sidebar-val {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #222;
+  letter-spacing: 0.2px;
+}
+
+.hp-sidebar-formula {
+  font-size: 12px;
+  color: #333;
+  font-style: italic;
+  letter-spacing: 0.3px;
+  line-height: 1.7;
+}
+
+/* ══════════════════════════════════════════════════════
+   PIPELINE CARDS
+══════════════════════════════════════════════════════ */
+.hp-cards-section {
+  border-bottom: 1px solid #eee;
+}
+
+.hp-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: #eee;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.hp-card {
+  background: #fff;
+  padding: 32px 28px;
+  transition: background 0.15s ease;
+  cursor: default;
+}
+
+.hp-card:hover {
+  background: #fafafa;
+}
+
+.hp-card-number {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ccc;
+  margin-bottom: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.hp-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111;
+  letter-spacing: 0.2px;
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+
+.hp-card-body {
+  font-size: 12.5px;
+  color: #666;
+  line-height: 1.75;
+  letter-spacing: 0.15px;
+}
+
+/* ══════════════════════════════════════════════════════
+   ARCHITECTURE FLOW
+══════════════════════════════════════════════════════ */
+.hp-arch-section {
+  /* no border-bottom — Footer follows */
+}
+
+.hp-arch-flow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+  row-gap: 12px;
+}
+
+.hp-arch-item {
+  display: flex;
+  align-items: center;
+}
+
+.hp-arch-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 20px;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  background: #fafafa;
+  min-width: 130px;
+  text-align: center;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.hp-arch-step:hover {
+  border-color: #bbb;
+  background: #fff;
+}
+
+.hp-arch-index {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #ccc;
+  margin-bottom: 6px;
+}
+
+.hp-arch-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #333;
+  letter-spacing: 0.3px;
+  line-height: 1.3;
+}
+
+.hp-arch-arrow {
+  font-size: 14px;
+  color: #ccc;
+  padding: 0 10px;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .hp-section { padding: 52px 32px; }
+  .hp-hero-body { padding: 52px 32px 32px; }
+  .hp-meta-strip { padding: 12px 32px; }
+  .hp-wave-container { padding: 0 32px; }
+  .hp-wave-axis-label { padding: 6px 32px 16px; }
+
+  .hp-abstract-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .hp-abstract-sidebar {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid #eee;
+    padding-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+  .hp-sidebar-item {
+    border-bottom: none;
+    border-right: 1px solid #f0f0f0;
+    padding: 0 20px 0 0;
+  }
+  .hp-sidebar-item:last-child { border-right: none; }
+}
+
+@media (max-width: 768px) {
+  .hp-section { padding: 40px 20px; }
+  .hp-hero-body { padding: 40px 20px 28px; }
+  .hp-meta-strip { padding: 10px 20px; gap: 6px; }
+  .hp-wave-container { padding: 0 20px; }
+  .hp-wave-axis-label { padding: 6px 20px 12px; }
+
+  .hp-wordmark { letter-spacing: -1px; }
+
+  .hp-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hp-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hp-stat-item:nth-child(3) .hp-stat-divider,
+  .hp-stat-item:nth-child(1) .hp-stat-divider {
+    display: none;
+  }
+
+  .hp-abstract-sidebar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hp-arch-flow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hp-arch-arrow {
+    transform: rotate(90deg);
+    padding: 4px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .hp-meta-strip { flex-wrap: wrap; }
+  .hp-abstract-sidebar { grid-template-columns: 1fr; }
+  .hp-sidebar-item { border-right: none; border-bottom: 1px solid #f0f0f0; padding: 14px 0; }
+  .hp-sidebar-item:last-child { border-bottom: none; }
+
+  .hp-stats { grid-template-columns: 1fr; }
+  .hp-stat-divider { display: none; }
+  .hp-stat-item { border-bottom: 1px solid #eee; }
+  .hp-stat-item:last-child { border-bottom: none; }
+}

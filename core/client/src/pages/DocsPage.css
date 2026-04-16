@@ -1,0 +1,517 @@
+/* ═══════════════════════════════════════════════════════
+   DocsPage.css
+   Styles for the LunarAtlas technical documentation wiki.
+   Two-column layout: sticky sidebar + scrollable content.
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Root ───────────────────────────────────────────── */
+.docs-root {
+  min-height: 100vh;
+  background: #fff;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  color: #111;
+}
+
+/* ── Two-column layout ──────────────────────────────── */
+.docs-layout {
+  display: flex;
+  flex: 1;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* ══════════════════════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════════════════════ */
+.docs-sidebar {
+  width: 230px;
+  flex-shrink: 0;
+  border-right: 1px solid #eee;
+}
+
+.docs-sidebar-inner {
+  position: sticky;
+  top: 0;
+  padding: 40px 20px 40px 32px;
+  max-height: 100vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.docs-sidebar-heading {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: #bbb;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+/* Nav links */
+.docs-nav-link {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 7px 0;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #888;
+  cursor: pointer;
+  letter-spacing: 0.2px;
+  transition: color 0.15s ease;
+  border-left: 2px solid transparent;
+  padding-left: 10px;
+  margin-left: -10px;
+  line-height: 1.4;
+}
+
+.docs-nav-link:hover {
+  color: #333;
+}
+
+.docs-nav-link--active {
+  color: #111;
+  font-weight: 700;
+  border-left-color: #111;
+}
+
+/* Separator */
+.docs-sidebar-sep {
+  height: 1px;
+  background: #eee;
+  margin: 24px 0;
+}
+
+/* Sidebar metadata */
+.docs-sidebar-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.docs-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.docs-meta-key {
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: #ccc;
+  text-transform: uppercase;
+}
+
+.docs-meta-val {
+  font-size: 11px;
+  color: #555;
+  letter-spacing: 0.2px;
+}
+
+/* Sidebar CTA link */
+.docs-sidebar-cta {
+  display: block;
+  padding: 9px 14px;
+  background: #111;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-align: center;
+  transition: background 0.15s ease;
+}
+
+.docs-sidebar-cta:hover {
+  background: #333;
+}
+
+/* ══════════════════════════════════════════════════════
+   MAIN CONTENT
+══════════════════════════════════════════════════════ */
+.docs-content {
+  flex: 1;
+  min-width: 0;
+  padding: 40px 48px 80px;
+  box-sizing: border-box;
+}
+
+/* ── Section spacing ────────────────────────────────── */
+.docs-section {
+  padding-top: 20px;
+  padding-bottom: 56px;
+  border-bottom: 1px solid #f0f0f0;
+  scroll-margin-top: 24px;
+}
+
+.docs-section:last-child {
+  border-bottom: none;
+}
+
+/* Section number badge */
+.docs-section-number {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ccc;
+  margin-bottom: 10px;
+}
+
+/* Section heading */
+.docs-section-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: #111;
+  margin: 0 0 24px 0;
+  line-height: 1.2;
+}
+
+.docs-h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #222;
+  letter-spacing: 0.3px;
+  margin: 28px 0 12px 0;
+}
+
+/* Paragraph */
+.docs-p {
+  font-size: 13.5px;
+  line-height: 1.85;
+  color: #444;
+  margin: 0 0 16px 0;
+  letter-spacing: 0.15px;
+  max-width: 720px;
+}
+
+.docs-p:last-child {
+  margin-bottom: 0;
+}
+
+.docs-p strong {
+  color: #111;
+  font-weight: 700;
+}
+
+/* Inline code */
+.docs-code {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+  background: #f5f5f5;
+  border: 1px solid #e8e8e8;
+  border-radius: 3px;
+  padding: 1px 5px;
+  color: #333;
+}
+
+/* Lists */
+.docs-list {
+  margin: 0 0 16px 0;
+  padding-left: 0;
+  list-style: none;
+  max-width: 680px;
+}
+
+.docs-list li {
+  font-size: 13px;
+  line-height: 1.75;
+  color: #555;
+  padding: 4px 0 4px 18px;
+  position: relative;
+  letter-spacing: 0.15px;
+  border-bottom: 1px solid #f8f8f8;
+}
+
+.docs-list li:last-child {
+  border-bottom: none;
+}
+
+.docs-list li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: #ccc;
+  font-size: 11px;
+}
+
+/* ── Callout box ────────────────────────────────────── */
+.docs-callout {
+  border-left: 3px solid #111;
+  background: #fafafa;
+  padding: 16px 20px;
+  margin: 24px 0;
+  border-radius: 0 4px 4px 0;
+  max-width: 680px;
+}
+
+.docs-callout-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  color: #777;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.docs-callout p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #444;
+  margin: 0;
+}
+
+.docs-callout strong {
+  color: #111;
+}
+
+/* ── Schema / code pre-blocks ───────────────────────── */
+.docs-schema-diagram {
+  margin: 24px 0;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.docs-schema-title {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #999;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  background: #f5f5f5;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.docs-pre {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: #333;
+  background: #fefefe;
+  margin: 0;
+  padding: 16px;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* ── Hierarchy diagram ──────────────────────────────── */
+.docs-hierarchy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 24px 0;
+  max-width: 520px;
+}
+
+.docs-hier-node {
+  padding: 12px 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+
+.docs-hier-node:hover {
+  border-color: #999;
+}
+
+.docs-hier-node--l0 { background: #111; }
+.docs-hier-node--l1 { background: #fff; border-color: #333; }
+.docs-hier-node--l2 { background: #fff; }
+.docs-hier-node--l3 { background: #fafafa; }
+.docs-hier-node--l4 { background: #f5f5f5; }
+
+.docs-hier-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 3px;
+}
+
+.docs-hier-node--l0 .docs-hier-label { color: #fff; }
+.docs-hier-node--l1 .docs-hier-label { color: #111; }
+.docs-hier-node--l2 .docs-hier-label,
+.docs-hier-node--l3 .docs-hier-label,
+.docs-hier-node--l4 .docs-hier-label { color: #333; }
+
+.docs-hier-detail {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 10px;
+  letter-spacing: 0.3px;
+}
+
+.docs-hier-node--l0 .docs-hier-detail { color: #bbb; }
+.docs-hier-node--l1 .docs-hier-detail { color: #555; }
+.docs-hier-node--l2 .docs-hier-detail,
+.docs-hier-node--l3 .docs-hier-detail,
+.docs-hier-node--l4 .docs-hier-detail { color: #888; }
+
+.docs-hier-connector {
+  width: 1px;
+  height: 20px;
+  background: #ccc;
+  margin-left: 28px;
+}
+
+/* ── Formula block ──────────────────────────────────── */
+.docs-formula-block {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 24px 0;
+  max-width: 560px;
+}
+
+.docs-formula-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #999;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  background: #f5f5f5;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.docs-formula {
+  font-size: 17px;
+  font-style: italic;
+  letter-spacing: 0.3px;
+  color: #111;
+  padding: 20px 24px;
+  background: #fff;
+  line-height: 1.6;
+}
+
+.docs-formula-note {
+  font-size: 11px;
+  color: #888;
+  line-height: 1.6;
+  padding: 12px 20px;
+  background: #fafafa;
+  border-top: 1px solid #eee;
+  letter-spacing: 0.15px;
+}
+
+/* ── Tables ─────────────────────────────────────────── */
+.docs-table-wrap {
+  overflow-x: auto;
+  margin: 20px 0;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+}
+
+.docs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.docs-table thead tr {
+  background: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.docs-table th {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #888;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.docs-table td {
+  padding: 10px 16px;
+  color: #444;
+  border-bottom: 1px solid #f0f0f0;
+  line-height: 1.5;
+}
+
+.docs-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.docs-table tbody tr:hover td {
+  background: #fafafa;
+}
+
+.docs-table td:first-child {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11px;
+  color: #333;
+}
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .docs-layout {
+    flex-direction: column;
+  }
+
+  .docs-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #eee;
+  }
+
+  .docs-sidebar-inner {
+    position: relative;
+    top: auto;
+    max-height: none;
+    padding: 20px 24px;
+    overflow: visible;
+  }
+
+  .docs-sidebar-heading { margin-bottom: 12px; }
+
+  nav[aria-label="Documentation sections"] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .docs-nav-link {
+    border: 1px solid #e8e8e8;
+    border-left: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    margin-left: 0;
+    white-space: nowrap;
+    font-size: 11px;
+  }
+
+  .docs-nav-link--active {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+    border-left-color: #111;
+  }
+
+  .docs-sidebar-meta { display: none; }
+  .docs-sidebar-sep:first-of-type { display: none; }
+
+  .docs-content {
+    padding: 32px 24px 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .docs-content { padding: 24px 16px 48px; }
+  .docs-formula { font-size: 14px; }
+}

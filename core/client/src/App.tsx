@@ -1,74 +1,43 @@
-import './App.css';
-import Header from './components/header/Header';
-import Footer from './components/footer/Footer';
-import RangeSelectorPanel from './components/rangeSelector/rangeSelector';
-import SpectralGraph from './components/graph/SpectralGraph';
+import { type ReactNode } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
+import HomePage from './pages/HomePage';
+import GraphPage from './pages/GraphPage';
+import DocsPage from './pages/DocsPage';
+import PaperPage from './pages/PaperPage';
 
-const F = "'Helvetica', 'Helvetica Neue', Arial, sans-serif";
+// ─────────────────────────────────────────────────────────────────
+// App.tsx  (updated)
+// Defines the client-side route tree.
+// /graph is protected — unauthenticated users are sent to /.
+// ─────────────────────────────────────────────────────────────────
+
+function ProtectedRoute({ children }: { children: ReactNode }) {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? <>{children}</> : <Navigate to="/" replace />;
+}
 
 function App() {
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: '#ffffff',
-        fontFamily: F,
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      {/* ── Navigation ──────────────── */}
-      <Header />
+    <Routes>
+      <Route path="/" element={<HomePage />} />
 
-      {/* ── Main content ────────────── */}
-      <main
-        style={{
-          flex: 1,
-          maxWidth: '1400px',
-          width: '100%',
-          margin: '0 auto',
-          padding: '28px 32px',
-          boxSizing: 'border-box',
-        }}
-      >
-        {/* Page heading */}
-        <div style={{ marginBottom: '20px' }}>
-          <h1
-            style={{
-              fontFamily: F,
-              fontSize: '13px',
-              fontWeight: '700',
-              letterSpacing: '2.5px',
-              color: '#111',
-              textTransform: 'uppercase',
-              margin: 0,
-            }}
-          >
-            Spectral Analysis
-          </h1>
-          <p
-            style={{
-              fontFamily: F,
-              fontSize: '11px',
-              color: '#999',
-              letterSpacing: '0.3px',
-              marginTop: '4px',
-            }}
-          >
-            Configure observation parameters and wavelength range below.
-          </p>
-        </div>
+      <Route
+        path="/graph"
+        element={
+          <ProtectedRoute>
+            <GraphPage />
+          </ProtectedRoute>
+        }
+      />
 
-        {/* ── Range Selector Panel ────── */}
-        <RangeSelectorPanel />
+      <Route path="/docs" element={<DocsPage />} />
 
-        {/* ── Spectral Graph ──────────── */}
-        <SpectralGraph />
-      </main>
+      <Route path="/paper" element={<PaperPage />} />
 
-      {/* ── Footer ──────────────────── */}
-      <Footer />
-    </div>
+      {/* Catch-all → home */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 
