@@ -1,6 +1,11 @@
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import SignUpModal from '../auth/SignUpModal';
+
 const F = "'Helvetica', 'Helvetica Neue', Arial, sans-serif";
 
-// Minimal monochrome spectral/lunar logo
+// ─── Minimal monochrome spectral/lunar logo ──────────────
 const Logo = () => (
   <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="19" cy="19" r="16" stroke="#111" strokeWidth="1.5" />
@@ -21,80 +26,162 @@ const Logo = () => (
 );
 
 export default function Header() {
+  const [showModal, setShowModal] = useState(false);
+  const { isLoggedIn, user, logout } = useAuth();
+  const location = useLocation();
+
+  const navLinks = [
+    { label: 'Home', to: '/' },
+    { label: 'Documentation', to: '/docs' },
+    { label: 'Graph', to: '/graph' },
+  ];
+
+  const isActive = (to: string) =>
+    to === '/' ? location.pathname === '/' : location.pathname.startsWith(to);
+
   return (
-    <header
-      style={{
-        fontFamily: F,
-        borderBottom: '1px solid #ddd',
-        background: '#fff',
-      }}
-    >
-      <div
+    <>
+      <header
         style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-          padding: '0 32px',
-          height: '60px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          fontFamily: F,
+          borderBottom: '1px solid #ddd',
+          background: '#fff',
+          position: 'sticky',
+          top: 0,
+          zIndex: 500,
         }}
       >
-        {/* Brand */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Logo />
-          <div>
-            <div
-              style={{
-                fontSize: '13px',
-                fontWeight: '700',
-                letterSpacing: '3px',
-                color: '#111',
-                lineHeight: 1,
-              }}
-            >
-              LUNAR<span style={{ fontWeight: '300' }}>ATLAS</span>
+        <div
+          style={{
+            maxWidth: '1400px',
+            margin: '0 auto',
+            padding: '0 32px',
+            height: '61px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          {/* Brand */}
+          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <Logo />
+            <div>
+              <div
+                style={{
+                  fontSize: '13px',
+                  fontWeight: '700',
+                  letterSpacing: '3px',
+                  color: '#111',
+                  lineHeight: 1,
+                }}
+              >
+                LUNAR<span style={{ fontWeight: '300' }}>ATLAS</span>
+              </div>
+              <div
+                style={{
+                  fontSize: '8.5px',
+                  letterSpacing: '1.8px',
+                  color: '#999',
+                  marginTop: '3px',
+                  fontWeight: '400',
+                }}
+              >
+                SPECTRAL ANALYSIS SYSTEM
+              </div>
             </div>
-            <div
-              style={{
-                fontSize: '8.5px',
-                letterSpacing: '1.8px',
-                color: '#999',
-                marginTop: '3px',
-                fontWeight: '400',
-              }}
-            >
-              SPECTRAL ANALYSIS SYSTEM
-            </div>
-          </div>
-        </div>
+          </Link>
 
-        {/* Nav */}
-        <nav style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
-          {[
-            { label: 'Home', href: '#' },
-            { label: 'Documents', href: '#' },
-            { label: 'Sign Up', href: '#' },
-          ].map(({ label, href }) => (
-            <a
-              key={label}
-              href={href}
-              style={{
-                fontSize: '11px',
-                fontWeight: '500',
-                letterSpacing: '1px',
-                color: '#444',
-                textTransform: 'uppercase',
-                transition: 'color 0.15s ease',
-              }}
-              onMouseEnter={(e) => ((e.target as HTMLElement).style.color = '#111')}
-              onMouseLeave={(e) => ((e.target as HTMLElement).style.color = '#444')}
-            >
-              {label}
-            </a>
-          ))}
-        </nav>
-      </div>
-    </header>
+          {/* Nav */}
+          <nav style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
+            {navLinks.map(({ label, to }) => {
+              const active = isActive(to);
+              return (
+                <Link
+                  key={label}
+                  to={to}
+                  style={{
+                    fontSize: '11px',
+                    fontWeight: active ? '700' : '500',
+                    letterSpacing: '1px',
+                    color: active ? '#111' : '#888',
+                    textTransform: 'uppercase',
+                    textDecoration: 'none',
+                    borderBottom: active ? '1px solid #111' : '1px solid transparent',
+                    paddingBottom: '2px',
+                    transition: 'color 0.15s ease',
+                  }}
+                  onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.color = '#111'; }}
+                  onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.color = '#888'; }}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+
+            {/* Auth area */}
+            {isLoggedIn ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                {/* User badge */}
+                <div style={{
+                  border: '1px solid #e0e0e0',
+                  padding: '4px 12px',
+                  display: 'flex', alignItems: 'center', gap: '7px',
+                }}>
+                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#111', flexShrink: 0 }} />
+                  <span style={{ fontSize: '10px', color: '#555', letterSpacing: '0.3px', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {user?.email}
+                  </span>
+                </div>
+                <button
+                  id="header-logout"
+                  onClick={logout}
+                  style={{
+                    fontFamily: F,
+                    fontSize: '10px',
+                    fontWeight: '500',
+                    letterSpacing: '1px',
+                    color: '#999',
+                    textTransform: 'uppercase',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'color 0.15s ease',
+                    padding: 0,
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#111')}
+                  onMouseLeave={e => (e.currentTarget.style.color = '#999')}
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <button
+                id="header-signup"
+                onClick={() => setShowModal(true)}
+                style={{
+                  fontFamily: F,
+                  fontSize: '10px',
+                  fontWeight: '700',
+                  letterSpacing: '1.5px',
+                  color: '#fff',
+                  textTransform: 'uppercase',
+                  background: '#111',
+                  border: 'none',
+                  padding: '8px 18px',
+                  cursor: 'pointer',
+                  transition: 'background 0.15s ease',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = '#333')}
+                onMouseLeave={e => (e.currentTarget.style.background = '#111')}
+              >
+                Sign Up
+              </button>
+            )}
+          </nav>
+        </div>
+      </header>
+
+      {showModal && <SignUpModal onClose={() => setShowModal(false)} />}
+    </>
   );
 }
