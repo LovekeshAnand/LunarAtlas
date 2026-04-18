@@ -13,35 +13,38 @@ const ZOOM_MIN = 1;
 const ZOOM_MAX = 5;
 
 // ─────────────────────────────────────────────────────────────
-// Shared Tailwind class strings
-// (defined as constants so Tailwind JIT scans complete strings)
+// Shared Tailwind class strings — complete strings so JIT scans them.
+// Dark mode colours use CSS custom properties defined in index.css
+// where possible (slider). Static surfaces use dark: variants.
 // ─────────────────────────────────────────────────────────────
 const SELECT_CLS =
-  'w-full appearance-none bg-[#f5f5f5] border border-border-dark rounded px-[10px] pr-8 py-[7px] ' +
-  'font-sans text-[12px] font-medium text-[#222] cursor-pointer outline-none transition-colors duration-150 ' +
-  'leading-[1.4] focus:border-[#999] disabled:text-ink-muted disabled:cursor-not-allowed disabled:bg-canvas-alt';
+  'w-full appearance-none bg-[#f5f5f5] dark:bg-[#1a1a1a] border border-border-dark dark:border-[#2a2a2a] rounded px-[10px] pr-8 py-[7px] ' +
+  'font-sans text-[12px] font-medium text-[#222] dark:text-[#d0d0d0] cursor-pointer outline-none transition-colors duration-150 ' +
+  'leading-[1.4] focus:border-[#999] dark:focus:border-[#555] disabled:text-ink-muted dark:disabled:text-[#444] disabled:cursor-not-allowed disabled:bg-canvas-alt dark:disabled:bg-[#111]';
 
 const NUM_WRAP_BASE =
-  'flex items-center bg-[#f5f5f5] rounded px-[10px] transition-colors duration-150 flex-1 focus-within:border-[#999]';
+  'flex items-center bg-[#f5f5f5] dark:bg-[#1a1a1a] rounded px-[10px] transition-colors duration-150 flex-1 focus-within:border-[#999] dark:focus-within:border-[#555]';
 
 const NUM_INPUT_CLS =
-  'flex-1 min-w-0 bg-transparent border-0 outline-none font-mono text-[12px] font-semibold text-[#222] py-[7px] ' +
+  'flex-1 min-w-0 bg-transparent border-0 outline-none font-mono text-[12px] font-semibold text-[#222] dark:text-[#d0d0d0] py-[7px] ' +
   '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none';
 
+// Slider thumb colour comes from --slider-thumb CSS var (switches on .dark).
+// Border ring uses --slider-thumb-ring. Both are defined in index.css :root/.dark.
 const SLIDER_CLS =
   'range-track appearance-none w-full h-1 rounded-sm outline-none cursor-pointer ' +
   '[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-[14px] ' +
-  '[&::-webkit-slider-thumb]:h-[14px] [&::-webkit-slider-thumb]:bg-[#333] ' +
+  '[&::-webkit-slider-thumb]:h-[14px] [&::-webkit-slider-thumb]:bg-[var(--slider-thumb)] ' +
   '[&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer ' +
-  '[&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white ' +
+  '[&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[var(--slider-thumb-ring)] ' +
   '[&::-webkit-slider-thumb]:shadow [&::-webkit-slider-thumb]:transition-transform ' +
   '[&::-webkit-slider-thumb:hover]:scale-[1.15] ' +
   '[&::-moz-range-thumb]:w-[14px] [&::-moz-range-thumb]:h-[14px] ' +
-  '[&::-moz-range-thumb]:bg-[#333] [&::-moz-range-thumb]:rounded-full ' +
+  '[&::-moz-range-thumb]:bg-[var(--slider-thumb)] [&::-moz-range-thumb]:rounded-full ' +
   '[&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-2 ' +
-  '[&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow';
+  '[&::-moz-range-thumb]:border-[var(--slider-thumb-ring)] [&::-moz-range-thumb]:shadow';
 
-// Per-format button colours (hardcoded so JIT picks up complete class strings)
+// Per-format export button colours — same in both modes (intentionally coloured)
 const EXPORT_BG: Record<string, string> = {
   pdf:  'bg-[#8b4444] hover:bg-[#a05050]',
   csv:  'bg-[#3a6b3a] hover:bg-[#4a7d4a]',
@@ -53,7 +56,7 @@ const EXPORT_BG: Record<string, string> = {
 // ─────────────────────────────────────────────────────────────
 function FieldLabel({ text }: { text: string }) {
   return (
-    <label className="font-sans text-[9px] font-bold tracking-[1.3px] text-[#888] uppercase block mb-1">
+    <label className="font-sans text-[9px] font-bold tracking-[1.3px] text-[#888] dark:text-[#555] uppercase block mb-1">
       {text}
     </label>
   );
@@ -81,7 +84,7 @@ function StyledSelect({
           <option key={opt} value={opt}>{opt}</option>
         ))}
       </select>
-      <span className="absolute right-[10px] text-[10px] text-[#999] pointer-events-none select-none">▾</span>
+      <span className="absolute right-[10px] text-[10px] text-[#999] dark:text-[#555] pointer-events-none select-none">▾</span>
     </div>
   );
 }
@@ -90,7 +93,7 @@ function StyledSelect({
 // SHARED: Column divider
 // ─────────────────────────────────────────────────────────────
 function ColDivider() {
-  return <div className="w-px bg-border self-stretch shrink-0" />;
+  return <div className="w-px bg-border dark:bg-[#222] self-stretch shrink-0" />;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -103,30 +106,30 @@ function ModeToggle({ activeMode, onChange }: { activeMode: 'L1' | 'L2'; onChang
   ];
 
   return (
-    <div className="flex border-b border-border-dark font-sans">
+    <div className="flex border-b border-border-dark dark:border-[#222] font-sans">
       {modes.map(({ key, label }) => {
         const active = key === activeMode;
         return (
           <button
             key={key}
             onClick={() => onChange(key)}
-            className={`flex-1 py-[10px] border-0 border-r border-border-dark font-sans text-[11px] tracking-[1.4px] uppercase cursor-pointer transition-all duration-150 outline-none border-b-2 ${
+            className={`flex-1 py-[10px] border-0 border-r border-border-dark dark:border-[#222] font-sans text-[11px] tracking-[1.4px] uppercase cursor-pointer transition-all duration-150 outline-none border-b-2 ${
               active
-                ? 'bg-canvas text-ink font-bold border-b-ink'
-                : 'bg-[#f7f7f7] text-[#888] font-normal border-b-transparent'
+                ? 'bg-canvas dark:bg-[#141414] text-ink dark:text-[#f0f0f0] font-bold border-b-ink dark:border-b-[#f0f0f0]'
+                : 'bg-[#f7f7f7] dark:bg-[#1a1a1a] text-[#888] dark:text-[#555] font-normal border-b-transparent'
             }`}
           >
             {label}
           </button>
         );
       })}
-      <div className="flex-[2] border-b-2 border-b-transparent bg-[#f7f7f7] border-l border-border-dark" />
+      <div className="flex-[2] border-b-2 border-b-transparent bg-[#f7f7f7] dark:bg-[#1a1a1a] border-l border-border-dark dark:border-[#222]" />
     </div>
   );
 }
 
 // ─────────────────────────────────────────────────────────────
-// 2. OBSERVATION INPUTS — Date / Time / Measurement Type
+// 2. OBSERVATION INPUTS
 // ─────────────────────────────────────────────────────────────
 function ObservationInputs({
   dates, timesForDate, measurementTypes,
@@ -173,7 +176,7 @@ function ObservationInputs({
 }
 
 // ─────────────────────────────────────────────────────────────
-// 3. WAVELENGTH RANGE INPUTS — min / max numeric fields
+// 3. WAVELENGTH RANGE INPUTS
 // ─────────────────────────────────────────────────────────────
 function WavelengthRangeInputs({ min, max, onMinChange, onMaxChange }: {
   min: number; max: number; onMinChange: (v: number) => void; onMaxChange: (v: number) => void;
@@ -198,7 +201,7 @@ function WavelengthRangeInputs({ min, max, onMinChange, onMaxChange }: {
   };
 
   const wrapClass = (err: boolean) =>
-    `${NUM_WRAP_BASE} border ${err ? 'border-[#c44]' : 'border-border-dark'}`;
+    `${NUM_WRAP_BASE} border ${err ? 'border-[#c44]' : 'border-border-dark dark:border-[#2a2a2a]'}`;
 
   return (
     <div className="flex flex-col gap-[6px]">
@@ -213,9 +216,9 @@ function WavelengthRangeInputs({ min, max, onMinChange, onMaxChange }: {
             min={ABS_MIN}
             max={max - 1}
           />
-          <span className="font-sans text-[9px] text-ink-muted ml-1 shrink-0 tracking-[0.2px]">(min)</span>
+          <span className="font-sans text-[9px] text-ink-muted dark:text-[#444] ml-1 shrink-0 tracking-[0.2px]">(min)</span>
         </div>
-        <span className="font-sans text-[13px] text-ink-muted shrink-0">—</span>
+        <span className="font-sans text-[13px] text-ink-muted dark:text-[#444] shrink-0">—</span>
         <div className={wrapClass(maxErr)}>
           <input
             type="number"
@@ -225,7 +228,7 @@ function WavelengthRangeInputs({ min, max, onMinChange, onMaxChange }: {
             min={min + 1}
             max={ABS_MAX}
           />
-          <span className="font-sans text-[9px] text-ink-muted ml-1 shrink-0 tracking-[0.2px]">(max)</span>
+          <span className="font-sans text-[9px] text-ink-muted dark:text-[#444] ml-1 shrink-0 tracking-[0.2px]">(max)</span>
         </div>
       </div>
       {(minErr || maxErr) && (
@@ -236,12 +239,9 @@ function WavelengthRangeInputs({ min, max, onMinChange, onMaxChange }: {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 4. ZOOM SLIDER — 1× to 5×
-// Complex conversion: the track fill gradient is driven by state
-// and cannot be expressed as a static Tailwind class.
-// Solution: CSS custom property (--track-fill) set via useEffect
-// so the JSX carries zero style={{}} props.
-// The .range-track rule is defined in index.css @layer components.
+// 4. ZOOM SLIDER
+// Track fill driven by --track-fill CSS var (set via useEffect).
+// Track and thumb colours adapt to dark mode via --slider-* vars.
 // ─────────────────────────────────────────────────────────────
 function ZoomSlider({ zoom, onChange }: { zoom: number; onChange: (v: number) => void }) {
   const pct       = ((zoom - ZOOM_MIN) / (ZOOM_MAX - ZOOM_MIN)) * 100;
@@ -255,7 +255,7 @@ function ZoomSlider({ zoom, onChange }: { zoom: number; onChange: (v: number) =>
     <div className="flex flex-col gap-[6px]">
       <div className="flex items-center justify-between">
         <FieldLabel text="Zoom Level" />
-        <span className="font-sans text-[11px] font-bold text-[#333] tracking-[0.5px] mb-1">
+        <span className="font-sans text-[11px] font-bold text-[#333] dark:text-[#d0d0d0] tracking-[0.5px] mb-1">
           ×{zoom.toFixed(1)}
         </span>
       </div>
@@ -269,7 +269,7 @@ function ZoomSlider({ zoom, onChange }: { zoom: number; onChange: (v: number) =>
         onChange={(e) => onChange(parseFloat(e.target.value))}
         className={SLIDER_CLS}
       />
-      <div className="flex justify-between font-sans text-[9px] text-ink-muted tracking-[0.3px]">
+      <div className="flex justify-between font-sans text-[9px] text-ink-muted dark:text-[#444] tracking-[0.3px]">
         {['×1', '×2', '×3', '×4', '×5'].map((l) => <span key={l}>{l}</span>)}
       </div>
     </div>
@@ -289,7 +289,7 @@ function ElementDropdown({ value, onChange }: { value: string; onChange: (v: str
 }
 
 // ─────────────────────────────────────────────────────────────
-// 6. EXPORT BUTTONS — PDF / CSV / JSON
+// 6. EXPORT BUTTONS
 // ─────────────────────────────────────────────────────────────
 const EXPORT_OPTIONS = [
   {
@@ -356,17 +356,17 @@ function ExportButtons({ onExport }: { onExport: (f: 'pdf' | 'csv' | 'json') => 
 // DEFAULT EXPORT: RangeSelectorPanel
 // ═════════════════════════════════════════════════════════════
 export default function RangeSelectorPanel() {
-  const [mode,                   setMode]                   = useState<'L1' | 'L2'>('L1');
-  const [selectedDate,           setSelectedDate]           = useState('');
-  const [selectedTime,           setSelectedTime]           = useState('');
+  const [mode,                    setMode]                    = useState<'L1' | 'L2'>('L1');
+  const [selectedDate,            setSelectedDate]            = useState('');
+  const [selectedTime,            setSelectedTime]            = useState('');
   const [selectedMeasurementType, setSelectedMeasurementType] = useState('');
-  const [minWl,                  setMinWl]                  = useState(200);
-  const [maxWl,                  setMaxWl]                  = useState(900);
-  const [zoom,                   setZoom]                   = useState(3);
-  const [element,                setElement]                = useState('');
+  const [minWl,                   setMinWl]                   = useState(200);
+  const [maxWl,                   setMaxWl]                   = useState(900);
+  const [zoom,                    setZoom]                    = useState(3);
+  const [element,                 setElement]                 = useState('');
 
-  const allDates        = useMemo(() => getUniqueDates(mockObservationData), []);
-  const timesForDate    = useMemo(
+  const allDates         = useMemo(() => getUniqueDates(mockObservationData), []);
+  const timesForDate     = useMemo(
     () => (selectedDate ? getTimesForDate(mockObservationData, selectedDate) : []),
     [selectedDate]
   );
@@ -377,7 +377,7 @@ export default function RangeSelectorPanel() {
   };
 
   return (
-    <section className="font-sans border border-border-dark rounded-md bg-canvas overflow-hidden">
+    <section className="font-sans border border-border-dark dark:border-[#222] rounded-md bg-canvas dark:bg-[#141414] overflow-hidden transition-colors duration-200">
       <ModeToggle activeMode={mode} onChange={setMode} />
 
       <div className="flex items-stretch flex-wrap">

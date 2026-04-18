@@ -6,6 +6,9 @@
 /* ── Core import ────────────────────────────────────────────── */
 @import "tailwindcss";
 
+/* ── Dark mode — toggled via .dark class on <html> ──────────── */
+@variant dark (&:where(.dark, .dark *));
+
 /* ── Content scanning ───────────────────────────────────────── */
 @source "./src/**/*.{ts,tsx,js,jsx}";
 
@@ -27,6 +30,24 @@
 
   /* Layout tokens */
   --spacing-header: 61px;
+}
+
+/* ── Theme-reactive CSS custom properties ───────────────────── */
+/* These switch automatically when .dark is applied to <html>   */
+:root {
+  --grid-line:         rgba(0, 0, 0, 0.048);
+  --slider-fill:       #333333;
+  --slider-empty:      #dddddd;
+  --slider-thumb:      #333333;
+  --slider-thumb-ring: #ffffff;
+}
+
+.dark {
+  --grid-line:         rgba(255, 255, 255, 0.042);
+  --slider-fill:       #c8c8c8;
+  --slider-empty:      #2e2e2e;
+  --slider-thumb:      #c8c8c8;
+  --slider-thumb-ring: #141414;
 }
 
 /* ── @font-face declarations ────────────────────────────────── */
@@ -94,21 +115,28 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Range input — dynamic track fill via CSS custom property ── */
-/*
- * The ZoomSlider fill colour cannot be expressed as a static
- * Tailwind class because it is driven by component state.
- * We define the gradient here and update --track-fill via
- * element.style.setProperty() inside a React useEffect.
- */
+/* ── Range input track — fill driven by --track-fill (set via  */
+/* element.style.setProperty in ZoomSlider's useEffect).        */
+/* Color values come from theme-reactive CSS custom properties. */
 @layer components {
   .range-track {
     background: linear-gradient(
       to right,
-      #333 0%,
-      #333 var(--track-fill, 50%),
-      #ddd var(--track-fill, 50%),
-      #ddd 100%
+      var(--slider-fill)  0%,
+      var(--slider-fill)  var(--track-fill, 50%),
+      var(--slider-empty) var(--track-fill, 50%),
+      var(--slider-empty) 100%
     );
+  }
+}
+
+/* ── Subtle grid/mesh overlay for the hero section ──────────── */
+/* Color reacts to dark mode via --grid-line CSS custom property */
+@layer utilities {
+  .grid-mesh {
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 }

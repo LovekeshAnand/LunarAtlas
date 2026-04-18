@@ -8,32 +8,32 @@ import dbSchemaDiagram from '../assets/db_schema_diagram.png';
 // Tailwind JIT detects every class during source scanning.
 // ─────────────────────────────────────────────────────────────
 const SEC     = 'mb-[72px] scroll-mt-20';
-const SEC_TAG = 'text-[9px] font-bold tracking-[2.5px] text-ink-muted uppercase mb-[10px]';
-const SEC_H2  = 'text-[22px] font-bold text-ink m-0 mb-5 tracking-[-0.3px] leading-tight';
-const SEC_HR  = 'border-0 border-t border-[#eee] m-0 mb-7';
-const BODY    = 'text-[13px] text-[#444] leading-[1.78] tracking-[0.2px] [&_p]:mb-4 [&_strong]:text-ink [&_strong]:font-bold [&_em]:italic [&_em]:text-[#555]';
-const SUB_H   = 'text-[14px] font-bold text-ink mt-8 mb-[10px]';
-const FORMULA = 'bg-[#f7f7f7] border border-border px-5 py-4 my-5 font-mono text-[13px] text-ink overflow-x-auto tracking-[0.3px] border-l-[3px] border-l-ink';
-const CALLOUT = 'bg-canvas-alt border border-border px-[18px] py-[14px] my-5 text-[12px] text-[#555] leading-[1.65] border-l-[3px] border-l-[#888] [&_strong]:text-ink';
-const CODE    = 'bg-[#f4f4f4] border border-border px-[6px] py-[2px] font-mono text-[11.5px] text-[#333] tracking-[0.1px]';
-const CODEBLK = 'bg-[#f7f7f7] border border-border px-5 py-4 my-4 font-mono text-[12px] text-[#222] overflow-x-auto leading-[1.6] whitespace-pre';
-const FIGURE  = 'my-7 border border-border';
-const FIG_CAP = 'px-[14px] py-[10px] text-[11px] text-[#888] border-t border-[#eee] leading-[1.5] bg-canvas-alt [&_strong]:text-[#555] [&_strong]:font-bold';
+const SEC_TAG = 'text-[9px] font-bold tracking-[2.5px] text-ink-muted dark:text-[#444] uppercase mb-[10px]';
+const SEC_H2  = 'text-[22px] font-bold text-ink dark:text-[#f0f0f0] m-0 mb-5 tracking-[-0.3px] leading-tight';
+const SEC_HR  = 'border-0 border-t border-[#eee] dark:border-[#1e1e1e] m-0 mb-7';
+const BODY    = 'text-[13px] text-[#444] dark:text-[#b0b0b0] leading-[1.78] tracking-[0.2px] [&_p]:mb-4 [&_strong]:text-ink dark:[&_strong]:text-[#f0f0f0] [&_strong]:font-bold [&_em]:italic [&_em]:text-[#555] dark:[&_em]:text-[#888]';
+const SUB_H   = 'text-[14px] font-bold text-ink dark:text-[#f0f0f0] mt-8 mb-[10px]';
+const FORMULA = 'bg-[#f7f7f7] dark:bg-[#111] border border-border dark:border-[#2a2a2a] px-5 py-4 my-5 font-mono text-[13px] text-ink dark:text-[#d0d0d0] overflow-x-auto tracking-[0.3px] border-l-[3px] border-l-ink dark:border-l-[#d0d0d0]';
+const CALLOUT = 'bg-canvas-alt dark:bg-[#141414] border border-border dark:border-[#2a2a2a] px-[18px] py-[14px] my-5 text-[12px] text-[#555] dark:text-[#888] leading-[1.65] border-l-[3px] border-l-[#888] dark:border-l-[#444] [&_strong]:text-ink dark:[&_strong]:text-[#d0d0d0]';
+const CODE    = 'bg-[#f4f4f4] dark:bg-[#1e1e1e] border border-border dark:border-[#2a2a2a] px-[6px] py-[2px] font-mono text-[11.5px] text-[#333] dark:text-[#d0d0d0] tracking-[0.1px]';
+const CODEBLK = 'bg-[#f7f7f7] dark:bg-[#111] border border-border dark:border-[#222] px-5 py-4 my-4 font-mono text-[12px] text-[#222] dark:text-[#c0c0c0] overflow-x-auto leading-[1.6] whitespace-pre';
+const FIGURE  = 'my-7 border border-border dark:border-[#222]';
+const FIG_CAP = 'px-[14px] py-[10px] text-[11px] text-[#888] dark:text-[#555] border-t border-[#eee] dark:border-[#1e1e1e] leading-[1.5] bg-canvas-alt dark:bg-[#141414] [&_strong]:text-[#555] dark:[&_strong]:text-[#999] [&_strong]:font-bold';
 const TABLE   = 'w-full border-collapse my-5 text-[12px]';
 const TBODY   = '[&>tr:last-child>td]:border-b-0';
-const TH      = 'text-left text-[9px] font-bold tracking-[1.5px] text-[#888] uppercase px-[14px] py-2 border-b border-[#ddd] bg-canvas-alt';
-const TD      = 'px-[14px] py-[10px] border-b border-[#f0f0f0] text-[#444] leading-[1.5] align-top';
-const TD_CODE = 'font-mono text-[11px] text-[#333] bg-[#f4f4f4] border border-border px-1 py-px';
-const FLIST   = 'border border-border my-5 overflow-hidden';
-const FROW    = 'grid grid-cols-[160px_74px_1fr] gap-x-3 px-4 py-[11px] border-b border-[#f0f0f0] items-center text-[12.5px] last:border-b-0 hover:bg-canvas-alt';
-const FNAME   = 'font-semibold text-ink text-[12.5px]';
-const FTYPE   = 'font-mono text-[11px] text-[#888] bg-[#f4f4f4] px-[6px] py-[2px] rounded-sm self-center whitespace-nowrap w-fit';
-const FDESC   = 'text-[#555] text-[12.5px] leading-[1.55] pl-3';
-const STEPS   = 'my-5 flex flex-col border border-border overflow-hidden';
-const SROW    = 'flex gap-5 items-start px-[18px] py-[14px] border-b border-[#f0f0f0] last:border-b-0 hover:bg-canvas-alt';
-const SNUM    = 'text-[10px] font-bold text-ink-muted tracking-[1px] shrink-0 pt-[2px] min-w-6';
-const STITLE  = 'text-[13px] font-semibold text-ink mb-[3px]';
-const SDESC   = 'text-[12.5px] text-[#555] leading-[1.6]';
+const TH      = 'text-left text-[9px] font-bold tracking-[1.5px] text-[#888] dark:text-[#555] uppercase px-[14px] py-2 border-b border-[#ddd] dark:border-[#1e1e1e] bg-canvas-alt dark:bg-[#141414]';
+const TD      = 'px-[14px] py-[10px] border-b border-[#f0f0f0] dark:border-[#1a1a1a] text-[#444] dark:text-[#aaa] leading-[1.5] align-top';
+const TD_CODE = 'font-mono text-[11px] text-[#333] dark:text-[#c0c0c0] bg-[#f4f4f4] dark:bg-[#1e1e1e] border border-border dark:border-[#2a2a2a] px-1 py-px';
+const FLIST   = 'border border-border dark:border-[#222] my-5 overflow-hidden';
+const FROW    = 'grid grid-cols-[160px_74px_1fr] gap-x-3 px-4 py-[11px] border-b border-[#f0f0f0] dark:border-[#1a1a1a] items-center text-[12.5px] last:border-b-0 hover:bg-canvas-alt dark:hover:bg-[#141414]';
+const FNAME   = 'font-semibold text-ink dark:text-[#f0f0f0] text-[12.5px]';
+const FTYPE   = 'font-mono text-[11px] text-[#888] dark:text-[#555] bg-[#f4f4f4] dark:bg-[#1e1e1e] px-[6px] py-[2px] rounded-sm self-center whitespace-nowrap w-fit';
+const FDESC   = 'text-[#555] dark:text-[#888] text-[12.5px] leading-[1.55] pl-3';
+const STEPS   = 'my-5 flex flex-col border border-border dark:border-[#222] overflow-hidden';
+const SROW    = 'flex gap-5 items-start px-[18px] py-[14px] border-b border-[#f0f0f0] dark:border-[#1a1a1a] last:border-b-0 hover:bg-canvas-alt dark:hover:bg-[#141414]';
+const SNUM    = 'text-[10px] font-bold text-ink-muted dark:text-[#444] tracking-[1px] shrink-0 pt-[2px] min-w-6';
+const STITLE  = 'text-[13px] font-semibold text-ink dark:text-[#f0f0f0] mb-[3px]';
+const SDESC   = 'text-[12.5px] text-[#555] dark:text-[#888] leading-[1.6]';
 
 const SECTIONS = [
   { id: 'intro',       label: 'Introduction'     },
@@ -52,8 +52,8 @@ function Sidebar({ activeId }: { activeId: string }) {
   }
 
   return (
-    <aside className="w-[220px] shrink-0 sticky top-[61px] h-[calc(100vh-61px)] overflow-y-auto border-r border-border pt-10 pb-10 pl-8 box-border">
-      <div className="text-[9px] font-bold tracking-[2px] text-ink-muted uppercase mb-5 pr-5">
+    <aside className="w-[220px] shrink-0 sticky top-[61px] h-[calc(100vh-61px)] overflow-y-auto border-r border-border dark:border-[#222] pt-10 pb-10 pl-8 box-border transition-colors duration-200">
+      <div className="text-[9px] font-bold tracking-[2px] text-ink-muted dark:text-[#444] uppercase mb-5 pr-5">
         Documentation
       </div>
 
@@ -62,8 +62,8 @@ function Sidebar({ activeId }: { activeId: string }) {
           <button
             className={`block text-[11.5px] py-[6px] border-0 border-l-2 pl-3 -ml-[14px] tracking-[0.3px] transition-colors duration-150 cursor-pointer bg-transparent font-sans text-left w-full ${
               activeId === id
-                ? 'text-ink font-bold border-l-ink'
-                : 'text-[#888] font-normal border-l-transparent hover:text-ink'
+                ? 'text-ink dark:text-[#f0f0f0] font-bold border-l-ink dark:border-l-[#f0f0f0]'
+                : 'text-[#888] dark:text-[#555] font-normal border-l-transparent hover:text-ink dark:hover:text-[#d0d0d0]'
             }`}
             onClick={() => scrollTo(id)}
           >
@@ -73,10 +73,10 @@ function Sidebar({ activeId }: { activeId: string }) {
       ))}
 
       <div className="mt-8 pr-5">
-        <div className="text-[9px] font-bold tracking-[1.5px] text-[#ccc] uppercase mb-2">
+        <div className="text-[9px] font-bold tracking-[1.5px] text-[#ccc] dark:text-[#333] uppercase mb-2">
           Source
         </div>
-        <div className="text-[10px] text-ink-muted leading-[1.5]">
+        <div className="text-[10px] text-ink-muted dark:text-[#444] leading-[1.5]">
           Anand, L. &amp; Saeed, D.<br />
           <em>LunarAtlas</em>, April 2026
         </div>
