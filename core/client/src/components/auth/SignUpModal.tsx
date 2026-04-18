@@ -2,22 +2,24 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
-const F = "'Helvetica', 'Helvetica Neue', Arial, sans-serif";
-
 interface SignUpModalProps {
   onClose: () => void;
 }
 
-export default function SignUpModal({ onClose }: SignUpModalProps) {
-  const { login } = useAuth();
-  const navigate = useNavigate();
+// Shared input style — error border toggled via conditional class
+const inputBase =
+  'font-sans text-[13px] text-ink bg-canvas-alt rounded-none px-3 py-[10px] w-full outline-none tracking-[0.2px] border transition-colors duration-150';
 
-  const [email, setEmail] = useState('');
+export default function SignUpModal({ onClose }: SignUpModalProps) {
+  const { login }    = useAuth();
+  const navigate     = useNavigate();
+
+  const [email,       setEmail]       = useState('');
   const [institution, setInstitution] = useState('');
-  const [interest, setInterest] = useState('');
-  const [agreed, setAgreed] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [interest,    setInterest]    = useState('');
+  const [agreed,      setAgreed]      = useState(false);
+  const [errors,      setErrors]      = useState<Record<string, string>>({});
+  const [submitted,   setSubmitted]   = useState(false);
 
   // Lock body scroll when open
   useEffect(() => {
@@ -34,10 +36,10 @@ export default function SignUpModal({ onClose }: SignUpModalProps) {
 
   function validate() {
     const e: Record<string, string> = {};
-    if (!email.trim() || !email.includes('@')) e.email = 'Enter a valid email address.';
-    if (!institution.trim()) e.institution = 'Institution is required.';
-    if (!interest.trim()) e.interest = 'Research interest is required.';
-    if (!agreed) e.agreed = 'You must acknowledge the data source.';
+    if (!email.trim() || !email.includes('@')) e.email       = 'Enter a valid email address.';
+    if (!institution.trim())                   e.institution = 'Institution is required.';
+    if (!interest.trim())                      e.interest    = 'Research interest is required.';
+    if (!agreed)                               e.agreed      = 'You must acknowledge the data source.';
     return e;
   }
 
@@ -53,88 +55,55 @@ export default function SignUpModal({ onClose }: SignUpModalProps) {
     }, 1400);
   }
 
-  const inputStyle = (err?: string): React.CSSProperties => ({
-    fontFamily: F,
-    fontSize: '13px',
-    color: '#111',
-    background: '#fafafa',
-    border: `1px solid ${err ? '#c55' : '#ddd'}`,
-    borderRadius: '0',
-    padding: '10px 12px',
-    width: '100%',
-    boxSizing: 'border-box',
-    outline: 'none',
-    letterSpacing: '0.2px',
-  });
+  const inputClass = (err?: string) =>
+    `${inputBase} ${err ? 'border-[#c55]' : 'border-border-dark'}`;
 
   return (
     <div
-      style={{
-        position: 'fixed', inset: 0, zIndex: 1000,
-        background: 'rgba(0,0,0,0.45)',
-        backdropFilter: 'blur(6px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '16px',
-      }}
+      className="fixed inset-0 z-[1000] bg-black/45 backdrop-blur-[6px] flex items-center justify-center p-4"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
-        style={{
-          background: '#fff',
-          border: '1px solid #ddd',
-          width: '100%',
-          maxWidth: '480px',
-          position: 'relative',
-          fontFamily: F,
-        }}
+        className="bg-canvas border border-border-dark w-full max-w-[480px] relative font-sans"
         role="dialog"
         aria-modal="true"
         aria-label="Sign Up"
       >
         {/* Header bar */}
-        <div style={{
-          borderBottom: '1px solid #eee',
-          padding: '20px 28px 16px',
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'space-between',
-        }}>
+        <div className="border-b border-[#eee] px-7 pt-5 pb-4 flex items-start justify-between">
           <div>
-            <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '2.5px', color: '#111', textTransform: 'uppercase' }}>
+            <div className="text-[11px] font-bold tracking-[2.5px] text-ink uppercase">
               Request Access
             </div>
-            <div style={{ fontSize: '11px', color: '#999', marginTop: '4px', letterSpacing: '0.3px' }}>
+            <div className="text-[11px] text-[#999] mt-1 tracking-[0.3px]">
               Chandrayaan-3 LIBS Spectral Database
             </div>
           </div>
           <button
             onClick={onClose}
             aria-label="Close"
-            style={{
-              background: 'none', border: 'none', cursor: 'pointer',
-              color: '#bbb', fontSize: '18px', lineHeight: 1, padding: '0',
-              marginTop: '-2px',
-            }}
-          >×</button>
+            className="bg-transparent border-0 cursor-pointer text-ink-muted text-[18px] leading-none p-0 -mt-[2px] hover:text-ink-soft transition-colors duration-150"
+          >
+            ×
+          </button>
         </div>
 
         {/* Body */}
-        <div style={{ padding: '24px 28px' }}>
+        <div className="px-7 py-6">
           {submitted ? (
-            <div style={{ textAlign: 'center', padding: '24px 0' }}>
-              <div style={{ fontSize: '28px', marginBottom: '12px' }}>✓</div>
-              <div style={{ fontSize: '13px', fontWeight: '700', letterSpacing: '1px', color: '#111' }}>
-                Access Granted
-              </div>
-              <div style={{ fontSize: '11px', color: '#999', marginTop: '6px', letterSpacing: '0.3px' }}>
+            <div className="text-center py-6">
+              <div className="text-[28px] mb-3">✓</div>
+              <div className="text-[13px] font-bold tracking-[1px] text-ink">Access Granted</div>
+              <div className="text-[11px] text-[#999] mt-[6px] tracking-[0.3px]">
                 Redirecting to spectral graph…
               </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} noValidate>
+
               {/* Email */}
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ fontSize: '9px', fontWeight: '700', letterSpacing: '1.5px', color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '5px' }}>
+              <div className="mb-4">
+                <label className="text-[9px] font-bold tracking-[1.5px] text-[#888] uppercase block mb-[5px]">
                   Email Address
                 </label>
                 <input
@@ -143,14 +112,16 @@ export default function SignUpModal({ onClose }: SignUpModalProps) {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="researcher@institution.edu"
-                  style={inputStyle(errors.email)}
+                  className={inputClass(errors.email)}
                 />
-                {errors.email && <div style={{ fontSize: '10px', color: '#c55', marginTop: '4px' }}>{errors.email}</div>}
+                {errors.email && (
+                  <div className="text-[10px] text-[#c55] mt-1">{errors.email}</div>
+                )}
               </div>
 
               {/* Institution */}
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ fontSize: '9px', fontWeight: '700', letterSpacing: '1.5px', color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '5px' }}>
+              <div className="mb-4">
+                <label className="text-[9px] font-bold tracking-[1.5px] text-[#888] uppercase block mb-[5px]">
                   Research Institution / Affiliation
                 </label>
                 <input
@@ -159,14 +130,16 @@ export default function SignUpModal({ onClose }: SignUpModalProps) {
                   value={institution}
                   onChange={e => setInstitution(e.target.value)}
                   placeholder="e.g. ISRO, MIT, IIT Delhi"
-                  style={inputStyle(errors.institution)}
+                  className={inputClass(errors.institution)}
                 />
-                {errors.institution && <div style={{ fontSize: '10px', color: '#c55', marginTop: '4px' }}>{errors.institution}</div>}
+                {errors.institution && (
+                  <div className="text-[10px] text-[#c55] mt-1">{errors.institution}</div>
+                )}
               </div>
 
               {/* Research Interest */}
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ fontSize: '9px', fontWeight: '700', letterSpacing: '1.5px', color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '5px' }}>
+              <div className="mb-5">
+                <label className="text-[9px] font-bold tracking-[1.5px] text-[#888] uppercase block mb-[5px]">
                   Research Interest
                 </label>
                 <input
@@ -175,54 +148,40 @@ export default function SignUpModal({ onClose }: SignUpModalProps) {
                   value={interest}
                   onChange={e => setInterest(e.target.value)}
                   placeholder="e.g. Lunar regolith composition, LIBS spectroscopy"
-                  style={inputStyle(errors.interest)}
+                  className={inputClass(errors.interest)}
                 />
-                {errors.interest && <div style={{ fontSize: '10px', color: '#c55', marginTop: '4px' }}>{errors.interest}</div>}
+                {errors.interest && (
+                  <div className="text-[10px] text-[#c55] mt-1">{errors.interest}</div>
+                )}
               </div>
 
               {/* Agreement checkbox */}
               <label
                 htmlFor="signup-agree"
-                style={{
-                  display: 'flex', alignItems: 'flex-start', gap: '10px',
-                  cursor: 'pointer', marginBottom: errors.agreed ? '6px' : '24px',
-                }}
+                className={`flex items-start gap-[10px] cursor-pointer ${errors.agreed ? 'mb-[6px]' : 'mb-6'}`}
               >
                 <input
                   id="signup-agree"
                   type="checkbox"
                   checked={agreed}
                   onChange={e => setAgreed(e.target.checked)}
-                  style={{ marginTop: '2px', accentColor: '#111', flexShrink: 0 }}
+                  className="mt-[2px] accent-ink shrink-0"
                 />
-                <span style={{ fontSize: '11px', color: '#555', lineHeight: '1.5', letterSpacing: '0.2px' }}>
+                <span className="text-[11px] text-[#555] leading-[1.5] tracking-[0.2px]">
                   I acknowledge that all spectral data is sourced from{' '}
-                  <strong style={{ color: '#111' }}>ISRO's Chandrayaan-3 PDS4 archive</strong>{' '}
+                  <strong className="text-ink">ISRO's Chandrayaan-3 PDS4 archive</strong>{' '}
                   and agree to cite the original mission data in any derived publications.
                 </span>
               </label>
-              {errors.agreed && <div style={{ fontSize: '10px', color: '#c55', marginBottom: '18px' }}>{errors.agreed}</div>}
+              {errors.agreed && (
+                <div className="text-[10px] text-[#c55] mb-[18px]">{errors.agreed}</div>
+              )}
 
               {/* Submit */}
               <button
                 id="signup-submit"
                 type="submit"
-                style={{
-                  width: '100%',
-                  padding: '13px',
-                  background: '#111',
-                  color: '#fff',
-                  border: 'none',
-                  fontFamily: F,
-                  fontSize: '11px',
-                  fontWeight: '700',
-                  letterSpacing: '2px',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer',
-                  transition: 'background 0.15s ease',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#333')}
-                onMouseLeave={e => (e.currentTarget.style.background = '#111')}
+                className="w-full py-[13px] bg-ink text-white border-0 font-sans text-[11px] font-bold tracking-[2px] uppercase cursor-pointer transition-colors duration-150 hover:bg-[#333]"
               >
                 Request Access
               </button>
@@ -232,13 +191,7 @@ export default function SignUpModal({ onClose }: SignUpModalProps) {
 
         {/* Footer note */}
         {!submitted && (
-          <div style={{
-            borderTop: '1px solid #eee',
-            padding: '12px 28px',
-            fontSize: '10px',
-            color: '#bbb',
-            letterSpacing: '0.3px',
-          }}>
+          <div className="border-t border-[#eee] px-7 py-3 text-[10px] text-ink-muted tracking-[0.3px]">
             Data provided in accordance with ISRO PDS4 open-data policy.
           </div>
         )}

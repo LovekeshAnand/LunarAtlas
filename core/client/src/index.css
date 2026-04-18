@@ -1,6 +1,36 @@
+/* ═══════════════════════════════════════════════════════════════
+   LunarAtlas — Global Stylesheet
+   Tailwind CSS v4  ·  CSS-first configuration
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Core import ────────────────────────────────────────────── */
 @import "tailwindcss";
 
-/* Regular */
+/* ── Content scanning ───────────────────────────────────────── */
+@source "./src/**/*.{ts,tsx,js,jsx}";
+
+/* ── Design tokens ──────────────────────────────────────────── */
+@theme {
+  /* Font stacks */
+  --font-sans: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Courier New', Courier, monospace;
+
+  /* Brand colour palette */
+  --color-ink:         #111111;
+  --color-ink-mid:     #444444;
+  --color-ink-soft:    #888888;
+  --color-ink-muted:   #bbbbbb;
+  --color-canvas:      #ffffff;
+  --color-canvas-alt:  #fafafa;
+  --color-border:      #e8e8e8;
+  --color-border-dark: #dddddd;
+
+  /* Layout tokens */
+  --spacing-header: 61px;
+}
+
+/* ── @font-face declarations ────────────────────────────────── */
+
 @font-face {
   font-family: 'Helvetica';
   src: url('/fonts/Helvetica.woff2') format('woff2');
@@ -9,7 +39,6 @@
   font-display: swap;
 }
 
-/* Italic */
 @font-face {
   font-family: 'Helvetica';
   src: url('/fonts/Helvetica-Oblique.woff2') format('woff2');
@@ -18,7 +47,6 @@
   font-display: swap;
 }
 
-/* Bold */
 @font-face {
   font-family: 'Helvetica';
   src: url('/fonts/Helvetica-Bold.woff2') format('woff2');
@@ -27,7 +55,6 @@
   font-display: swap;
 }
 
-/* Bold Italic */
 @font-face {
   font-family: 'Helvetica';
   src: url('/fonts/Helvetica-BoldOblique.woff2') format('woff2');
@@ -36,7 +63,6 @@
   font-display: swap;
 }
 
-/* Light */
 @font-face {
   font-family: 'Helvetica';
   src: url('/fonts/Helvetica-Light.woff2') format('woff2');
@@ -45,7 +71,6 @@
   font-display: swap;
 }
 
-/* Light Italic */
 @font-face {
   font-family: 'Helvetica';
   src: url('/fonts/Helvetica-LightOblique.woff2') format('woff2');
@@ -54,6 +79,36 @@
   font-display: swap;
 }
 
-@theme inline {
-  --font-sans: 'Helvetica', system-ui, sans-serif;
+/* ── Global resets ──────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Range input — dynamic track fill via CSS custom property ── */
+/*
+ * The ZoomSlider fill colour cannot be expressed as a static
+ * Tailwind class because it is driven by component state.
+ * We define the gradient here and update --track-fill via
+ * element.style.setProperty() inside a React useEffect.
+ */
+@layer components {
+  .range-track {
+    background: linear-gradient(
+      to right,
+      #333 0%,
+      #333 var(--track-fill, 50%),
+      #ddd var(--track-fill, 50%),
+      #ddd 100%
+    );
+  }
 }
