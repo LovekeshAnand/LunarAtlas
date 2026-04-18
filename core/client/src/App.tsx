@@ -5,7 +5,7 @@ import Footer from './components/footer/Footer';
 import HomePage from './pages/HomePage';
 import DocsPage from './pages/DocsPage';
 import GraphPage from './pages/GraphPage';
-import './App.css';
+// import './App.css';
 
 const F = "'Helvetica', 'Helvetica Neue', Arial, sans-serif";
 
