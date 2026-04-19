@@ -5,6 +5,15 @@ import { useTheme } from '../../context/ThemeContext';
 import SignUpModal from '../auth/SignUpModal';
 
 // ─── Spectral / lunar logo — uses currentColor so it adapts to dark mode
+/**
+ * @fileoverview Persistent Global Header.
+ * Implements navigation logic that intercepts protected routes for unauthenticated users.
+ */
+
+/**
+ * Brand Logo Component.
+ * Illustrates the LIBS (Laser-Induced Breakdown Spectroscopy) grid pattern.
+ */
 const Logo = () => (
   <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="19" cy="19" r="16" stroke="currentColor" strokeWidth="1.5" />
@@ -17,7 +26,7 @@ const Logo = () => (
   </svg>
 );
 
-// ─── Sun icon — shown in dark mode (click to go light)
+/** Sun icon for dark-to-light theme transition */
 const SunIcon = () => (
   <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
     <circle cx="7.5" cy="7.5" r="2.8" />
@@ -32,17 +41,22 @@ const SunIcon = () => (
   </svg>
 );
 
-// ─── Moon icon — shown in light mode (click to go dark)
+/** Moon icon for light-to-dark theme transition */
 const MoonIcon = () => (
   <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12.5 9.5 A5.5 5.5 0 1 1 5.5 2.5 A4 4 0 0 0 12.5 9.5Z" />
   </svg>
 );
 
+/**
+ * Primary Navigation Header.
+ * Synchronizes the theme state and provides auth-protected navigation links.
+ */
 export default function Header() {
   const [showModal, setShowModal] = useState(false);
   const { isLoggedIn, user, logout } = useAuth();
   const { isDark, toggle } = useTheme();
+
   const location = useLocation();
 
   const navLinks = [
@@ -53,6 +67,14 @@ export default function Header() {
 
   const isActive = (to: string) =>
     to === '/' ? location.pathname === '/' : location.pathname.startsWith(to);
+
+  const handleProtectedLink = (e: React.MouseEvent, to: string) => {
+    if (to !== '/' && !isLoggedIn) {
+      e.preventDefault();
+      setShowModal(true);
+    }
+  };
+
 
   return (
     <>
@@ -80,6 +102,7 @@ export default function Header() {
                 <Link
                   key={label}
                   to={to}
+                  onClick={(e) => handleProtectedLink(e, to)}
                   className={`text-[11px] tracking-[1px] uppercase no-underline pb-[2px] transition-colors duration-150 border-b ${
                     active
                       ? 'font-bold text-ink dark:text-[#f0f0f0] border-ink dark:border-[#f0f0f0]'
@@ -90,6 +113,7 @@ export default function Header() {
                 </Link>
               );
             })}
+
 
             {/* Dark / light toggle */}
             <button
