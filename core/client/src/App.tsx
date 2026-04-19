@@ -5,7 +5,7 @@ import Header from './components/header/Header';
 import Footer from './components/footer/Footer';
 import HomePage from './pages/HomePage';
 import DocsPage from './pages/DocsPage';
-import GraphPage from './pages/GraphPage';
+import GraphDisplay from './pages/GraphDisplay';
 
 // Guards /docs and /graph — redirects to home if not logged in
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -21,10 +21,11 @@ function AppRoutes() {
         <Routes>
           <Route path="/"      element={<HomePage />} />
           <Route path="/docs"  element={<RequireAuth><DocsPage /></RequireAuth>} />
-          <Route path="/graph" element={<RequireAuth><GraphPage /></RequireAuth>} />
+          <Route path="/graph" element={<RequireAuth><GraphDisplay /></RequireAuth>} />
           <Route path="*"      element={<Navigate to="/" replace />} />
         </Routes>
       </main>
+
       <Footer />
     </div>
   );

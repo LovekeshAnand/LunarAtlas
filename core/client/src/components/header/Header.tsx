@@ -54,6 +54,14 @@ export default function Header() {
   const isActive = (to: string) =>
     to === '/' ? location.pathname === '/' : location.pathname.startsWith(to);
 
+  const handleProtectedLink = (e: React.MouseEvent, to: string) => {
+    if (to !== '/' && !isLoggedIn) {
+      e.preventDefault();
+      setShowModal(true);
+    }
+  };
+
+
   return (
     <>
       <header className="font-sans border-b border-border-dark dark:border-[#222] bg-canvas dark:bg-[#0d0d0d] sticky top-0 z-[500] transition-colors duration-200">
@@ -80,6 +88,7 @@ export default function Header() {
                 <Link
                   key={label}
                   to={to}
+                  onClick={(e) => handleProtectedLink(e, to)}
                   className={`text-[11px] tracking-[1px] uppercase no-underline pb-[2px] transition-colors duration-150 border-b ${
                     active
                       ? 'font-bold text-ink dark:text-[#f0f0f0] border-ink dark:border-[#f0f0f0]'
@@ -90,6 +99,7 @@ export default function Header() {
                 </Link>
               );
             })}
+
 
             {/* Dark / light toggle */}
             <button

@@ -56,11 +56,12 @@ const EXPORT_BG: Record<string, string> = {
 // ─────────────────────────────────────────────────────────────
 function FieldLabel({ text }: { text: string }) {
   return (
-    <label className="font-sans text-[9px] font-bold tracking-[1.3px] text-[#888] dark:text-[#555] uppercase block mb-1">
+    <label className="font-sans text-[9px] font-bold tracking-[1.3px] text-[#888] dark:text-[#777] uppercase block mb-1">
       {text}
     </label>
   );
 }
+
 
 // ─────────────────────────────────────────────────────────────
 // SHARED: StyledSelect
@@ -101,9 +102,10 @@ function ColDivider() {
 // ─────────────────────────────────────────────────────────────
 function ModeToggle({ activeMode, onChange }: { activeMode: 'L1' | 'L2'; onChange: (m: 'L1' | 'L2') => void }) {
   const modes: { key: 'L1' | 'L2'; label: string }[] = [
-    { key: 'L1', label: 'L1 (CALIBRATED)' },
     { key: 'L2', label: 'L2 (CLEAN)' },
+    { key: 'L1', label: 'L1 (CALIBRATED)' },
   ];
+
 
   return (
     <div className="flex border-b border-border-dark dark:border-[#222] font-sans">
@@ -254,9 +256,12 @@ function ZoomSlider({ zoom, onChange }: { zoom: number; onChange: (v: number) =>
   return (
     <div className="flex flex-col gap-[6px]">
       <div className="flex items-center justify-between">
-        <FieldLabel text="Zoom Level" />
-        <span className="font-sans text-[11px] font-bold text-[#333] dark:text-[#d0d0d0] tracking-[0.5px] mb-1">
-          ×{zoom.toFixed(1)}
+        <div className="flex items-center gap-2">
+           <FieldLabel text="Spectral Zoom" />
+           <span className="text-[9px] text-[#999] dark:text-[#555] font-bold tracking-[1px] mb-1">(X-Axis SCALE)</span>
+        </div>
+        <span className="font-sans text-[11px] font-bold text-[#333] dark:text-[#d0d0d0] tracking-[0.5px] mb-1 font-mono">
+          {zoom === 1 ? 'FULL SCAN' : `${zoom.toFixed(0)}x`}
         </span>
       </div>
       <input
@@ -264,11 +269,12 @@ function ZoomSlider({ zoom, onChange }: { zoom: number; onChange: (v: number) =>
         type="range"
         min={ZOOM_MIN}
         max={ZOOM_MAX}
-        step={0.1}
+        step={1}
         value={zoom}
         onChange={(e) => onChange(parseFloat(e.target.value))}
         className={SLIDER_CLS}
       />
+
       <div className="flex justify-between font-sans text-[9px] text-ink-muted dark:text-[#444] tracking-[0.3px]">
         {['×1', '×2', '×3', '×4', '×5'].map((l) => <span key={l}>{l}</span>)}
       </div>
@@ -355,15 +361,21 @@ function ExportButtons({ onExport }: { onExport: (f: 'pdf' | 'csv' | 'json') => 
 // ═════════════════════════════════════════════════════════════
 // DEFAULT EXPORT: RangeSelectorPanel
 // ═════════════════════════════════════════════════════════════
-export default function RangeSelectorPanel() {
-  const [mode,                    setMode]                    = useState<'L1' | 'L2'>('L1');
+export default function RangeSelectorPanel({ 
+  mode, onModeChange, 
+  zoom, onZoomChange 
+}: { 
+  mode: 'L1' | 'L2', onModeChange: (m: 'L1' | 'L2') => void,
+  zoom: number, onZoomChange: (z: number) => void
+}) {
   const [selectedDate,            setSelectedDate]            = useState('');
   const [selectedTime,            setSelectedTime]            = useState('');
   const [selectedMeasurementType, setSelectedMeasurementType] = useState('');
   const [minWl,                   setMinWl]                   = useState(200);
   const [maxWl,                   setMaxWl]                   = useState(900);
-  const [zoom,                    setZoom]                    = useState(3);
   const [element,                 setElement]                 = useState('');
+
+
 
   const allDates         = useMemo(() => getUniqueDates(mockObservationData), []);
   const timesForDate     = useMemo(
@@ -378,7 +390,8 @@ export default function RangeSelectorPanel() {
 
   return (
     <section className="font-sans border border-border-dark dark:border-[#222] rounded-md bg-canvas dark:bg-[#141414] overflow-hidden transition-colors duration-200">
-      <ModeToggle activeMode={mode} onChange={setMode} />
+      <ModeToggle activeMode={mode} onChange={onModeChange} />
+
 
       <div className="flex items-stretch flex-wrap">
 
@@ -402,8 +415,9 @@ export default function RangeSelectorPanel() {
         {/* COL 2 — Wavelength Range + Zoom */}
         <div className="flex-[1.4_1_280px] p-5 px-6 flex flex-col justify-center gap-[18px] min-w-0">
           <WavelengthRangeInputs min={minWl} max={maxWl} onMinChange={setMinWl} onMaxChange={setMaxWl} />
-          <ZoomSlider zoom={zoom} onChange={setZoom} />
+          <ZoomSlider zoom={zoom} onChange={onZoomChange} />
         </div>
+
 
         <ColDivider />
 
