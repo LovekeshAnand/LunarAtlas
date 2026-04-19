@@ -1,6 +1,57 @@
+/* ═══════════════════════════════════════════════════════════════
+   LunarAtlas — Global Stylesheet
+   Tailwind CSS v4  ·  CSS-first configuration
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Core import ────────────────────────────────────────────── */
 @import "tailwindcss";
 
-/* Regular */
+/* ── Dark mode — toggled via .dark class on <html> ──────────── */
+@variant dark (&:where(.dark, .dark *));
+
+/* ── Content scanning ───────────────────────────────────────── */
+@source "./src/**/*.{ts,tsx,js,jsx}";
+
+/* ── Design tokens ──────────────────────────────────────────── */
+@theme {
+  /* Font stacks */
+  --font-sans: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Courier New', Courier, monospace;
+
+  /* Brand colour palette */
+  --color-ink:         #111111;
+  --color-ink-mid:     #444444;
+  --color-ink-soft:    #888888;
+  --color-ink-muted:   #bbbbbb;
+  --color-canvas:      #ffffff;
+  --color-canvas-alt:  #fafafa;
+  --color-border:      #e8e8e8;
+  --color-border-dark: #dddddd;
+
+  /* Layout tokens */
+  --spacing-header: 61px;
+}
+
+/* ── Theme-reactive CSS custom properties ───────────────────── */
+/* These switch automatically when .dark is applied to <html>   */
+:root {
+  --grid-line:         rgba(0, 0, 0, 0.048);
+  --slider-fill:       #333333;
+  --slider-empty:      #dddddd;
+  --slider-thumb:      #333333;
+  --slider-thumb-ring: #ffffff;
+}
+
+.dark {
+  --grid-line:         rgba(255, 255, 255, 0.042);
+  --slider-fill:       #c8c8c8;
+  --slider-empty:      #2e2e2e;
+  --slider-thumb:      #c8c8c8;
+  --slider-thumb-ring: #141414;
+}
+
+/* ── @font-face declarations ────────────────────────────────── */
+
 @font-face {
   font-family: 'Helvetica';
   src: url('/fonts/Helvetica.woff2') format('woff2');
@@ -9,7 +60,6 @@
   font-display: swap;
 }
 
-/* Italic */
 @font-face {
   font-family: 'Helvetica';
   src: url('/fonts/Helvetica-Oblique.woff2') format('woff2');
@@ -18,7 +68,6 @@
   font-display: swap;
 }
 
-/* Bold */
 @font-face {
   font-family: 'Helvetica';
   src: url('/fonts/Helvetica-Bold.woff2') format('woff2');
@@ -27,7 +76,6 @@
   font-display: swap;
 }
 
-/* Bold Italic */
 @font-face {
   font-family: 'Helvetica';
   src: url('/fonts/Helvetica-BoldOblique.woff2') format('woff2');
@@ -36,7 +84,6 @@
   font-display: swap;
 }
 
-/* Light */
 @font-face {
   font-family: 'Helvetica';
   src: url('/fonts/Helvetica-Light.woff2') format('woff2');
@@ -45,7 +92,6 @@
   font-display: swap;
 }
 
-/* Light Italic */
 @font-face {
   font-family: 'Helvetica';
   src: url('/fonts/Helvetica-LightOblique.woff2') format('woff2');
@@ -54,6 +100,43 @@
   font-display: swap;
 }
 
-@theme inline {
-  --font-sans: 'Helvetica', system-ui, sans-serif;
+/* ── Global resets ──────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Range input track — fill driven by --track-fill (set via  */
+/* element.style.setProperty in ZoomSlider's useEffect).        */
+/* Color values come from theme-reactive CSS custom properties. */
+@layer components {
+  .range-track {
+    background: linear-gradient(
+      to right,
+      var(--slider-fill)  0%,
+      var(--slider-fill)  var(--track-fill, 50%),
+      var(--slider-empty) var(--track-fill, 50%),
+      var(--slider-empty) 100%
+    );
+  }
+}
+
+/* ── Subtle grid/mesh overlay for the hero section ──────────── */
+/* Color reacts to dark mode via --grid-line CSS custom property */
+@layer utilities {
+  .grid-mesh {
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
 }

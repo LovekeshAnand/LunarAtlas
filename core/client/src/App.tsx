@@ -1,74 +1,44 @@
-import './App.css';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Header from './components/header/Header';
 import Footer from './components/footer/Footer';
-import RangeSelectorPanel from './components/rangeSelector/rangeSelector';
-import SpectralGraph from './components/graph/SpectralGraph';
+import HomePage from './pages/HomePage';
+import DocsPage from './pages/DocsPage';
+import GraphPage from './pages/GraphPage';
 
-const F = "'Helvetica', 'Helvetica Neue', Arial, sans-serif";
+// Guards /docs and /graph — redirects to home if not logged in
+function RequireAuth({ children }: { children: React.ReactNode }) {
+  const { isLoggedIn } = useAuth();
+  return isLoggedIn ? <>{children}</> : <Navigate to="/" replace />;
+}
+
+function AppRoutes() {
+  return (
+    <div className="min-h-screen bg-canvas dark:bg-[#0d0d0d] font-sans flex flex-col transition-colors duration-200">
+      <Header />
+      <main className="flex-1">
+        <Routes>
+          <Route path="/"      element={<HomePage />} />
+          <Route path="/docs"  element={<RequireAuth><DocsPage /></RequireAuth>} />
+          <Route path="/graph" element={<RequireAuth><GraphPage /></RequireAuth>} />
+          <Route path="*"      element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
+  );
+}
 
 function App() {
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: '#ffffff',
-        fontFamily: F,
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      {/* ── Navigation ──────────────── */}
-      <Header />
-
-      {/* ── Main content ────────────── */}
-      <main
-        style={{
-          flex: 1,
-          maxWidth: '1400px',
-          width: '100%',
-          margin: '0 auto',
-          padding: '28px 32px',
-          boxSizing: 'border-box',
-        }}
-      >
-        {/* Page heading */}
-        <div style={{ marginBottom: '20px' }}>
-          <h1
-            style={{
-              fontFamily: F,
-              fontSize: '13px',
-              fontWeight: '700',
-              letterSpacing: '2.5px',
-              color: '#111',
-              textTransform: 'uppercase',
-              margin: 0,
-            }}
-          >
-            Spectral Analysis
-          </h1>
-          <p
-            style={{
-              fontFamily: F,
-              fontSize: '11px',
-              color: '#999',
-              letterSpacing: '0.3px',
-              marginTop: '4px',
-            }}
-          >
-            Configure observation parameters and wavelength range below.
-          </p>
-        </div>
-
-        {/* ── Range Selector Panel ────── */}
-        <RangeSelectorPanel />
-
-        {/* ── Spectral Graph ──────────── */}
-        <SpectralGraph />
-      </main>
-
-      {/* ── Footer ──────────────────── */}
-      <Footer />
-    </div>
+    <BrowserRouter>
+      <ThemeProvider>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </ThemeProvider>
+    </BrowserRouter>
   );
 }
 

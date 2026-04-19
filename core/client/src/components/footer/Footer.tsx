@@ -1,30 +1,12 @@
-const F = "'Helvetica', 'Helvetica Neue', Arial, sans-serif";
-
 export default function Footer() {
   return (
-    <footer
-      style={{
-        fontFamily: F,
-        borderTop: '1px solid #ddd',
-        background: '#fff',
-      }}
-    >
-      <div
-        style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-          padding: '14px 32px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '24px',
-        }}
-      >
-        <span style={{ fontSize: '11px', color: '#999', letterSpacing: '0.5px' }}>
+    <footer className="border-t border-border-dark dark:border-[#222] bg-canvas dark:bg-[#0d0d0d] font-sans transition-colors duration-200">
+      <div className="max-w-[1400px] mx-auto px-8 py-[14px] flex items-center justify-center gap-6">
+        <span className="text-[11px] text-[#999] dark:text-[#555] tracking-[0.5px]">
           © 2026 LunarAtlas
         </span>
-        <span style={{ color: '#ddd' }}>|</span>
-        <span style={{ fontSize: '11px', color: '#bbb', letterSpacing: '0.5px' }}>
+        <span className="text-border-dark dark:text-[#333]">|</span>
+        <span className="text-[11px] text-ink-muted dark:text-[#404040] tracking-[0.5px]">
           Spectral Analysis System
         </span>
       </div>
