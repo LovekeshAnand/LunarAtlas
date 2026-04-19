@@ -5,25 +5,53 @@ import SpectralGraph from '../components/graph/SpectralGraph';
 import RangeSelectorPanel from '../components/rangeSelector/rangeSelector';
 import { mockDataService, type SpectralData, type PeakDetection } from '../services/mockDataService';
 
+/**
+ * @fileoverview Main Spectral Graph Page.
+ * Orchestrates the data flow between the Range Selector and the Spectral Visualization.
+ * Implements the L1 -> L2 processing pipeline visualization and metadata management.
+ */
+
 export default function GraphDisplay() {
+  // --- State Architecture ---
   const [data, setData] = useState<SpectralData[]>([]);
   const [peaks, setPeaks] = useState<PeakDetection[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  /** Current active measurement ID. Pinning a specific plasma/background shot pair. */
   const [measurementId, setMeasurementId] = useState('m_001');
+  
+  /** Global processing context: L1 (Raw/Calibrated) or L2 (Cleaned/Subtracted) */
   const [viewMode, setViewMode] = useState<'L1' | 'L2'>('L2');
+  
+  /** Discrete zoom level for detailed spectral feature analysis */
   const [zoom, setZoom] = useState(1);
 
-
-
+  /**
+   * EFFECT: Synchronizes spectral data when the Measurement ID changes.
+   * Simulates a production backend fetch with error handling.
+   */
   useEffect(() => {
+    let isMounted = true;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoading(true);
-    mockDataService.fetchSpectrum(measurementId).then((res) => {
-      setData(res.data);
-      setPeaks(res.peaks);
-      setIsLoading(false);
-    });
+
+
+    mockDataService.fetchSpectrum(measurementId)
+      .then((res) => {
+        if (!isMounted) return;
+        setData(res.data);
+        setPeaks(res.peaks);
+      })
+      .catch((err) => {
+        console.error('[Pipeline Error] Failed to fetch spectral sequence:', err);
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false);
+      });
+
+    return () => { isMounted = false; };
   }, [measurementId]);
+
 
   return (
     <div className="max-w-[1400px] mx-auto px-8 py-7 box-border font-sans">

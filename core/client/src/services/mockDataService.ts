@@ -1,68 +1,106 @@
+/**
+ * @fileoverview Mock Data Service for LunarAtlas.
+ * Provides simulated spectral data processing for Chandrayaan-3 LIBS (Laser-Induced Breakdown Spectroscopy).
+ * This service simulates the transformation of Level-1 PDS4 raw data into Cleaned (L2) spectra.
+ */
+
+/**
+ * Represents a single spectral data point in the mission sequence.
+ */
 export interface SpectralData {
+  /** Wavelength in nanometers (scientific mission range: 164.35 to 878.26 nm) */
   wavelength: number;
+  /** Raw detector counts during plasma emission event */
   rawPlasma: number;
+  /** Baseline detector counts captured during a near-simultaneous background event */
   rawBackground: number;
-  intensity: number; // The cleaned intensity
+  /** Cleaned intensity after background subtraction and noise suppression */
+  intensity: number;
+  /** Unique sequential identifier pinning this record to a specific shot pair */
   measurementId: string;
 }
 
+/**
+ * Represents a validated elemental signature (emission line) detected in the spectrum.
+ */
 export interface PeakDetection {
+  /** Wavelength of the detected peak center */
   wavelength: number;
+  /** Peak intensity after baseline removal */
   intensity: number;
+  /** Confidence level: Signal-to-Noise Ratio (calculated vs local variance) */
   snr: number;
+  /** Element/Ion identity matched against NIST Atomic Spectra Database */
   element: string;
 }
 
+/**
+ * Core reference lines from the NIST Atomic Spectra Database.
+ * These are used for automated elemental identification in the L2 pipeline.
+ */
 const NIST_LINES = [
-  { wl: 279.55, el: 'Mg II' },
-  { wl: 288.16, el: 'Si I' },
-  { wl: 334.94, el: 'Ti II' },
-  { wl: 393.37, el: 'Ca II' },
-  { wl: 396.15, el: 'Al I' },
-  { wl: 404.58, el: 'Fe I' },
-  { wl: 777.40, el: 'O I' }
+  { wl: 279.55, el: 'Mg II' }, // Magnesium (Ionized)
+  { wl: 288.16, el: 'Si I'  }, // Silicon (Neutral)
+  { wl: 334.94, el: 'Ti II' }, // Titanium (Ionized)
+  { wl: 393.37, el: 'Ca II' }, // Calcium (Ionized)
+  { wl: 396.15, el: 'Al I'  }, // Aluminum (Neutral)
+  { wl: 404.58, el: 'Fe I'  }, // Iron (Neutral)
+  { wl: 777.40, el: 'O I'   }  // Oxygen (Neutral - atmospheric/matrix)
 ];
 
+/**
+ * Generates a high-fidelity mock spectrum based on real LIBS mission parameters.
+ * 
+ * ALGORITHMS:
+ * 1. Proximity Pairing: Pairs plasma shots with background acquisitions.
+ * 2. Background Subtraction: I_alt = max(0, I_plasma - I_bg).
+ * 3. SNR Thresholding: Detects peaks where SNR > 3σ relative to a local sliding window.
+ * 
+ * @param measurementId The identifier for the calibration session
+ * @returns Object containing the full spectral sequence and detected elemental peaks
+ */
 export function generateMockSpectrum(measurementId: string = 'm_001'): { data: SpectralData[], peaks: PeakDetection[] } {
   const data: SpectralData[] = [];
   const minWavelength = 164.35;
   const maxWavelength = 878.26;
-  const numChannels = 2049;
+  const numChannels = 2049; // Standard Chandrayaan-3 LIBS detector resolution
   const step = (maxWavelength - minWavelength) / (numChannels - 1);
 
-  // Background continuum (thermal/solar radiation)
+  // Background continuum baseline (simulating thermal and instrument noise)
   const bgBaseline = 1000;
   
-  // Specific simulated peaks to match NIST lines closely (with some instrument drift)
+  // Synthetic emission lines (approximating lunar regolith composition)
   const syntheticPeaks = [
-    { wl: 279.71, amp: 684, width: 0.2 }, // Mg II matched
-    { wl: 288.30, amp: 210, width: 0.2 }, // Si I matched
-    { wl: 335.10, amp: 145, width: 0.2 }, // Ti II matched
-    { wl: 393.55, amp: 580, width: 0.2 }, // Ca II matched
-    { wl: 396.34, amp: 490, width: 0.2 }, // Al I matched
-    { wl: 404.75, amp: 205, width: 0.2 }, // Fe I matched
-    { wl: 777.62, amp: 240, width: 0.3 }  // O I matched
+    { wl: 279.71, amp: 684, width: 0.2 }, // Mg signature
+    { wl: 288.30, amp: 210, width: 0.2 }, // Si signature
+    { wl: 335.10, amp: 145, width: 0.2 }, // Ti signature
+    { wl: 393.55, amp: 580, width: 0.2 }, // Ca signature
+    { wl: 396.34, amp: 490, width: 0.2 }, // Al signature
+    { wl: 404.75, amp: 205, width: 0.2 }, // Fe signature
+    { wl: 777.62, amp: 240, width: 0.3 }  // O signature
   ];
 
   for (let i = 0; i < numChannels; i++) {
     const wavelength = minWavelength + i * step;
     
-    // Independent poisson-like noise for background and plasma
+    // Poisson-distributed noise simulation
     const bgNoise = (Math.random() - 0.5) * 80;
     const plasmaNoise = (Math.random() - 0.5) * 80;
     
     const rawBackground = bgBaseline + bgNoise;
     let plasmaEmission = 0;
     
-    // Add peak emissions to plasma
+    // Summing Gaussian peak profiles
     for (const peak of syntheticPeaks) {
       plasmaEmission += peak.amp * Math.exp(-Math.pow(wavelength - peak.wl, 2) / (2 * Math.pow(peak.width, 2)));
     }
     
     const rawPlasma = bgBaseline + plasmaEmission + plasmaNoise;
 
-    // ALGORITHM: Background Subtraction and Negative-Value Clamping
-    // I_clean(lambda) = max(0, I_plasma(lambda) - I_bg(lambda))
+    /**
+     * ALGORITHM: Background Subtraction and Negative-Value Clamping
+     * Prevents unphysical negative intensities resulting from high noise in the background shot.
+     */
     const cleanedIntensity = Math.max(0, rawPlasma - rawBackground);
 
     data.push({
@@ -74,10 +112,12 @@ export function generateMockSpectrum(measurementId: string = 'm_001'): { data: S
     });
   }
 
-  // ALGORITHM: SNR Thresholding and Peak Detection
-  // Using a local window of 50 channels where SNR > 3 sigma local
+  /**
+   * ALGORITHM: SNR Thresholding and Peak Detection
+   * Evaluates peaks against the local standard deviation (σ) within a sliding window.
+   */
   const peakDetections: PeakDetection[] = [];
-  const windowSize = 50;
+  const windowSize = 50; // Reference window for local noise baseline
   
   for (let i = Math.floor(windowSize / 2); i < data.length - Math.floor(windowSize / 2); i++) {
     let localSum = 0;
@@ -94,13 +134,15 @@ export function generateMockSpectrum(measurementId: string = 'm_001'): { data: S
     
     const currentPoint = data[i];
     
-    // Check if it's a local maximum
+    // Peak finding (local maximum)
     if (currentPoint.intensity > data[i - 1].intensity && currentPoint.intensity > data[i + 1].intensity) {
       const snr = currentPoint.intensity / localSigma;
+
+      // Acceptance criteria: SNR > 3 and absolute intensity > 50 cts
       if (snr > 3) {
-        // Find best match in NIST database (if within 0.5 nm)
+        // Cross-referencing detected wavelength against NIST database
         let bestMatch = null;
-        let minDiff = 0.5;
+        let minDiff = 0.5; // Detection tolerance bandwidth
         for (const nist of NIST_LINES) {
           const diff = Math.abs(currentPoint.wavelength - nist.wl);
           if (diff < minDiff) {
@@ -110,7 +152,6 @@ export function generateMockSpectrum(measurementId: string = 'm_001'): { data: S
         }
         
         if (bestMatch && currentPoint.intensity > 50) {
-            // we found a valid peak
             peakDetections.push({
                wavelength: currentPoint.wavelength,
                intensity: currentPoint.intensity,
@@ -122,7 +163,7 @@ export function generateMockSpectrum(measurementId: string = 'm_001'): { data: S
     }
   }
 
-  // Filter overlapping detections
+  // Peak deduplication (ensuring only the strongest signature is kept within 1nm)
   const uniquePeaks = [];
   for (let i = 0; i < peakDetections.length; i++) {
     const current = peakDetections[i];
@@ -137,12 +178,23 @@ export function generateMockSpectrum(measurementId: string = 'm_001'): { data: S
   return { data, peaks: uniquePeaks };
 }
 
+/**
+ * Public Data Accessor.
+ * Provides a Promise-based API for fetching processed data.
+ */
 export const mockDataService = {
+  /**
+   * Simulates an asynchronous data fetch from the processing backend.
+   * @param measurementId Target sequence ID
+   * @returns Promise resolving to a full L2 analysis result
+   */
   fetchSpectrum: (measurementId: string): Promise<{ data: SpectralData[], peaks: PeakDetection[] }> => {
     return new Promise((resolve) => {
+      // Simulate typical processing/IO latency
       setTimeout(() => {
         resolve(generateMockSpectrum(measurementId));
       }, 400);
     });
   }
 };
+

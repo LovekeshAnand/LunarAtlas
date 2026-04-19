@@ -358,22 +358,38 @@ function ExportButtons({ onExport }: { onExport: (f: 'pdf' | 'csv' | 'json') => 
   );
 }
 
-// ═════════════════════════════════════════════════════════════
-// DEFAULT EXPORT: RangeSelectorPanel
-// ═════════════════════════════════════════════════════════════
+/**
+ * @fileoverview Range Selector Panel for spectral analysis.
+ * Provides filtration for observation metadata, wavelength ranges, and elemental analysis.
+ * Controls the global 'viewMode' (L1/L2) and 'zoom' level.
+ */
+
+/**
+ * Properties for the RangeSelectorPanel component.
+ */
 export default function RangeSelectorPanel({ 
   mode, onModeChange, 
   zoom, onZoomChange 
 }: { 
-  mode: 'L1' | 'L2', onModeChange: (m: 'L1' | 'L2') => void,
-  zoom: number, onZoomChange: (z: number) => void
+  /** Current processing level (L1 Raw or L2 Cleaned) */
+  mode: 'L1' | 'L2', 
+  /** Callback triggered when the processing level is toggled */
+  onModeChange: (m: 'L1' | 'L2') => void,
+  /** Current zoom level (1x-5x) */
+  zoom: number, 
+  /** Callback triggered when the zoom level is adjusted */
+  onZoomChange: (z: number) => void
 }) {
+  // --- Local Filtration States ---
+  // Note: These states track specific observation metadata. 
+  // In a production environment, these would be used to filter the parent data fetch.
   const [selectedDate,            setSelectedDate]            = useState('');
   const [selectedTime,            setSelectedTime]            = useState('');
   const [selectedMeasurementType, setSelectedMeasurementType] = useState('');
   const [minWl,                   setMinWl]                   = useState(200);
   const [maxWl,                   setMaxWl]                   = useState(900);
   const [element,                 setElement]                 = useState('');
+
 
 
 
