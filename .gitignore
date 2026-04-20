@@ -1,0 +1,11 @@
+# Application
+venv/
+.env
+__pycache__/
+
+# Documentation
+doc/
+
+# Logs
+*.log
+processing_scripts/*.log
