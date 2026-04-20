@@ -9,6 +9,8 @@ from app.database.connection import db
 from app.cache.redis_cache import cache
 from app.api.v1.endpoints import router as api_router
 
+os.makedirs('logs', exist_ok=True)
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO if settings.DEBUG else logging.WARNING,
@@ -45,10 +47,6 @@ async def startup_event():
     logger.info("=" * 60)
     logger.info(f"Starting {settings.APP_NAME} v{settings.APP_VERSION}")
     logger.info("=" * 60)
-    
-    # Create logs directory if it doesn't exist
-    if not os.path.exists('logs'):
-        os.makedirs('logs')
     
     # Connect to database
     try:

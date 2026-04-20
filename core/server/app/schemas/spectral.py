@@ -59,3 +59,20 @@ class HealthResponse(BaseModel):
     database: bool
     redis: bool
     timestamp: datetime
+
+class NistLine(BaseModel):
+    """NIST Reference Spectral Line"""
+    element: str
+    ionization_stage: Optional[str] = None
+    wavelength_nm: float
+    relative_intensity: Optional[int] = None
+    aki: Optional[float] = None
+    ei_ev: Optional[float] = None
+    ek_ev: Optional[float] = None
+
+class ObservationInfo(BaseModel):
+    """Observation session metadata"""
+    observation_id: str
+    target_name: Optional[str] = None
+    creation_datetime: Optional[datetime] = None
+    record_count: Optional[int] = None

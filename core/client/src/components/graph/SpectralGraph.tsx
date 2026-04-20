@@ -1,166 +1,387 @@
-import { type SpectralData } from '../../services/mockDataService';
+import { useState, useRef, useMemo, useEffect } from 'react';
+import { type SpectralDataPoint } from '../../services/apiService';
+import { ELEMENT_PEAKS } from '../../utils/spectralUtils';
 
-const NM_TICKS  = ['200', '300', '400', '500', '600', '700', '800', '900', '1000'];
-
-/**
- * @fileoverview High-performance SVG-based spectral graph component.
-
- * Optimized for rendering 2,000+ data points without external library overhead.
- */
-
-/**
- * Properties for the SpectralGraph component.
- */
 interface SpectralGraphProps {
-  /** Array of processed spectral data points */
-  data: SpectralData[];
-  /** Loading state flag */
+  data: SpectralDataPoint[];
   isLoading: boolean;
-  /** Current display mode (L1 Raw or L2 Cleaned) */
   viewMode: 'L1' | 'L2';
-  /** Discrete zoom multiplier (1x to 5x) controlled by the parent */
-  zoom: number;
+  proportion: number;
+  lambdaMin: number;
+  lambdaMax: number;
+  selectedElement?: string;
+  onRangeChange?: (min: number, max: number) => void;
 }
 
-// SVG Viewbox dimensions (fixed aspect ratio)
-const chartWidth  = 1000;
+const chartWidth = 1000;
 const chartHeight = 320;
+const ABS_MIN = 164.35;
+const ABS_MAX = 878.26;
 
-/**
- * Renders a scientifically accurate spectral plot using SVG paths.
- * Implements centered-zoom logic by recalculating the visible wavelength range.
- */
-export default function SpectralGraph({ data, isLoading, viewMode, zoom }: SpectralGraphProps) {
+const formatTick = (value: number) => value.toFixed(1);
 
-  /**
-   * Generates an SVG Path string for a specific data series.
-   * 
-   * MATH:
-   * 1. Define Absolute Mission Range (ABS_MIN to ABS_MAX).
-   * 2. Calculate Viewport Range based on zoom: Range / Zoom.
-   * 3. Center the Viewport around the middle of the spectrum.
-   * 4. Map the physical wavelengths (nm) to local SVG coordinates (0 to 1000).
-   * 
-   * @param key The data key to plot (intensity, rawPlasma, or rawBackground)
-   * @returns A valid SVG 'd' attribute string
-   */
-  const generatePath = (key: 'intensity' | 'rawPlasma' | 'rawBackground') => {
-    if (!data.length) return '';
-    
-    // Mission instrument range parameters
-    const ABS_MIN = 164.35;
-    const ABS_MAX = 878.26;
-    const ABS_CENTER = (ABS_MIN + ABS_MAX) / 2;
-    const ABS_RANGE = ABS_MAX - ABS_MIN;
+export default function SpectralGraph({
+  data,
+  isLoading,
+  viewMode,
+  lambdaMin,
+  lambdaMax,
+  onRangeChange,
+  selectedElement = '',
+}: SpectralGraphProps) {
+  const [hoveredPoint, setHoveredPoint] = useState<SpectralDataPoint | null>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+  const lastMouseX = useRef(0);
 
-    // Viewport calculation: narrows the range as zoom increases
-    const viewRange = ABS_RANGE / zoom;
-    const minX = ABS_CENTER - (viewRange / 2);
-    const maxX = ABS_CENTER + (viewRange / 2);
+  const minX = Math.min(lambdaMin, lambdaMax);
+  const maxX = Math.max(lambdaMin, lambdaMax);
+  const domainX = Math.max(maxX - minX, 0.01);
 
-    const minY = 0;
-    // L1 counts (raw) are magnitudes higher than L2 intensity (subtracted)
-    const maxY = viewMode === 'L2' ? 1000 : 2500;
+  // --- Interaction Handlers ---
 
-    const points = data
-      .filter(d => d.wavelength >= minX && d.wavelength <= maxX) // Viewport clipping
-      .map((d) => {
-        // Horizontal mapping (wavelength -> x coordinate)
-        const x = ((d.wavelength - minX) / (maxX - minX)) * chartWidth;
-        // Vertical mapping (counts/intensity -> y coordinate)
-        const val = d[key] as number;
-        const y = chartHeight - ((val - minY) / (maxY - minY)) * chartHeight;
-        return `${x.toFixed(1)},${y.toFixed(1)}`;
-      });
+  const handleWheel = (e: React.WheelEvent) => {
+    if (!onRangeChange) return;
+    e.preventDefault();
+    const zoomSpeed = 0.12;
+    const direction = e.deltaY > 0 ? 1 : -1;
+    const factor = 1 + direction * zoomSpeed;
 
-    if (points.length < 2) return '';
-    return `M ${points.join(' L ')}`;
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const mouseX = e.clientX - rect.left;
+    const mousePct = mouseX / rect.width;
+    const mouseWavelength = minX + mousePct * domainX;
+
+    const targetDomain = Math.max(0.1, domainX * factor);
+    let nMin = mouseWavelength - mousePct * targetDomain;
+    let nMax = nMin + targetDomain;
+
+    // Proportional boundary correction to stay anchored to mouse center
+    if (nMin < ABS_MIN) {
+      nMin = ABS_MIN;
+      nMax = Math.min(ABS_MAX, nMin + targetDomain);
+    } else if (nMax > ABS_MAX) {
+      nMax = ABS_MAX;
+      nMin = Math.max(ABS_MIN, nMax - targetDomain);
+    }
+
+    onRangeChange(nMin, nMax);
   };
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    isDragging.current = true;
+    lastMouseX.current = e.clientX;
+  };
+
+  const handleMouseMoveGlobal = (e: MouseEvent) => {
+    if (!isDragging.current || !onRangeChange) return;
+    const dx = e.clientX - lastMouseX.current;
+    if (Math.abs(dx) < 1) return;
+    
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    
+    lastMouseX.current = e.clientX;
+    const wavelengthShift = (dx / rect.width) * domainX;
+    
+    let nMin = minX - wavelengthShift;
+    let nMax = maxX - wavelengthShift;
+
+    // Clamp but allow pushing against the wall
+    if (nMin < ABS_MIN) {
+      nMin = ABS_MIN;
+      nMax = ABS_MIN + domainX;
+    } else if (nMax > ABS_MAX) {
+      nMax = ABS_MAX;
+      nMin = ABS_MAX - domainX;
+    }
+
+    onRangeChange(nMin, nMax);
+  };
+
+  const handleMouseUpGlobal = () => {
+    isDragging.current = false;
+  };
+
+  useEffect(() => {
+    window.addEventListener('mousemove', handleMouseMoveGlobal);
+    window.addEventListener('mouseup', handleMouseUpGlobal);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMoveGlobal);
+      window.removeEventListener('mouseup', handleMouseUpGlobal);
+    };
+  }, [minX, maxX, domainX]);
+
+  // --- Data Processors ---
+
+  const visibleData = useMemo(() => 
+    data.filter(p => p.wavelength >= minX && p.wavelength <= maxX),
+    [data, minX, maxX]
+  );
+
+
+
+  const allYValues = useMemo(() => {
+    return visibleData.flatMap((point) =>
+      viewMode === 'L2' ? [point.intensity] : [point.rawPlasma, point.rawBackground]
+    );
+  }, [visibleData, viewMode]);
+
+  const rawMinY = allYValues.length ? Math.min(...allYValues) : 0;
+  const rawMaxY = allYValues.length ? Math.max(...allYValues) : 1;
+  const rangeY = rawMaxY - rawMinY;
+  const paddingY = rangeY > 0 ? rangeY * 0.15 : 10;
+  
+  const domainMinY = rawMinY - paddingY;
+  const domainMaxY = rawMaxY + paddingY;
+  const domainRangeY = Math.max(domainMaxY - domainMinY, 1);
+
+  const xTicks = Array.from({ length: 6 }, (_, i) => minX + (domainX * i) / 5);
+
+  const getYValue = (p: SpectralDataPoint) => {
+    if (viewMode === 'L2') return p.intensity;
+    return p.rawPlasma; 
+  };
+
+  const getCanvasPos = (p: { wavelength: number; intensity: number } | SpectralDataPoint) => {
+    const x = ((p.wavelength - minX) / domainX) * chartWidth;
+    const val = 'intensity' in p ? p.intensity : getYValue(p as SpectralDataPoint);
+    const y = chartHeight - ((val - domainMinY) / domainRangeY) * chartHeight;
+    return { x, y };
+  };
+
+  const generatePath = (_key: 'intensity' | 'rawPlasma' | 'rawBackground', close = false) => {
+    if (visibleData.length < 2) return '';
+    const points = visibleData.map((p) => {
+      const { x, y } = getCanvasPos(p);
+      return `${x.toFixed(2)},${y.toFixed(2)}`;
+    });
+    let d = `M ${points.join(' L ')}`;
+    if (close) {
+      const lastX = ((visibleData[visibleData.length - 1].wavelength - minX) / domainX) * chartWidth;
+      const firstX = ((visibleData[0].wavelength - minX) / domainX) * chartWidth;
+      d += ` L ${lastX},${chartHeight} L ${firstX},${chartHeight} Z`;
+    }
+    return d;
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!containerRef.current || visibleData.length === 0) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    
+    const svgX = (mouseX / rect.width) * chartWidth;
+    const targetWavelength = minX + (svgX / chartWidth) * domainX;
+    
+    let closest = visibleData[0];
+    let minDiff = Math.abs(closest.wavelength - targetWavelength);
+
+    for (const p of visibleData) {
+      const diff = Math.abs(p.wavelength - targetWavelength);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closest = p;
+      }
+    }
+
+    setHoveredPoint(closest);
+    setMousePos({ x: mouseX, y: mouseY });
+  };
+
+  const clearHover = () => setHoveredPoint(null);
+
+  const yAxisLabel = viewMode === 'L2' ? 'Intensity (cts)' : 'Raw Counts';
+  // Reduced density threshold for point markers
+  const showMarkers = domainX < 5 && visibleData.length < 500;
+
+  // Hover state for any peak line
+  const [hoveredPeak, setHoveredPeak] = useState<any | null>(null);
+
   return (
-    <div className="font-sans mt-4 border border-border-dark dark:border-[#222] rounded-md bg-canvas-alt dark:bg-[#141414] overflow-hidden transition-colors duration-200">
-
-      {/* Primary Plot Area */}
+    <div className="font-sans mt-4 border border-border-dark dark:border-[#222] rounded-md bg-canvas-alt dark:bg-[#141414] overflow-hidden shadow-sm select-none">
       <div className="relative h-[320px] flex">
-
-        {/* Vertical Axis (Y) Label */}
-        <div className="w-10 shrink-0 flex items-center justify-center">
-          <span className="text-[10px] font-semibold text-[#999] dark:text-[#555] tracking-[1.5px] uppercase -rotate-90 whitespace-nowrap">
-            {viewMode === 'L2' ? 'Cleaned Intensity' : 'Raw Counts'}
+        <div className="w-10 shrink-0 flex items-center justify-center bg-gray-50 dark:bg-[#111] border-r border-gray-100 dark:border-[#222]">
+          <span className="text-[9px] font-bold text-[#888] tracking-[1.5px] uppercase -rotate-90 whitespace-nowrap">
+            {yAxisLabel}
           </span>
         </div>
 
-        {/* SVG Drawing Canvas */}
-        <div className="flex-1 relative border-l border-border-dark dark:border-[#222] bg-white dark:bg-[#0a0a0a] overflow-hidden">
-          
-          {/* Scientific Grid (Subtle 40px default mesh) */}
-          <div className="absolute inset-0 grid-mesh opacity-20 pointer-events-none" />
+        <div 
+          ref={containerRef}
+          className="flex-1 relative bg-white dark:bg-[#0a0a0a] cursor-crosshair overflow-hidden"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={clearHover}
+          onWheel={handleWheel}
+          onMouseDown={handleMouseDown}
+        >
+          <div className="absolute inset-0 grid-mesh opacity-10 pointer-events-none" />
 
-          <svg 
-            className="absolute inset-0 w-full h-full" 
+          <svg
+            className="absolute inset-0 w-full h-full"
             viewBox={`0 0 ${chartWidth} ${chartHeight}`}
             preserveAspectRatio="none"
           >
-            {!isLoading && data.length > 0 && (
+            <defs>
+              <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.15" />
+                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
+              </linearGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+
+            {!isLoading && visibleData.length > 0 && (
               <>
-                {/* Level-1 Visualization: Composite showing background vs plasma */}
+                {/* Visual Area Gradient */}
+                {viewMode === 'L2' && (
+                  <path d={generatePath('intensity', true)} fill="url(#areaGradient)" />
+                )}
+
+                {/* Spectral Lines (Rendered before peaks) */}
                 {viewMode === 'L1' && (
                   <>
-                    <path
-                      d={generatePath('rawBackground')}
-                      fill="none"
-                      stroke="#888"
-                      strokeWidth="1"
-                      strokeDasharray="4 2"
-                      opacity="0.4"
-                    />
-                    <path
-                      d={generatePath('rawPlasma')}
-                      fill="none"
-                      stroke="#111"
-                      strokeWidth="1.2"
-                      className="dark:stroke-[#f0f0f0]"
-                    />
+                    <path d={generatePath('rawBackground')} fill="none" stroke="#666" strokeWidth="0.5" strokeDasharray="2,2" opacity="0.3" />
+                    <path d={generatePath('rawPlasma')} fill="none" stroke="#111" strokeWidth="0.8" strokeLinejoin="round" className="dark:stroke-[#f0f0f0]" />
                   </>
                 )}
-                {/* Level-2 Visualization: Single cleaned intensity stream */}
                 {viewMode === 'L2' && (
-                  <path
-                    d={generatePath('intensity')}
-                    fill="none"
-                    stroke="#111"
-                    strokeWidth="1.5"
-                    className="dark:stroke-[#f0f0f0]"
-                  />
+                  <path d={generatePath('intensity')} fill="none" stroke="#3b82f6" strokeWidth="0.8" strokeLinejoin="round" />
+                )}
+
+                {/* ALL ELEMENTAL PEAKS OVERLAY */}
+                {Object.entries(ELEMENT_PEAKS).map(([el, peaks]) => {
+                  const isActive = selectedElement === el;
+                  return peaks.map((peak, idx) => {
+                    const x = ((peak.wavelength - minX) / domainX) * chartWidth;
+                    if (x < 0 || x > chartWidth) return null;
+                    
+                    const isHovered = hoveredPeak === peak;
+                    const opacity = isHovered ? 1 : (isActive ? 0.6 : 0.15);
+                    const strokeWidth = isHovered || isActive ? 1.5 : 1;
+
+                    return (
+                      <g 
+                        key={`${el}-${peak.label}-${idx}`} 
+                        className="cursor-pointer transition-opacity duration-200"
+                        onMouseEnter={() => setHoveredPeak(peak)}
+                        onMouseLeave={() => setHoveredPeak(null)}
+                      >
+                        <line 
+                          x1={x} y1={0} x2={x} y2={chartHeight} 
+                          stroke={isActive ? "#ff3333" : "#999"} 
+                          strokeWidth={strokeWidth} 
+                          strokeDasharray={isActive ? "none" : "4,4"} 
+                          opacity={opacity}
+                        />
+                        {(isHovered || isActive) && (
+                          <text 
+                            x={x + 5} y={30 + (idx % 6) * 15} 
+                            fill={isActive ? "#ff3333" : "#666"} 
+                            fontSize="9" fontWeight="black" 
+                            className="font-mono pointer-events-none uppercase tracking-tighter"
+                          >
+                            {el} {peak.label} ({peak.wavelength}nm)
+                          </text>
+                        )}
+                      </g>
+                    );
+                  });
+                })}
+
+                {/* Individual Data Points */}
+                {showMarkers && visibleData.map((p, i) => {
+                  const { x, y } = getCanvasPos(p);
+                  return (
+                    <circle key={i} cx={x} cy={y} r="2" fill="#3b82f6" stroke="white" strokeWidth="0.5" />
+                  );
+                })}
+                
+                {/* Crosshair / Tooltip Marker */}
+                {hoveredPoint && (
+                  <>
+                    <line 
+                      x1={getCanvasPos(hoveredPoint).x} y1={0} 
+                      x2={getCanvasPos(hoveredPoint).x} y2={chartHeight} 
+                      stroke="#111" strokeWidth="1" strokeDasharray="2,2" className="dark:stroke-gray-600"
+                    />
+                    <circle 
+                      cx={getCanvasPos(hoveredPoint).x} cy={getCanvasPos(hoveredPoint).y} 
+                      r="5" fill="#3b82f6" stroke="white" strokeWidth="2" className="shadow-lg"
+                    />
+                  </>
                 )}
               </>
             )}
           </svg>
 
-          {/* Loading and Selection Overlays */}
-          {(isLoading || !data.length) && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-white/50 dark:bg-black/50 backdrop-blur-[1px]">
-              {isLoading ? (
-                <div className="flex flex-col items-center gap-3">
-                  <div className="w-5 h-5 border-2 border-[#111] dark:border-white border-t-transparent rounded-full animate-spin" />
-                  <span className="text-[10px] font-bold tracking-[1px] uppercase text-[#111] dark:text-white">Executing Processing Pipeline</span>
+          {/* ... Tooltip div remains same ... */}
+          {hoveredPoint && (
+            <div 
+              className="absolute pointer-events-none z-50 bg-[#111] text-white p-2.5 rounded-sm text-[10px] shadow-2xl font-mono border border-gray-700"
+              style={{ 
+                left: Math.min(mousePos.x + 15, containerRef.current?.clientWidth! - 140),
+                top: Math.max(mousePos.y - 75, 10)
+              }}
+            >
+              <div className="border-b border-gray-700 pb-1 mb-1.5 text-gray-400 uppercase tracking-widest text-[8px] flex justify-between">
+                <span>Spectral Data</span>
+                <span className="text-blue-400">READY</span>
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <div className="flex justify-between gap-4">
+                  <span className="text-gray-500">λ:</span>
+                  <span className="font-bold">{hoveredPoint.wavelength.toFixed(3)} nm</span>
                 </div>
-              ) : (
-                <span className="text-[10px] font-bold tracking-[1px] uppercase text-gray-400">Select parameters to load spectra</span>
-              )}
+                <div className="flex justify-between gap-4">
+                  <span className="text-gray-500">I:</span>
+                  <span className="font-bold text-blue-400">{getYValue(hoveredPoint).toFixed(2)} cts</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white/40 dark:bg-black/40 backdrop-blur-[2px]">
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-5 h-5 border-2 border-[#111] dark:border-white border-t-transparent rounded-full animate-spin" />
+              </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* Horizontal Axis (X) Labels (Wavelength nm) */}
-      <div className="border-t border-border-dark dark:border-[#222] flex items-center py-2 pl-12 pr-2 justify-between">
-        {NM_TICKS.map((nm) => (
-          <span key={nm} className="text-[9px] text-ink-muted dark:text-gray-400 tracking-[0.3px] font-mono">{nm}</span>
+      <div className="border-t border-border-dark dark:border-[#222] flex items-center py-2 px-12 justify-between bg-gray-50 dark:bg-[#111]">
+        {xTicks.map((tick) => (
+          <span key={tick} className="text-[9px] font-bold text-[#888] font-mono">
+            {formatTick(tick)}
+          </span>
         ))}
-        <span className="text-[10px] font-semibold text-[#999] dark:text-[#555] tracking-[1.5px] uppercase ml-2">nm</span>
+        <span className="text-[9px] font-bold text-[#888] tracking-[1.5px] uppercase ml-2">nm</span>
+      </div>
+
+      <div className="border-t border-border-dark dark:border-[#222] px-4 py-2 flex items-center justify-between text-[9px] font-mono text-gray-400 bg-white dark:bg-[#0a0a0a]">
+        <div className="flex gap-4">
+          <span>MIN: {rawMinY.toFixed(1)}</span>
+          <span>MAX: {rawMaxY.toFixed(1)}</span>
+        </div>
+        <div className="flex gap-4 items-center">
+           {selectedElement && (
+             <span className="text-red-600 font-bold uppercase tracking-widest animate-pulse">
+               Elemental Peaks: {selectedElement}
+             </span>
+           )}
+           <span>PTS: {visibleData.length}</span>
+           <span className="text-[8px] text-gray-500">(Scroll to Zoom • Drag to Pan)</span>
+        </div>
       </div>
     </div>
   );
 }
-
