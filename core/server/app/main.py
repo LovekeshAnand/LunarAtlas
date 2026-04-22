@@ -8,6 +8,8 @@ from app.config import settings
 from app.database.connection import db
 from app.cache.redis_cache import cache
 from app.api.v1.endpoints import router as api_router
+from app.api.v1.auth import router as auth_router
+from app.api.v1.export import router as export_router
 
 os.makedirs('logs', exist_ok=True)
 
@@ -51,9 +53,22 @@ async def startup_event():
     # Connect to database
     try:
         await db.connect()
+        # Initialize users table
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS app_users (
+                id SERIAL PRIMARY KEY,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                institution VARCHAR(255),
+                interest VARCHAR(255),
+                hashed_password VARCHAR(255) NOT NULL,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        logger.info("[OK] Assured app_users table exists")
     except Exception as e:
-        logger.error(f"Failed to connect to database: {e}")
+        logger.error(f"Failed to connect to database or init table: {e}")
         # sys.exit(1) # We might want to keep it running for testing
+
     
     # Connect to Redis
     try:
@@ -79,6 +94,20 @@ app.include_router(
     api_router,
     prefix=settings.API_V1_PREFIX,
     tags=["spectral-data"]
+)
+
+# Include Auth router
+app.include_router(
+    auth_router,
+    prefix=f"{settings.API_V1_PREFIX}/auth",
+    tags=["auth"]
+)
+
+# Include Export router
+app.include_router(
+    export_router,
+    prefix=f"{settings.API_V1_PREFIX}/export",
+    tags=["export"]
 )
 
 # Root endpoint
