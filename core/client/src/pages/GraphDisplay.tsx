@@ -204,12 +204,12 @@ export default function GraphDisplay() {
               <div className="mb-6 p-4 bg-white rounded-md shadow-sm border border-solid border-gray-200">
                  <div className="flex justify-between border-b border-solid border-gray-200 pb-2 mb-3">
                    <div className="flex items-center gap-2">
-                      <span className="font-sans font-semibold text-[13px] text-gray-800">LTTB Performance Metrics</span>
+                      <span className="font-sans font-semibold text-[13px] text-gray-800">M4 Performance Metrics</span>
                    </div>
                  </div>
                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 font-sans text-[13px]">
                    <div><span className="text-gray-500 block leading-tight font-medium">Raw Data</span> {metrics.originalPoints.toLocaleString()} PTS</div>
-                   <div><span className="text-gray-500 block leading-tight font-medium">LTTB Buckets</span> {metrics.finalPoints.toLocaleString()}</div>
+                   <div><span className="text-gray-500 block leading-tight font-medium">M4 Buckets</span> {metrics.finalPoints.toLocaleString()}</div>
                    <div><span className="text-blue-600 block leading-tight font-medium">Latency</span> {metrics.executionTimeMs.toFixed(2)}ms</div>
                    <div><span className="text-green-600 block leading-tight font-medium">Integrity</span> MATCHED</div>
                  </div>
@@ -315,7 +315,7 @@ export default function GraphDisplay() {
                   {[
                     { label: 'DB Latency', value: '1.2ms', marker: 'text-gray-500' },
                     { label: 'Points Loaded', value: rawData.length.toLocaleString(), marker: 'text-gray-500' },
-                    { label: 'LTTB Status', value: 'OPTIMIZED', marker: 'text-gray-500' },
+                    { label: 'M4 Status', value: 'OPTIMIZED', marker: 'text-gray-500' },
                     { label: 'NIST Entries', value: nistLines.length.toString(), marker: 'text-gray-500' }
                   ].map((stat, i) => (
                     <li key={i} className="flex items-center justify-between group">

@@ -108,7 +108,7 @@ function ProportionSlider({ proportion, onChange }: { proportion: number; onChan
     <div className="flex flex-col gap-[6px]">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-           <FieldLabel text="Data Density (LTTB)" />
+           <FieldLabel text="Data Density (M4)" />
         </div>
         <span className="font-sans text-[13px] font-semibold text-gray-600">
           {pct === 100 ? 'RAW 100%' : `${pct.toFixed(1)}%`}

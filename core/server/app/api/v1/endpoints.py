@@ -12,7 +12,7 @@ from app.schemas.spectral import (
     NistLine,
     ObservationInfo
 )
-from app.core.downsampling import adaptive_minmax_downsample, DownsampleConfig
+from app.core.downsampling import m4_downsample, DownsampleConfig
 from app.database.connection import db
 from app.cache.redis_cache import cache, cached
 from app.config import settings
@@ -267,7 +267,7 @@ async def get_spectrum(
             B_MIN=settings.MIN_BUCKET_SIZE
         )
         
-        downsample_result = adaptive_minmax_downsample(
+        downsample_result = m4_downsample(
             data=data,
             zoom_level=zoom_level,
             lambda_min=lambda_min,

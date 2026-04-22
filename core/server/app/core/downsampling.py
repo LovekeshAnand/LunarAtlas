@@ -89,7 +89,7 @@ def calculate_zoom_max(
     return z_max
 
 
-def adaptive_minmax_downsample(
+def m4_downsample(
     data: np.ndarray,
     zoom_level: int,
     lambda_min: float,
@@ -97,14 +97,10 @@ def adaptive_minmax_downsample(
     config: DownsampleConfig = DownsampleConfig()
 ) -> Dict:
     """
-    Adaptive min-max downsampling algorithm.
+    MinMaxMinMax (M4) downsampling algorithm.
 
-    Implements Equations 4-9 from the LunarAtlas paper with
-    data-density-aware zoom saturation.
-
-    The algorithm preserves emission line peaks at all zoom levels
-    by retaining both the minimum and maximum intensity within
-    each wavelength bucket.
+    Preserves exactly up to 4 extreme points per bucket: First, Min, Max, Last.
+    This guarantees visual envelope preservation while massively reducing data size.
 
     Args:
         data: NumPy array of shape (N, 2) - [wavelength_nm, intensity]
@@ -116,7 +112,6 @@ def adaptive_minmax_downsample(
     Returns:
         Dictionary with mode, data, and metadata.
     """
-    # Validate input
     if len(data) == 0:
         return {
             "mode": "empty",
@@ -139,13 +134,9 @@ def adaptive_minmax_downsample(
             "message": "Invalid wavelength range"
         }
 
-    # Calculate bucket size (Eq. 4-5)
+    # Calculate bucket size
     b_final = calculate_bucket_size(delta_lambda, zoom_level, config)
-
-    # Calculate zoom saturation with data-density awareness
     z_max = calculate_zoom_max(delta_lambda, config, n_points=len(data))
-
-    # Number of buckets at this zoom level
     n_buckets = math.ceil(delta_lambda / b_final)
 
     # Check saturation: return raw if zoom beyond z_max OR
@@ -166,64 +157,52 @@ def adaptive_minmax_downsample(
         }
 
     logger.info(
-        f"Downsampling: zoom={zoom_level}, buckets={n_buckets}, "
+        f"M4 Downsampling: zoom={zoom_level}, buckets={n_buckets}, "
         f"b_final={b_final:.4f}nm, points={len(data)}"
     )
 
-    # Pre-allocate result list
-    buckets = []
+    m4_data = []
 
-    # Process each bucket (Eq. 7-9)
+    # Process each bucket
     for j in range(n_buckets):
         lambda_start = lambda_min + (j * b_final)
         lambda_end = lambda_start + b_final
 
-        # Overlap for continuity (Eq. 7)
-        if j > 0:
-            lambda_start_ext = lambda_start - (config.OVERLAP_PCT * b_final)
-        else:
-            lambda_start_ext = lambda_start
-
-        if j < n_buckets - 1:
-            lambda_end_ext = lambda_end + (config.OVERLAP_PCT * b_final)
-        else:
-            lambda_end_ext = lambda_end
-
-        # Filter data points in this bucket
-        mask = (data[:, 0] >= lambda_start_ext) & (data[:, 0] < lambda_end_ext)
+        # Strict bucket filtering, no overlap in M4
+        mask = (data[:, 0] >= lambda_start) & (data[:, 0] < lambda_end)
         bucket_data = data[mask]
 
         if len(bucket_data) == 0:
             continue
 
-        # Eq. 8-9: min and max intensities
         intensities = bucket_data[:, 1]
-        wavelengths = bucket_data[:, 0]
 
-        min_idx = np.argmin(intensities)
-        max_idx = np.argmax(intensities)
+        # M4 Extraction: First, Min, Max, Last
+        idx_first = 0
+        idx_last = len(bucket_data) - 1
+        idx_min = int(np.argmin(intensities))
+        idx_max = int(np.argmax(intensities))
 
-        buckets.append({
-            "bucket_id": j,
-            "lambda_min": float(wavelengths[min_idx]),
-            "intensity_min": float(intensities[min_idx]),
-            "lambda_max": float(wavelengths[max_idx]),
-            "intensity_max": float(intensities[max_idx]),
-            "n_points": int(len(bucket_data)),
-            "lambda_center": float((lambda_start + lambda_end) / 2)
-        })
+        # Deduplicate and sort by X-axis logically (First is always first, Last is last)
+        unique_indices = sorted(list(set([idx_first, idx_min, idx_max, idx_last])))
 
-    reduction_factor = len(data) / len(buckets) if buckets else 0
+        for idx in unique_indices:
+            m4_data.append({
+                "wavelength_nm": float(bucket_data[idx, 0]),
+                "intensity": float(bucket_data[idx, 1])
+            })
+
+    reduction_factor = len(data) / len(m4_data) if m4_data else 0
 
     return {
         "mode": "downsampled",
         "z_max": z_max,
         "zoom_level": zoom_level,
         "b_final": b_final,
-        "n_buckets": len(buckets),
+        "n_buckets": n_buckets,
         "original_points": len(data),
         "reduction_factor": reduction_factor,
-        "data": buckets
+        "data": m4_data
     }
 
 

@@ -1,7 +1,7 @@
 import type { SpectralDataPoint } from '../services/apiService';
 
 /**
- * @fileoverview Web Worker for Largest Triangle Three Buckets (LTTB) Downsampling.
+ * @fileoverview Web Worker for M4 Algorithm Downsampling.
  * Runs in a separate thread to prevent UI freezing during rapid slider scrubbing.
  */
 
@@ -24,104 +24,57 @@ export interface DownsampleResult {
 }
 
 /**
- * Calculates the area of a triangle given three points.
+ * M4 Algorithm (MinMaxMinMax).
+ * Downsamples data while explicitly preserving exactly up to 4 extreme points per bucket: First, Min, Max, Last.
+ * This guarantees visual envelope preservation while massively reducing data size.
  */
-function calculateTriangleArea(
-  p1x: number, p1y: number,
-  p2x: number, p2y: number,
-  p3x: number, p3y: number
-): number {
-  return Math.abs(
-    (p1x * (p2y - p3y) +
-     p2x * (p3y - p1y) +
-     p3x * (p1y - p2y)) / 2.0
-  );
-}
-
-/**
- * Largest Triangle Three Buckets (LTTB) Algorithm.
- * Downsamples data while explicitly preserving extreme visual points (peaks/valleys).
- */
-export function lttb(data: SpectralDataPoint[], threshold: number): SpectralDataPoint[] {
+export function m4(data: SpectralDataPoint[], threshold: number): SpectralDataPoint[] {
   const dataLength = data.length;
-  if (threshold >= dataLength || threshold === 0 || dataLength < 3) {
+  // If threshold is large enough, or too few points, return data
+  if (threshold >= dataLength || threshold === 0 || dataLength < 4) {
     return data;
   }
 
+  // threshold is the target number of downsampled points.
+  // M4 yields up to 4 points per bucket. So we divide data into (threshold / 4) buckets.
+  const numBuckets = Math.max(1, Math.floor(threshold / 4));
+  const pointsPerBucket = dataLength / numBuckets;
+  
   const sampled: SpectralDataPoint[] = [];
-  let sampledIndex = 0;
 
-  // Bucket size. Leave room for start and end data points
-  const every = (dataLength - 2) / (threshold - 2);
+  for (let i = 0; i < numBuckets; i++) {
+    const startIdx = Math.floor(i * pointsPerBucket);
+    const endIdx = i === numBuckets - 1 ? dataLength : Math.floor((i + 1) * pointsPerBucket);
+    const bucketLength = endIdx - startIdx;
+    
+    if (bucketLength === 0) continue;
 
-  let a = 0; // Initially a is the first point in the triangle
-  let maxAreaPoint = { ...data[a] };
-  sampled[sampledIndex++] = maxAreaPoint;
+    let minIdx = startIdx;
+    let maxIdx = startIdx;
+    let minVal = data[startIdx].intensity;
+    let maxVal = data[startIdx].intensity;
 
-  for (let i = 0; i < threshold - 2; i++) {
-    // Calculate point average for next bucket (the 'C' in the triangle ABC)
-    let avgX = 0;
-    let avgY = 0;
-    let avgRangeStart = Math.floor((i + 1) * every) + 1;
-    let avgRangeEnd = Math.floor((i + 2) * every) + 1;
-    avgRangeEnd = avgRangeEnd < dataLength ? avgRangeEnd : dataLength;
-
-    const avgRangeLength = avgRangeEnd - avgRangeStart;
-
-    for (; avgRangeStart < avgRangeEnd; avgRangeStart++) {
-      avgX += data[avgRangeStart].wavelength;
-      avgY += data[avgRangeStart].intensity;
-    }
-    avgX /= avgRangeLength;
-    avgY /= avgRangeLength;
-
-    // Get the range for the current bucket (the 'B' in the triangle ABC)
-    let rangeOffs = Math.floor(i * every) + 1;
-    const rangeTo = Math.floor((i + 1) * every) + 1;
-
-    // Point A
-    const pointAx = data[a].wavelength;
-    const pointAy = data[a].intensity;
-
-    let maxArea = -1;
-    let nextA = rangeOffs;
-    let maxAreaPointRef = data[rangeOffs];
-
-    // Find the point in bucket B that creates the largest triangle
-    for (; rangeOffs < rangeTo; rangeOffs++) {
-      const area = calculateTriangleArea(
-        pointAx, pointAy, // Point A
-        data[rangeOffs].wavelength, data[rangeOffs].intensity, // Point B
-        avgX, avgY // Point C (Average of next bucket)
-      );
-
-      if (area > maxArea) {
-        maxArea = area;
-        maxAreaPointRef = data[rangeOffs];
-        nextA = rangeOffs;
+    for (let j = startIdx + 1; j < endIdx; j++) {
+      const val = data[j].intensity;
+      if (val < minVal) {
+        minVal = val;
+        minIdx = j;
+      }
+      if (val > maxVal) {
+        maxVal = val;
+        maxIdx = j;
       }
     }
 
-    sampled[sampledIndex++] = { ...maxAreaPointRef }; // Clone the chosen point
-    a = nextA; // Set the chosen point as the 'A' for the next iteration
-  }
+    const firstIdx = startIdx;
+    const lastIdx = endIdx - 1;
 
-  // Always add the last point
-  sampled[sampledIndex++] = { ...data[dataLength - 1] };
-
-  // Quick sanity check - enforce global max/min if they somehow missed 
-  // (LTTB generally catches them because peaks create the largest triangles, 
-  // but LIBS data can be highly anomalous).
-  const originalMax = Math.max(...data.map(d => d.intensity));
-  const newMax = Math.max(...sampled.map(d => d.intensity));
-  
-  if (originalMax !== newMax) {
-       // Find the real peak and enforce it near its location
-       const peakObj = data.find(d => d.intensity === originalMax);
-       if(peakObj) {
-           sampled.push({...peakObj});
-           sampled.sort((x, y) => x.wavelength - y.wavelength); // Maintain X-axis order
-       }
+    // Deduplicate and sort
+    const uniqueIndices = Array.from(new Set([firstIdx, minIdx, maxIdx, lastIdx])).sort((a, b) => a - b);
+    
+    for (const idx of uniqueIndices) {
+      sampled.push(data[idx]);
+    }
   }
 
   return sampled;
@@ -133,7 +86,7 @@ self.onmessage = (e: MessageEvent<DownsampleConfig>) => {
   const { data, ratio } = e.data;
 
   // Calculate target threshold (e.g. 0.5 * 2000 = 1000 points)
-  let threshold = Math.max(3, Math.floor(data.length * ratio));
+  let threshold = Math.max(4, Math.floor(data.length * ratio));
   
   // If the desired threshold is 100%, skip downsampling
   if (ratio >= 0.99) {
@@ -146,7 +99,7 @@ self.onmessage = (e: MessageEvent<DownsampleConfig>) => {
   const originalMax = data.length > 0 ? Math.max(...data.map(d => d.intensity)) : 0;
 
   try {
-    resultData = lttb(data, threshold);
+    resultData = m4(data, threshold);
   } catch (err) {
     if (err instanceof Error) errorMsg = err.message;
     else errorMsg = 'Unknown Worker Error';
