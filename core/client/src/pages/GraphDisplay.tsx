@@ -130,19 +130,19 @@ export default function GraphDisplay() {
       <div className="flex flex-col gap-8 w-full">
         
         {/* Header Section */}
-        <div className="flex items-center justify-between border-b-[2px] border-dashed border-gray-400 pb-6">
+        <div className="flex items-center justify-between border-b border-solid border-gray-200 pb-6">
           <div>
-            <h1 className="text-[28px] font-marker text-blue-700 leading-none mb-1 -rotate-1 origin-left">
-               LunarAtlas <span className="text-red-600">Research</span>
+            <h1 className="text-[28px] font-sans font-bold text-gray-900 leading-none mb-1">
+               LunarAtlas <span className="text-gray-500">Research</span>
             </h1>
-            <p className="text-[12px] font-caveat tracking-widest text-gray-500 font-bold ml-1">Spectral Analysis Platform v1.2</p>
+            <p className="text-[13px] font-sans tracking-wide text-gray-500 font-medium ml-1">Spectral Analysis Platform v1.2</p>
           </div>
           <div className="flex gap-4">
              <div className="text-right">
-                <div className="text-[12px] font-caveat text-gray-600 font-bold mb-1">Database Sync</div>
+                <div className="text-[12px] font-sans text-gray-500 font-medium mb-1">Database Sync</div>
                 <div className="flex items-center gap-2 justify-end">
-                   <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse border border-green-800" />
-                   <span className="text-[14px] font-marker text-[#111]">{health?.database ? 'CONNECTED' : 'STANDALONE'}</span>
+                   <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse border border-green-200" />
+                   <span className="text-[13px] font-sans font-semibold text-gray-700">{health?.database ? 'CONNECTED' : 'STANDALONE'}</span>
                 </div>
              </div>
           </div>
@@ -169,9 +169,9 @@ export default function GraphDisplay() {
         {/* Main Workspace */}
         <div className="flex flex-col lg:flex-row gap-8">
           <section className="flex-1 flex flex-col min-w-0">
-            <div className="flex items-center justify-between mb-4 pb-2 border-b-2 border-dotted border-gray-400">
+            <div className="flex items-center justify-between mb-4 pb-2 border-b border-solid border-gray-200">
               <div className="flex items-center gap-3">
-                <h2 className="text-[16px] font-marker text-blue-800 -rotate-1 origin-left">
+                <h2 className="text-[16px] font-sans font-semibold text-gray-800">
                    Active Viewport
                 </h2>
               </div>
@@ -179,7 +179,7 @@ export default function GraphDisplay() {
               <div className="flex items-center gap-4">
                 <button 
                   onClick={() => setShowConsole(!showConsole)}
-                  className="text-[12px] font-caveat text-gray-500 hover:text-blue-600 transition-colors bg-white px-3 py-1 rounded shadow-sm border border-gray-300 rotate-1"
+                  className="text-[13px] font-sans text-gray-600 hover:text-blue-600 transition-colors bg-white px-3 py-1 rounded-sm border border-solid border-gray-300"
                 >
                   {showConsole ? 'Close Console' : 'Open Console'}
                 </button>
@@ -201,24 +201,23 @@ export default function GraphDisplay() {
 
             {/* Dev Console */}
             {showConsole && metrics.originalPoints > 0 && (
-              <div className="mb-6 p-4 sticky-note -rotate-1 shadow-md border border-yellow-300">
-                 <div className="flex justify-between border-b-2 border-dashed border-gray-400 pb-2 mb-3">
+              <div className="mb-6 p-4 bg-white rounded-md shadow-sm border border-solid border-gray-200">
+                 <div className="flex justify-between border-b border-solid border-gray-200 pb-2 mb-3">
                    <div className="flex items-center gap-2">
-                      <span className="font-marker text-[13px] text-gray-800">LTTB Performance Metrics</span>
+                      <span className="font-sans font-semibold text-[13px] text-gray-800">LTTB Performance Metrics</span>
                    </div>
                  </div>
-                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 font-caveat text-[13px]">
-                   <div><span className="text-red-600 block leading-tight font-bold">Raw Data</span> {metrics.originalPoints.toLocaleString()} PTS</div>
-                   <div><span className="text-red-600 block leading-tight font-bold">LTTB Buckets</span> {metrics.finalPoints.toLocaleString()}</div>
-                   <div><span className="text-blue-600 block leading-tight font-bold">Latency</span> {metrics.executionTimeMs.toFixed(2)}ms</div>
-                   <div><span className="text-green-600 block leading-tight font-bold">Integrity</span> MATCHED</div>
+                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 font-sans text-[13px]">
+                   <div><span className="text-gray-500 block leading-tight font-medium">Raw Data</span> {metrics.originalPoints.toLocaleString()} PTS</div>
+                   <div><span className="text-gray-500 block leading-tight font-medium">LTTB Buckets</span> {metrics.finalPoints.toLocaleString()}</div>
+                   <div><span className="text-blue-600 block leading-tight font-medium">Latency</span> {metrics.executionTimeMs.toFixed(2)}ms</div>
+                   <div><span className="text-green-600 block leading-tight font-medium">Integrity</span> MATCHED</div>
                  </div>
               </div>
             )}
 
             {/* The Graph */}
-            <div className="bg-white p-6 border-2 border-gray-200 rounded-sm shadow-xl mt-4 relative">
-              <div className="absolute top-2 left-2 w-full h-full border-2 border-gray-200 pointer-events-none rounded-sm" style={{ transform: 'rotate(-0.5deg)' }}></div>
+            <div className="bg-white p-6 border border-solid border-gray-200 rounded-md shadow-sm mt-4 relative">
               <SpectralGraph
                 data={downsampledData}
                 isLoading={isLoading}
@@ -238,15 +237,14 @@ export default function GraphDisplay() {
             <ScientificBoard />
 
             {/* NIST Reference Table */}
-            <div className="mt-8 bg-white p-6 border-2 border-gray-200 rounded-sm shadow-xl relative">
-              <div className="absolute top-0 left-0 w-full h-full border-2 border-gray-200 pointer-events-none rounded-sm" style={{ transform: 'rotate(0.5deg)' }}></div>
-              <div className="flex items-center justify-between mb-4 pb-2 border-b-2 border-dashed border-gray-400 relative z-10">
+            <div className="mt-8 bg-white p-6 border border-solid border-gray-200 rounded-md shadow-sm relative">
+              <div className="flex items-center justify-between mb-4 pb-2 border-b border-solid border-gray-200 relative z-10">
                 <div className="flex items-center gap-3">
-                  <h3 className="text-[16px] font-marker text-[#111]">
-                    C-3 Spectral Analysis Reference <span className="text-red-500">(NIST ASD)</span>
+                  <h3 className="text-[16px] font-sans font-semibold text-gray-800">
+                    C-3 Spectral Analysis Reference <span className="text-gray-500 font-normal">(NIST ASD)</span>
                   </h3>
                 </div>
-                <span className="text-[13px] font-caveat font-bold text-blue-600">Units: nm</span>
+                <span className="text-[13px] font-sans font-medium text-gray-500">Units: nm</span>
               </div>
               
               <div className="w-full overflow-hidden border border-gray-200 rounded-sm bg-white shadow-sm">
@@ -294,56 +292,56 @@ export default function GraphDisplay() {
 
           {/* Right Sidebar */}
           <aside className="w-full lg:w-72 flex-shrink-0">
-            <div className="sticky-note p-6 text-gray-900 rounded-sm sticky top-8 shadow-xl border-l-8 border-l-yellow-400 transform rotate-2">
+            <div className="bg-white p-6 text-gray-900 rounded-md shadow-sm border border-solid border-gray-200 sticky top-8">
               
-              <h2 className="relative z-10 text-[18px] font-marker text-blue-800 mb-6 pb-2 border-b-2 border-dashed border-gray-400 flex items-center justify-between">
+              <h2 className="relative z-10 text-[16px] font-sans font-semibold text-gray-800 mb-6 pb-2 border-b border-solid border-gray-200 flex items-center justify-between">
                 System Registry
               </h2>
               
               <div className="relative z-10 space-y-6">
                 <div className="space-y-2">
-                  <div className="text-[14px] font-caveat font-bold text-red-600">Research Subject</div>
-                  <div className="text-lg font-marker tracking-tighter text-[#111] break-all">
+                  <div className="text-[13px] font-sans font-medium text-gray-500">Research Subject</div>
+                  <div className="text-lg font-sans font-semibold text-gray-900 break-all">
                     {selectedObservationId || 'UNSELECTED'}
                   </div>
-                  <div className="text-[13px] font-caveat text-gray-600 leading-relaxed pl-2 border-l-2 border-blue-400">
+                  <div className="text-[13px] font-sans text-gray-600 leading-relaxed pl-2 border-l-2 border-gray-300">
                     Pragyan Rover LIBS payload acquisition. Instrument: <span className="font-bold">CH3-LIBS-01</span>.
                   </div>
                 </div>
 
-                <div className="h-px bg-gray-300 border-b-2 border-dashed border-gray-300" />
+                <div className="h-px bg-gray-200 border-b border-solid border-gray-200" />
 
                 <ul className="space-y-3">
                   {[
-                    { label: 'DB Latency', value: '1.2ms', marker: 'text-green-600' },
-                    { label: 'Points Loaded', value: rawData.length.toLocaleString(), marker: 'text-blue-600' },
-                    { label: 'LTTB Status', value: 'OPTIMIZED', marker: 'text-red-500' },
-                    { label: 'NIST Entries', value: nistLines.length.toString(), marker: 'text-blue-600' }
+                    { label: 'DB Latency', value: '1.2ms', marker: 'text-gray-500' },
+                    { label: 'Points Loaded', value: rawData.length.toLocaleString(), marker: 'text-gray-500' },
+                    { label: 'LTTB Status', value: 'OPTIMIZED', marker: 'text-gray-500' },
+                    { label: 'NIST Entries', value: nistLines.length.toString(), marker: 'text-gray-500' }
                   ].map((stat, i) => (
                     <li key={i} className="flex items-center justify-between group">
                       <div className="flex items-center gap-2">
-                        <span className={`text-[14px] font-caveat font-bold ${stat.marker}`}>{stat.label}:</span>
+                        <span className={`text-[13px] font-sans font-medium ${stat.marker}`}>{stat.label}:</span>
                       </div>
-                      <span className="text-[14px] font-marker text-gray-800">{stat.value}</span>
+                      <span className="text-[13px] font-sans font-semibold text-gray-800">{stat.value}</span>
                     </li>
                   ))}
                 </ul>
 
-                <div className="pt-6 flex flex-col gap-3 border-t-2 border-dashed border-gray-400 mt-4">
-                   <div className="text-[15px] font-marker text-red-600 mb-2 border-b border-red-300 inline-block">Mission Control - Export</div>
+                <div className="pt-6 flex flex-col gap-3 border-t border-solid border-gray-200 mt-4">
+                   <div className="text-[13px] font-sans font-semibold text-gray-600 mb-2">Mission Control - Export</div>
                    
                    <button 
                      onClick={() => apiService.exportCsv(measurementId, lambdaMin, lambdaMax, 0, true)}
-                     className="w-full text-center p-3 bg-white rounded border-2 border-dashed border-green-600 hover:bg-green-50 transition-colors shadow-sm cursor-pointer group rotate-1"
+                     className="w-full text-center p-2.5 bg-white rounded border border-solid border-gray-300 hover:bg-gray-50 transition-colors shadow-sm cursor-pointer"
                    >
-                      <span className="text-[13px] font-marker text-green-700">EXPORT AS CSV</span>
+                      <span className="text-[12px] font-sans font-medium text-gray-700">EXPORT AS CSV</span>
                    </button>
                    
                    <button 
                      onClick={() => apiService.exportJson(measurementId, lambdaMin, lambdaMax, 0, true)}
-                     className="w-full text-center p-3 bg-white rounded border-2 border-dashed border-blue-600 hover:bg-blue-50 transition-colors shadow-sm cursor-pointer group -rotate-1"
+                     className="w-full text-center p-2.5 bg-white rounded border border-solid border-gray-300 hover:bg-gray-50 transition-colors shadow-sm cursor-pointer"
                    >
-                      <span className="text-[13px] font-marker text-blue-700">EXPORT AS JSON</span>
+                      <span className="text-[12px] font-sans font-medium text-gray-700">EXPORT AS JSON</span>
                    </button>
                 </div>
               </div>

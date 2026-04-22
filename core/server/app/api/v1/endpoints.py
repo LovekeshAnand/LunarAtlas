@@ -14,7 +14,7 @@ from app.schemas.spectral import (
 )
 from app.core.downsampling import adaptive_minmax_downsample, DownsampleConfig
 from app.database.connection import db
-from app.cache.redis_cache import cache
+from app.cache.redis_cache import cache, cached
 from app.config import settings
 
 logger = logging.getLogger(__name__)
@@ -59,6 +59,7 @@ async def health_check():
 
 
 @router.get("/context", response_model=List[ObservationInfo])
+@cached(ttl=3600)
 async def list_observations():
     """
     List available observation sessions from the database.
@@ -82,6 +83,7 @@ async def list_observations():
         raise HTTPException(status_code=500, detail="Failed to fetch observation context")
 
 @router.get("/measurements", response_model=List[MeasurementInfo])
+@cached(ttl=3600)
 async def list_measurements(
     observation_id: str = Query(None, description="Filter by observation id (file_info_id)"),
     limit: int = Query(50, ge=1, le=500)
@@ -120,6 +122,7 @@ async def list_measurements(
         raise HTTPException(status_code=500, detail="Database query failed")
 
 @router.get("/nist/lines", response_model=List[NistLine])
+@cached(ttl=3600)
 async def get_nist_lines(
     element: str = Query(None, description="Filter by element (e.g. Fe, Mg)"),
     lambda_min: float = Query(None),
