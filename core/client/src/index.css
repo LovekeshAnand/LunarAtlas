@@ -15,8 +15,10 @@
 /* ── Design tokens ──────────────────────────────────────────── */
 @theme {
   /* Font stacks */
-  --font-sans: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
   --font-mono: 'Courier New', Courier, monospace;
+  --font-marker: 'Inter', system-ui, sans-serif;
+  --font-caveat: 'Inter', system-ui, sans-serif;
 
   /* Brand colour palette */
   --color-ink:         #111111;
@@ -138,5 +140,29 @@ html, body {
       linear-gradient(var(--grid-line) 1px, transparent 1px),
       linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
     background-size: 40px 40px;
+  }
+
+  .whiteboard-bg {
+    background-color: #f8fafc;
+    background-image: radial-gradient(rgba(209, 213, 219, 0.4) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .dark .whiteboard-bg {
+    background-color: #0f172a;
+    background-image: radial-gradient(rgba(82, 82, 82, 0.4) 1px, transparent 1px);
+  }
+
+  .sticky-note {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border-radius: 6px;
+  }
+
+  .dark .sticky-note {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
   }
 }

@@ -20,6 +20,11 @@ class Settings(BaseSettings):
     # API
     API_V1_PREFIX: str = "/api/v1"
     CORS_ORIGINS: List[str] = ["*"]
+
+    # Security
+    SECRET_KEY: str = "lunar-atlas-super-secret-key-change-in-prod"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440 # 24 hours
     
     # Performance
     MAX_WORKERS: int = 4

@@ -126,23 +126,23 @@ export default function GraphDisplay() {
   }, [measurementId, lambdaMin, lambdaMax]);
 
   return (
-    <div className="max-w-[1400px] mx-auto px-8 py-7 box-border font-sans bg-[#fcfcfc] min-h-screen">
+    <div className="max-w-[1400px] mx-auto px-8 py-7 box-border font-sans whiteboard-bg min-h-screen">
       <div className="flex flex-col gap-8 w-full">
         
         {/* Header Section */}
-        <div className="flex items-center justify-between border-b-[2px] border-[#111] pb-6">
+        <div className="flex items-center justify-between border-b border-solid border-gray-200 pb-6">
           <div>
-            <h1 className="text-[28px] font-black tracking-[-1px] text-[#111] uppercase leading-none mb-1">
-               LunarAtlas <span className="text-blue-600">Research</span>
+            <h1 className="text-[28px] font-sans font-bold text-gray-900 leading-none mb-1">
+               LunarAtlas <span className="text-gray-500">Research</span>
             </h1>
-            <p className="text-[10px] uppercase tracking-[3px] text-gray-400 font-bold">Spectral Analysis Platform v1.2</p>
+            <p className="text-[13px] font-sans tracking-wide text-gray-500 font-medium ml-1">Spectral Analysis Platform v1.2</p>
           </div>
           <div className="flex gap-4">
              <div className="text-right">
-                <div className="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-1">Database Sync</div>
+                <div className="text-[12px] font-sans text-gray-500 font-medium mb-1">Database Sync</div>
                 <div className="flex items-center gap-2 justify-end">
-                   <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                   <span className="text-xs font-mono font-bold text-[#111]">{health?.database ? 'CONNECTED' : 'STANDALONE'}</span>
+                   <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse border border-green-200" />
+                   <span className="text-[13px] font-sans font-semibold text-gray-700">{health?.database ? 'CONNECTED' : 'STANDALONE'}</span>
                 </div>
              </div>
           </div>
@@ -169,10 +169,9 @@ export default function GraphDisplay() {
         {/* Main Workspace */}
         <div className="flex flex-col lg:flex-row gap-8">
           <section className="flex-1 flex flex-col min-w-0">
-            <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
+            <div className="flex items-center justify-between mb-4 pb-2 border-b border-solid border-gray-200">
               <div className="flex items-center gap-3">
-                <Activity size={18} className="text-blue-600" />
-                <h2 className="text-[14px] font-black tracking-[1.5px] text-[#111] uppercase italic">
+                <h2 className="text-[16px] font-sans font-semibold text-gray-800">
                    Active Viewport
                 </h2>
               </div>
@@ -180,9 +179,9 @@ export default function GraphDisplay() {
               <div className="flex items-center gap-4">
                 <button 
                   onClick={() => setShowConsole(!showConsole)}
-                  className="text-[9px] font-black tracking-[1.5px] text-gray-400 hover:text-blue-600 uppercase transition-colors"
+                  className="text-[13px] font-sans text-gray-600 hover:text-blue-600 transition-colors bg-white px-3 py-1 rounded-sm border border-solid border-gray-300"
                 >
-                  {showConsole ? '[ Close Console ]' : '[ Open Console ]'}
+                  {showConsole ? 'Close Console' : 'Open Console'}
                 </button>
               </div>
             </div>
@@ -202,25 +201,23 @@ export default function GraphDisplay() {
 
             {/* Dev Console */}
             {showConsole && metrics.originalPoints > 0 && (
-              <div className="mb-6 p-4 bg-[#111] rounded-sm font-mono text-[10px] text-blue-400 shadow-2xl border border-blue-900/30">
-                 <div className="flex justify-between border-b border-gray-800 pb-2 mb-3">
+              <div className="mb-6 p-4 bg-white rounded-md shadow-sm border border-solid border-gray-200">
+                 <div className="flex justify-between border-b border-solid border-gray-200 pb-2 mb-3">
                    <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                      <span className="font-bold uppercase tracking-widest text-gray-400">LTTB Performance Metrics</span>
+                      <span className="font-sans font-semibold text-[13px] text-gray-800">LTTB Performance Metrics</span>
                    </div>
-                   <span className="text-gray-600">CLIENT-SIDE THREAD: ACTIVE</span>
                  </div>
-                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                   <div><span className="text-gray-500 block mb-1 uppercase tracking-tighter">Raw Data</span> {metrics.originalPoints.toLocaleString()} PTS</div>
-                   <div><span className="text-gray-500 block mb-1 uppercase tracking-tighter">LTTB Buckets</span> {metrics.finalPoints.toLocaleString()}</div>
-                   <div><span className="text-gray-500 block mb-1 uppercase tracking-tighter">Latency</span> {metrics.executionTimeMs.toFixed(2)}ms</div>
-                   <div><span className="text-gray-500 block mb-1 uppercase tracking-tighter">Integrity</span> MATCHED</div>
+                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 font-sans text-[13px]">
+                   <div><span className="text-gray-500 block leading-tight font-medium">Raw Data</span> {metrics.originalPoints.toLocaleString()} PTS</div>
+                   <div><span className="text-gray-500 block leading-tight font-medium">LTTB Buckets</span> {metrics.finalPoints.toLocaleString()}</div>
+                   <div><span className="text-blue-600 block leading-tight font-medium">Latency</span> {metrics.executionTimeMs.toFixed(2)}ms</div>
+                   <div><span className="text-green-600 block leading-tight font-medium">Integrity</span> MATCHED</div>
                  </div>
               </div>
             )}
 
             {/* The Graph */}
-            <div className="bg-white p-4 border border-gray-100 rounded-sm shadow-sm ring-1 ring-black/5">
+            <div className="bg-white p-6 border border-solid border-gray-200 rounded-md shadow-sm mt-4 relative">
               <SpectralGraph
                 data={downsampledData}
                 isLoading={isLoading}
@@ -240,15 +237,14 @@ export default function GraphDisplay() {
             <ScientificBoard />
 
             {/* NIST Reference Table */}
-            <div className="mt-8">
-              <div className="flex items-center justify-between mb-4 pb-2 border-b-2 border-[#111]">
+            <div className="mt-8 bg-white p-6 border border-solid border-gray-200 rounded-md shadow-sm relative">
+              <div className="flex items-center justify-between mb-4 pb-2 border-b border-solid border-gray-200 relative z-10">
                 <div className="flex items-center gap-3">
-                  <TableIcon size={18} className="text-blue-600" />
-                  <h3 className="text-[14px] font-black tracking-[1.5px] text-[#111] uppercase">
-                    C-3 Spectral Analysis Reference <span className="text-gray-400 font-normal ml-2">(NIST ASD)</span>
+                  <h3 className="text-[16px] font-sans font-semibold text-gray-800">
+                    C-3 Spectral Analysis Reference <span className="text-gray-500 font-normal">(NIST ASD)</span>
                   </h3>
                 </div>
-                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Wavelength Units: Nanometers (nm)</span>
+                <span className="text-[13px] font-sans font-medium text-gray-500">Units: nm</span>
               </div>
               
               <div className="w-full overflow-hidden border border-gray-200 rounded-sm bg-white shadow-sm">
@@ -296,53 +292,57 @@ export default function GraphDisplay() {
 
           {/* Right Sidebar */}
           <aside className="w-full lg:w-72 flex-shrink-0">
-            <div className="bg-[#111] p-6 text-white rounded-sm sticky top-8 shadow-2xl overflow-hidden">
-              {/* Decorative background element */}
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-600/10 rounded-full blur-3xl" />
+            <div className="bg-white p-6 text-gray-900 rounded-md shadow-sm border border-solid border-gray-200 sticky top-8">
               
-              <h2 className="relative z-10 text-[10px] font-black tracking-[3px] text-white uppercase mb-8 pb-3 border-b border-white/10 flex items-center justify-between">
+              <h2 className="relative z-10 text-[16px] font-sans font-semibold text-gray-800 mb-6 pb-2 border-b border-solid border-gray-200 flex items-center justify-between">
                 System Registry
-                <div className="w-2 h-2 rounded-full bg-green-500" />
               </h2>
               
-              <div className="relative z-10 space-y-8">
-                <div className="space-y-4">
-                  <div className="text-[9px] uppercase tracking-widest text-gray-500 font-bold">Research Subject</div>
-                  <div className="text-xl font-black italic tracking-tighter text-blue-400 truncate" title={selectedObservationId}>
+              <div className="relative z-10 space-y-6">
+                <div className="space-y-2">
+                  <div className="text-[13px] font-sans font-medium text-gray-500">Research Subject</div>
+                  <div className="text-lg font-sans font-semibold text-gray-900 break-all">
                     {selectedObservationId || 'UNSELECTED'}
                   </div>
-                  <div className="text-[11px] text-white/60 leading-relaxed border-l-2 border-blue-500 pl-3">
-                    Pragyan Rover LIBS payload acquisition. Instrument: <span className="text-white font-bold">CH3-LIBS-01</span>.
+                  <div className="text-[13px] font-sans text-gray-600 leading-relaxed pl-2 border-l-2 border-gray-300">
+                    Pragyan Rover LIBS payload acquisition. Instrument: <span className="font-bold">CH3-LIBS-01</span>.
                   </div>
                 </div>
 
-                <div className="h-px bg-white/5" />
+                <div className="h-px bg-gray-200 border-b border-solid border-gray-200" />
 
-                <ul className="space-y-4 overflow-hidden">
+                <ul className="space-y-3">
                   {[
-                    { label: 'DB Latency', value: '1.2ms', color: 'bg-green-500' },
-                    { label: 'Points Loaded', value: rawData.length.toLocaleString(), color: 'bg-blue-500' },
-                    { label: 'LTTB Status', value: 'OPTIMIZED', color: 'bg-blue-400' },
-                    { label: 'NIST Entries', value: nistLines.length.toString(), color: 'bg-yellow-400' }
+                    { label: 'DB Latency', value: '1.2ms', marker: 'text-gray-500' },
+                    { label: 'Points Loaded', value: rawData.length.toLocaleString(), marker: 'text-gray-500' },
+                    { label: 'LTTB Status', value: 'OPTIMIZED', marker: 'text-gray-500' },
+                    { label: 'NIST Entries', value: nistLines.length.toString(), marker: 'text-gray-500' }
                   ].map((stat, i) => (
                     <li key={i} className="flex items-center justify-between group">
-                      <div className="flex items-center gap-3">
-                        <span className={`w-1.5 h-1.5 rounded-full ${stat.color} group-hover:scale-125 transition-transform`} />
-                        <span className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">{stat.label}</span>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[13px] font-sans font-medium ${stat.marker}`}>{stat.label}:</span>
                       </div>
-                      <span className="text-[10px] font-mono font-bold text-white group-hover:text-blue-400 transition-colors">{stat.value}</span>
+                      <span className="text-[13px] font-sans font-semibold text-gray-800">{stat.value}</span>
                     </li>
                   ))}
                 </ul>
 
-                <div className="pt-4">
-                   <div className="p-4 bg-white/5 rounded-sm border border-white/10 hover:bg-white/10 transition-colors cursor-pointer group">
-                      <div className="text-[8px] uppercase tracking-[3px] text-gray-500 mb-2 font-black">Mission Control</div>
-                      <div className="text-xs font-bold flex items-center justify-between">
-                         DOWNLOAD DATA
-                         <Zap size={12} className="text-yellow-500 group-hover:animate-pulse" />
-                      </div>
-                   </div>
+                <div className="pt-6 flex flex-col gap-3 border-t border-solid border-gray-200 mt-4">
+                   <div className="text-[13px] font-sans font-semibold text-gray-600 mb-2">Mission Control - Export</div>
+                   
+                   <button 
+                     onClick={() => apiService.exportCsv(measurementId, lambdaMin, lambdaMax, 0, true)}
+                     className="w-full text-center p-2.5 bg-white rounded border border-solid border-gray-300 hover:bg-gray-50 transition-colors shadow-sm cursor-pointer"
+                   >
+                      <span className="text-[12px] font-sans font-medium text-gray-700">EXPORT AS CSV</span>
+                   </button>
+                   
+                   <button 
+                     onClick={() => apiService.exportJson(measurementId, lambdaMin, lambdaMax, 0, true)}
+                     className="w-full text-center p-2.5 bg-white rounded border border-solid border-gray-300 hover:bg-gray-50 transition-colors shadow-sm cursor-pointer"
+                   >
+                      <span className="text-[12px] font-sans font-medium text-gray-700">EXPORT AS JSON</span>
+                   </button>
                 </div>
               </div>
             </div>

@@ -80,8 +80,56 @@ export interface SpectrumMeta {
 }
 
 export const apiService = {
+  // === Helpers ===
+  getAuthHeader() {
+    const token = localStorage.getItem('access_token');
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  },
+
+  // === Authentication & User ===
+  async register(data: { email: string; institution: string; interest: string; password: string }) {
+    const res = await fetch(`${API_BASE}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(()=>({}));
+        throw new Error(err.detail || `Registration failed: ${res.status}`);
+    }
+    return res.json();
+  },
+
+  async login(email: string, password: string): Promise<{ access_token: string; token_type: string }> {
+    const params = new URLSearchParams();
+    params.append('username', email);
+    params.append('password', password);
+
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params,
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(()=>({}));
+        throw new Error(err.detail || `Login failed: ${res.status}`);
+    }
+    return res.json();
+  },
+
+  async fetchMe() {
+    const res = await fetch(`${API_BASE}/auth/me`, {
+      headers: this.getAuthHeader()
+    });
+    if (!res.ok) throw new Error('Not authenticated');
+    return res.json();
+  },
+
+  // === Spectral Data ===
   async fetchMeasurements(limit = 50): Promise<MeasurementInfo[]> {
-    const res = await fetch(`${API_BASE}/measurements?limit=${limit}`);
+    const res = await fetch(`${API_BASE}/measurements?limit=${limit}`, {
+        headers: this.getAuthHeader()
+    });
     if (!res.ok) {
       throw new Error(`Measurements fetch failed: ${res.status}`);
     }
@@ -104,7 +152,9 @@ export const apiService = {
       force_raw: String(forceRaw),
     });
 
-    const res = await fetch(`${API_BASE}/spectrum?${params}`);
+    const res = await fetch(`${API_BASE}/spectrum?${params}`, {
+        headers: this.getAuthHeader()
+    });
     if (!res.ok) {
       const err = await res.text();
       throw new Error(`Spectrum fetch failed (${res.status}): ${err.slice(0, 200)}`);
@@ -176,10 +226,35 @@ export const apiService = {
     if (min !== undefined) params.append('lambda_min', String(min));
     if (max !== undefined) params.append('lambda_max', String(max));
     
-    const res = await fetch(`${API_BASE}/nist/lines?${params}`);
+    const res = await fetch(`${API_BASE}/nist/lines?${params}`, {
+        headers: this.getAuthHeader()
+    });
     if (!res.ok) {
       throw new Error(`NIST lines fetch failed: ${res.status}`);
     }
     return res.json();
+  },
+
+  // === Export API ===
+  exportJson(measurementId: string, lambdaMin: number, lambdaMax: number, zoomLevel: number, forceRaw: boolean) {
+    const params = new URLSearchParams({
+      measurement_id: measurementId,
+      lambda_min: String(lambdaMin),
+      lambda_max: String(lambdaMax),
+      zoom_level: String(zoomLevel),
+      force_raw: String(forceRaw),
+    });
+    window.open(`${API_BASE}/export/json?${params}`, '_blank');
+  },
+
+  exportCsv(measurementId: string, lambdaMin: number, lambdaMax: number, zoomLevel: number, forceRaw: boolean) {
+    const params = new URLSearchParams({
+      measurement_id: measurementId,
+      lambda_min: String(lambdaMin),
+      lambda_max: String(lambdaMax),
+      zoom_level: String(zoomLevel),
+      force_raw: String(forceRaw),
+    });
+    window.open(`${API_BASE}/export/csv?${params}`, '_blank');
   }
 };

@@ -201,17 +201,18 @@ export default function SpectralGraph({
   const [hoveredPeak, setHoveredPeak] = useState<any | null>(null);
 
   return (
-    <div className="font-sans mt-4 border border-border-dark dark:border-[#222] rounded-md bg-canvas-alt dark:bg-[#141414] overflow-hidden shadow-sm select-none">
+    <div className="mt-4 border-2 border-dashed border-gray-400 rounded bg-white overflow-hidden shadow-lg select-none relative">
+      <div className="absolute top-0 right-0 w-8 h-8 border-l-2 border-b-2 border-dashed border-gray-400 bg-gray-50 pointer-events-none" style={{ transform: 'rotate(10deg) translate(5px, -5px)' }}></div>
       <div className="relative h-[320px] flex">
-        <div className="w-10 shrink-0 flex items-center justify-center bg-gray-50 dark:bg-[#111] border-r border-gray-100 dark:border-[#222]">
-          <span className="text-[9px] font-bold text-[#888] tracking-[1.5px] uppercase -rotate-90 whitespace-nowrap">
+        <div className="w-10 shrink-0 flex items-center justify-center bg-gray-50 border-r-2 border-dashed border-gray-300">
+          <span className="text-[11px] font-caveat font-bold text-gray-500 tracking-widest uppercase -rotate-90 whitespace-nowrap">
             {yAxisLabel}
           </span>
         </div>
 
         <div 
           ref={containerRef}
-          className="flex-1 relative bg-white dark:bg-[#0a0a0a] cursor-crosshair overflow-hidden"
+          className="flex-1 relative bg-transparent cursor-crosshair overflow-hidden"
           onMouseMove={handleMouseMove}
           onMouseLeave={clearHover}
           onWheel={handleWheel}
@@ -248,12 +249,12 @@ export default function SpectralGraph({
                 {/* Spectral Lines (Rendered before peaks) */}
                 {viewMode === 'L1' && (
                   <>
-                    <path d={generatePath('rawBackground')} fill="none" stroke="#666" strokeWidth="0.5" strokeDasharray="2,2" opacity="0.3" />
-                    <path d={generatePath('rawPlasma')} fill="none" stroke="#111" strokeWidth="0.8" strokeLinejoin="round" className="dark:stroke-[#f0f0f0]" />
+                    <path d={generatePath('rawBackground')} fill="none" stroke="#9ca3af" strokeWidth="1" strokeDasharray="4,4" opacity="0.6" />
+                    <path d={generatePath('rawPlasma')} fill="none" stroke="#1f2937" strokeWidth="1.5" strokeLinejoin="round" />
                   </>
                 )}
                 {viewMode === 'L2' && (
-                  <path d={generatePath('intensity')} fill="none" stroke="#3b82f6" strokeWidth="0.8" strokeLinejoin="round" />
+                  <path d={generatePath('intensity')} fill="none" stroke="#2563eb" strokeWidth="2" strokeLinejoin="round" style={{ filter: 'drop-shadow(1px 2px 2px rgba(37,99,235,0.2))' }} />
                 )}
 
                 {/* ALL ELEMENTAL PEAKS OVERLAY */}
@@ -325,24 +326,23 @@ export default function SpectralGraph({
           {/* ... Tooltip div remains same ... */}
           {hoveredPoint && (
             <div 
-              className="absolute pointer-events-none z-50 bg-[#111] text-white p-2.5 rounded-sm text-[10px] shadow-2xl font-mono border border-gray-700"
+              className="absolute pointer-events-none z-50 sticky-note p-3 text-gray-800 shadow-xl border-t-[8px] border-t-yellow-400 rotate-1"
               style={{ 
                 left: Math.min(mousePos.x + 15, containerRef.current?.clientWidth! - 140),
                 top: Math.max(mousePos.y - 75, 10)
               }}
             >
-              <div className="border-b border-gray-700 pb-1 mb-1.5 text-gray-400 uppercase tracking-widest text-[8px] flex justify-between">
-                <span>Spectral Data</span>
-                <span className="text-blue-400">READY</span>
+              <div className="border-b-2 border-dashed border-gray-400 pb-1 mb-2 font-marker text-blue-700 text-[11px]">
+                Spectral Data Snapshot
               </div>
-              <div className="flex flex-col gap-0.5">
+              <div className="flex flex-col gap-1 font-caveat text-[12px]">
                 <div className="flex justify-between gap-4">
-                  <span className="text-gray-500">λ:</span>
-                  <span className="font-bold">{hoveredPoint.wavelength.toFixed(3)} nm</span>
+                  <span className="text-gray-600 font-bold">Wavelength (λ):</span>
+                  <span className="font-bold text-red-600">{hoveredPoint.wavelength.toFixed(3)} nm</span>
                 </div>
                 <div className="flex justify-between gap-4">
-                  <span className="text-gray-500">I:</span>
-                  <span className="font-bold text-blue-400">{getYValue(hoveredPoint).toFixed(2)} cts</span>
+                  <span className="text-gray-600 font-bold">Intensity (I):</span>
+                  <span className="font-bold text-blue-700">{getYValue(hoveredPoint).toFixed(2)} cts</span>
                 </div>
               </div>
             </div>
@@ -358,28 +358,28 @@ export default function SpectralGraph({
         </div>
       </div>
 
-      <div className="border-t border-border-dark dark:border-[#222] flex items-center py-2 px-12 justify-between bg-gray-50 dark:bg-[#111]">
+      <div className="border-t-2 border-dashed border-gray-300 flex items-center py-2 px-12 justify-between bg-gray-50">
         {xTicks.map((tick) => (
-          <span key={tick} className="text-[9px] font-bold text-[#888] font-mono">
+          <span key={tick} className="text-[12px] font-caveat font-bold text-gray-600">
             {formatTick(tick)}
           </span>
         ))}
-        <span className="text-[9px] font-bold text-[#888] tracking-[1.5px] uppercase ml-2">nm</span>
+        <span className="text-[12px] font-marker font-bold text-gray-500 ml-2">nm</span>
       </div>
 
-      <div className="border-t border-border-dark dark:border-[#222] px-4 py-2 flex items-center justify-between text-[9px] font-mono text-gray-400 bg-white dark:bg-[#0a0a0a]">
+      <div className="border-t-2 border-dashed border-gray-300 px-4 py-3 flex items-center justify-between text-[12px] font-caveat text-gray-600 bg-white">
         <div className="flex gap-4">
-          <span>MIN: {rawMinY.toFixed(1)}</span>
-          <span>MAX: {rawMaxY.toFixed(1)}</span>
+          <span>Min: <strong className="text-red-500">{rawMinY.toFixed(1)}</strong></span>
+          <span>Max: <strong className="text-blue-600">{rawMaxY.toFixed(1)}</strong></span>
         </div>
         <div className="flex gap-4 items-center">
            {selectedElement && (
-             <span className="text-red-600 font-bold uppercase tracking-widest animate-pulse">
-               Elemental Peaks: {selectedElement}
+             <span className="text-red-600 font-marker text-[13px] animate-pulse -rotate-2">
+               Target Base: {selectedElement}
              </span>
            )}
-           <span>PTS: {visibleData.length}</span>
-           <span className="text-[8px] text-gray-500">(Scroll to Zoom • Drag to Pan)</span>
+           <span className="font-bold text-gray-800 text-[11px]">Total Pts: {visibleData.length}</span>
+           <span className="text-gray-400 text-[11px]">(Scroll to Zoom • Drag to Pan)</span>
         </div>
       </div>
     </div>

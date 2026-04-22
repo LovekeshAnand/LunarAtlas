@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { apiService } from '../services/apiService';
 
 export interface AuthUser {
   email: string;
@@ -9,26 +10,57 @@ export interface AuthUser {
 interface AuthContextValue {
   isLoggedIn: boolean;
   user: AuthUser | null;
-  login: (user: AuthUser) => void;
+  login: (access_token: string) => Promise<void>;
   logout: () => void;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextValue>({
   isLoggedIn: false,
   user: null,
-  login: () => {},
+  login: async () => {},
   logout: () => {},
+  loading: true
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const login = (u: AuthUser) => setUser(u);
-  const logout = () => setUser(null);
+  useEffect(() => {
+    const initAuth = async () => {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        try {
+          const u = await apiService.fetchMe();
+          setUser(u);
+        } catch (e) {
+          localStorage.removeItem('access_token');
+        }
+      }
+      setLoading(false);
+    };
+    initAuth();
+  }, []);
+
+  const login = async (access_token: string) => {
+    localStorage.setItem('access_token', access_token);
+    try {
+      const u = await apiService.fetchMe();
+      setUser(u);
+    } catch {
+      localStorage.removeItem('access_token');
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem('access_token');
+    setUser(null);
+  };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn: !!user, user, login, logout }}>
-      {children}
+    <AuthContext.Provider value={{ isLoggedIn: !!user, user, login, logout, loading }}>
+      {!loading && children}
     </AuthContext.Provider>
   );
 }
