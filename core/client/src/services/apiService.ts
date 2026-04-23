@@ -1,6 +1,17 @@
 /**
  * @fileoverview Live API Service for LunarAtlas.
- * Connects to the FastAPI backend for real Chandrayaan-3 LIBS spectral data.
+ *
+ * Centralises all HTTP communication with the FastAPI backend.
+ * Provides typed methods for:
+ *   - Authentication (register, login, session validation)
+ *   - Spectral data retrieval with M4 downsampling
+ *   - NIST reference line queries
+ *   - Data export (CSV / JSON)
+ *   - Observation and measurement hierarchy navigation
+ *
+ * All methods return typed Promises and throw on HTTP errors.
+ * The base URL is configured via `VITE_API_BASE_URL` env variable,
+ * with a fallback to `/api/v1` for same-origin deployments.
  */
 
 const API_BASE =
@@ -21,19 +32,10 @@ export interface MeasurementInfo {
   laser_energy_v: number | null;
 }
 
-interface DownsampledBucket {
-  bucket_id: number;
-  lambda_min: number;
-  intensity_min: number;
-  lambda_max: number;
-  intensity_max: number;
-  n_points: number;
-  lambda_center: number;
-}
-
-interface RawSpectralPoint {
+interface SpectralApiPoint {
   wavelength_nm: number;
   intensity: number;
+  raw_plasma: number;
 }
 
 interface SpectrumResponse {
@@ -43,7 +45,7 @@ interface SpectrumResponse {
   lambda_max: number;
   zoom_level: number;
   z_max: number | null;
-  data: DownsampledBucket[] | RawSpectralPoint[];
+  data: SpectralApiPoint[];
   metadata: {
     original_points?: number;
     n_buckets?: number | null;
@@ -62,6 +64,18 @@ export interface HealthResponse {
   timestamp: string;
 }
 
+/**
+ * A single spectral data point as consumed by the frontend graph.
+ *
+ * This is the unified shape used across the rendering pipeline:
+ * API response → apiService mapping → useDownsampling hook → SpectralGraph.
+ *
+ * @property wavelength    - Wavelength in nm (X-axis).
+ * @property intensity     - Cleaned (L2) intensity in counts (primary Y-axis).
+ * @property rawPlasma     - Uncleaned plasma counts (for L1 / overlay mode).
+ * @property rawBackground - Background counts (for L1 mode).
+ * @property measurementId - Foreign key linking back to the measurement record.
+ */
 export interface SpectralDataPoint {
   wavelength: number;
   intensity: number;
@@ -161,27 +175,15 @@ export const apiService = {
     }
 
     const body: SpectrumResponse = await res.json();
-    let points: SpectralDataPoint[] = [];
-
-    if (body.mode === 'downsampled') {
-      const buckets = body.data as DownsampledBucket[];
-      points = buckets.map((bucket) => ({
-        wavelength: bucket.lambda_center,
-        intensity: bucket.intensity_max,
-        rawPlasma: bucket.intensity_max,
-        rawBackground: bucket.intensity_min,
-        measurementId: body.measurement_id,
-      }));
-    } else if (body.mode === 'raw') {
-      const raw = body.data as RawSpectralPoint[];
-      points = raw.map((point) => ({
-        wavelength: point.wavelength_nm,
-        intensity: point.intensity,
-        rawPlasma: point.intensity,
-        rawBackground: 0,
-        measurementId: body.measurement_id,
-      }));
-    }
+    
+    // Both 'downsampled' and 'raw' modes now return flat SpectralApiPoint objects
+    const points: SpectralDataPoint[] = body.data.map((point) => ({
+      wavelength: point.wavelength_nm,
+      intensity: point.intensity,
+      rawPlasma: point.raw_plasma ?? point.intensity, // fallback just in case
+      rawBackground: 0,
+      measurementId: body.measurement_id,
+    }));
 
     return {
       data: points,

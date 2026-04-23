@@ -2,7 +2,7 @@ import { useMemo, useEffect, useRef } from 'react';
 import { type MeasurementInfo } from '../../services/apiService';
 
 
-const ELEMENTS = ['Fe', 'Mg', 'Si', 'Al', 'Ca', 'Ti', 'Na', 'H₂O', 'O'];
+const ELEMENTS = ['All', 'Fe', 'Mg', 'Si', 'Al', 'Ca', 'Ti', 'Na', 'H₂O', 'O'];
 
 // ... ClS constants remain same ...
 const SELECT_CLS =
@@ -67,10 +67,11 @@ function ColDivider() {
   return <div className="w-px bg-border dark:bg-[#222] self-stretch shrink-0" />;
 }
 
-function ModeToggle({ activeMode, onChange }: { activeMode: 'L1' | 'L2'; onChange: (m: 'L1' | 'L2') => void }) {
-  const modes: { key: 'L1' | 'L2'; label: string }[] = [
-    { key: 'L2', label: 'L2 (CLEAN)' },
-    { key: 'L1', label: 'L1 (RAW/CALIBRATED)' },
+function ModeToggle({ activeMode, onChange }: { activeMode: 'L1' | 'L2' | 'overlay'; onChange: (m: 'L1' | 'L2' | 'overlay') => void }) {
+  const modes: { key: 'L1' | 'L2' | 'overlay'; label: string }[] = [
+    { key: 'L2', label: 'L2 Cleaned' },
+    { key: 'L1', label: 'L1 Raw' },
+    { key: 'overlay', label: 'L1 vs L2 Overlay' },
   ];
 
   return (
@@ -91,7 +92,7 @@ function ModeToggle({ activeMode, onChange }: { activeMode: 'L1' | 'L2'; onChang
           </button>
         );
       })}
-      <div className="flex-[2] bg-gray-50" />
+      <div className="flex-1 bg-gray-50" />
     </div>
   );
 }
@@ -144,8 +145,8 @@ export default function RangeSelectorPanel({
   observations, selectedObservationId, onObservationChange,
   measurements, selectedMeasurementId, onMeasurementChange,
 }: { 
-  mode: 'L1' | 'L2', 
-  onModeChange: (m: 'L1' | 'L2') => void,
+  mode: 'L1' | 'L2' | 'overlay', 
+  onModeChange: (m: 'L1' | 'L2' | 'overlay') => void,
   proportion: number, 
   onProportionChange: (p: number) => void,
   minWavelength: number,

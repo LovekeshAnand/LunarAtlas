@@ -1,7 +1,39 @@
+/**
+ * @fileoverview useDownsampling — React hook for off-thread M4 downsampling.
+ *
+ * Manages the lifecycle of a dedicated Web Worker that runs the M4
+ * (MinMaxMinMax) downsampling algorithm. This ensures that heavy
+ * computation (scanning thousands of data points) never blocks the
+ * main UI thread, maintaining 60 FPS responsiveness during rapid
+ * slider scrubbing.
+ *
+ * **Usage:**
+ * ```tsx
+ * const { data, metrics, error } = useDownsampling(rawData, proportion);
+ * // `data` contains the M4-downsampled points ready for rendering.
+ * // `metrics` provides execution time and point counts for the dev console.
+ * ```
+ *
+ * @see {@link ../workers/downsampleWorker.ts} for the M4 algorithm implementation.
+ */
+
 import { useState, useEffect, useRef } from 'react';
 import type { SpectralDataPoint } from '../services/apiService';
 import type { DownsampleConfig, DownsampleResult } from '../workers/downsampleWorker';
 
+/* ------------------------------------------------------------------ */
+/*  State interface                                                    */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Shape of the state returned by the useDownsampling hook.
+ *
+ * @property data         - The downsampled data points (ready to render).
+ * @property originalData - Reference to the unmodified raw input data.
+ * @property isProcessing - True while the worker is computing.
+ * @property metrics      - Performance and integrity metrics from the worker.
+ * @property error        - Error message from the worker, or null.
+ */
 export interface DownsamplingState {
   data: SpectralDataPoint[];
   originalData: SpectralDataPoint[];
@@ -15,6 +47,20 @@ export interface DownsamplingState {
   error: string | null;
 }
 
+/* ------------------------------------------------------------------ */
+/*  Hook implementation                                                */
+/* ------------------------------------------------------------------ */
+
+/**
+ * React hook that manages an M4 downsampling Web Worker.
+ *
+ * Spawns a Web Worker on mount, posts data whenever `rawData` or `ratio`
+ * changes, and cleans up (terminates) the worker on unmount.
+ *
+ * @param rawData - Full spectral data array from the API.
+ * @param ratio   - Downsampling ratio (0.0–1.0). E.g., 0.1 = keep 10%.
+ * @returns DownsamplingState with the downsampled data, metrics, and status.
+ */
 export function useDownsampling(
   rawData: SpectralDataPoint[],
   ratio: number
@@ -29,13 +75,14 @@ export function useDownsampling(
 
   const workerRef = useRef<Worker | null>(null);
 
+  /* ── Spawn worker on mount, terminate on unmount ── */
   useEffect(() => {
-    // Initialize Web Worker
     workerRef.current = new Worker(
       new URL('../workers/downsampleWorker.ts', import.meta.url),
       { type: 'module' }
     );
 
+    /* Handle results from the worker */
     workerRef.current.onmessage = (e: MessageEvent<DownsampleResult>) => {
       const { downsampled, executionTimeMs, originalPoints, finalPoints, error, variancePeak } = e.data;
       
@@ -53,8 +100,8 @@ export function useDownsampling(
     };
   }, []);
 
+  /* ── Post data to worker whenever inputs change ── */
   useEffect(() => {
-    // Kick off downsampling whenever rawData or ratio changes
     if (rawData.length === 0) {
       setState(prev => ({ ...prev, data: [], originalData: [], isProcessing: false }));
       return;

@@ -1,9 +1,21 @@
+/**
+ * @fileoverview GraphDisplay — Primary research interface for LunarAtlas.
+ *
+ * Orchestrates the full spectral analysis workflow:
+ *   Context → Observations → Measurements → Spectrum → M4 Downsample → Render
+ *
+ * State management strategy:
+ *   - Database hierarchy: observations → measurements → spectrum data
+ *   - View controls: viewMode, proportion, lambdaMin/Max, element filter
+ *   - Each state change triggers a dependent useEffect chain for data fetching
+ */
+
 import { useState, useEffect } from 'react';
-import { Activity, Zap, Table as TableIcon } from 'lucide-react';
 
 import SpectralGraph from '../components/graph/SpectralGraph';
 import RangeSelectorPanel from '../components/rangeSelector/rangeSelector';
 import ScientificBoard from '../components/education/ScientificBoard';
+import BenchmarkTable from '../components/benchmarks/BenchmarkTable';
 import { useDownsampling } from '../hooks/useDownsampling';
 import {
   apiService,
@@ -45,7 +57,7 @@ export default function GraphDisplay() {
   const [spectrumMeta, setSpectrumMeta] = useState<SpectrumMeta | null>(null);
 
   /** UI Controls */
-  const [viewMode, setViewMode] = useState<'L1' | 'L2'>('L2');
+  const [viewMode, setViewMode] = useState<'L1' | 'L2' | 'overlay'>('L2');
   const [proportion, setProportion] = useState(0.1); 
   const [lambdaMin, setLambdaMin] = useState(DEFAULT_LAMBDA_MIN);
   const [lambdaMax, setLambdaMax] = useState(DEFAULT_LAMBDA_MAX);
@@ -235,6 +247,9 @@ export default function GraphDisplay() {
 
             {/* Scientific Board (Theory) */}
             <ScientificBoard />
+
+            {/* Benchmark Comparison Tables */}
+            <BenchmarkTable />
 
             {/* NIST Reference Table */}
             <div className="mt-8 bg-white p-6 border border-solid border-gray-200 rounded-md shadow-sm relative">
