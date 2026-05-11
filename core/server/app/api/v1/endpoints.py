@@ -12,7 +12,7 @@ from app.schemas.spectral import (
     NistLine,
     ObservationInfo
 )
-from app.core.downsampling import m4_downsample, DownsampleConfig
+from app.core.downsampling import lttb_downsample
 from app.database.connection import db
 from app.cache.redis_cache import cache, cached
 from app.config import settings
@@ -180,19 +180,19 @@ async def get_spectrum(
     force_raw: bool = Query(False, description="Bypass server downsampling and return raw data")
 ):
     """
-    Retrieve spectral data with M4 downsampling.
+    Retrieve spectral data with LTTB downsampling.
 
     Fetches raw wavelength-intensity pairs from ``spectral_data_clean``,
-    applies the M4 downsampling algorithm based on zoom level, and
-    returns the result with metadata. Supports Redis caching and
-    a ``force_raw`` bypass for when clients need unprocessed data.
+    applies the LTTB (Largest Triangle Three Buckets) downsampling
+    algorithm based on zoom level, and returns the result with metadata.
+    Supports Redis caching and a ``force_raw`` bypass.
 
     Query Flow
     ----------
     1. Generate cache key from (measurement_id, λ_min, λ_max, zoom).
     2. Check Redis cache (if enabled).
     3. Query PostgreSQL for raw spectral data.
-    4. Apply ``m4_downsample()`` (or return raw if ``force_raw=True``).
+    4. Apply ``lttb_downsample()`` (or return raw if ``force_raw=True``).
     5. Cache the result and return.
 
     Parameters
@@ -319,31 +319,16 @@ async def get_spectrum(
                 await cache.set(cache_key, result, ttl=settings.CACHE_TTL)
             return result
         
-        # Apply downsampling
-        downsample_config = DownsampleConfig(
-            BASE_BUCKETS=settings.BASE_BUCKETS,
-            B_MIN=settings.MIN_BUCKET_SIZE
-        )
-        
-        downsample_result = m4_downsample(
+        # Apply downsampling (index-based for LIBS data)
+        downsample_result = lttb_downsample(
             data=data,
             zoom_level=zoom_level,
             lambda_min=lambda_min,
-            lambda_max=lambda_max,
-            config=downsample_config
+            lambda_max=lambda_max
         )
         
-        # Format data for Pydantic validation
-        raw_data = downsample_result['data']
-        if downsample_result['mode'] == 'raw':
-            # Convert [[wavelength, intensity], ...] → [{"wavelength_nm": ..., "intensity": ...}, ...]
-            formatted_data = [
-                {"wavelength_nm": float(pt[0]), "intensity": float(pt[1]), "raw_plasma": float(pt[2])}
-                for pt in raw_data
-            ]
-        else:
-            # Downsampled buckets are already dicts
-            formatted_data = raw_data
+        # LTTB returns flat dicts for both raw and downsampled modes
+        formatted_data = downsample_result['data']
 
         # Build response
         result = {

@@ -17,10 +17,10 @@ describe('LTTB Downsampling Algorithm', () => {
     expect(result).toEqual(mockData);
   });
 
-  it('should downsample to the exact threshold requested', () => {
+  it('should downsample to >= threshold requested due to True Peak union', () => {
     const threshold = 100;
     const result = lttb(mockData, threshold);
-    expect(result.length).toBe(threshold);
+    expect(result.length).toBeGreaterThanOrEqual(threshold);
   });
 
   it('should preserve the first and last points', () => {
@@ -31,11 +31,12 @@ describe('LTTB Downsampling Algorithm', () => {
   });
 
   it('should retain the global maximum (Peak Retention Check)', () => {
-    // Even with heavy downsampling (1000 -> 20 pts), the peak at 999 should survive
+    // Even with heavy downsampling (1000 -> 20 pts), the global peak should survive
     const threshold = 20;
+    const inputMax = Math.max(...mockData.map(p => p.intensity));
     const result = lttb(mockData, threshold);
     const maxVal = Math.max(...result.map(p => p.intensity));
-    expect(maxVal).toBe(999);
+    expect(maxVal).toBe(inputMax);
   });
 
   it('should handle empty or near-empty arrays gracefully', () => {

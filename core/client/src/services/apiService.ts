@@ -4,7 +4,7 @@
  * Centralises all HTTP communication with the FastAPI backend.
  * Provides typed methods for:
  *   - Authentication (register, login, session validation)
- *   - Spectral data retrieval with M4 downsampling
+ *   - Spectral data retrieval with LTTB downsampling
  *   - NIST reference line queries
  *   - Data export (CSV / JSON)
  *   - Observation and measurement hierarchy navigation
@@ -258,5 +258,38 @@ export const apiService = {
       force_raw: String(forceRaw),
     });
     window.open(`${API_BASE}/export/csv?${params}`, '_blank');
-  }
+  },
+
+  /**
+   * Fetches spectral data for multiple Measurement IDs simultaneously.
+   * All requests run in parallel via Promise.all.
+   *
+   * @param measurementIds - Array of measurement_id strings to fetch
+   * @param lambdaMin - Wavelength lower bound (nm)
+   * @param lambdaMax - Wavelength upper bound (nm)
+   * @returns Map from measurement_id → SpectralDataPoint[]
+   */
+  async fetchMultipleSpectra(
+    measurementIds: string[],
+    lambdaMin: number,
+    lambdaMax: number
+  ): Promise<Map<string, SpectralDataPoint[]>> {
+    const results = await Promise.allSettled(
+      measurementIds.map((id) =>
+        this.fetchSpectrum(id, lambdaMin, lambdaMax, 0, true)
+      )
+    );
+
+    const map = new Map<string, SpectralDataPoint[]>();
+    results.forEach((result, index) => {
+      const id = measurementIds[index];
+      if (result.status === 'fulfilled') {
+        map.set(id, result.value.data);
+      } else {
+        console.warn(`[API] fetchMultipleSpectra: Failed for ID ${id}:`, result.reason);
+        map.set(id, []);
+      }
+    });
+    return map;
+  },
 };

@@ -1,20 +1,20 @@
 /**
- * @fileoverview useDownsampling — React hook for off-thread M4 downsampling.
+ * @fileoverview useDownsampling — React hook for off-thread LTTB downsampling.
  *
- * Manages the lifecycle of a dedicated Web Worker that runs the M4
- * (MinMaxMinMax) downsampling algorithm. This ensures that heavy
- * computation (scanning thousands of data points) never blocks the
- * main UI thread, maintaining 60 FPS responsiveness during rapid
- * slider scrubbing.
+ * Manages the lifecycle of a dedicated Web Worker that runs the LTTB
+ * (Largest Triangle Three Buckets) downsampling algorithm. This ensures
+ * that heavy computation (scanning thousands of data points) never
+ * blocks the main UI thread, maintaining 60 FPS responsiveness during
+ * rapid slider scrubbing.
  *
  * **Usage:**
  * ```tsx
  * const { data, metrics, error } = useDownsampling(rawData, proportion);
- * // `data` contains the M4-downsampled points ready for rendering.
+ * // `data` contains the LTTB-downsampled points ready for rendering.
  * // `metrics` provides execution time and point counts for the dev console.
  * ```
  *
- * @see {@link ../workers/downsampleWorker.ts} for the M4 algorithm implementation.
+ * @see {@link ../workers/downsampleWorker.ts} for the LTTB algorithm implementation.
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -52,7 +52,7 @@ export interface DownsamplingState {
 /* ------------------------------------------------------------------ */
 
 /**
- * React hook that manages an M4 downsampling Web Worker.
+ * React hook that manages an LTTB downsampling Web Worker.
  *
  * Spawns a Web Worker on mount, posts data whenever `rawData` or `ratio`
  * changes, and cleans up (terminates) the worker on unmount.
