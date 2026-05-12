@@ -6,7 +6,6 @@ class SpectralDataPoint(BaseModel):
     """Single spectral data point"""
     wavelength_nm: float
     intensity: float
-    raw_plasma: float
 
 class DownsampledBucket(BaseModel):
     """Min-max downsampled bucket"""

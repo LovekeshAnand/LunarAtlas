@@ -40,7 +40,7 @@ class CacheLayer:
         key_parts = [str(arg) for arg in args]
         key_parts.extend([f"{k}={v}" for k, v in sorted(kwargs.items())])
         key_str = ":".join(key_parts)
-        return f"lunaratlas_v2:{hashlib.md5(key_str.encode()).hexdigest()}"
+        return f"lunaratlas:{hashlib.md5(key_str.encode()).hexdigest()}"
     
     async def get(self, key: str) -> Optional[Any]:
         """Retrieve value from cache"""

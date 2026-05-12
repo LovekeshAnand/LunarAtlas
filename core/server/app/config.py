@@ -31,7 +31,8 @@ class Settings(BaseSettings):
     WORKER_CONNECTIONS: int = 1000
     
     # Downsampling (calibrated for CH3 LIBS: ~2094 channels per measurement)
-    CH3_CHANNELS: int = 2094
+    BASE_BUCKETS: int = 200
+    MIN_BUCKET_SIZE: float = 0.01  # nm
     
     class Config:
         env_file = ".env"
