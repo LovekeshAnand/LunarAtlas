@@ -2,7 +2,7 @@ import { useMemo, useEffect, useRef } from 'react';
 import { type MeasurementInfo } from '../../services/apiService';
 
 
-const ELEMENTS = ['Fe', 'Mg', 'Si', 'Al', 'Ca', 'Ti', 'Na', 'H₂O', 'O'];
+const ELEMENTS = ['All', 'Fe', 'Mg', 'Si', 'Al', 'Ca', 'Ti', 'Na', 'H₂O', 'O'];
 
 // ... ClS constants remain same ...
 const SELECT_CLS =
@@ -67,10 +67,11 @@ function ColDivider() {
   return <div className="w-px bg-border dark:bg-[#222] self-stretch shrink-0" />;
 }
 
-function ModeToggle({ activeMode, onChange }: { activeMode: 'L1' | 'L2'; onChange: (m: 'L1' | 'L2') => void }) {
-  const modes: { key: 'L1' | 'L2'; label: string }[] = [
-    { key: 'L2', label: 'L2 (CLEAN)' },
-    { key: 'L1', label: 'L1 (RAW/CALIBRATED)' },
+function ModeToggle({ activeMode, onChange }: { activeMode: 'L1' | 'L2' | 'overlay'; onChange: (m: 'L1' | 'L2' | 'overlay') => void }) {
+  const modes: { key: 'L1' | 'L2' | 'overlay'; label: string }[] = [
+    { key: 'L2', label: 'L2 Cleaned' },
+    { key: 'L1', label: 'L1 Raw' },
+    { key: 'overlay', label: 'L1 vs L2 Overlay' },
   ];
 
   return (
@@ -91,7 +92,7 @@ function ModeToggle({ activeMode, onChange }: { activeMode: 'L1' | 'L2'; onChang
           </button>
         );
       })}
-      <div className="flex-[2] bg-gray-50" />
+      <div className="flex-1 bg-gray-50" />
     </div>
   );
 }
@@ -142,10 +143,11 @@ export default function RangeSelectorPanel({
   onMinWavelengthChange, onMaxWavelengthChange,
   element, onElementChange,
   observations, selectedObservationId, onObservationChange,
-  measurements, selectedMeasurementId, onMeasurementChange,
+  measurements,
+  loadedCount,
 }: { 
-  mode: 'L1' | 'L2', 
-  onModeChange: (m: 'L1' | 'L2') => void,
+  mode: 'L1' | 'L2' | 'overlay', 
+  onModeChange: (m: 'L1' | 'L2' | 'overlay') => void,
   proportion: number, 
   onProportionChange: (p: number) => void,
   minWavelength: number,
@@ -158,8 +160,8 @@ export default function RangeSelectorPanel({
   selectedObservationId: string,
   onObservationChange: (id: string) => void,
   measurements: MeasurementInfo[],
-  selectedMeasurementId: string,
-  onMeasurementChange: (id: string) => void,
+  /** Number of measurement datasets currently loaded in parallel */
+  loadedCount: number,
 }) {
 
   const observationOptions = useMemo(() => 
@@ -170,41 +172,35 @@ export default function RangeSelectorPanel({
     [observations]
   );
 
-  const measurementOptions = useMemo(() => 
-    measurements.map(m => ({
-      label: `Measurement #${m.measurement_index} (${m.measurement_type})`,
-      value: m.measurement_id
-    })),
-    [measurements]
-  );
+  // Total plasma measurements available (all IDs, not just loaded)
+  const totalMeasurements = measurements.length;
 
   return (
     <section className="border border-solid border-gray-200 bg-white rounded-md shadow-sm overflow-hidden relative">
       <ModeToggle activeMode={mode} onChange={onModeChange} />
       <div className="flex items-stretch flex-wrap">
-        
-        {/* Real-time DB Inputs */}
+
+        {/* Observation selector + loaded IDs badge */}
         <div className="flex-[1_1_240px] p-5 px-6 flex flex-col justify-center min-w-0 bg-white border-r border-solid border-gray-200">
-          <div className="flex flex-col gap-4">
-             <div>
-                <FieldLabel text="Observation Session" />
-                <StyledSelect
-                  value={selectedObservationId}
-                  options={observationOptions}
-                  onChange={onObservationChange}
-                  placeholder="— Pick one —"
-                />
-             </div>
-             <div>
-                <FieldLabel text="Data Point / Pulse" />
-                <StyledSelect
-                  value={selectedMeasurementId}
-                  options={measurementOptions}
-                  onChange={onMeasurementChange}
-                  placeholder={selectedObservationId ? "— Pick Measurement —" : "— Select above first —"}
-                  disabled={!selectedObservationId}
-                />
-             </div>
+          <div className="flex flex-col gap-3">
+            <div>
+              <FieldLabel text="Observation Session" />
+              <StyledSelect
+                value={selectedObservationId}
+                options={observationOptions}
+                onChange={onObservationChange}
+                placeholder="— Pick one —"
+              />
+            </div>
+            {/* All measurements auto-loaded — show count instead of selector */}
+            <div className="flex items-center justify-between px-3 py-2 rounded bg-blue-50 border border-solid border-blue-100">
+              <span className="font-sans text-[11px] font-medium text-blue-600">
+                Measurements Loaded
+              </span>
+              <span className="font-sans text-[13px] font-black text-blue-700">
+                {loadedCount > 0 ? `${loadedCount} / ${totalMeasurements}` : selectedObservationId ? '…' : '—'}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -213,33 +209,35 @@ export default function RangeSelectorPanel({
           <div className="flex flex-col gap-2">
             <FieldLabel text="Wavelength Zoom Range (nm)" />
             <div className="flex items-center gap-2">
-                <input 
-                  type="number" value={minWavelength} 
-                  onChange={(e) => onMinWavelengthChange(parseFloat(e.target.value))}
-                  className={NUM_INPUT_CLS + " border border-solid border-gray-200 rounded-sm bg-gray-50 hover:bg-white focus:bg-white transition-colors"} 
-                />
-                <span className="font-sans font-medium text-gray-400 px-2">to</span>
-                <input 
-                  type="number" value={maxWavelength} 
-                  onChange={(e) => onMaxWavelengthChange(parseFloat(e.target.value))}
-                  className={NUM_INPUT_CLS + " border border-solid border-gray-200 rounded-sm bg-gray-50 hover:bg-white focus:bg-white transition-colors"} 
-                />
+              <input
+                type="number" value={minWavelength}
+                onChange={(e) => onMinWavelengthChange(parseFloat(e.target.value))}
+                className={NUM_INPUT_CLS + " border border-solid border-gray-200 rounded-sm bg-gray-50 hover:bg-white focus:bg-white transition-colors"}
+              />
+              <span className="font-sans font-medium text-gray-400 px-2">to</span>
+              <input
+                type="number" value={maxWavelength}
+                onChange={(e) => onMaxWavelengthChange(parseFloat(e.target.value))}
+                className={NUM_INPUT_CLS + " border border-solid border-gray-200 rounded-sm bg-gray-50 hover:bg-white focus:bg-white transition-colors"}
+              />
             </div>
           </div>
           <ProportionSlider proportion={proportion} onChange={onProportionChange} />
         </div>
 
-        {/* Analytics & Export */}
+        {/* Elemental Focus & Status */}
         <div className="flex-[1_1_200px] p-5 px-6 flex flex-col justify-center gap-4 min-w-0 bg-white">
           <div>
-             <FieldLabel text="Elemental Focus Tool" />
-             <StyledSelect value={element} options={ELEMENTS} onChange={onElementChange} placeholder="None active" />
+            <FieldLabel text="Elemental Focus Tool" />
+            <StyledSelect value={element} options={ELEMENTS} onChange={onElementChange} placeholder="None active" />
           </div>
           <div className="pt-2 border-t border-solid border-gray-200">
-             <div className="flex flex-col gap-1 opacity-80">
-                <span className="font-sans text-[12px] text-gray-500 font-medium inline-block">Analysis Status:</span>
-                <span className="font-sans text-[13px] text-blue-600 font-semibold inline-block">Monitoring...</span>
-             </div>
+            <div className="flex flex-col gap-1">
+              <span className="font-sans text-[11px] text-gray-400 font-medium">Parallel Loading</span>
+              <span className="font-sans text-[12px] font-semibold text-emerald-600">
+                {loadedCount > 0 ? `All ${loadedCount} IDs active` : 'Awaiting observation'}
+              </span>
+            </div>
           </div>
         </div>
 

@@ -12,7 +12,7 @@ from app.schemas.spectral import (
     NistLine,
     ObservationInfo
 )
-from app.core.downsampling import adaptive_minmax_downsample, DownsampleConfig
+from app.core.downsampling import lttb_downsample
 from app.database.connection import db
 from app.cache.redis_cache import cache, cached
 from app.config import settings
@@ -26,7 +26,16 @@ router = APIRouter()
 async def health_check():
     """
     Health check endpoint.
-    Returns service status and component availability.
+
+    Returns the operational status of all backend components:
+    - **Database:** PostgreSQL connectivity (verified via ``SELECT 1``).
+    - **Redis:** Cache layer connectivity (verified via ``PING``).
+    - **Status:** ``healthy`` if the database is reachable, ``degraded`` otherwise.
+
+    Returns
+    -------
+    HealthResponse
+        JSON with status, version, database, redis, and timestamp fields.
     """
     from datetime import datetime
     
@@ -63,7 +72,15 @@ async def health_check():
 async def list_observations():
     """
     List available observation sessions from the database.
-    Used to populate mission/date selectors on the frontend.
+
+    Queries the ``observation_file_info`` table and returns observation
+    metadata ordered by creation date (most recent first). Used by the
+    frontend to populate the mission/date selector dropdowns.
+
+    Returns
+    -------
+    List[ObservationInfo]
+        Up to 100 observation records with ID, target name, date, and count.
     """
     query = """
         SELECT 
@@ -163,7 +180,40 @@ async def get_spectrum(
     force_raw: bool = Query(False, description="Bypass server downsampling and return raw data")
 ):
     """
-    Retrieve spectral data with adaptive min-max downsampling.
+    Retrieve spectral data with LTTB downsampling.
+
+    Fetches raw wavelength-intensity pairs from ``spectral_data_clean``,
+    applies the LTTB (Largest Triangle Three Buckets) downsampling
+    algorithm based on zoom level, and returns the result with metadata.
+    Supports Redis caching and a ``force_raw`` bypass.
+
+    Query Flow
+    ----------
+    1. Generate cache key from (measurement_id, λ_min, λ_max, zoom).
+    2. Check Redis cache (if enabled).
+    3. Query PostgreSQL for raw spectral data.
+    4. Apply ``lttb_downsample()`` (or return raw if ``force_raw=True``).
+    5. Cache the result and return.
+
+    Parameters
+    ----------
+    measurement_id : str
+        Unique measurement identifier from the measurement_clean table.
+    lambda_min : float
+        Minimum wavelength boundary in nm.
+    lambda_max : float
+        Maximum wavelength boundary in nm.
+    zoom_level : int
+        Discrete zoom level (0 = most zoomed out, higher = more buckets).
+    use_cache : bool
+        Whether to check and store results in Redis.
+    force_raw : bool
+        If True, bypass server-side downsampling and return all raw points.
+
+    Returns
+    -------
+    SpectralResponse
+        JSON containing mode, data array, metadata, and timing info.
     """
     start_time = time.time()
     
@@ -187,13 +237,17 @@ async def get_spectrum(
     # Query database
     query = """
         SELECT 
-            wavelength_nm, 
-            intensity
-        FROM spectral_data_clean
+            c.wavelength_nm, 
+            c.intensity,
+            cal.response_count AS raw_plasma
+        FROM spectral_data_clean c
+        JOIN spectral_data_calibrated cal 
+          ON c.measurement_id = cal.measurement_id 
+          AND c.wavelength_nm = cal.wavelength_nm
         WHERE 
-            measurement_id = $1
-            AND wavelength_nm BETWEEN $2 AND $3
-        ORDER BY wavelength_nm
+            c.measurement_id = $1
+            AND c.wavelength_nm BETWEEN $2 AND $3
+        ORDER BY c.wavelength_nm
     """
     
     try:
@@ -226,7 +280,7 @@ async def get_spectrum(
         
         # Convert to NumPy array
         data = np.array([
-            [float(row['wavelength_nm']), float(row['intensity'])]
+            [float(row['wavelength_nm']), float(row['intensity']), float(row['raw_plasma'])]
             for row in rows
         ])
         
@@ -237,8 +291,12 @@ async def get_spectrum(
         
         if force_raw:
             formatted_data = [
-                {"wavelength_nm": float(pt[0]), "intensity": float(pt[1])}
-                for pt in data
+                {
+                    "wavelength_nm": float(row['wavelength_nm']), 
+                    "intensity": float(row['intensity']),
+                    "raw_plasma": float(row['raw_plasma'])
+                }
+                for row in rows
             ]
             result = {
                 "mode": "raw",
@@ -261,31 +319,16 @@ async def get_spectrum(
                 await cache.set(cache_key, result, ttl=settings.CACHE_TTL)
             return result
         
-        # Apply downsampling
-        downsample_config = DownsampleConfig(
-            BASE_BUCKETS=settings.BASE_BUCKETS,
-            B_MIN=settings.MIN_BUCKET_SIZE
-        )
-        
-        downsample_result = adaptive_minmax_downsample(
+        # Apply downsampling (index-based for LIBS data)
+        downsample_result = lttb_downsample(
             data=data,
             zoom_level=zoom_level,
             lambda_min=lambda_min,
-            lambda_max=lambda_max,
-            config=downsample_config
+            lambda_max=lambda_max
         )
         
-        # Format data for Pydantic validation
-        raw_data = downsample_result['data']
-        if downsample_result['mode'] == 'raw':
-            # Convert [[wavelength, intensity], ...] → [{"wavelength_nm": ..., "intensity": ...}, ...]
-            formatted_data = [
-                {"wavelength_nm": float(pt[0]), "intensity": float(pt[1])}
-                for pt in raw_data
-            ]
-        else:
-            # Downsampled buckets are already dicts
-            formatted_data = raw_data
+        # LTTB returns flat dicts for both raw and downsampled modes
+        formatted_data = downsample_result['data']
 
         # Build response
         result = {
