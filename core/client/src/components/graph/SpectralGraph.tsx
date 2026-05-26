@@ -435,13 +435,6 @@ export default function SpectralGraph({
                             opacity={lineOpacity}
                           />
 
-                          {/* Diamond marker at mid-height */}
-                          <polygon
-                            points={`${x},${chartHeight * 0.4 - 4} ${x + 4},${chartHeight * 0.4} ${x},${chartHeight * 0.4 + 4} ${x - 4},${chartHeight * 0.4}`}
-                            fill={color}
-                            opacity={isHovered ? 1 : 0.7}
-                          />
-
                           {/* Label pill */}
                           <rect
                             x={x + 5} y={labelY - 8}

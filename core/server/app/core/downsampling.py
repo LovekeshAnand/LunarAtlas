@@ -129,7 +129,9 @@ def lttb_downsample(
     data: np.ndarray,
     zoom_level: int,
     lambda_min: float,
-    lambda_max: float
+    lambda_max: float,
+    target_wavelengths: List[float] = None,
+    proportion: float = None
 ) -> Dict:
     """
     LTTB Multi-Zoom Formulation for Chandrayaan-3 LIBS (Fixed 2094 domain).
@@ -151,9 +153,14 @@ def lttb_downsample(
 
     n_raw = len(data)
     
-    # N(k) mathematical formulation (2094 is the CH-3 LIBS structural constant)
-    target_k_size = int(2094 * (2 ** -zoom_level))
-    threshold = min(2094, target_k_size)
+    # Calculate threshold based on proportion if provided, otherwise zoom_level
+    if proportion is not None:
+        target_k_size = int(2094 * proportion)
+        threshold = min(2094, target_k_size)
+    else:
+        # N(k) mathematical formulation (2094 is the CH-3 LIBS structural constant)
+        target_k_size = int(2094 * (2 ** -zoom_level))
+        threshold = min(2094, target_k_size)
     
     # Render raw if required (z=0 or sparse data)
     if threshold >= n_raw or threshold < 3:
@@ -229,15 +236,19 @@ def lttb_downsample(
     # Always keep last point
     sampled_indices.append(n_raw - 1)
 
-    # === SECTION 8: TRUE PEAK GUARANTEE ===
-    # P_final = LTTB(data) U Peaks(data)
-    # Peak definition: I_i > I_i-1 AND I_i > I_i+1
-    
-    peak_mask = (intensities[1:-1] > intensities[:-2]) & (intensities[1:-1] > intensities[2:])
-    peak_indices = np.where(peak_mask)[0] + 1
-    
-    unique_indices = list(set(sampled_indices).union(set(peak_indices)))
-    unique_indices.sort()
+    # === SECTION 8: TARGETED PEAK PRESERVATION ===
+    # P_final = LTTB(data) U Peaks_target(data)
+    final_indices = list(sampled_indices)
+    if target_wavelengths:
+        for wl in target_wavelengths:
+            idx = int(np.searchsorted(wavelengths, wl))
+            if idx >= len(wavelengths):
+                idx = len(wavelengths) - 1
+            elif idx > 0 and abs(wavelengths[idx - 1] - wl) < abs(wavelengths[idx] - wl):
+                idx -= 1
+            final_indices.append(idx)
+            
+    unique_indices = sorted(list(set(final_indices)))
     
     lttb_data = []
     for idx in unique_indices:
@@ -253,7 +264,7 @@ def lttb_downsample(
         "mode": "downsampled",
         "z_max": 5,
         "zoom_level": zoom_level,
-        "b_final": b_final if 'b_final' in locals() else 0.0,
+        "b_final": 0.0,
         "n_buckets": len(lttb_data),
         "original_points": n_raw,
         "reduction_factor": reduction_factor,

@@ -39,6 +39,7 @@ import type { SpectralDataPoint } from '../services/apiService';
 export interface DownsampleConfig {
   data: SpectralDataPoint[];
   ratio: number;
+  targetWavelengths?: number[];
 }
 
 /**
@@ -69,25 +70,39 @@ export interface DownsampleResult {
 /*  LTTB Algorithm — HFT-optimised                                     */
 /* ------------------------------------------------------------------ */
 
+function findNearestIndex(data: SpectralDataPoint[], targetWavelength: number): number {
+  let low = 0;
+  let high = data.length - 1;
+  while (low < high) {
+    const mid = Math.floor((low + high) / 2);
+    if (data[mid].wavelength < targetWavelength) {
+      low = mid + 1;
+    } else {
+      high = mid;
+    }
+  }
+  if (low > 0 && Math.abs(data[low - 1].wavelength - targetWavelength) < Math.abs(data[low].wavelength - targetWavelength)) {
+    return low - 1;
+  }
+  return low;
+}
+
 /**
  * Largest Triangle Three Buckets (LTTB) downsampling algorithm.
  *
  * Selects the most visually significant point per bucket by maximising
  * triangle area with neighbours.
  *
- * **Optimisation notes:**
- * - Triangle area formula is inlined to eliminate function call overhead
- *   in the O(N) hot loop.
- * - The absolute value of the cross product is used (equivalent to 2×area
- *   but monotonic, so skipping the /2 is correct for argmax).
- * - Global max enforcement at the end guarantees peak retention even
- *   under extreme downsampling of anomalous LIBS data.
- *
- * @param data      - Input array of spectral data points.
- * @param threshold - Target number of output points.
+ * @param data              - Input array of spectral data points.
+ * @param threshold         - Target number of output points.
+ * @param targetWavelengths - Wavelengths of elemental lines to preserve.
  * @returns The downsampled array preserving visual fidelity.
  */
-export function lttb(data: SpectralDataPoint[], threshold: number): SpectralDataPoint[] {
+export function lttb(
+  data: SpectralDataPoint[],
+  threshold: number,
+  targetWavelengths?: number[]
+): SpectralDataPoint[] {
   const dataLength = data.length;
 
   // Short-circuit: no downsampling needed
@@ -157,18 +172,18 @@ export function lttb(data: SpectralDataPoint[], threshold: number): SpectralData
   // Always keep the last point
   sampledIndices.push(dataLength - 1);
 
-  // === SECTION 8: TRUE PEAK GUARANTEE ===
-  // P_final = LTTB(data) U Peaks(data)
-  // Peak definition: I_i > I_{i-1} AND I_i > I_{i+1}
-  const peakIndices: number[] = [];
-  for (let i = 1; i < dataLength - 1; i++) {
-    if (data[i].intensity > data[i - 1].intensity && data[i].intensity > data[i + 1].intensity) {
-      peakIndices.push(i);
+  // === SECTION 8: TARGETED PEAK PRESERVATION ===
+  // P_final = LTTB(data) U Peaks_target(data)
+  const finalIndices = [...sampledIndices];
+  if (targetWavelengths && targetWavelengths.length > 0) {
+    for (const wavelength of targetWavelengths) {
+      const idx = findNearestIndex(data, wavelength);
+      finalIndices.push(idx);
     }
   }
 
   // Union and sort indices
-  const uniqueIndices = Array.from(new Set([...sampledIndices, ...peakIndices])).sort((a, b) => a - b);
+  const uniqueIndices = Array.from(new Set(finalIndices)).sort((a, b) => a - b);
   
   return uniqueIndices.map(idx => data[idx]);
 }
@@ -186,7 +201,7 @@ export function lttb(data: SpectralDataPoint[], threshold: number): SpectralData
 if (typeof self !== 'undefined') {
 self.onmessage = (e: MessageEvent<DownsampleConfig>) => {
   const tStart = performance.now();
-  const { data, ratio } = e.data;
+  const { data, ratio, targetWavelengths } = e.data;
 
   // Mathematical formulation of threshold for LIBS C3:
   // Base rendering targets N_base = 2094, adjusted by UI proportion.
@@ -210,7 +225,7 @@ self.onmessage = (e: MessageEvent<DownsampleConfig>) => {
   }
 
   try {
-    resultData = lttb(data, threshold);
+    resultData = lttb(data, threshold, targetWavelengths);
   } catch (err) {
     if (err instanceof Error) errorMsg = err.message;
     else errorMsg = 'Unknown Worker Error';

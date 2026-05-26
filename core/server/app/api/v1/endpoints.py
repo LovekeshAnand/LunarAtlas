@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException, Query
-from typing import List
+from typing import List, Optional
 import numpy as np
 import time
 import logging
+import json
 
 from app.schemas.spectral import (
     SpectralQueryParams,
@@ -73,9 +74,9 @@ async def list_observations():
     """
     List available observation sessions from the database.
 
-    Queries the ``observation_file_info`` table and returns observation
-    metadata ordered by creation date (most recent first). Used by the
-    frontend to populate the mission/date selector dropdowns.
+    Queries the ``observation_file_info`` table joined with ``observation``
+    and returns observation metadata ordered by data capture date (most recent first).
+    Used by the frontend to populate the mission/date selector dropdowns.
 
     Returns
     -------
@@ -84,13 +85,15 @@ async def list_observations():
     """
     query = """
         SELECT 
-            file_info_id as observation_id, 
-            xml_label_name as target_name, 
-            creation_datetime,
-            record_count
-        FROM observation_file_info
-        ORDER BY creation_datetime DESC
-        LIMIT 100
+            i.file_info_id as observation_id, 
+            i.xml_label_name as target_name, 
+            s.observation_date as creation_datetime,
+            i.record_count
+        FROM observation_file_info i
+        JOIN observation o ON i.observation_id = o.observation_id
+        JOIN observation_session s ON o.session_id = s.session_id
+        ORDER BY s.observation_date DESC, o.start_time DESC
+        LIMIT 500
     """
     try:
         rows = await db.fetch_all(query)
@@ -176,6 +179,8 @@ async def get_spectrum(
     lambda_min: float = Query(200.0, description="Minimum wavelength (nm)"),
     lambda_max: float = Query(800.0, description="Maximum wavelength (nm)"),
     zoom_level: int = Query(0, description="Discrete zoom level (0-5)"),
+    proportion: Optional[float] = Query(None, description="LTTB density ratio (0.0–1.0). Overrides zoom_level when set."),
+    target_wavelengths: Optional[str] = Query(None, description="Comma-separated target wavelengths (nm) for Targeted Peak Preservation."),
     use_cache: bool = Query(True, description="Enable Redis caching"),
     force_raw: bool = Query(False, description="Bypass server downsampling and return raw data")
 ):
@@ -217,13 +222,23 @@ async def get_spectrum(
     """
     start_time = time.time()
     
+    # Parse target_wavelengths from comma-separated string
+    parsed_target_wavelengths: List[float] = []
+    if target_wavelengths:
+        try:
+            parsed_target_wavelengths = [float(w.strip()) for w in target_wavelengths.split(',') if w.strip()]
+        except ValueError:
+            logger.warning(f"Invalid target_wavelengths format: {target_wavelengths}")
+
     # Generate cache key
     cache_key = cache.generate_key(
         "spectrum",
         measurement_id,
         lambda_min,
         lambda_max,
-        zoom_level
+        zoom_level,
+        proportion,
+        target_wavelengths or ""
     )
     
     # Try cache first
@@ -324,7 +339,9 @@ async def get_spectrum(
             data=data,
             zoom_level=zoom_level,
             lambda_min=lambda_min,
-            lambda_max=lambda_max
+            lambda_max=lambda_max,
+            target_wavelengths=parsed_target_wavelengths if parsed_target_wavelengths else None,
+            proportion=proportion
         )
         
         # LTTB returns flat dicts for both raw and downsampled modes

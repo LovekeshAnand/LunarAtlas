@@ -19,6 +19,7 @@ interface MiniSpectralCardProps {
   proportion: number;
   isFocused: boolean;
   onFocus: (id: string | null) => void;
+  targetWavelengths?: number[];
 }
 
 const MINI_W = 600;
@@ -31,11 +32,12 @@ export default function MiniSpectralCard({
   proportion,
   isFocused,
   onFocus,
+  targetWavelengths,
 }: MiniSpectralCardProps) {
   const { id, label, color, data, meta } = dataset;
 
   // Independent LTTB + peak guarantee for this card
-  const { data: lttbData, metrics } = useDownsampling(data, proportion);
+  const { data: lttbData, metrics } = useDownsampling(data, proportion, targetWavelengths);
 
   const minX = Math.min(lambdaMin, lambdaMax);
   const maxX = Math.max(lambdaMin, lambdaMax);

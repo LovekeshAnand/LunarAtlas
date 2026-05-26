@@ -63,7 +63,8 @@ export interface DownsamplingState {
  */
 export function useDownsampling(
   rawData: SpectralDataPoint[],
-  ratio: number
+  ratio: number,
+  targetWavelengths?: number[]
 ): DownsamplingState {
   const [state, setState] = useState<DownsamplingState>({
     data: [],
@@ -100,6 +101,8 @@ export function useDownsampling(
     };
   }, []);
 
+  const targetWavelengthsStr = JSON.stringify(targetWavelengths);
+
   /* ── Post data to worker whenever inputs change ── */
   useEffect(() => {
     if (rawData.length === 0) {
@@ -109,10 +112,10 @@ export function useDownsampling(
 
     setState(prev => ({ ...prev, originalData: rawData, isProcessing: true, error: null }));
     
-    const config: DownsampleConfig = { data: rawData, ratio };
+    const config: DownsampleConfig = { data: rawData, ratio, targetWavelengths };
     workerRef.current?.postMessage(config);
 
-  }, [rawData, ratio]);
+  }, [rawData, ratio, targetWavelengthsStr]);
 
   return state;
 }

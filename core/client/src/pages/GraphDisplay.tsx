@@ -24,6 +24,7 @@ import MiniSpectralCard from '../components/graph/MiniSpectralCard';
 import RangeSelectorPanel from '../components/rangeSelector/rangeSelector';
 import ScientificBoard from '../components/education/ScientificBoard';
 import BenchmarkTable from '../components/benchmarks/BenchmarkTable';
+import NistValidationPanel from '../components/benchmarks/NistValidationPanel';
 import {
   apiService,
   type SpectralDataPoint,
@@ -37,6 +38,18 @@ import {
 
 const DEFAULT_LAMBDA_MIN = 164.35;
 const DEFAULT_LAMBDA_MAX = 878.26;
+
+const ELEMENT_PEAKS: Record<string, number[]> = {
+  Mg: [279.553, 280.271, 285.213],
+  Si: [288.158, 390.553, 413.089],
+  Ti: [334.941, 336.121, 337.280, 368.520],
+  Ca: [393.366, 396.847, 422.673, 849.802, 854.209, 866.214],
+  Al: [394.401, 396.152, 308.215, 309.271],
+  Fe: [404.581, 438.355, 373.486, 385.991],
+  O: [777.194, 777.417, 777.539, 844.636],
+  Na: [588.995, 589.592],
+  'H₂O': [656.281, 486.133],
+};
 
 /* ------------------------------------------------------------------ */
 /*  GraphDisplay                                                        */
@@ -52,6 +65,10 @@ export default function GraphDisplay() {
   const [measurementData, setMeasurementData] = useState<Map<string, SpectralDataPoint[]>>(new Map());
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  /* ── Active subset selector to prevent client and database overload ── */
+  const [activeMeasurementIds, setActiveMeasurementIds] = useState<Set<string>>(new Set());
+  const [lttbEnabled, setLttbEnabled] = useState(true);
 
   /* ── Viewport ── */
   const [lambdaMin, setLambdaMin] = useState(DEFAULT_LAMBDA_MIN);
@@ -109,6 +126,11 @@ export default function GraphDisplay() {
       .then((list) => {
         if (!isMounted) return;
         setMeasurements(list);
+        if (list.length > 0) {
+          setActiveMeasurementIds(new Set([list[0].measurement_id]));
+        } else {
+          setActiveMeasurementIds(new Set());
+        }
       })
       .catch((err) => console.error('[API] Measurements fetch failed:', err));
 
@@ -116,20 +138,22 @@ export default function GraphDisplay() {
   }, [selectedObservationId]);
 
   /* ================================================================ */
-  /*  EFFECT: Parallel-fetch ALL measurement spectra                  */
-  /*  Triggered when measurement list is ready OR wavelength changes  */
+  /*  EFFECT: Parallel-fetch active measurement spectra only          */
   /* ================================================================ */
 
   useEffect(() => {
-    if (measurements.length === 0) return;
+    if (measurements.length === 0 || activeMeasurementIds.size === 0) {
+      setMeasurementData(new Map());
+      return;
+    }
     let isMounted = true;
 
-    const ids = measurements.map((m) => m.measurement_id);
+    const ids = Array.from(activeMeasurementIds);
     setIsLoading(true);
     setError(null);
 
-    // lambdaMin/lambdaMax come directly from state — no hardcoding
-    apiService.fetchMultipleSpectra(ids, lambdaMin, lambdaMax)
+    // Fetch raw spectral data for active measurements in the full wavelength range
+    apiService.fetchMultipleSpectra(ids, DEFAULT_LAMBDA_MIN, DEFAULT_LAMBDA_MAX)
       .then((dataMap) => {
         if (!isMounted) return;
         setMeasurementData(dataMap);
@@ -143,17 +167,40 @@ export default function GraphDisplay() {
       });
 
     return () => { isMounted = false; };
-  }, [measurements, lambdaMin, lambdaMax]);
+  }, [measurements, activeMeasurementIds]);
 
   /* ================================================================ */
-  /*  EFFECT: Fetch NIST lines when element or range changes          */
+  /*  EFFECT: Fetch NIST lines for the full range on element change   */
   /* ================================================================ */
 
   useEffect(() => {
-    apiService.fetchNistLines(element || undefined, lambdaMin, lambdaMax)
+    apiService.fetchNistLines(element || undefined, DEFAULT_LAMBDA_MIN, DEFAULT_LAMBDA_MAX)
       .then((lines) => setNistLines(lines))
       .catch((err) => console.error('[API] NIST fetch failed:', err));
-  }, [element, lambdaMin, lambdaMax]);
+  }, [element]);
+
+  // Client-side viewport filter for NIST lines
+  const visibleNistLines = useMemo(() => {
+    return nistLines.filter(
+      (line) => line.wavelength_nm >= lambdaMin && line.wavelength_nm <= lambdaMax
+    );
+  }, [nistLines, lambdaMin, lambdaMax]);
+
+  /* ================================================================ */
+  /*  Derived Peak Preservation Wavelengths                           */
+  /* ================================================================ */
+
+  const ALL_TARGET_WAVELENGTHS = useMemo(() => {
+    return Object.values(ELEMENT_PEAKS).flat();
+  }, []);
+
+  const targetWavelengths = useMemo(() => {
+    if (!lttbEnabled) return [];
+    if (!element || element === 'All') return ALL_TARGET_WAVELENGTHS;
+    return ELEMENT_PEAKS[element] || [];
+  }, [element, lttbEnabled, ALL_TARGET_WAVELENGTHS]);
+
+  const currentProportion = lttbEnabled ? proportion : 1.0;
 
   /* ================================================================ */
   /*  Derived: build SpectralDataset[] for both components           */
@@ -244,7 +291,10 @@ export default function GraphDisplay() {
           selectedObservationId={selectedObservationId}
           onObservationChange={setSelectedObservationId}
           measurements={measurements}
-          loadedCount={loadedCount}
+          lttbEnabled={lttbEnabled}
+          onLttbEnabledChange={setLttbEnabled}
+          activeMeasurementIds={activeMeasurementIds}
+          onActiveMeasurementIdsChange={setActiveMeasurementIds}
         />
 
         {/* ── Dev Console ── */}
@@ -257,7 +307,7 @@ export default function GraphDisplay() {
               <div><span className="text-gray-400 block text-[10px] uppercase tracking-wide">Observation</span>{selectedObservationId ? selectedObservationId.slice(0, 16) + '…' : '—'}</div>
               <div><span className="text-gray-400 block text-[10px] uppercase tracking-wide">Measurements</span>{measurements.length}</div>
               <div><span className="text-gray-400 block text-[10px] uppercase tracking-wide">Total Points</span>{totalPoints.toLocaleString()}</div>
-              <div><span className="text-gray-400 block text-[10px] uppercase tracking-wide">NIST Entries</span>{nistLines.length}</div>
+              <div><span className="text-gray-400 block text-[10px] uppercase tracking-wide">NIST Entries</span>{visibleNistLines.length}</div>
             </div>
           </div>
         )}
@@ -279,7 +329,7 @@ export default function GraphDisplay() {
                 Overlapping Spectral Analysis
               </h2>
               <p className="text-[11px] font-sans text-gray-400 mt-0.5">
-                All Measurement IDs rendered simultaneously · z-index layered · hover to isolate
+                All Selected Measurement IDs rendered simultaneously · z-index layered · hover to isolate
               </p>
             </div>
             {focusedId && (
@@ -298,10 +348,12 @@ export default function GraphDisplay() {
             isLoading={isLoading}
             lambdaMin={lambdaMin}
             lambdaMax={lambdaMax}
-            proportion={proportion}
+            proportion={currentProportion}
             onRangeChange={(min, max) => { setLambdaMin(min); setLambdaMax(max); }}
             focusedId={focusedId}
             onFocusChange={setFocusedId}
+            targetWavelengths={targetWavelengths}
+            selectedElement={element}
           />
         </div>
 
@@ -320,7 +372,7 @@ export default function GraphDisplay() {
                 </p>
               </div>
               <span className="text-[11px] font-sans text-gray-400 bg-white px-3 py-1 rounded-full border border-solid border-gray-200">
-                {datasets.length} measurement{datasets.length !== 1 ? 's' : ''}
+                {datasets.length} active measurement{datasets.length !== 1 ? 's' : ''}
               </span>
             </div>
 
@@ -332,9 +384,10 @@ export default function GraphDisplay() {
                   dataset={ds}
                   lambdaMin={lambdaMin}
                   lambdaMax={lambdaMax}
-                  proportion={proportion}
+                  proportion={currentProportion}
                   isFocused={focusedId === ds.id}
                   onFocus={handleFocus}
+                  targetWavelengths={targetWavelengths}
                 />
               ))}
             </div>
@@ -344,6 +397,13 @@ export default function GraphDisplay() {
         {/* ══════════════════════════════════════════════════════════ */}
         {/* SECTION 3: Scientific Board + Benchmarks                  */}
         {/* ══════════════════════════════════════════════════════════ */}
+        <NistValidationPanel
+          lambdaMin={lambdaMin}
+          lambdaMax={lambdaMax}
+          measurementData={measurementData}
+          element={element}
+          activeMeasurementIds={activeMeasurementIds}
+        />
         <ScientificBoard />
         <BenchmarkTable />
 
@@ -368,14 +428,14 @@ export default function GraphDisplay() {
                 </tr>
               </thead>
               <tbody className="font-mono">
-                {nistLines.length === 0 ? (
+                {visibleNistLines.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="py-12 text-center text-gray-400 italic text-[12px] font-sans">
                       No NIST reference lines matching current criteria found in database.
                     </td>
                   </tr>
                 ) : (
-                  nistLines.map((line, idx) => {
+                  visibleNistLines.map((line, idx) => {
                     const isMatch = element === line.element;
                     return (
                       <tr

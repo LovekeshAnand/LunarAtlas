@@ -1,6 +1,4 @@
 
-import { BookOpen, Zap, Search } from 'lucide-react';
-
 export default function ScientificBoard() {
   return (
     <div className="mt-12 mb-8 relative p-8 bg-white border border-solid border-gray-200 shadow-sm rounded-md overflow-hidden min-h-[300px]">

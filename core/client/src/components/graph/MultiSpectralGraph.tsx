@@ -19,6 +19,7 @@ import { useState, useRef, useMemo, useEffect, useCallback } from 'react';
 import { type SpectralDataPoint } from '../../services/apiService';
 import { type MeasurementInfo } from '../../services/apiService';
 import { useDownsampling } from '../../hooks/useDownsampling';
+import { ELEMENT_PEAKS, type ElementalPeak } from '../../utils/spectralUtils';
 
 /* ------------------------------------------------------------------ */
 /*  Color palette — muted, astronomy-inspired, no excessive glow       */
@@ -61,6 +62,8 @@ interface MultiSpectralGraphProps {
   onRangeChange?: (min: number, max: number) => void;
   focusedId?: string | null;
   onFocusChange?: (id: string | null) => void;
+  targetWavelengths?: number[];
+  selectedElement?: string;
 }
 
 /* ------------------------------------------------------------------ */
@@ -71,12 +74,14 @@ export function buildDatasets(
   measurementData: Map<string, SpectralDataPoint[]>,
   measurements: MeasurementInfo[]
 ): SpectralDataset[] {
-  return Array.from(measurementData.entries()).map(([id, data], i) => {
+  return Array.from(measurementData.entries()).map(([id, data]) => {
     const meta = measurements.find((m) => m.measurement_id === id);
+    const idx = measurements.findIndex((m) => m.measurement_id === id);
+    const stableIdx = idx >= 0 ? idx : 0;
     return {
       id,
-      label: meta ? `Measurement #${meta.measurement_index}` : `ID ${i + 1}`,
-      color: MEASUREMENT_COLORS[i % MEASUREMENT_COLORS.length],
+      label: meta ? `Measurement #${meta.measurement_index}` : `ID`,
+      color: MEASUREMENT_COLORS[stableIdx % MEASUREMENT_COLORS.length],
       data,
       meta,
     };
@@ -98,6 +103,7 @@ interface DatasetLaneProps {
   chartHeight: number;
   isActive: boolean;
   isInactive: boolean;
+  targetWavelengths?: number[];
 }
 
 function DatasetLane({
@@ -111,9 +117,10 @@ function DatasetLane({
   chartHeight,
   isActive,
   isInactive,
+  targetWavelengths,
 }: DatasetLaneProps) {
   // LTTB + peak guarantee via Web Worker for THIS dataset independently
-  const { data: lttbData } = useDownsampling(dataset.data, proportion);
+  const { data: lttbData } = useDownsampling(dataset.data, proportion, targetWavelengths);
 
   const visible = useMemo(
     () => lttbData.filter((p) => p.wavelength >= minX && p.wavelength <= minX + domainX),
@@ -186,11 +193,14 @@ export default function MultiSpectralGraph({
   onRangeChange,
   focusedId,
   onFocusChange,
+  targetWavelengths,
+  selectedElement,
 }: MultiSpectralGraphProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
   const [hoveredPoint, setHoveredPoint] = useState<{ wavelength: number; intensity: number; id: string } | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [hoveredPeak, setHoveredPeak] = useState<ElementalPeak | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
@@ -281,7 +291,6 @@ export default function MultiSpectralGraph({
     const rect = containerRef.current.getBoundingClientRect();
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
-    const targetWl = minX + (mx / rect.width) * domainX;
 
     let bestDist = Infinity;
     let bestPoint: typeof hoveredPoint = null;
@@ -452,9 +461,88 @@ export default function MultiSpectralGraph({
                   chartHeight={CHART_H}
                   isActive={isActive}
                   isInactive={isInactive}
+                  targetWavelengths={targetWavelengths}
                 />
               );
             })}
+
+            {/* ── NIST elemental peak overlays ── */}
+            {(() => {
+              /** Per-element color palette for visual distinction */
+              const ELEMENT_COLORS: Record<string, string> = {
+                'Fe': '#ef4444', 'Mg': '#22c55e', 'Si': '#8b5cf6',
+                'Al': '#f97316', 'Ca': '#06b6d4', 'Ti': '#ec4899',
+                'Na': '#eab308', 'H₂O': '#14b8a6', 'O': '#6366f1',
+              };
+
+              const showAll = selectedElement === 'All';
+              let labelSlot = 0; // stagger labels vertically to prevent overlap
+
+              return Object.entries(ELEMENT_PEAKS).map(([el, peaks]) => {
+                const isActive = showAll || selectedElement === el;
+                if (!isActive && !showAll) {
+                  // Still render faintly for context when nothing selected
+                  return peaks.map((peak, idx) => {
+                    const x = ((peak.wavelength - minX) / domainX) * CHART_W;
+                    if (x < 0 || x > CHART_W) return null;
+                    return (
+                      <line
+                        key={`bg-${el}-${idx}`}
+                        x1={x} y1={0} x2={x} y2={CHART_H}
+                        stroke="#d1d5db" strokeWidth="0.5" strokeDasharray="6,6"
+                        opacity="0.3"
+                      />
+                    );
+                  });
+                }
+
+                const color = ELEMENT_COLORS[el] || '#6b7280';
+
+                return peaks.map((peak, idx) => {
+                  const x = ((peak.wavelength - minX) / domainX) * CHART_W;
+                  if (x < 0 || x > CHART_W) return null;
+
+                  const isHovered = hoveredPeak === peak;
+                  const currentSlot = labelSlot++;
+                  const labelY = 18 + (currentSlot % 10) * 22;
+                  const lineOpacity = isHovered ? 1.0 : 0.65;
+                  const labelText = `${el} ${peak.label}  ${peak.wavelength}`;
+
+                  return (
+                    <g
+                      key={`${el}-${peak.label}-${idx}`}
+                      className="cursor-pointer"
+                      onMouseEnter={() => setHoveredPeak(peak)}
+                      onMouseLeave={() => setHoveredPeak(null)}
+                    >
+                      {/* Solid vertical reference line */}
+                      <line
+                        x1={x} y1={0} x2={x} y2={CHART_H}
+                        stroke={color}
+                        strokeWidth={isHovered ? 2 : 1.2}
+                        opacity={lineOpacity}
+                      />
+
+                      {/* Label pill */}
+                      <rect
+                        x={x + 5} y={labelY - 8}
+                        width={labelText.length * 5.5 + 10} height={16}
+                        rx="3" fill={color}
+                        opacity={isHovered ? 0.95 : 0.75}
+                      />
+                      <text
+                        x={x + 10} y={labelY + 3}
+                        fill="white"
+                        fontSize="8" fontWeight="600"
+                        className="font-sans pointer-events-none select-none"
+                      >
+                        {labelText}
+                      </text>
+                    </g>
+                  );
+                });
+              });
+            })()}
 
             {/* Hover crosshair + dot (no glow filter) */}
             {hoveredPoint && (() => {
