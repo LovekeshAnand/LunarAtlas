@@ -1,0 +1,456 @@
+\documentclass[12pt,a4paper]{article}
+
+% ---------------------------
+% Packages
+% ---------------------------
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{siunitx}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{authblk}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% ---------------------------
+% Listings setup (for code)
+% ---------------------------
+\lstdefinestyle{code}{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{orange},
+  showstringspaces=false,
+  breaklines=true,
+  frame=single
+}
+
+\lstset{style=code}
+
+% ---------------------------
+% Title / Authors
+% ---------------------------
+\title{LunarAtlas: A Reproducible Spectral Data Infrastructure for Chandrayaan-3 LIBS with Peak-Preserving Visualization}
+
+\author[1]{Lovekesh Anand}
+\author[1]{Dua Saeed}
+
+\affil[1]{Independent Researchers}
+
+\date{April 2026}
+
+% ---------------------------
+% Document
+% ---------------------------
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We present LunarAtlas, a backend-centric scientific data infrastructure that transforms publicly available Chandrayaan-3 Laser-Induced Breakdown Spectroscopy (LIBS) Level-1 data into a reproducible, versioned, and machine-accessible spectral database optimized for interactive visualization and scientific analysis. Unlike conventional planetary mission archives that expose static files or generic REST endpoints, LunarAtlas implements all scientifically critical operations---including wavelength calibration, spectral cleaning, peak detection, and validation against curated subsets of the NIST Atomic Spectra Database---within a PostgreSQL-backed server architecture, ensuring reproducibility and auditability. 
+
+We introduce an adaptive min--max downsampling algorithm specifically designed for spectroscopic data that guarantees preservation of emission line peaks while reducing data volume by up to two orders of magnitude for efficient web-based visualization. The algorithm combines zoom-aware bucket sizing, overlapping bucket boundaries to prevent peak splitting, and NIST-referenced peak insertion to maintain scientific fidelity across all zoom levels. 
+
+Analysis of Chandrayaan-3 LIBS spectra demonstrates successful identification of major lunar elements (Mg, Ca, Al, Fe, Si, O) with wavelength accuracies within the instrumental resolution and sub-\SI{500}{ms} API response times for typical \(\sim 1.6\times10^{4}\)-point observations. This work establishes a methodological framework for planetary spectroscopy data systems that prioritizes scientific integrity, reproducibility, and accessibility, with direct applications to Mars LIBS missions (ChemCam, SuperCam, MarSCoDe) and future lunar exploration programs.
+\end{abstract}
+
+\noindent\textbf{Keywords:} Laser-Induced Breakdown Spectroscopy; Chandrayaan-3; Planetary Data Systems; PDS4; Spectral Visualization; Data Infrastructure; Peak Detection; NIST Validation; Lunar Composition.
+
+% ------------------------------------------------
+\section{Introduction}
+% ------------------------------------------------
+
+\subsection{Background and Motivation}
+
+Laser-Induced Breakdown Spectroscopy (LIBS) has emerged as a transformative technology for \emph{in situ} planetary exploration, enabling rapid, remote elemental analysis without sample preparation. The technique operates by focusing a pulsed laser onto a target surface, creating a transient plasma plume whose characteristic emission spectrum encodes the elemental composition of the ablated material (e.g., Cremers and Radziemski, 2013; Wiens et al., 2012). Since its first planetary deployment on NASA's Mars Science Laboratory rover \emph{Curiosity} in 2012, LIBS has revolutionized our understanding of Martian geochemistry through the ChemCam instrument, which has acquired hundreds of thousands of spectra from thousands of unique targets in Gale Crater.
+
+The success of ChemCam has been followed by SuperCam on the Mars 2020 \emph{Perseverance} rover, which integrates LIBS with Raman spectroscopy, time-resolved fluorescence, and visible/infrared reflectance imaging to provide comprehensive mineralogical and chemical characterization. China's Tianwen-1 mission has deployed the Mars Surface Composition Detector (MarSCoDe) LIBS instrument on the Zhurong rover, further demonstrating the global adoption of LIBS for planetary science.
+
+The extension of LIBS to lunar exploration represents a significant milestone in planetary spectroscopy. India's Chandrayaan-3 mission, which successfully landed near the lunar south pole in August 2023, carried a LIBS instrument aboard the Pragyan rover, marking the first deployment of this technology on the Moon. Operating in the near-vacuum lunar environment presents unique challenges compared to Martian LIBS due to different plasma expansion dynamics, lack of atmospheric confinement, and extreme temperature variations.
+
+\subsection{The Challenge of Planetary Spectroscopy Data Accessibility}
+
+While the scientific value of planetary LIBS data is well established, significant barriers exist between raw mission data and actionable scientific insights. Planetary Data System version~4 (PDS4) archives provide robust standards for long-term data preservation through self-describing XML labels paired with tabular or binary data products. However, PDS4 archives are optimized for archival completeness rather than interactive analysis:
+
+\begin{enumerate}[label=(\roman*),nosep]
+  \item \textbf{Semantic gap:} Users must manually interpret XML schemas, decode instrument-specific metadata, and reconcile calibration context before performing spectral analysis.
+  \item \textbf{Computational bottlenecks:} High-resolution LIBS spectra typically contain \(\sim 8{,}000\)--\(20{,}000\) wavelength--intensity pairs per observation. Direct rendering can saturate browser memory and produce sluggish zoom/pan interactions.
+  \item \textbf{Lack of reproducible pipelines:} Published analyses often rely on ad hoc scripts that are not version-controlled or archived with DOIs, hampering reproducibility.
+  \item \textbf{Scientific integrity risks:} Generic downsampling algorithms for time-series visualization (mean/median aggregation, Largest Triangle Three Buckets) prioritize visual shape over peak preservation, risking loss of narrow emission lines critical for elemental identification.
+\end{enumerate}
+
+These challenges are particularly acute for Chandrayaan-3 LIBS data which, while publicly released through ISRO's PDS4-compliant archives, do not yet have mission-provided, peak-aware interactive analysis tools comparable to those developed for Mars missions.
+
+\subsection{Research Objectives and Contributions}
+
+The central research question addressed by LunarAtlas is:
+
+\medskip
+\noindent\emph{How can publicly available lunar LIBS data be transformed into a reproducible, versioned, and machine-accessible system without compromising scientific validity or peak fidelity?}
+\medskip
+
+This paper makes the following contributions:
+
+\begin{enumerate}[label=(C\arabic*),leftmargin=2em]
+  \item \textbf{PDS4-aware data pipeline:} A systematic ingestion framework that parses Chandrayaan-3 LIBS XML labels and CSV products, extracting wavelength--intensity spectra, measurement metadata, and observation context into a normalized PostgreSQL schema preserving scientific hierarchy (mission \(\rightarrow\) instrument \(\rightarrow\) observation \(\rightarrow\) measurement \(\rightarrow\) spectral data).
+  \item \textbf{Physically motivated cleaning:} A background subtraction and noise rejection methodology tailored to lunar LIBS, separating true plasma emission from background continuum while preserving spectral line positions and relative intensities.
+  \item \textbf{Adaptive min--max downsampling:} A mathematically formalized, zoom-aware downsampling method that (i) computes bucket sizes as functions of wavelength range and zoom level, (ii) uses overlapping bucket boundaries to prevent peak splitting, (iii) preserves minimum and maximum intensities per bucket to retain baseline and peak information, and (iv) inserts NIST-matched peaks explicitly to guarantee presence of reference lines.
+  \item \textbf{NIST-based validation:} Automated cross-validation of detected spectral peaks against curated subsets of the NIST Atomic Spectra Database, with confidence scoring based on wavelength agreement, peak prominence, and line strength.
+  \item \textbf{Backend-centric architecture:} A three-tier system (PostgreSQL + Python API + React frontend) where all scientifically meaningful logic resides in auditable, versioned backend modules, treating the visualization layer as a thin client.
+  \item \textbf{Empirical validation:} Demonstration that the system can identify major lunar elements with wavelength accuracies within instrumental resolution, achieve \(\sim 100\%\) retention of reference lines across zoom levels, and maintain sub-\SI{500}{ms} API response times for typical queries.
+\end{enumerate}
+
+\subsection{Paper Organization}
+
+The remainder of this paper is organized as follows. Section~\ref{sec:related} reviews related work in planetary LIBS instruments, data systems, and downsampling algorithms. Section~\ref{sec:data} describes the Chandrayaan-3 LIBS dataset and PDS4 context. Section~\ref{sec:architecture} presents the LunarAtlas system architecture and schema design. Section~\ref{sec:processing} details the data processing and cleaning pipeline. Section~\ref{sec:math} provides the mathematical formulation of adaptive min--max downsampling. Section~\ref{sec:api} describes the API design and visualization workflow. Section~\ref{sec:results} presents experimental validation. Section~\ref{sec:discussion} discusses implications, limitations, and future directions. Section~\ref{sec:conclusion} concludes.
+
+% ------------------------------------------------
+\section{Related Work}
+\label{sec:related}
+% ------------------------------------------------
+
+\subsection{Planetary LIBS Instruments and Mission Heritage}
+
+\subsubsection{ChemCam on Mars Science Laboratory}
+
+The ChemCam instrument on NASA's \emph{Curiosity} rover represents the first successful deployment of LIBS for planetary exploration (Wiens et al., 2012; Maurice et al., 2012). Operational since August 2012 in Gale Crater, ChemCam combines a pulsed Nd:KGW laser with three spectrometers covering approximately 240--850~nm at sub-nanometer resolution. Its telescopic mast unit enables target analysis at distances up to \(\sim 7\)~m, with typical measurement sequences of tens of laser shots per point.
+
+ChemCam has characterized vertical chemostratigraphy in Gale Crater, detected volatile and trace elements (e.g., B, F), identified distinct igneous rock populations, and quantified hydrogen content as a proxy for hydration state. The Martian ambient pressure (\(\sim\) 7~mbar) provides favorable conditions for plasma confinement and signal-to-noise.
+
+\subsubsection{SuperCam, MarSCoDe, and Chandrayaan-3 LIBS}
+
+SuperCam on \emph{Perseverance} integrates LIBS with Raman and VNIR spectroscopy to extend ChemCam's capabilities on Mars, while China's MarSCoDe instrument on Zhurong combines LIBS with short-wave infrared spectroscopy. Chandrayaan-3's LIBS payload on Pragyan constitutes the first lunar LIBS deployment, operating in a near-vacuum environment with different plasma physics and instrument constraints.
+
+These missions demonstrate the maturity of LIBS as a planetary technique and motivate robust data infrastructures that can handle diverse instruments, environments, and calibration schemes in a unified way.
+
+\subsection{Planetary Data Systems and Archival Standards}
+
+PDS4 organizes data into bundles, collections, and products, using XML labels to describe structure, units, and provenance. For LIBS, typical products pair XML labels with CSV or binary tables containing wavelength, intensity, and flags (laser status, plasma/background, timing). While self-describing, these archives do not provide out-of-the-box APIs or visualization tools; users must write bespoke parsers for each mission and instrument.
+
+\subsection{Downsampling and Feature-Preserving Visualization}
+
+General-purpose time-series downsampling methods such as mean/median aggregation, Douglas--Peucker simplification, and Largest Triangle Three Buckets (LTTB) are widely used in web visualization libraries. They prioritize perceived shape over strict retention of narrow peaks. For LIBS and other spectroscopy, however, narrow emission lines are the primary carriers of scientific information.
+
+Spectral analysis literature focuses on baseline correction, peak detection, and line fitting but typically assumes access to full-resolution data. The downsampling problem for interactive, peak-preserving visualization of high-resolution spectra has not been comprehensively addressed, especially in a planetary mission context.
+
+% ------------------------------------------------
+\section{Chandrayaan-3 LIBS Dataset and PDS4 Context}
+\label{sec:data}
+% ------------------------------------------------
+
+\subsection{Mission Overview and Landing Site}
+
+Chandrayaan-3 launched on July 14, 2023 and achieved a soft landing near the lunar south pole on August 23, 2023. The Pragyan rover carried two spectroscopic payloads: a LIBS for elemental composition analysis and an APXS for complementary X-ray spectroscopy. The landing site is of high interest for potential volatile deposits, access to ancient crustal materials, and future resource utilization.
+
+\subsection{LIBS Level-1 Data Products}
+
+Chandrayaan-3 LIBS data are released as calibrated Level-1 (L1) products conforming to PDS4. Each observational product consists of:
+
+\begin{itemize}[nosep]
+  \item An XML label describing observation time, mission and instrument context, and table structures (e.g., wavelength and intensity fields with units).
+  \item A tabular file (CSV or fixed-width) storing wavelength (\si{nm}), intensity (counts or calibrated units), measurement identifiers, timestamps, and flags such as laser status and plasma/background.
+\end{itemize}
+
+Typical L1 files contain \(\sim 8{,}000\)--\(16{,}000\) wavelength samples per measurement, spanning approximately 200--850~nm, and multiple measurements per observation sequence (background + plasma shots).
+
+\subsection{PDS4 Semantics and Database Mapping}
+
+In PDS4, LIBS products define column semantics, units, and processing levels, but not relational query abstractions. LunarAtlas maps these semantics into a relational schema with tables for mission, instrument, observation, file version, measurement, and spectral samples. The schema preserves provenance (e.g., PDS4 logical identifiers and file hashes) while enabling SQL-level queries on wavelength ranges, measurement types, and observation context.
+
+% ------------------------------------------------
+\section{LunarAtlas System Architecture}
+\label{sec:architecture}
+% ------------------------------------------------
+
+\subsection{Design Principles}
+
+LunarAtlas follows three design principles:
+
+\begin{enumerate}[nosep]
+  \item \textbf{Single source of scientific truth:} All domain logic (bucketing, peak detection, NIST matching) resides in the backend; the frontend is a rendering layer only.
+  \item \textbf{Reproducibility by design:} Every algorithm and parameter is versioned and recorded; API responses include algorithm versions and commit hashes.
+  \item \textbf{Separation of concerns:} Data persistence, scientific logic, and presentation are implemented in distinct tiers.
+\end{enumerate}
+
+\subsection{Three-Tier Architecture}
+
+The three-tier architecture comprises:
+
+\begin{itemize}[nosep]
+  \item \textbf{Data layer:} PostgreSQL 14+ stores mission metadata, measurement tables, spectral samples, NIST reference lines, and algorithm version records. Composite indices such as \texttt{(observation\_id, wavelength)} and BRIN indices on wavelength support efficient range queries.
+  \item \textbf{Logic layer:} A Python (FastAPI/Flask) backend implements PDS4 parsing, ingestion, cleaning, bucket computation, min--max aggregation, peak detection, NIST matching, and JSON serialization.
+  \item \textbf{Presentation layer:} A React + AmCharts frontend manages viewports, user interaction, and chart rendering, but never performs scientific calculations or client-side downsampling.
+\end{itemize}
+
+\subsection{Schema Highlights}
+
+Core tables include:
+
+\begin{itemize}[nosep]
+  \item \texttt{mission}, \texttt{instrument}, and \texttt{instrument\_specification} for high-level context.
+  \item \texttt{observation\_date}, \texttt{observation}, and \texttt{file\_version} to capture acquisition times and file provenance.
+  \item \texttt{measurement} for per-pulse metadata (laser status, plasma/background, timings, energies).
+  \item \texttt{spectral\_data} for wavelength–intensity pairs, indexed by measurement and wavelength.
+  \item \texttt{nist\_reference\_lines} for curated NIST emission lines relevant to lunar regolith elements.
+\end{itemize}
+
+% ------------------------------------------------
+\section{Data Processing and Cleaning Pipeline}
+\label{sec:processing}
+% ------------------------------------------------
+
+\subsection{PDS4 Ingestion Workflow}
+
+The ingestion pipeline performs:
+
+\begin{enumerate}[nosep]
+  \item XML label parsing to extract PDS4 logical identifiers, observation times, and table column definitions.
+  \item CSV loading with data types inferred from the PDS4 metadata.
+  \item Observation and file-version insertion into the database, recording file hashes and processing levels.
+  \item Grouping by measurement identifier to create measurement records and bulk insertion of spectral samples.
+\end{enumerate}
+
+\subsection{Background Subtraction}
+
+Plasma and background measurements are paired based on time and flags. For each pair, cleaned intensity is computed as
+\[
+I_{\text{cleaned}}(\lambda) = \max\bigl(0,\, I_{\text{plasma}}(\lambda) - I_{\text{background}}(\lambda)\bigr),
+\]
+with negative values clamped to zero as non-physical. Cleaning quality is evaluated via peak retention, baseline reduction, and the fraction of would-be negative samples, providing diagnostics of background subtraction performance.
+
+\subsection{Wavelength Calibration Verification}
+
+Calibration is verified by:
+
+\begin{enumerate}[nosep]
+  \item Detecting bright emission lines using peak-finding and prominence thresholds.
+  \item Matching detected peaks to NIST reference lines within a tolerance (e.g., \(\pm 0.02\)~nm).
+  \item Computing metrics such as mean offset, standard deviation, root mean square error (RMSE), and maximum deviation.
+\end{enumerate}
+
+These metrics confirm that wavelength assignments are within instrumental resolution.
+
+% ------------------------------------------------
+\section{Mathematical Formulation of Adaptive Min--Max Downsampling}
+\label{sec:math}
+% ------------------------------------------------
+
+\subsection{Problem Statement}
+
+Given a high-resolution spectrum
+\[
+S = \{(\lambda_i, I_i) : i = 1, 2, \ldots, N_{\text{raw}}\}, 
+\]
+with sorted wavelengths \(\lambda_{\min} \le \lambda_i \le \lambda_{\max}\), construct a reduced representation \(S'\) with \(N_{\text{buckets}} \ll N_{\text{raw}}\) such that:
+
+\begin{enumerate}[nosep]
+  \item All scientifically significant peaks (as defined by prominence and NIST matching) are represented in \(S'\).
+  \item Baseline structure is retained via minimum intensities.
+  \item Bucket sizes adapt to zoom level.
+  \item Computation and serialization are fast enough for interactive use.
+\end{enumerate}
+
+\subsection{Zoom-Adjusted Bucket Size}
+
+Let \(\Delta\lambda = \lambda_{\max} - \lambda_{\min}\), and \(z \in [0,10]\) denote zoom level (with \(z=10\) representing raw data mode). For \(z < 10\), define
+\[
+b_{\text{size}}(z) = \frac{\Delta\lambda}{\text{BASE\_BUCKETS}\times 2^z},
+\]
+where \(\text{BASE\_BUCKETS}\approx 1000\). Impose a minimum bucket size
+\[
+b_{\text{size,final}} = \max\bigl(b_{\text{size}}(z),\, \text{MIN\_BUCKET\_SIZE}\bigr),
+\]
+with \(\text{MIN\_BUCKET\_SIZE}\) on the order of the instrument resolution (e.g., \SI{0.01}{nm}). If the minimum is reached and the user zooms further, the system transitions to raw-data mode and returns all samples in the window.
+
+\subsection{Bucket Count and Overlapping Boundaries}
+
+The number of buckets is
+\[
+N_{\text{buckets}} = \left\lceil \frac{\Delta\lambda}{b_{\text{size,final}}} \right\rceil.
+\]
+
+Non-overlapping boundaries are
+\[
+\lambda_{\text{start}}(j) = \lambda_{\min} + j\,b_{\text{size,final}}, \quad
+\lambda_{\text{end}}(j) = \lambda_{\text{start}}(j) + b_{\text{size,final}}.
+\]
+
+To prevent peak splitting, a fractional overlap \(o_{\text{pct}}\) (e.g., 5\%) is introduced:
+\[
+\Delta\lambda_{\text{overlap}} = b_{\text{size,final}} \cdot o_{\text{pct}}.
+\]
+
+Extended boundaries become
+\[
+\lambda_{\text{start,ext}}(j) =
+\begin{cases}
+\lambda_{\text{start}}(j) - \Delta\lambda_{\text{overlap}}, & j>0,\\
+\lambda_{\text{start}}(j), & j=0,
+\end{cases}
+\]
+\[
+\lambda_{\text{end,ext}}(j) =
+\begin{cases}
+\lambda_{\text{end}}(j) + \Delta\lambda_{\text{overlap}}, & j < N_{\text{buckets}}-1,\\
+\lambda_{\text{end}}(j), & j = N_{\text{buckets}}-1.
+\end{cases}
+\]
+
+\subsection{Min--Max Aggregation}
+
+For bucket \(j\), define
+\[
+I_{\min}(j) = \min\{I_i : \lambda_i \in \text{bucket } j\}, \qquad
+I_{\max}(j) = \max\{I_i : \lambda_i \in \text{bucket } j\},
+\]
+and record the corresponding wavelengths \(\lambda_{\min}(j)\) and \(\lambda_{\max}(j)\) where the extrema occur, along with the number of contributing samples \(N_{\text{points}}(j)\). Each bucket is thus represented as
+\[
+\text{Bucket}_j = \bigl(\lambda_{\min}(j), I_{\min}(j),\, \lambda_{\max}(j), I_{\max}(j),\, N_{\text{points}}(j)\bigr).
+\]
+
+\subsection{Peak Detection, NIST Matching, and Confidence}
+
+Peaks are detected as local maxima with prominence \(P\) above a local baseline and compared to NIST reference lines. The wavelength offset is
+\[
+\Delta\lambda_{\text{offset}} = |\lambda_{\text{peak}} - \lambda_{\text{NIST}}|,
+\]
+and matches within a tolerance (e.g., \(\le \SI{0.02}{nm}\)) are considered candidates.
+
+A combined confidence score \(C\in[0,1]\) can be constructed as a geometric mean of (i) a wavelength agreement score, (ii) a prominence score, and (iii) a NIST line-strength score, and used to decide which peaks to highlight in the visualization.
+
+% ------------------------------------------------
+\section{API Design and Visualization Workflow}
+\label{sec:api}
+% ------------------------------------------------
+
+\subsection{Spectral Endpoint}
+
+The primary endpoint is
+\begin{verbatim}
+GET /api/v1/spectral
+\end{verbatim}
+with query parameters: \texttt{observation\_id}, \texttt{min\_wavelength}, \texttt{max\_wavelength}, \texttt{zoom\_level}, and \texttt{include\_nist}. Responses include metadata, algorithm version, raw point counts, bucket parameters, and an array of bucket objects with optional NIST match annotations.
+
+\subsection{Progressive Loading and Zoom Strategy}
+
+The frontend:
+
+\begin{enumerate}[nosep]
+  \item Requests an overview spectrum (full range, low zoom).
+  \item On zoom in/out events, translates new viewport bounds to wavelength ranges and zoom levels.
+  \item Requests updated buckets for the visible window at appropriate zoom.
+  \item Displays min--max buckets and overlays NIST lines when enabled.
+\end{enumerate}
+
+At maximum zoom, the backend switches to raw mode and streams all samples in the requested window, allowing inspection of the full-resolution spectrum.
+
+\subsection{Chart Configuration}
+
+The React + AmCharts frontend renders buckets as filled ranges between \(I_{\min}\) and \(I_{\max}\) as functions of wavelength, with optional markers at NIST-matched peaks. Tooltips display wavelength range, intensity range, point counts, and identified elements with confidence scores.
+
+% ------------------------------------------------
+\section{Results and Experimental Validation}
+\label{sec:results}
+% ------------------------------------------------
+
+% (You can expand this section with the full tables and numbers from your long draft; here is a compact version.)
+
+\subsection{Dataset Overview}
+
+A set of Chandrayaan-3 LIBS spectra spanning multiple operation days was ingested and processed through the LunarAtlas pipeline. Typical spectra contained \(\sim 1.4\times10^{4}\) points over 200--850~nm, with targets including undisturbed regolith, rover-disturbed regolith, and rock fragments.
+
+\subsection{Wavelength Calibration and Element Identification}
+
+Cross-matching bright emission lines against NIST references yields mean wavelength offsets on the order of \(\sim 0.05\)–0.1~nm, with RMSE values within instrumental resolution. Major elements detected across high-quality spectra include Ca, Fe, Mg, Si, Al, and O, consistent with expected lunar regolith composition.
+
+\subsection{Peak Preservation and Comparison to Baselines}
+
+Across tested spectra and zoom levels, adaptive min--max downsampling with overlapping buckets and NIST-guided insertion preserves essentially all NIST-matched lines across zoom levels, while mean/median aggregation and LTTB lose a non-trivial fraction of narrow lines. Max-only strategies retain peaks but discard baseline information, limiting prominence and SNR analysis.
+
+\subsection{Performance}
+
+On a modest server configuration, end-to-end response times (database query + aggregation + JSON serialization) remain below \(\sim \SI{500}{ms}\) for typical L1 spectra across a range of zoom levels, with payload sizes remaining in the 10–400~kB range under compression. Composite indices on \texttt{(observation\_id, wavelength)} provide substantial speedups for spectral-range queries.
+
+% ------------------------------------------------
+\section{Discussion}
+\label{sec:discussion}
+% ------------------------------------------------
+
+LunarAtlas demonstrates that a backend-centric architecture, coupled with mathematically explicit, peak-preserving downsampling, can bridge the gap between archival PDS4 data and modern expectations for interactive spectral analysis. By centralizing domain logic in the backend, the system ensures that visualizations presented to users are reproducible scientific views rather than client-side approximations.
+
+The adaptive min--max approach addresses shortcomings of generic downsampling methods by prioritizing the retention of scientifically meaningful extrema and reference lines. Combined with NIST-based validation and confidence scoring, LunarAtlas helps democratize LIBS interpretation while preserving expert-level metadata.
+
+The pattern is generalizable to other spectroscopic missions and modalities, including Mars LIBS, Raman, XRF, and imaging spectroscopy, provided that instrument-specific calibration and reference databases are integrated appropriately.
+
+% ------------------------------------------------
+\section{Conclusion}
+\label{sec:conclusion}
+% ------------------------------------------------
+
+LunarAtlas illustrates how publicly available Chandrayaan-3 LIBS data can be transformed into a reproducible, interactive, and scientifically rigorous spectral data infrastructure. Key elements include a PDS4-aware ingestion pipeline, physically motivated cleaning and calibration checks, a mathematically formalized adaptive min--max downsampling algorithm tailored to spectroscopy, and a backend-centric API that exposes peak-preserving, NIST-validated spectra to thin visualization clients.
+
+The system achieves high peak-retention rates across zoom levels, wavelength accuracies within instrumental resolution, and sub-second response times for typical queries. By treating spectral data, processing algorithms, and derived visualizations as tightly coupled, versioned artefacts, LunarAtlas provides both a working implementation for Chandrayaan-3 data and a generalizable blueprint for future planetary spectroscopy data systems.
+
+% ------------------------------------------------
+\section*{Acknowledgments}
+% ------------------------------------------------
+
+We acknowledge the Indian Space Research Organisation (ISRO) for the public release of Chandrayaan-3 LIBS data through PDS4-compliant archives, and the National Institute of Standards and Technology (NIST) for maintaining the Atomic Spectra Database that underpins spectral validation. We also acknowledge the open-source scientific Python ecosystem (NumPy, SciPy, Pandas, Astropy) and the broader planetary science community whose work on LIBS instruments and calibration informs this study.
+
+% ------------------------------------------------
+\section*{Author Contributions}
+% ------------------------------------------------
+
+L.~Anand: Conceptualization, system architecture, algorithm development, database design, API implementation, data analysis, writing---original draft and editing.
+
+D.~Saeed: Data processing pipeline, PDS4 parsing, NIST validation, visualization design, performance benchmarking, writing---review and editing.
+
+% ------------------------------------------------
+\section*{Data Availability}
+% ------------------------------------------------
+
+Processed Chandrayaan-3 LIBS data products and LunarAtlas source code will be made publicly available upon manuscript acceptance. Raw Chandrayaan-3 LIBS data are available from ISRO's PDS4 archives.
+
+% ------------------------------------------------
+\section*{Competing Interests}
+% ------------------------------------------------
+
+The authors declare no competing interests.
+
+% ------------------------------------------------
+\begin{thebibliography}{99}
+
+\bibitem{Wiens2012}
+Wiens, R.~C., et al. (2012).
+The ChemCam instrument suite on the Mars Science Laboratory (MSL) rover: Body unit and combined system tests.
+\emph{Space Science Reviews}, 170, 167--227.
+
+\bibitem{Maurice2012}
+Maurice, S., et al. (2012).
+The ChemCam instrument suite on the Mars Science Laboratory (MSL) rover: Science objectives and mast unit description.
+\emph{Space Science Reviews}, 170, 95--166.
+
+\bibitem{Cremers2013}
+Cremers, D.~A. and Radziemski, L.~J. (2013).
+\emph{Handbook of Laser-Induced Breakdown Spectroscopy}, 2nd ed.
+Wiley.
+
+\bibitem{Hughes2018}
+Hughes, J.~S., et al. (2018).
+Planetary Data System Standards Reference.
+NASA Planetary Data System.
+
+\bibitem{NISTASD}
+Kramida, A., Ralchenko, Y., Reader, J., and NIST ASD Team (2023).
+NIST Atomic Spectra Database (version 5.11).
+National Institute of Standards and Technology, Gaithersburg, MD.
+
+% (Add further entries from your full reference list as needed.)
+
+\end{thebibliography}
+
+\end{document}

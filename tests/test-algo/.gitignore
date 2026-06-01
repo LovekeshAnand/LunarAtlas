@@ -1,0 +1,297 @@
+# LunarAtlas Project .gitignore
+# Comprehensive ignore file for Python backend + React frontend
+
+# ============================================================================
+# PYTHON / BACKEND
+# ============================================================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# ============================================================================
+# NODE.JS / REACT / FRONTEND
+# ============================================================================
+
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Production build
+/build
+/frontend/build
+
+# Misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Package manager lock files (optional - uncomment if you want to ignore)
+# package-lock.json
+# yarn.lock
+
+# ============================================================================
+# DATABASE
+# ============================================================================
+
+# PostgreSQL
+*.sql
+*.dump
+*.db
+*.sqlite
+*.sqlite3
+
+# Database backups
+*.backup
+*.bak
+
+# ============================================================================
+# DOCKER
+# ============================================================================
+
+# Docker volumes
+postgres_data/
+pgdata/
+
+# Docker Compose override files
+docker-compose.override.yml
+docker-compose.*.yml
+
+# ============================================================================
+# DATA FILES
+# ============================================================================
+
+# Large CSV files (except sample data)
+*.csv
+!*sample*.csv
+!*example*.csv
+
+# Exclude the uploaded sample data from being ignored
+!ch3_lib_002_20230825T104221_00_l1_cleaned.csv
+
+# HDF5 and other data formats
+*.h5
+*.hdf5
+*.parquet
+*.feather
+
+# Compressed data
+*.tar.gz
+*.zip
+*.7z
+*.rar
+!lunaratlas_complete_system.tar.gz
+
+# ============================================================================
+# DOCUMENTATION
+# ============================================================================
+
+# Generated documentation
+docs/_build/
+site/
+.mkdocs_cache/
+
+# PDF outputs (keep the documentation PDFs)
+# *.pdf  # Commented out to keep documentation PDFs
+
+# ============================================================================
+# LOGS & TEMP FILES
+# ============================================================================
+
+# Log files
+*.log
+logs/
+*.out
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# OS-specific
+Thumbs.db
+.DS_Store
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# ============================================================================
+# SECRETS & CREDENTIALS
+# ============================================================================
+
+# API keys and secrets
+secrets/
+*.key
+*.pem
+*.cert
+*.crt
+credentials.json
+service-account.json
+
+# ============================================================================
+# JUPYTER NOTEBOOKS
+# ============================================================================
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Jupyter Notebook outputs (optional)
+# *.ipynb
+
+# ============================================================================
+# RESEARCH & ANALYSIS
+# ============================================================================
+
+# Experiment results
+experiments/results/
+experiments/output/
+results/
+output/
+
+# Model checkpoints
+*.ckpt
+*.pt
+*.pth
+checkpoints/
+
+# ============================================================================
+# MISC
+# ============================================================================
+
+# System files
+.fuse_hidden*
+.directory
+.Trash-*
+
+# Archive files (except our distribution)
+*.tar
+*.tgz
+
+# Backup files
+*~
+*.bak
+*.swp
+*.swo
+
+# ============================================================================
+# PROJECT-SPECIFIC
+# ============================================================================
+
+# Don't ignore these important files
+!.gitignore
+!README.md
+!LICENSE
+!requirements.txt
+!package.json
+!docker-compose.yml
+!Dockerfile
+!.dockerignore
+
+# Test data directories (but keep structure)
+test_data/*
+!test_data/.gitkeep
+
+# Cache directories
+.cache/
+__pycache__/
+
+# ============================================================================
+# FINAL NOTES
+# ============================================================================
+# 
+# This .gitignore is comprehensive for a Python + React project
+# 
+# To add files back that are ignored, use:
+#   git add -f <filename>
+# 
+# To check what's being ignored:
+#   git status --ignored
+# 
+# To temporarily disable .gitignore:
+#   git add --all --force
+#

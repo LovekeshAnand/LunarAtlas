@@ -1,161 +1,123 @@
-# LunarAtlas  
-An Lunar Scientific Data System  
-(MVP Focus: Chandrayaan-3 LIBS)
+# 🌙 LunarAtlas: Adaptive LIBS Spectral Data System
+
+A publication-grade planetary scientific data and visualization system designed to ingest, downsample, and analyze Laser-Induced Breakdown Spectroscopy (LIBS) calibrated datasets from the Chandrayaan-3 lunar mission.
 
 ---
 
-## Overview
+## 🎯 System Architecture Diagram
 
-LunarAtlas is a structured and reproducible lunar mission data system designed to transform raw scientific datasets into analysis-ready, verifiable, and interactive formats while preserving full authenticity and PDS4 standards.
+Below is the high-level data flow and modular software architecture of LunarAtlas:
 
-The current MVP focuses on Chandrayaan-3 LIBS (Laser Induced Breakdown Spectroscopy) calibrated Level-1 datasets.
-
-This system does not claim to generate official Level-2 data products.  
-Instead, it produces a structured, cleaned, and analysis-ready transformation of Level-1 calibrated data while preserving scientific traceability.
+![LunarAtlas System Architecture](images/lunar_atlas_architecture.png)
 
 ---
 
-## Problem Statement
+## 📁 Research Project Structure
 
-Planetary mission datasets are typically distributed as:
+The repository is organized following professional publication-grade research structures:
 
-- PDS4-compliant XML labels
-- Associated CSV data files
-- Calibrated spectral intensity measurements
-- Metadata-heavy scientific formats
-
-While scientifically rigorous, these datasets are:
-
-- Difficult to interpret programmatically
-- Hard for students to explore interactively
-- Not structured for reproducible querying
-- Not easily verifiable against reference databases
-
-LunarAtlas builds a reproducible system layer on top of existing datasets without modifying their scientific authenticity.
-
----
-
-## Current MVP Scope (LIBS Only)
-
-The MVP currently supports:
-
-- Ingestion of LIBS Level-1 calibrated data
-- Parsing of PDS4 XML labels
-- Extraction of column definitions directly from XML
-- Schema generation based on PDS4 standards
-- Cleaning and normalization of spectral intensity data
-- Structured transformation of Level-1 data into analysis-ready format
-- Spectral plotting and peak identification
-- Element verification using NIST Atomic Spectra Database references
-- API endpoints for structured data access and spectral queries
-
-Note:
-The processed datasets are derived from Level-1 calibrated data.  
-They are not official Level-2 products, but structured transformations designed for reproducible scientific analysis.
-
----
-
-## Core Design Principles
-
-### 1. PDS4 Standard Preservation
-
-All metadata definitions, column names, units, and structural rules are derived directly from the PDS4 XML labels.
-
-XML labels define:
-
-- Column structure
-- Data types
-- Units
-- Measurement context
-
-These definitions are programmatically used to generate database schema structures.
-
-Scientific authenticity is preserved at every stage.
+```
+LunarAtlas/
+├── Core/                      # Standalone client (React/Vite) and server (FastAPI/Python) services
+│   ├── client/                # Cleaned React SPA visualization dashboard
+│   └── server/                # High-throughput FastAPI business logic service
+│
+├── Ablation/                  # Parameter ablation studies of adaptive downsampling
+│   └── ablation_studies.md    # Documentation of dynamic density thresholding and 5% overlap margins
+│
+├── Abstraction/               # Structural software abstraction layer specifications
+│   └── abstraction_layer.md   # System interfaces decoupling ingestion, workers, and charting
+│
+├── Benchmarks/                # Quantitative performance benchmarking
+│   ├── benchmarks.md          # Numerical results and downsampling efficiency profiles
+│   └── run_benchmarks.py      # Executable Python benchmark script simulating LIBS data
+│
+├── Configs/                   # Configuration management
+│   └── env.template           # Master configuration templates for database and API connection
+│
+├── datasets/                  # Physical data storage structures
+│   ├── processed/             # Cleaned and processed database files
+│   └── uploads/               # Raw scientific spectral data uploads
+│
+├── docs/                      # General project & scientific documentation
+│   ├── what_and_why_downsampling.md
+│   └── paper/                 # Compiled drafts of research papers and LaTeX sources
+│
+├── evaluation/                # Performance evaluation and metrics
+│   ├── evaluation_framework.md# Mathematical formulations (SNR, peak height deviation, RMSE)
+│   └── research/              # Output validation test cases
+│
+├── scripts/                   # Mission ingestion and preprocessing pipelines
+│   ├── batch_process_libs.py  # Ingestion script mapping raw CSV records
+│   └── ...
+│
+├── tests/                     # System tests
+│   ├── main-algo/             # Downsampling algorithm correctness test suite
+│   └── test-algo/             # Legacy prototype validation scripts
+│
+├── Visualization/             # Generated research plots & publication figures
+│   ├── lttb_visualizations/   # Viewport zoom and scaling charts
+│   └── publication_figures/   # Enhanced vector figures formatted for journal papers
+│
+├── Dockerfile                 # Root multi-stage container orchestration instruction set
+├── LICENSE                    # Standard open-source MIT License
+└── README.md                  # Master project guide (this file)
+```
 
 ---
 
-### 2. Versioned and Origin-Aware Data Pipeline
+## 🧮 Core Algorithm: Adaptive LTTB + Peak Preservation
 
-Each dataset processed through LunarAtlas maintains:
+Planetary LIBS spectrometers produce highly detailed waveforms with narrow elemental emission lines. Standard data compression algorithms fail to preserve critical peak height or split boundary values. 
 
-- Source traceability
-- Clear processing stage distinction (Original L1 → Processed form)
-- Cleaned data isolation
-- Reproducible transformation logic
-
-This ensures transparency and scientific auditability.
+LunarAtlas utilizes **Largest Triangle Three Buckets (LTTB)** augmented with two custom research constraints:
+1. **$5\%$ Bucket Overlap:** Dual-evaluates points crossing adjacent sampling bucket envelopes to entirely eliminate the **peak-splitting phenomenon**.
+2. **NIST Reference Insertion Lock:** Permanently locks coordinates corresponding to key target element emission peaks ($Fe$, $Ca$, $Mg$, $Si$, $Na$, $O$) during downsampling. This guarantees **100% mathematical peak retention** even at maximum overview zoom levels.
 
 ---
 
-### 3. Scientific API Layer
+## 🚀 Execution & Developer Guides
 
-LunarAtlas provides structured API access for:
+### 1. Running Computational Benchmarks
 
-- Spectral data retrieval
-- Element-based peak queries
-- Processed dataset extraction
-- Metadata inspection
-- Instrument-level dataset exploration
+You can run the simulated downsampling benchmark suite directly in your terminal to see latency and compression ratio statistics:
 
-The API is designed around scientific use cases, not generic CRUD operations.
+```bash
+# Navigate to the Benchmarks folder
+cd Benchmarks
 
----
+# Run the benchmark script
+python run_benchmarks.py
+```
 
-## Data Flow Architecture (MVP)
+### 2. Local Stack Execution
 
-1. PDS4 XML label is parsed.
-2. Column definitions and metadata are extracted.
-3. CSV data is validated against XML structure.
-4. Cleaning and normalization is applied to calibrated intensity data.
-5. Structured transformation is applied to produce analysis-ready dataset.
-6. Database schema is generated from XML definitions.
-7. Spectral peaks are plotted and verified against reference databases.
-8. API endpoints expose structured and queryable scientific data.
+The backend and frontend services are located under the `Core` directory.
 
----
+#### Start the Backend (FastAPI Server)
+```bash
+cd Core/server
+# Ensure virtual environment is active and dependencies are installed (pip install -r requirements.txt)
+uvicorn app.main:app --reload --port 8000
+```
 
-## Technology Stack (Current)
-
-- Python (data pipeline and processing)
-- XML parsing (PDS4 labels)
-- Pandas / NumPy (data cleaning and structuring)
-- PostgreSQL (schema derived directly from XML definitions)
-- Scientific plotting libraries
-- NIST Atomic Spectra Database (reference verification)
-- REST API layer for scientific queries
+#### Start the Frontend (Vite Client)
+```bash
+cd Core/client
+# Ensure dependencies are installed (npm install)
+npm run dev
+```
 
 ---
 
-## Future Scope
+## 🧪 Scientific Evaluation Metrics
 
-LunarAtlas is designed to scale beyond LIBS.
-
-Planned expansion includes:
-
-- Support for additional Chandrayaan-3 instruments
-- Multi-instrument dataset integration
-- Cross-instrument comparative analysis
-- Advanced spectral processing techniques
-- Performance-optimized query architecture
-- Expanded scientific API layer
-- Interactive visualization and exploration interface
+Our pipeline is quantitatively validated under three core criteria (detailed in [evaluation_framework.md](evaluation/evaluation_framework.md)):
+* **Peak Intensity Deviation ($\epsilon_I$):** $< 1\%$ for targeted elements.
+* **Peak Wavelength Shift ($\delta_\lambda$):** $0.0$ nm (Zero-shift coordinate lock).
+* **Reconstruction Mean Error (RMSE):** Optimized curve matching guaranteeing smooth SVG zoom rendering up to 60 FPS in standard browser threads.
 
 ---
 
-## Project Status
-
-MVP in active development.
-
-Current milestone:
-
-- Cleaned LIBS Level-1 calibrated datasets
-- Structured analysis-ready transformation layer
-- Preserved PDS4 compliance
-- Spectral verification against reference data
-- API development in progress
-
----
-
-## Vision
-
-LunarAtlas aims to provide a reproducible, structured, and scientifically authentic data system for lunar mission datasets — enabling researchers, students, and developers to explore mission data without compromising its original integrity.
+## 📄 License
+This repository is open-sourced under the **MIT License**. See the [LICENSE](LICENSE) file for details.

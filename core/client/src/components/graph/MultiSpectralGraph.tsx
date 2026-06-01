@@ -231,6 +231,16 @@ export default function MultiSpectralGraph({
 
   const domainRangeY = Math.max(domainMaxY - domainMinY, 1);
 
+  const yTicks = useMemo(() => {
+    const ticks = [];
+    const count = 5;
+    for (let i = 0; i < count; i++) {
+      const val = domainMaxY - (domainRangeY * i) / (count - 1);
+      ticks.push(val);
+    }
+    return ticks;
+  }, [domainMinY, domainMaxY, domainRangeY]);
+
   /* ── Wheel zoom — MUST use passive:false addEventListener, not React onWheel ── */
   useEffect(() => {
     const el = containerRef.current;
@@ -248,7 +258,7 @@ export default function MultiSpectralGraph({
       let nMax = nMin + newDomain;
       if (nMin < ABS_MIN) { nMin = ABS_MIN; nMax = Math.min(ABS_MAX, nMin + newDomain); }
       if (nMax > ABS_MAX) { nMax = ABS_MAX; nMin = Math.max(ABS_MIN, nMax - newDomain); }
-      onRangeChange(nMin, nMax);
+      onRangeChange(Math.round(nMin * 100) / 100, Math.round(nMax * 100) / 100);
     };
 
     el.addEventListener('wheel', handleWheel, { passive: false });
@@ -272,7 +282,7 @@ export default function MultiSpectralGraph({
     let nMin = minX - shift, nMax = maxX - shift;
     if (nMin < ABS_MIN) { nMin = ABS_MIN; nMax = ABS_MIN + domainX; }
     if (nMax > ABS_MAX) { nMax = ABS_MAX; nMin = ABS_MAX - domainX; }
-    onRangeChange(nMin, nMax);
+    onRangeChange(Math.round(nMin * 100) / 100, Math.round(nMax * 100) / 100);
   }, [onRangeChange, minX, maxX, domainX]);
 
   useEffect(() => {
@@ -348,27 +358,29 @@ export default function MultiSpectralGraph({
     <div className="w-full flex flex-col bg-white border border-solid border-gray-200 rounded-lg shadow-sm overflow-hidden">
 
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-3.5 border-b border-solid border-gray-100 bg-gray-50/70">
-        <div className="flex items-center gap-3">
-          <span className="text-[13px] font-sans font-bold text-gray-700">
-            Overlapping Spectral View
+      <div className="flex items-center justify-between px-6 py-2 border-b border-solid border-gray-100 bg-gray-50/70 flex-wrap gap-3">
+        {/* Left side: Title + stats + LTTB badge */}
+        <div className="flex items-center gap-2.5">
+          <span className="text-[12px] font-sans font-bold text-gray-700 shrink-0">
+            Spectral View
           </span>
-          <span className="text-[11px] font-sans text-gray-400 px-2 py-0.5 bg-white border border-solid border-gray-200 rounded-full">
-            {loadedCount} measurement{loadedCount !== 1 ? 's' : ''} · {totalPoints.toLocaleString()} pts (raw)
-          </span>
-          {/* LTTB badge */}
-          <span className="text-[10px] font-sans font-bold text-emerald-700 px-2 py-0.5 bg-emerald-50 border border-solid border-emerald-200 rounded-full uppercase tracking-wide">
-            LTTB + Peak Guarantee ✓
+          <span className="text-[9px] font-sans font-bold text-emerald-700 px-2 py-0.5 bg-emerald-50 border border-solid border-emerald-200 rounded-full uppercase tracking-wide shrink-0">
+            LTTB ✓
           </span>
         </div>
-        <div className="text-[11px] font-sans text-gray-400">
-          Scroll to Zoom · Drag to Pan · Hover to Isolate
-        </div>
-      </div>
 
-      {/* Legend chips */}
-      {datasets.length > 0 && (
-        <div className="flex items-center gap-2 flex-wrap px-6 py-2.5 border-b border-solid border-gray-100 bg-white">
+        {/* Right side: Clear Focus Button + Legend Chips */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {focusedId && onFocusChange && (
+            <button
+              type="button"
+              onClick={() => onFocusChange(null)}
+              className="text-[9px] font-sans text-gray-600 hover:text-red-650 hover:border-red-200 bg-white border border-solid border-gray-200 px-2 py-0.5 rounded-full transition-colors shadow-sm font-bold cursor-pointer shrink-0"
+            >
+              Clear Focus ×
+            </button>
+          )}
+
           {datasets.map((ds) => {
             const hidden = hiddenIds.has(ds.id);
             const isActive = activeId === ds.id;
@@ -384,37 +396,48 @@ export default function MultiSpectralGraph({
                 style={{
                   borderColor: hidden ? '#e5e7eb' : ds.color,
                   color: hidden ? '#9ca3af' : '#374151',
-                  background: hidden ? '#f9fafb' : isActive ? ds.color + '20' : ds.color + '12',
+                  background: hidden ? '#f9fafb' : isActive ? ds.color + '20' : ds.color + '09',
                 }}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-sans font-semibold
+                className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-sans font-semibold
                            border border-solid transition-all duration-150 cursor-pointer select-none"
               >
-                <span className="w-2 h-2 rounded-full shrink-0" style={{ background: hidden ? '#d1d5db' : ds.color }} />
+                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: hidden ? '#d1d5db' : ds.color }} />
                 {ds.label}
                 {ds.meta?.laser_energy_v && (
-                  <span className="opacity-50 font-normal text-[10px]">· {ds.meta.laser_energy_v}V</span>
+                  <span className="opacity-50 font-normal text-[9px]">· {ds.meta.laser_energy_v} Volt</span>
                 )}
               </button>
             );
           })}
         </div>
-      )}
+      </div>
 
       {/* Chart area */}
-      <div className="relative flex" style={{ height: '440px' }}>
+      <div className="relative flex" style={{ height: '330px' }}>
 
-        {/* Y-axis label */}
-        <div className="w-10 shrink-0 flex items-center justify-center border-r border-solid border-gray-100 bg-gray-50/40">
-          <span className="text-[10px] font-sans font-medium text-gray-400 tracking-widest uppercase -rotate-90 whitespace-nowrap">
-            Intensity (cts)
-          </span>
+        {/* Y-axis label & ticks */}
+        <div className="w-20 shrink-0 flex items-stretch border-r border-solid border-gray-100 bg-gray-50/40 py-[5px] select-none">
+          {/* Rotated label */}
+          <div className="w-6 flex items-center justify-center border-r border-solid border-gray-100/50">
+            <span className="text-[9px] font-sans font-black text-gray-400 tracking-widest uppercase -rotate-90 whitespace-nowrap">
+              Intensity (cts)
+            </span>
+          </div>
+          {/* Ticks column */}
+          <div className="flex-1 flex flex-col justify-between items-end pr-2 text-[9px] font-mono text-gray-400">
+            {yTicks.map((val, idx) => (
+              <span key={idx} className="leading-none">
+                {Math.round(val).toLocaleString()}
+              </span>
+            ))}
+          </div>
         </div>
 
         {/* SVG container */}
         <div
           ref={containerRef}
           className="flex-1 relative cursor-crosshair overflow-hidden"
-          style={{ height: '440px' }}
+          style={{ height: '330px' }}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => { setHoveredId(null); setHoveredPoint(null); }}
           onMouseDown={handleMouseDown}
@@ -627,15 +650,18 @@ export default function MultiSpectralGraph({
       </div>
 
       {/* Footer */}
-      <div className="px-6 py-2.5 flex items-center justify-between border-t border-solid border-gray-100 bg-white text-[11px] font-sans text-gray-500">
+      <div className="px-6 py-2 flex items-center justify-between border-t border-solid border-gray-100 bg-white text-[11px] font-sans text-gray-500">
         <div className="flex items-center gap-4">
           <span>λ range: <strong className="text-gray-700">{minX.toFixed(2)}–{maxX.toFixed(2)} nm</strong></span>
           <span>Span: <strong className="text-gray-700">{domainX.toFixed(2)} nm</strong></span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
+          <span className="text-[10px] text-gray-400 select-none hidden sm:inline">
+            Scroll to Zoom · Drag to Pan · Hover to Isolate
+          </span>
           {activeId && (
             <span
-              className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide"
+              className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide shrink-0"
               style={{
                 background: (datasets.find(d => d.id === activeId)?.color ?? '#888') + '18',
                 color: datasets.find(d => d.id === activeId)?.color ?? '#888',

@@ -211,11 +211,6 @@ export default function GraphDisplay() {
     [measurementData, measurements]
   );
 
-  const loadedCount = useMemo(
-    () => Array.from(measurementData.values()).filter((d) => d.length > 0).length,
-    [measurementData]
-  );
-
   const totalPoints = useMemo(
     () => datasets.reduce((s, d) => s + d.data.length, 0),
     [datasets]
@@ -234,46 +229,8 @@ export default function GraphDisplay() {
   /* ================================================================ */
 
   return (
-    <div className="w-full px-6 py-7 box-border font-sans min-h-screen bg-[#f8f9fb]">
-      <div className="max-w-[1600px] mx-auto flex flex-col gap-7">
-
-        {/* ── Page Header ── */}
-        <div className="flex items-center justify-between border-b border-solid border-gray-200 pb-5">
-          <div>
-            <h1 className="text-[26px] font-sans font-black text-gray-900 leading-none mb-1">
-              LunarAtlas <span className="text-gray-400 font-normal">Research</span>
-            </h1>
-            <p className="text-[12px] font-sans tracking-wide text-gray-500 font-medium">
-              Chandrayaan-3 LIBS Spectral Analysis Platform · Multi-Measurement Overlay
-            </p>
-          </div>
-          <div className="flex items-center gap-6">
-            {/* Measurement count badge */}
-            {loadedCount > 0 && (
-              <div className="text-right">
-                <div className="text-[11px] font-sans text-gray-400 mb-0.5">Parallel Datasets</div>
-                <div className="text-[22px] font-black text-blue-600 leading-none">{loadedCount}</div>
-              </div>
-            )}
-            {/* DB status */}
-            <div className="text-right">
-              <div className="text-[11px] font-sans text-gray-400 mb-1">Database</div>
-              <div className="flex items-center gap-1.5 justify-end">
-                <span className={`w-2 h-2 rounded-full ${health?.database ? 'bg-emerald-400 animate-pulse' : 'bg-gray-300'}`} />
-                <span className="text-[12px] font-sans font-semibold text-gray-700">
-                  {health?.database ? 'CONNECTED' : 'STANDALONE'}
-                </span>
-              </div>
-            </div>
-            {/* Console toggle */}
-            <button
-              onClick={() => setShowConsole(!showConsole)}
-              className="text-[12px] font-sans text-gray-500 hover:text-blue-600 transition-colors bg-white px-3 py-1.5 rounded border border-solid border-gray-200 shadow-sm"
-            >
-              {showConsole ? 'Close Console' : 'Dev Console'}
-            </button>
-          </div>
-        </div>
+    <div className="w-full px-6 py-4 box-border font-sans min-h-screen bg-[#f8f9fb]">
+      <div className="max-w-[1600px] mx-auto flex flex-col gap-4">
 
         {/* ── Controls Panel ── */}
         <RangeSelectorPanel
@@ -295,6 +252,9 @@ export default function GraphDisplay() {
           onLttbEnabledChange={setLttbEnabled}
           activeMeasurementIds={activeMeasurementIds}
           onActiveMeasurementIdsChange={setActiveMeasurementIds}
+          showConsole={showConsole}
+          setShowConsole={setShowConsole}
+          health={health}
         />
 
         {/* ── Dev Console ── */}
@@ -323,25 +283,6 @@ export default function GraphDisplay() {
         {/* SECTION 1: Full-width Overlapping Multi-Measurement Graph */}
         {/* ══════════════════════════════════════════════════════════ */}
         <div ref={mainGraphRef}>
-          <div className="flex items-center justify-between mb-3">
-            <div>
-              <h2 className="text-[15px] font-sans font-bold text-gray-800">
-                Overlapping Spectral Analysis
-              </h2>
-              <p className="text-[11px] font-sans text-gray-400 mt-0.5">
-                All Selected Measurement IDs rendered simultaneously · z-index layered · hover to isolate
-              </p>
-            </div>
-            {focusedId && (
-              <button
-                onClick={() => setFocusedId(null)}
-                className="text-[11px] font-sans text-gray-500 hover:text-gray-700 bg-white border border-solid border-gray-200 px-3 py-1 rounded-full transition-colors shadow-sm"
-              >
-                Clear Focus ×
-              </button>
-            )}
-          </div>
-
           {/* Full-width graph — no sidebar */}
           <MultiSpectralGraph
             datasets={datasets}
@@ -349,7 +290,10 @@ export default function GraphDisplay() {
             lambdaMin={lambdaMin}
             lambdaMax={lambdaMax}
             proportion={currentProportion}
-            onRangeChange={(min, max) => { setLambdaMin(min); setLambdaMax(max); }}
+            onRangeChange={(min, max) => {
+              setLambdaMin(Math.round(min * 100) / 100);
+              setLambdaMax(Math.round(max * 100) / 100);
+            }}
             focusedId={focusedId}
             onFocusChange={setFocusedId}
             targetWavelengths={targetWavelengths}
