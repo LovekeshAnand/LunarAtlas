@@ -117,7 +117,6 @@ class DBConn:
 
 BASE_BUCKETS:    int   = 1000
 MIN_BUCKET_SIZE: float = 0.01   # nm  (≈ instrument resolution floor)
-OVERLAP_PCT:     float = 0.05   # 5 % overlap to prevent peak splitting
 ABS_MAX_ZOOM:    int   = 10     # hard cap so UI slider stays sane
 
 
@@ -199,12 +198,11 @@ def generate_bucket_boundaries(
 ) -> List[tuple]:
     wavelength_span = max_wl - min_wl
     n_buckets = math.ceil(wavelength_span / bucket_size)
-    overlap = bucket_size * OVERLAP_PCT
     boundaries = []
     for i in range(n_buckets):
-        start = min_wl + i * bucket_size - (overlap if i > 0 else 0)
+        start = min_wl + i * bucket_size
         start = max(start, min_wl)
-        end   = start + bucket_size + overlap
+        end   = start + bucket_size
         boundaries.append((start, end))
     return boundaries
 
@@ -427,7 +425,7 @@ def get_spectral_data(
             "effective_zoom":     eff_zoom,
             "bucket_size_nm":     bsize,
             "bucket_count":       n_buckets,
-            "overlap_percentage": OVERLAP_PCT * 100,
+            "overlap_percentage": 0.0,
             "saturated":          saturated,
         },
         buckets=buckets,

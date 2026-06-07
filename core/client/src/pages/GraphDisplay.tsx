@@ -298,6 +298,7 @@ export default function GraphDisplay() {
             onFocusChange={setFocusedId}
             targetWavelengths={targetWavelengths}
             selectedElement={element}
+            lttbEnabled={lttbEnabled}
           />
         </div>
 
@@ -332,6 +333,7 @@ export default function GraphDisplay() {
                   isFocused={focusedId === ds.id}
                   onFocus={handleFocus}
                   targetWavelengths={targetWavelengths}
+                  lttbEnabled={lttbEnabled}
                 />
               ))}
             </div>

@@ -1,0 +1,33 @@
+{
+  "logical_identifier": "urn:isro:isda:ch3_chr.lib:data_calibrated:ch3_lib_029_20230830T145805_04_l1",
+  "version_id": "1.0",
+  "title": "Chandrayaan-3 Rover LIBS Experiment",
+  "start_time": "2023-08-30T16:02:03Z",
+  "stop_time": "2023-08-30T16:02:06Z",
+  "file_name": "ch3_lib_029_20230830T145805_04_l1.csv",
+  "file_size": 66035,
+  "records": 5,
+  "column_descriptions": {
+    "Time": "UTC Time",
+    "Measurement Count": "Count of readout data records",
+    "Operation Mode": "ASLF: Asynchronous with Laser Fire, SLF: Synchronous with Laser Fire",
+    "Measurement type": "EP: Each Pulse, LP: Last Pulse",
+    "Force Reset status": "1: Background scene spectral data, 0: Check for laser fire status",
+    "Laser Fire Status": "1: Plasma emission spectral data, 0: Check for force reset status",
+    "Response_Count": "Count for each pixel where pixel number ranges from 1 to 2094",
+    "Delay Time": "Delay Time",
+    "Integration Time": "Integration Time",
+    "Number of Pulses": "Number of laser shots fired",
+    "X Factor": "X (Multiplication)Factor: 1X or 5X with respect to defined number of pulses",
+    "Laser Energy": "Energy equivalent voltage",
+    "Laser Pump Current": "Laser Pump Current",
+    "PRR": "Pulse Repetition rate (3Hz or 5Hz)",
+    "ON OFF Status": "ON/OFF Status"
+  },
+  "instrument_description": "ChaSTE-LIBS compact active spectrometer",
+  "source_file": "ch3_lib_029_20230830T145805_04_l1.csv",
+  "processing_timestamp": "20260601_133132",
+  "total_measurements": 2,
+  "wavelength_range_nm": "164.35 - 878.26",
+  "total_channels": 2094
+}

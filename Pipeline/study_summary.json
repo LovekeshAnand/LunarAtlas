@@ -1,0 +1,2476 @@
+{
+  "raw_base_directory": "D:\\ch3_libs\\lib-v2\\data\\calibrated",
+  "total_date_folders": 9,
+  "date_folders_list": [
+    "20230825",
+    "20230826",
+    "20230827",
+    "20230828",
+    "20230829",
+    "20230830",
+    "20230831",
+    "20230901",
+    "20230902"
+  ],
+  "sessions": {
+    "20230825": {
+      "observation_folders_count": 4,
+      "observations": [
+        {
+          "observation_code": "ch3_lib_002_20230825T104221_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 8,
+          "subfiles_xml_count": 8
+        },
+        {
+          "observation_code": "ch3_lib_002_20230825T145453_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 15,
+          "subfiles_xml_count": 15
+        },
+        {
+          "observation_code": "ch3_lib_002_20230825T145453_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_002_20230825T145453_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        }
+      ]
+    },
+    "20230826": {
+      "observation_folders_count": 6,
+      "observations": [
+        {
+          "observation_code": "ch3_lib_003_20230826T142853_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_003_20230826T142853_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 12,
+          "subfiles_xml_count": 12
+        },
+        {
+          "observation_code": "ch3_lib_003_20230826T142853_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_004_20230826T191223_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 8,
+          "subfiles_xml_count": 8
+        },
+        {
+          "observation_code": "ch3_lib_004_20230826T233217_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 16,
+          "subfiles_xml_count": 16
+        },
+        {
+          "observation_code": "ch3_lib_004_20230826T233217_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        }
+      ]
+    },
+    "20230827": {
+      "observation_folders_count": 9,
+      "observations": [
+        {
+          "observation_code": "ch3_lib_007_20230827T181223_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_007_20230827T181223_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_007_20230827T181223_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        },
+        {
+          "observation_code": "ch3_lib_007_20230827T181223_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 10,
+          "subfiles_xml_count": 10
+        },
+        {
+          "observation_code": "ch3_lib_007_20230827T181223_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_008_20230827T221223_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 8,
+          "subfiles_xml_count": 8
+        },
+        {
+          "observation_code": "ch3_lib_008_20230827T234923_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        },
+        {
+          "observation_code": "ch3_lib_008_20230827T234923_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 10,
+          "subfiles_xml_count": 10
+        },
+        {
+          "observation_code": "ch3_lib_008_20230827T234923_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        }
+      ]
+    },
+    "20230828": {
+      "observation_folders_count": 26,
+      "observations": [
+        {
+          "observation_code": "ch3_lib_009_20230828T141223_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_009_20230828T141223_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        },
+        {
+          "observation_code": "ch3_lib_009_20230828T141223_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_009_20230828T141223_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_009_20230828T141223_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_009_20230828T141223_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_009_20230828T141223_06_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_009_20230828T141223_07_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_009_20230828T141223_08_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_009_20230828T141223_09_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_009_20230828T141223_10_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_012_20230828T175738_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        },
+        {
+          "observation_code": "ch3_lib_012_20230828T175738_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_012_20230828T175738_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 11,
+          "subfiles_xml_count": 11
+        },
+        {
+          "observation_code": "ch3_lib_012_20230828T175738_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_012_20230828T175738_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_012_20230828T175738_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_012_20230828T175738_06_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_012_20230828T175738_07_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_012_20230828T175738_08_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 9,
+          "subfiles_xml_count": 9
+        },
+        {
+          "observation_code": "ch3_lib_013_20230828T203459_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 12,
+          "subfiles_xml_count": 12
+        },
+        {
+          "observation_code": "ch3_lib_013_20230828T203459_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_013_20230828T203459_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_013_20230828T203459_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_013_20230828T203459_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_013_20230828T203459_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 12,
+          "subfiles_xml_count": 12
+        }
+      ]
+    },
+    "20230829": {
+      "observation_folders_count": 62,
+      "observations": [
+        {
+          "observation_code": "ch3_lib_013_20230829T010653_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 19,
+          "subfiles_xml_count": 19
+        },
+        {
+          "observation_code": "ch3_lib_013_20230829T010653_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 15,
+          "subfiles_xml_count": 15
+        },
+        {
+          "observation_code": "ch3_lib_013_20230829T010653_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_015_20230829T085432_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 10,
+          "subfiles_xml_count": 10
+        },
+        {
+          "observation_code": "ch3_lib_015_20230829T085432_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_015_20230829T085432_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 7,
+          "subfiles_xml_count": 7
+        },
+        {
+          "observation_code": "ch3_lib_015_20230829T085432_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_015_20230829T085432_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_015_20230829T085432_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_015_20230829T085432_06_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        },
+        {
+          "observation_code": "ch3_lib_015_20230829T085432_07_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_015_20230829T085432_08_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_016_20230829T160844_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 12,
+          "subfiles_xml_count": 12
+        },
+        {
+          "observation_code": "ch3_lib_016_20230829T160844_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_016_20230829T160844_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_016_20230829T160844_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_019_20230829T171530_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        },
+        {
+          "observation_code": "ch3_lib_019_20230829T171530_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_019_20230829T171530_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_019_20230829T171530_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_019_20230829T171530_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_019_20230829T171530_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_019_20230829T171530_06_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_019_20230829T171530_07_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 5,
+          "subfiles_xml_count": 5
+        },
+        {
+          "observation_code": "ch3_lib_020_20230829T191921_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_020_20230829T191921_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 8,
+          "subfiles_xml_count": 8
+        },
+        {
+          "observation_code": "ch3_lib_020_20230829T191921_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_020_20230829T191921_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        },
+        {
+          "observation_code": "ch3_lib_020_20230829T191921_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 5,
+          "subfiles_xml_count": 5
+        },
+        {
+          "observation_code": "ch3_lib_020_20230829T191921_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_020_20230829T191921_06_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_020_20230829T191921_07_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_020_20230829T191921_08_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_020_20230829T191921_09_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_020_20230829T191921_10_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_020_20230829T191921_11_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_020_20230829T191921_12_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 8,
+          "subfiles_xml_count": 8
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_06_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 5,
+          "subfiles_xml_count": 5
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_07_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_08_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_09_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_10_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_11_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 11,
+          "subfiles_xml_count": 11
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_12_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_13_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_14_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_15_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_16_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_17_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_18_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_19_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_20_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_21_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_22_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_23_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_022_20230829T233951_24_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 7,
+          "subfiles_xml_count": 7
+        }
+      ]
+    },
+    "20230830": {
+      "observation_folders_count": 77,
+      "observations": [
+        {
+          "observation_code": "ch3_lib_026_20230830T051643_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_026_20230830T051643_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_026_20230830T051643_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 10,
+          "subfiles_xml_count": 10
+        },
+        {
+          "observation_code": "ch3_lib_026_20230830T051643_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_026_20230830T051643_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 5,
+          "subfiles_xml_count": 5
+        },
+        {
+          "observation_code": "ch3_lib_026_20230830T051643_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_026_20230830T051643_06_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_026_20230830T051643_07_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_026_20230830T051643_08_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_026_20230830T051643_09_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        },
+        {
+          "observation_code": "ch3_lib_026_20230830T051643_10_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_026_20230830T051643_11_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 5,
+          "subfiles_xml_count": 5
+        },
+        {
+          "observation_code": "ch3_lib_028_20230830T115512_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_028_20230830T115512_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_028_20230830T115512_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_028_20230830T115512_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_028_20230830T115512_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_028_20230830T115512_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_028_20230830T115512_06_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_028_20230830T115512_07_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_028_20230830T115512_08_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 13,
+          "subfiles_xml_count": 13
+        },
+        {
+          "observation_code": "ch3_lib_028_20230830T115512_09_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_028_20230830T115512_10_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 8,
+          "subfiles_xml_count": 8
+        },
+        {
+          "observation_code": "ch3_lib_028_20230830T115512_11_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_028_20230830T115512_12_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_028_20230830T115512_13_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 11,
+          "subfiles_xml_count": 11
+        },
+        {
+          "observation_code": "ch3_lib_028_20230830T115512_14_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_029_20230830T145805_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_029_20230830T145805_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_029_20230830T145805_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_029_20230830T145805_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_029_20230830T145805_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 5,
+          "subfiles_xml_count": 5
+        },
+        {
+          "observation_code": "ch3_lib_029_20230830T145805_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_029_20230830T145805_06_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 15,
+          "subfiles_xml_count": 15
+        },
+        {
+          "observation_code": "ch3_lib_029_20230830T145805_07_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_029_20230830T145805_08_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_029_20230830T145805_09_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_029_20230830T145805_10_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        },
+        {
+          "observation_code": "ch3_lib_029_20230830T145805_11_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_029_20230830T145805_12_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 14,
+          "subfiles_xml_count": 14
+        },
+        {
+          "observation_code": "ch3_lib_031_20230830T185336_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_031_20230830T185336_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_031_20230830T185336_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 5,
+          "subfiles_xml_count": 5
+        },
+        {
+          "observation_code": "ch3_lib_031_20230830T185336_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_031_20230830T185336_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_031_20230830T185336_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        },
+        {
+          "observation_code": "ch3_lib_031_20230830T185336_06_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 14,
+          "subfiles_xml_count": 14
+        },
+        {
+          "observation_code": "ch3_lib_031_20230830T185336_07_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_031_20230830T185336_08_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_031_20230830T185336_09_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_031_20230830T185336_10_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 16,
+          "subfiles_xml_count": 16
+        },
+        {
+          "observation_code": "ch3_lib_031_20230830T185336_11_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        },
+        {
+          "observation_code": "ch3_lib_031_20230830T185336_12_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_031_20230830T185336_13_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_031_20230830T185336_14_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_031_20230830T185336_15_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_031_20230830T185336_16_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_031_20230830T185336_17_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 11,
+          "subfiles_xml_count": 11
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T194242_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T194242_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 5,
+          "subfiles_xml_count": 5
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T194242_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T194242_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T194242_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T194242_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 16,
+          "subfiles_xml_count": 16
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T231233_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 13,
+          "subfiles_xml_count": 13
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T231233_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T231233_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 8,
+          "subfiles_xml_count": 8
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T231233_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 7,
+          "subfiles_xml_count": 7
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T231233_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 26,
+          "subfiles_xml_count": 26
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T231233_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T231233_06_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 27,
+          "subfiles_xml_count": 27
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T231233_07_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T231233_08_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T231233_09_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T231233_10_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 5,
+          "subfiles_xml_count": 5
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T231233_11_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_032_20230830T231233_12_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 12,
+          "subfiles_xml_count": 12
+        }
+      ]
+    },
+    "20230831": {
+      "observation_folders_count": 81,
+      "observations": [
+        {
+          "observation_code": "ch3_lib_034_20230831T051804_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_034_20230831T051804_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_034_20230831T051804_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 5,
+          "subfiles_xml_count": 5
+        },
+        {
+          "observation_code": "ch3_lib_034_20230831T051804_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_034_20230831T051804_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 5,
+          "subfiles_xml_count": 5
+        },
+        {
+          "observation_code": "ch3_lib_034_20230831T051804_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 13,
+          "subfiles_xml_count": 13
+        },
+        {
+          "observation_code": "ch3_lib_034_20230831T051804_06_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_034_20230831T051804_07_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_034_20230831T051804_08_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 5,
+          "subfiles_xml_count": 5
+        },
+        {
+          "observation_code": "ch3_lib_034_20230831T051804_09_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_034_20230831T051804_10_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_034_20230831T051804_11_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_034_20230831T051804_12_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 13,
+          "subfiles_xml_count": 13
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 7,
+          "subfiles_xml_count": 7
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 10,
+          "subfiles_xml_count": 10
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 5,
+          "subfiles_xml_count": 5
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_06_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_07_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_08_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_09_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_10_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_11_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_12_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 15,
+          "subfiles_xml_count": 15
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_13_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 5,
+          "subfiles_xml_count": 5
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_14_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_15_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_16_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_17_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_035_20230831T085343_18_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 45,
+          "subfiles_xml_count": 45
+        },
+        {
+          "observation_code": "ch3_lib_036_20230831T145549_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_036_20230831T145549_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_036_20230831T145549_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_036_20230831T145549_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 15,
+          "subfiles_xml_count": 15
+        },
+        {
+          "observation_code": "ch3_lib_036_20230831T145549_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_036_20230831T145549_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        },
+        {
+          "observation_code": "ch3_lib_036_20230831T145549_06_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_036_20230831T145549_07_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_036_20230831T145549_08_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_036_20230831T145549_09_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_036_20230831T145549_10_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_036_20230831T145549_11_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_036_20230831T145549_12_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_036_20230831T145549_13_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 5,
+          "subfiles_xml_count": 5
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_06_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_07_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_08_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_09_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_10_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_11_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_12_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_13_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_14_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_15_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_16_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_17_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 5,
+          "subfiles_xml_count": 5
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_18_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_19_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_20_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_21_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 8,
+          "subfiles_xml_count": 8
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_22_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_23_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_24_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_25_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_26_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_27_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_28_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_29_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 5,
+          "subfiles_xml_count": 5
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_30_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_31_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_32_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_33_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_038_20230831T215709_34_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 3,
+          "subfiles_xml_count": 3
+        }
+      ]
+    },
+    "20230901": {
+      "observation_folders_count": 28,
+      "observations": [
+        {
+          "observation_code": "ch3_lib_040_20230901T061242_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 8,
+          "subfiles_xml_count": 8
+        },
+        {
+          "observation_code": "ch3_lib_040_20230901T061242_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_040_20230901T061242_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_040_20230901T061242_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_040_20230901T061242_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_040_20230901T061242_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 1,
+          "subfiles_xml_count": 1
+        },
+        {
+          "observation_code": "ch3_lib_041_20230901T131919_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 10,
+          "subfiles_xml_count": 10
+        },
+        {
+          "observation_code": "ch3_lib_041_20230901T131919_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_041_20230901T131919_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 9,
+          "subfiles_xml_count": 9
+        },
+        {
+          "observation_code": "ch3_lib_041_20230901T131919_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_041_20230901T131919_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_041_20230901T131919_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_041_20230901T131919_06_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_041_20230901T131919_07_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        },
+        {
+          "observation_code": "ch3_lib_041_20230901T131919_08_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_042_20230901T183802_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_042_20230901T183802_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_042_20230901T183802_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        },
+        {
+          "observation_code": "ch3_lib_042_20230901T183802_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_042_20230901T183802_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_043_20230901T222958_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_043_20230901T222958_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_043_20230901T222958_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        },
+        {
+          "observation_code": "ch3_lib_043_20230901T222958_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_043_20230901T222958_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 7,
+          "subfiles_xml_count": 7
+        },
+        {
+          "observation_code": "ch3_lib_043_20230901T223909_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 4,
+          "subfiles_xml_count": 4
+        },
+        {
+          "observation_code": "ch3_lib_043_20230901T223909_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_043_20230901T223909_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 15,
+          "subfiles_xml_count": 15
+        }
+      ]
+    },
+    "20230902": {
+      "observation_folders_count": 8,
+      "observations": [
+        {
+          "observation_code": "ch3_lib_045_20230902T074049_00_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_045_20230902T074049_01_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_045_20230902T074049_02_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_045_20230902T074049_03_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_045_20230902T074049_04_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_045_20230902T074049_05_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_045_20230902T074049_06_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 2,
+          "subfiles_xml_count": 2
+        },
+        {
+          "observation_code": "ch3_lib_045_20230902T074049_07_l1",
+          "has_parent_csv": true,
+          "has_parent_xml": true,
+          "valid_parent_pair": true,
+          "subfiles_csv_count": 6,
+          "subfiles_xml_count": 6
+        }
+      ]
+    }
+  },
+  "summary_metrics": {
+    "total_observation_folders": 301,
+    "total_parent_csv_files": 301,
+    "total_parent_xml_files": 301,
+    "total_sub_files_detected": 2562
+  }
+}

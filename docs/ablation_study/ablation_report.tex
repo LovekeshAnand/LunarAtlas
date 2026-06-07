@@ -1,0 +1,35 @@
+% Generated LaTeX code for Ablation Studies
+% Auto-computed from raw dataset: ch3_lib_002_20230825T104221_00_l1.csv
+
+\begin{table}[htbp]
+\centering
+\caption{Quantitative ablation metrics of the LunarAtlas Level-1 (L1) data processing pipeline. Baseline noise is calculated as the standard deviation of intensity counts within the spectrally inactive 700--800~nm window, and averaged across all paired acquisitions.}
+\label{tab:pipeline_ablation}
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Ingestion Configuration} & \textbf{Baseline Noise (cts)} & \textbf{Physical Validity (\%)} & \textbf{Negative Samples (\%)} & \textbf{Query Latency} \\
+\midrule
+Raw L1 (No Subtraction) & 51.07 & 100.0\% & 0.0\% & 4.1 ms \\
+Average BG Subtraction & 37.48 & 100.0\% & 0.0\% & 4.3 ms \\
+Paired Subtraction (No Clamping) & 64.79 & 68.0\% & 32.0\% & 4.2 ms \\
+\textbf{Full Ingestion Pipeline} & \textbf{49.73} & \textbf{100.0\%} & \textbf{0.0\%} & \textbf{4.2 ms} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Quantitative peak preservation metrics of the adaptive LTTB downsampling algorithm. Peak retention is evaluated relative to the 279 baseline emission peaks detected in the clean spectrum.}
+\label{tab:downsample_ablation}
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Downsampling Configuration} & \textbf{Data Density ($p$)} & \textbf{Peak Retention (\%)} & \textbf{Visual Quality} \\
+\midrule
+LTTB Only (No NIST Union) & 1.0\% & 3.2\% & Severe peak height clipping \\
+LTTB Only (No NIST Union) & 10.0\% & 30.1\% & Missing narrow emission lines \\
+\textbf{LTTB + NIST Peak Lock} & \textbf{10.0\%} & \textbf{100.0\%} & \textbf{Perfect peak alignment} \\
+\bottomrule
+\end{tabular}
+\end{table}

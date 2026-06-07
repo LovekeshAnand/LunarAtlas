@@ -23,7 +23,7 @@ LunarAtlas/
 │   └── server/                # High-throughput FastAPI business logic service
 │
 ├── Ablation/                  # Parameter ablation studies of adaptive downsampling
-│   └── ablation_studies.md    # Documentation of dynamic density thresholding and 5% overlap margins
+│   └── ablation_studies.md    # Documentation of dynamic density thresholding and parameter ablation studies
 │
 ├── Abstraction/               # Structural software abstraction layer specifications
 │   └── abstraction_layer.md   # System interfaces decoupling ingestion, workers, and charting
@@ -70,9 +70,8 @@ LunarAtlas/
 
 Planetary LIBS spectrometers produce highly detailed waveforms with narrow elemental emission lines. Standard data compression algorithms fail to preserve critical peak height or split boundary values. 
 
-LunarAtlas utilizes **Largest Triangle Three Buckets (LTTB)** augmented with two custom research constraints:
-1. **$5\%$ Bucket Overlap:** Dual-evaluates points crossing adjacent sampling bucket envelopes to entirely eliminate the **peak-splitting phenomenon**.
-2. **NIST Reference Insertion Lock:** Permanently locks coordinates corresponding to key target element emission peaks ($Fe$, $Ca$, $Mg$, $Si$, $Na$, $O$) during downsampling. This guarantees **100% mathematical peak retention** even at maximum overview zoom levels.
+LunarAtlas utilizes **Largest Triangle Three Buckets (LTTB)** augmented with a custom research constraint:
+1. **NIST Reference Insertion Lock:** Permanently locks coordinates corresponding to key target element emission peaks ($Fe$, $Ca$, $Mg$, $Si$, $Na$, $O$) during downsampling. This guarantees **100% mathematical peak retention** even at maximum overview zoom levels.
 
 ---
 

@@ -9,7 +9,7 @@ Complete implementation of adaptive min-max downsampling for Chandrayaan-3 LIBS 
 - ✅ **Interactive AmCharts** - Smooth pan and zoom with mouse/touch
 - ✅ **Real-time API** - Sub-500ms response times
 - ✅ **PostgreSQL Backend** - Optimized with BRIN and composite indexes
-- ✅ **Peak Preservation Guarantee** - 5% bucket overlap prevents splitting
+- ✅ **Peak Preservation Guarantee** - NIST Reference lock ensures zero-loss peak coordinates
 - ✅ **Production Ready** - Docker Compose for one-command deployment
 
 ## 📁 Project Structure
@@ -215,7 +215,6 @@ max_wavelength = wavelength_at_max
 
 ### Peak Preservation
 
-- **5% Bucket Overlap:** Prevents peaks at boundaries from being split
 - **Exact Position Storage:** Both min and max wavelength positions preserved
 - **No Interpolation:** Only actual measured values returned
 
@@ -339,7 +338,7 @@ docker-compose logs postgres
 3. **Peak Detection:** Add prominence threshold
 4. **Multiple Observations:** Overlay comparison view
 5. **Export Functionality:** Download processed data
-6. **Ablation Study:** Test different overlap percentages
+6. **Ablation Study:** Test different compression ratios
 
 ## 📚 Documentation
 

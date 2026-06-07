@@ -1,0 +1,11 @@
+Measurement_ID,Detected_Wavelength_nm,Peak_Intensity_counts,NIST_Element,NIST_Wavelength_nm,Wavelength_Offset_nm,Verification_Status
+1,253.2,173.0,Unknown,,,UNREGISTERED
+1,281.19,1484.0,Unknown,,,UNREGISTERED
+1,286.02,203.0,Unknown,,,UNREGISTERED
+1,289.73,184.0,Unknown,,,UNREGISTERED
+1,310.46,211.0,Unknown,,,UNREGISTERED
+1,311.19,219.0,Unknown,,,UNREGISTERED
+1,318.57,299.0,Unknown,,,UNREGISTERED
+1,319.67,256.0,Unknown,,,UNREGISTERED
+1,320.78,395.0,Unknown,,,UNREGISTERED
+1,321.52,321.0,Unknown,,,UNREGISTERED

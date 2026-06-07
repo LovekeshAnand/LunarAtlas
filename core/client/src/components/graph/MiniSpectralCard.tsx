@@ -20,6 +20,7 @@ interface MiniSpectralCardProps {
   isFocused: boolean;
   onFocus: (id: string | null) => void;
   targetWavelengths?: number[];
+  lttbEnabled?: boolean;
 }
 
 const MINI_W = 600;
@@ -33,6 +34,7 @@ export default function MiniSpectralCard({
   isFocused,
   onFocus,
   targetWavelengths,
+  lttbEnabled = true,
 }: MiniSpectralCardProps) {
   const { id, label, color, data, meta } = dataset;
 
@@ -148,8 +150,12 @@ export default function MiniSpectralCard({
       <div className="flex items-center gap-2 px-4 py-1.5 bg-gray-50/50"
         style={{ borderBottom: `1px solid ${isFocused ? color + '18' : '#f3f4f6'}` }}
       >
-        <span className="text-[9px] font-sans font-bold text-emerald-600 bg-emerald-50 border border-solid border-emerald-100 px-1.5 py-0.5 rounded uppercase tracking-widest">
-          LTTB ✓
+        <span className={`text-[9px] font-sans font-bold px-1.5 py-0.5 border border-solid rounded uppercase tracking-widest ${
+          lttbEnabled
+            ? 'text-emerald-600 bg-emerald-50 border-emerald-100'
+            : 'text-red-650 bg-red-50 border-red-100'
+        }`}>
+          {lttbEnabled ? 'LTTB ON' : 'LTTB OFF'}
         </span>
         <span className="text-[9px] font-sans font-bold text-blue-600 bg-blue-50 border border-solid border-blue-100 px-1.5 py-0.5 rounded uppercase tracking-widest">
           Peak Guarantee ✓

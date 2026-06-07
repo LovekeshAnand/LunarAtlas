@@ -64,6 +64,7 @@ interface MultiSpectralGraphProps {
   onFocusChange?: (id: string | null) => void;
   targetWavelengths?: number[];
   selectedElement?: string;
+  lttbEnabled?: boolean;
 }
 
 /* ------------------------------------------------------------------ */
@@ -195,6 +196,7 @@ export default function MultiSpectralGraph({
   onFocusChange,
   targetWavelengths,
   selectedElement,
+  lttbEnabled = true,
 }: MultiSpectralGraphProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
@@ -364,8 +366,12 @@ export default function MultiSpectralGraph({
           <span className="text-[12px] font-sans font-bold text-gray-700 shrink-0">
             Spectral View
           </span>
-          <span className="text-[9px] font-sans font-bold text-emerald-700 px-2 py-0.5 bg-emerald-50 border border-solid border-emerald-200 rounded-full uppercase tracking-wide shrink-0">
-            LTTB ✓
+          <span className={`text-[9px] font-sans font-bold px-2 py-0.5 border border-solid rounded-full uppercase tracking-wide shrink-0 ${
+            lttbEnabled
+              ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
+              : 'text-red-700 bg-red-50 border-red-200'
+          }`}>
+            {lttbEnabled ? 'LTTB ON' : 'LTTB OFF'}
           </span>
         </div>
 

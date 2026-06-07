@@ -1,0 +1,3 @@
+Measurement_ID,Time,Operation_Mode,Measurement_Type,Delay_Time_us,Integration_Time_us,Number_of_Pulses,X_Factor,Laser_Energy_V,Laser_Pump_Current_A,PRR_Hz,On_Off_Status
+1,2023-08-30 16:02:37,ASLF,Plasma,0.375,2000,20,1,3144,95,5,1
+2,2023-08-30 16:02:38,ASLF,Plasma,0.375,2000,20,1,3155,95,5,1

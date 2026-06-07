@@ -151,12 +151,19 @@ class EnhancedLTTBVisualizer:
         plt.savefig(f'{output_path}.png', dpi=600)
         plt.close()
 
+    def _get_measurement_id(self, requested_id):
+        available_ids = self.data['Measurement_ID'].unique()
+        if len(available_ids) == 0:
+            raise ValueError("No measurements found in the dataset.")
+        return requested_id if requested_id in available_ids else available_ids[0]
+
     def fig2_perfect_comparison(self, measurement_id=3):
         """
         Figure 2: Perfect Comparison
         Clean 2-panel showing exact before/after alignment.
         """
         print("[Fig 2] Creating Perfect Comparison...")
+        measurement_id = self._get_measurement_id(measurement_id)
         df = self.data[self.data['Measurement_ID'] == measurement_id].copy().sort_values('Wavelength_nm')
         wl = df['Wavelength_nm'].values
         val = df['Cleaned_Intensity'].values
@@ -192,6 +199,7 @@ class EnhancedLTTBVisualizer:
     def fig3_adaptive_zoom(self, measurement_id=3):
         """Figure 3: Clean Adaptive Zoom"""
         print("[Fig 3] Creating Clean Adaptive Zoom...")
+        measurement_id = self._get_measurement_id(measurement_id)
         df = self.data[self.data['Measurement_ID'] == measurement_id].copy().sort_values('Wavelength_nm')
         wl = df['Wavelength_nm'].values
         val = df['Cleaned_Intensity'].values
@@ -225,16 +233,21 @@ class EnhancedLTTBVisualizer:
     def fig4_peak_preservation(self, measurement_id=3):
         """Figure 4: Clean Pareto Front"""
         print("[Fig 4] Enhancing Quantitative Pareto Front...")
+        measurement_id = self._get_measurement_id(measurement_id)
         df = self.data[self.data['Measurement_ID'] == measurement_id].copy().sort_values('Wavelength_nm')
         wl, val = df['Wavelength_nm'].values, df['Cleaned_Intensity'].values
         
         peaks, _ = find_peaks(val, prominence=50, distance=5)
+        if len(peaks) == 0:
+            print("No peaks detected for Pareto analysis. Trying lower prominence...")
+            peaks, _ = find_peaks(val, prominence=20, distance=5)
+            
         thresholds = [50, 100, 200, 400, 800, len(wl)]
         res = []
         
         for t in thresholds:
             _, _, idxs, _ = self.lttb_downsample_with_tracking(wl, val, t)
-            pres = 100 * np.isin(peaks, idxs).sum() / len(peaks)
+            pres = 100 * np.isin(peaks, idxs).sum() / len(peaks) if len(peaks) > 0 else 100.0
             red = len(wl) / len(idxs) if len(idxs) > 0 else 1
             res.append((red, pres, t))
             
@@ -256,7 +269,54 @@ class EnhancedLTTBVisualizer:
         plt.savefig(f'{output_path}.pdf')
         plt.savefig(f'{output_path}.png', dpi=600)
         plt.close()
+
+    def fig4_peak_comparison(self, measurement_id=3):
+        """
+        Generates a direct peak-by-peak comparison plot showing exactly which raw peaks 
+        are preserved vs missed by the downsampling algorithm.
+        """
+        print("[Fig 4 Peak Comparison] Generating peak comparison...")
+        measurement_id = self._get_measurement_id(measurement_id)
+        df = self.data[self.data['Measurement_ID'] == measurement_id].copy().sort_values('Wavelength_nm')
+        wl = df['Wavelength_nm'].values
+        val = df['Cleaned_Intensity'].values
         
+        # Detect peaks in raw data
+        raw_peaks_idx, _ = find_peaks(val, prominence=30, distance=5)
+        
+        # Apply LTTB downsampling at 200 points
+        wl_d, val_d, sampled_indices, _ = self.lttb_downsample_with_tracking(wl, val, threshold=200)
+        
+        # Determine preserved and missed peaks
+        preserved_peaks = [idx for idx in raw_peaks_idx if idx in sampled_indices]
+        missed_peaks = [idx for idx in raw_peaks_idx if idx not in sampled_indices]
+        
+        fig, ax = plt.subplots(figsize=(10, 5))
+        ax.plot(wl, val, color=COLORS['grey'], lw=1.2, alpha=0.5, label='Raw Spectrum')
+        ax.plot(wl_d, val_d, color=COLORS['primary'], lw=1.2, alpha=0.8, label='LTTB Downsampled (200 pts)')
+        
+        # Mark preserved peaks in green
+        if preserved_peaks:
+            ax.scatter(wl[preserved_peaks], val[preserved_peaks], color='green', marker='o', s=60, zorder=5, 
+                       label=f'Preserved Peaks ({len(preserved_peaks)}/{len(raw_peaks_idx)})')
+        
+        # Mark missed peaks in red
+        if missed_peaks:
+            ax.scatter(wl[missed_peaks], val[missed_peaks], color='red', marker='x', s=60, zorder=5, 
+                       label=f'Missed Peaks ({len(missed_peaks)}/{len(raw_peaks_idx)})')
+            
+        ax.set_title(f'Peak Preservation Analysis (Measurement #{measurement_id})')
+        ax.set_xlabel('Wavelength (nm)')
+        ax.set_ylabel('Intensity (counts)')
+        ax.legend(loc='upper right')
+        
+        plt.tight_layout()
+        output_path = self.output_dir / 'fig4_peak_comparison'
+        plt.savefig(f'{output_path}.png', dpi=300)
+        plt.savefig(f'{output_path}.pdf')
+        plt.close()
+        print(f"  * Saved peak comparison: {output_path.name}.png")
+
     def fig5_heatmap(self):
         """Figure 5: Clean Spectral Heatmap"""
         print("[Fig 5] Creating clean heatmap...")
@@ -279,6 +339,38 @@ class EnhancedLTTBVisualizer:
         plt.savefig(f'{output_path}.png', dpi=600)
         plt.close()
 
+    def generate_individual_graphs(self):
+        """Generate individual spectral line plots for each measurement in the dataset"""
+        print("[Individual Graphs] Generating plots for each measurement...")
+        available_ids = self.data['Measurement_ID'].unique()
+        
+        # Create a subdirectory for individual graphs
+        indiv_dir = self.output_dir / 'individual_measurements'
+        indiv_dir.mkdir(exist_ok=True)
+        
+        for meas_id in available_ids:
+            df = self.data[self.data['Measurement_ID'] == meas_id].copy().sort_values('Wavelength_nm')
+            wl = df['Wavelength_nm'].values
+            val = df['Cleaned_Intensity'].values
+            
+            # Apply LTTB with a standard threshold of 500
+            wl_d, val_d, _, _ = self.lttb_downsample_with_tracking(wl, val, threshold=500)
+            
+            fig, ax = plt.subplots(figsize=(8, 4))
+            ax.plot(wl, val, color=COLORS['grey'], lw=1.0, alpha=0.4, label='Raw Spectrum')
+            ax.plot(wl_d, val_d, color=COLORS['primary'], lw=1.2, alpha=0.9, label='LTTB Downsampled (500 pts)')
+            
+            ax.set_title(f'Measurement #{meas_id} Spectral Signature')
+            ax.set_xlabel('Wavelength (nm)')
+            ax.set_ylabel('Intensity (counts)')
+            ax.legend(loc='upper right')
+            
+            plt.tight_layout()
+            output_path = indiv_dir / f'measurement_{meas_id}_spectrum'
+            plt.savefig(f'{output_path}.png', dpi=300)
+            plt.close()
+            print(f"  * Saved: {output_path.name}.png")
+
     def generate_all(self):
         print("\n" + "="*50)
         print(" GENERATING CLEAN VISUAL SUITE")
@@ -287,10 +379,35 @@ class EnhancedLTTBVisualizer:
         self.fig2_perfect_comparison()
         self.fig3_adaptive_zoom()
         self.fig4_peak_preservation()
+        self.fig4_peak_comparison()
         self.fig5_heatmap()
+        self.generate_individual_graphs()
         print("\n[SUCCESS] Clean, publisher-ready figures saved.")
 
 if __name__ == "__main__":
+    import os
+    import glob
+    
+    # Check default path first, fall back to a local sample from the workspace if not found
     data_path = r"D:\ch3_libs\lib-v2\data\calibrated\20230825\ch3_lib_002_20230825T104221_00_l1\cleaned_libs_data\cleaned_spectra\ch3_lib_002_20230825T104221_00_l1_cleaned.csv"
-    viz = EnhancedLTTBVisualizer(data_path)
-    viz.generate_all()
+    if not os.path.exists(data_path):
+        local_patterns = [
+            "c:/Users/ZBook/Desktop/LunarAtlas/datasets/processed/calibrated/*/*/*_cleaned.csv",
+            "./datasets/processed/calibrated/*/*/*_cleaned.csv",
+            "datasets/processed/calibrated/*/*/*_cleaned.csv"
+        ]
+        found = False
+        for pat in local_patterns:
+            matches = glob.glob(pat)
+            if matches:
+                data_path = matches[0]
+                found = True
+                break
+        if not found:
+            print("Warning: Default data paths could not be found. Please check data file mapping.")
+            
+    if os.path.exists(data_path):
+        viz = EnhancedLTTBVisualizer(data_path)
+        viz.generate_all()
+    else:
+        print(f"Error: Could not locate spectral data CSV file: {data_path}")

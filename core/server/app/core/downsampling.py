@@ -34,7 +34,6 @@ class DownsampleConfig:
     """
     BASE_BUCKETS: int = 200
     B_MIN: float = 0.01
-    OVERLAP_PCT: float = 0.05
 
 
 def calculate_bucket_size(
