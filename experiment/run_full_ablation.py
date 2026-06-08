@@ -44,7 +44,8 @@ def run_ablation():
     print("======================================================================")
     
     # Find all CSV files in datasets/uploads
-    search_path = "c:/Users/ZBook/Desktop/LunarAtlas/datasets/uploads/*/*/*.csv"
+    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    search_path = os.path.join(repo_root, "datasets/uploads/*/*/*.csv")
     raw_files = glob.glob(search_path)
     if not raw_files:
         raw_files = glob.glob("./datasets/uploads/*/*/*.csv")
@@ -369,12 +370,12 @@ def run_ablation():
     mean_p5_neg = np.mean(all_p5_negatives)
     
     # Write LaTeX files
-    for folder in ["docs/ablastion study", "doc/ablastion study"]:
-        out_dir = os.path.join("c:/Users/ZBook/Desktop/LunarAtlas", folder)
-        os.makedirs(out_dir, exist_ok=True)
-        
-        # Write ablation_report.tex
-        latex_tables = f"""% Auto-generated LaTeX tables for LunarAtlas Ablation Studies
+    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    out_dir = os.path.join(repo_root, "docs/ablation_study")
+    os.makedirs(out_dir, exist_ok=True)
+    
+    # Write ablation_report.tex
+    latex_tables = f"""% Auto-generated LaTeX tables for LunarAtlas Ablation Studies
 % Aggregated over {sample_size} sampled files ({total_pairs_analyzed} background-plasma shot pairs)
 
 \\begin{{table}}[htbp]
@@ -415,12 +416,12 @@ Standard LTTB Only (No NIST Union) & 10.0\\% & {np.mean(downsample_results['lttb
 \\end{{tabular}}
 \\end{{table}}
 """
+    
+    with open(os.path.join(out_dir, "ablation_report.tex"), "w") as f:
+        f.write(latex_tables)
         
-        with open(os.path.join(out_dir, "ablation_report.tex"), "w") as f:
-            f.write(latex_tables)
-            
-        # Write detailed ablation_section.tex
-        latex_section = f"""% Section V: Ablation Studies and Quantitative Validation
+    # Write detailed ablation_section.tex
+    latex_section = f"""% Section V: Ablation Studies and Quantitative Validation
 % This file contains the complete, detailed academic LaTeX text for the ablation study.
 % Incorporate this directly into the research paper manuscript.
 
@@ -494,11 +495,11 @@ The results show that standard LTTB downsampling is highly inadequate for scient
 \\subsubsection{{The Advantages of the Hybrid NIST Peak-Union Lock}}
 The LunarAtlas hybrid configuration (LTTB + NIST Peak Lock) resolves this by explicitly injecting the indices of target NIST wavelengths into the downsampled set. This approach guarantees \\textbf{{100.0\\% peak preservation}} of targeted elements at any zoom level, while still compressing the raw data volume by 90\\% to ensure smooth interactive browser rendering.
 """
+    
+    with open(os.path.join(out_dir, "ablation_section.tex"), "w") as f:
+        f.write(latex_section)
         
-        with open(os.path.join(out_dir, "ablation_section.tex"), "w") as f:
-            f.write(latex_section)
-            
-    print("LaTeX files written successfully to docs/ablastion study/ and doc/ablastion study/")
+    print(f"LaTeX files written successfully to {out_dir}")
 
 if __name__ == "__main__":
     run_ablation()

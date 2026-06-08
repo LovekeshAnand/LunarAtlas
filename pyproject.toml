@@ -1,0 +1,83 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "lunaratlas"
+version = "1.0.0"
+description = "Reproducible LIBS spectral data processing and visualization infrastructure for Chandrayaan-3"
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.10"
+
+authors = [
+    {name = "[YOUR FULL NAME]", email = "[your-email@institution.edu]"},
+]
+
+keywords = [
+    "planetary science",
+    "LIBS spectroscopy",
+    "Chandrayaan-3",
+    "lunar science",
+    "data pipeline",
+    "LTTB downsampling",
+    "NIST atomic database",
+    "open science",
+]
+
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+
+dependencies = [
+    "numpy>=1.24.0",
+    "pandas>=2.0.0",
+    "scipy>=1.11.0",
+    "matplotlib>=3.7.0",
+    "lxml>=4.9.0",
+]
+
+[project.optional-dependencies]
+db = ["psycopg2-binary>=2.9.0"]
+api = [
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "databases[asyncpg]>=0.8.0",
+    "redis>=5.0.0",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.0.0",
+]
+report = ["reportlab>=4.0.0"]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "flake8>=6.0.0",
+]
+all = ["lunaratlas[db,api,report,dev]"]
+
+[project.urls]
+Homepage = "https://github.com/[YOUR-GITHUB-USERNAME]/LunarAtlas"
+Repository = "https://github.com/[YOUR-GITHUB-USERNAME]/LunarAtlas"
+Documentation = "https://github.com/[YOUR-GITHUB-USERNAME]/LunarAtlas/tree/main/docs"
+"Bug Tracker" = "https://github.com/[YOUR-GITHUB-USERNAME]/LunarAtlas/issues"
+Paper = "https://doi.org/10.5281/zenodo.[YOUR-ZENODO-ID]"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["Pipeline*", "core*"]

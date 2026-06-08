@@ -1,0 +1,29 @@
+# ─── LunarAtlas Root Requirements ────────────────────────────────────────────
+# Pipeline (Steps 1–8) and experiment scripts
+# Install with: pip install -r requirements.txt
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Core scientific stack ──────────────────────────────────────────────────
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.11.0
+matplotlib>=3.7.0
+
+# ── Pipeline data parsing ──────────────────────────────────────────────────
+lxml>=4.9.0          # Fast XML parsing for PDS4 label files
+
+# ── Database (Stage 7 + Stage 8 ingestion) ────────────────────────────────
+psycopg2-binary>=2.9.0
+
+# ── Report generation ─────────────────────────────────────────────────────
+reportlab>=4.0.0     # PDF generation for ablation study guide
+
+# ── Testing ───────────────────────────────────────────────────────────────
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# ── Code quality ──────────────────────────────────────────────────────────
+flake8>=6.0.0
+
+# ─── API Server Requirements ──────────────────────────────────────────────
+# For the FastAPI backend, use: pip install -r core/server/requirements.txt

@@ -76,7 +76,7 @@ def generate_improved_plots(processed_dir):
         wl_max = df['Wavelength_nm'].max()
         
         # 1. Overlay Plot Setup
-        fig, ax = plt.subplots(figsize=(16, 7), dpi=200)
+        fig, ax = plt.subplots(figsize=(16, 7), dpi=300)
         
         # Cleaned Canvas aesthetics
         ax.set_facecolor('#f8fafc')
@@ -124,7 +124,7 @@ def generate_improved_plots(processed_dir):
         plots_folder.mkdir(exist_ok=True)
         
         plot_out = plots_folder / f"{stem_name}_nist_comparison.png"
-        fig.savefig(plot_out, dpi=200, bbox_inches='tight')
+        fig.savefig(plot_out, dpi=300, bbox_inches='tight')
         plt.close(fig)
         
         print(f"  [SUCCESS] Plot saved to: {plot_out.relative_to(base_dir)}")

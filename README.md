@@ -1,122 +1,219 @@
-# 🌙 LunarAtlas: Adaptive LIBS Spectral Data System
+# 🌙 LunarAtlas
 
-A publication-grade planetary scientific data and visualization system designed to ingest, downsample, and analyze Laser-Induced Breakdown Spectroscopy (LIBS) calibrated datasets from the Chandrayaan-3 lunar mission.
+**A Reproducible LIBS Spectral Data Processing and Visualization Infrastructure for Chandrayaan-3**
 
----
-
-## 🎯 System Architecture Diagram
-
-Below is the high-level data flow and modular software architecture of LunarAtlas:
-
-![LunarAtlas System Architecture](images/lunar_atlas_architecture.png)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
+[![CI](https://github.com/[YOUR-GITHUB-USERNAME]/LunarAtlas/actions/workflows/ci.yml/badge.svg)](https://github.com/[YOUR-GITHUB-USERNAME]/LunarAtlas/actions)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.[YOUR-ZENODO-ID].svg)](https://doi.org/10.5281/zenodo.[YOUR-ZENODO-ID])
+[![Elsevier SoftwareX](https://img.shields.io/badge/Paper-SoftwareX-orange)](docs/paper/paper.md)
 
 ---
 
-## 📁 Research Project Structure
+## What Is LunarAtlas?
 
-The repository is organized following professional publication-grade research structures:
+LunarAtlas is an open-source, end-to-end software infrastructure for the
+**ingestion, processing, and interactive visualization** of Laser-Induced
+Breakdown Spectroscopy (LIBS) Level-1 calibrated data from the ISRO
+Chandrayaan-3 lunar mission.
+
+It solves a real problem: the raw Chandrayaan-3 LIBS data is published in
+PDS4 format by ISRO, but **no open tool existed to process it into
+analysis-ready spectral records**. LunarAtlas provides that tool.
+
+**Key results:**
+- `max(0, I_plasma − I_background)` clamping reduces unphysical negative
+  channel fraction from **49.6% → 0%**
+- NIST Peak-Union Lock raises elemental line retention from **6.25% → 100%**
+  at 10× data reduction
+- Full pipeline from raw PDS4 → PostgreSQL-queryable spectra in one command
+
+---
+
+## Quick Start (3 Commands)
+
+```bash
+# 1. Clone and install
+git clone https://github.com/[YOUR-GITHUB-USERNAME]/LunarAtlas.git
+cd LunarAtlas
+pip install -r requirements.txt
+
+# 2. Run the full ingestion pipeline
+#    (set RAW_DIR to your ISRO PRADAN download path)
+python Pipeline/step2_process_l1_data.py "D:\ch3_libs\lib-v2\data\calibrated"
+
+# 3. Start the API server and dashboard
+cd core/server && uvicorn app.main:app --reload --port 8000
+cd core/client && npm install && npm run dev
+```
+
+Or use Docker:
+```bash
+docker build -t lunaratlas .
+docker run -p 8000:8000 lunaratlas
+```
+
+---
+
+## Repository Structure
 
 ```
 LunarAtlas/
-├── Core/                      # Standalone client (React/Vite) and server (FastAPI/Python) services
-│   ├── client/                # Cleaned React SPA visualization dashboard
-│   └── server/                # High-throughput FastAPI business logic service
 │
-├── Ablation/                  # Parameter ablation studies of adaptive downsampling
-│   └── ablation_studies.md    # Documentation of dynamic density thresholding and parameter ablation studies
+├── Pipeline/                      # 8-stage ingestion pipeline
+│   ├── step1_structure_study.py   # PDS4 directory scanner
+│   ├── step2_process_l1_data.py   # Core: BG subtraction + clamping  ← Main contribution
+│   ├── step3_graph_plotting.py    # NIST overlay plots (300 DPI)
+│   ├── step4_nist_verification_logs.py  # Peak detection + NIST cross-ref
+│   ├── step5_md5_checksums.py     # Digital signature manifest
+│   ├── step6_segregate_data_folders.py  # ISRO hierarchy replication
+│   ├── step7_db_ingestion.py      # Batch PostgreSQL ingestion
+│   ├── step8_data_verification.py # End-to-end MD5 audit
+│   └── study_summary.json         # PDS4 inventory (auto-generated)
 │
-├── Abstraction/               # Structural software abstraction layer specifications
-│   └── abstraction_layer.md   # System interfaces decoupling ingestion, workers, and charting
+├── core/
+│   ├── server/                    # FastAPI REST API
+│   │   └── app/core/downsampling.py  # LTTB + NIST Peak-Union Lock  ← Novel algorithm
+│   └── client/                    # React/TypeScript dashboard
+│       └── src/workers/downsampleWorker.ts  # Web Worker LTTB
 │
-├── Benchmarks/                # Quantitative performance benchmarking
-│   ├── benchmarks.md          # Numerical results and downsampling efficiency profiles
-│   └── run_benchmarks.py      # Executable Python benchmark script simulating LIBS data
+├── tests/
+│   ├── test_lttb_algorithm.py     # LTTB unit tests (pytest)
+│   └── test_pipeline_processing.py  # Pipeline math unit tests (pytest)
 │
-├── Configs/                   # Configuration management
-│   └── env.template           # Master configuration templates for database and API connection
+├── docs/paper/
+│   ├── paper.md                   # SoftwareX submission manuscript
+│   └── paper.bib                  # Bibliography
 │
-├── datasets/                  # Physical data storage structures
-│   ├── processed/             # Cleaned and processed database files
-│   └── uploads/               # Raw scientific spectral data uploads
+├── experiment/                    # Ablation and validation scripts
+│   ├── run_full_ablation.py       # Full validation experiment suite
+│   └── LunarAtlas_Ablation_Study_Guide.pdf
 │
-├── docs/                      # General project & scientific documentation
-│   ├── what_and_why_downsampling.md
-│   └── paper/                 # Compiled drafts of research papers and LaTeX sources
+├── Benchmarks/                    # Performance benchmarking
+│   └── run_benchmarks.py
 │
-├── evaluation/                # Performance evaluation and metrics
-│   ├── evaluation_framework.md# Mathematical formulations (SNR, peak height deviation, RMSE)
-│   └── research/              # Output validation test cases
-│
-├── scripts/                   # Mission ingestion and preprocessing pipelines
-│   ├── batch_process_libs.py  # Ingestion script mapping raw CSV records
-│   └── ...
-│
-├── tests/                     # System tests
-│   ├── main-algo/             # Downsampling algorithm correctness test suite
-│   └── test-algo/             # Legacy prototype validation scripts
-│
-├── Visualization/             # Generated research plots & publication figures
-│   ├── lttb_visualizations/   # Viewport zoom and scaling charts
-│   └── publication_figures/   # Enhanced vector figures formatted for journal papers
-│
-├── Dockerfile                 # Root multi-stage container orchestration instruction set
-├── LICENSE                    # Standard open-source MIT License
-└── README.md                  # Master project guide (this file)
+├── CITATION.cff                   # Machine-readable citation metadata
+├── DATA_AVAILABILITY.md           # Data availability statement
+├── CHANGELOG.md                   # Version history
+├── CONTRIBUTING.md                # Contributor guide
+├── requirements.txt               # Python dependencies
+├── environment.yml                # Conda environment
+└── Dockerfile                     # Container build
 ```
 
 ---
 
-## 🧮 Core Algorithm: Adaptive LTTB + Peak Preservation
+## System Architecture
 
-Planetary LIBS spectrometers produce highly detailed waveforms with narrow elemental emission lines. Standard data compression algorithms fail to preserve critical peak height or split boundary values. 
-
-LunarAtlas utilizes **Largest Triangle Three Buckets (LTTB)** augmented with a custom research constraint:
-1. **NIST Reference Insertion Lock:** Permanently locks coordinates corresponding to key target element emission peaks ($Fe$, $Ca$, $Mg$, $Si$, $Na$, $O$) during downsampling. This guarantees **100% mathematical peak retention** even at maximum overview zoom levels.
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    ISRO PDS4 Raw Archive                        │
+│         (PRADAN portal — lib-v2, L1 calibrated CSVs)           │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │
+           ┌───────────────▼───────────────┐
+           │   Pipeline Steps 1–8 (Python) │
+           │                               │
+           │  1. Scan PDS4 structure       │
+           │  2. Parse XML → pair shots    │  ← Core contribution
+           │     I_clean = max(0, Ip−Ib)  │
+           │  3. Plot spectra + NIST refs  │
+           │  4. NIST peak verification   │
+           │  5. MD5 checksums            │
+           │  6. Folder replication       │
+           │  7. PostgreSQL ingestion     │
+           │  8. End-to-end audit         │
+           └───────────────┬───────────────┘
+                           │
+           ┌───────────────▼───────────────┐
+           │   PostgreSQL Database         │
+           │   (mission / observation /    │
+           │    measurement / spectral)    │
+           └───────────────┬───────────────┘
+                           │
+           ┌───────────────▼───────────────┐
+           │   FastAPI REST API            │
+           │   + Redis Cache               │
+           │   LTTB + NIST Peak Lock       │  ← Novel algorithm
+           │   P_final = LTTB ∪ NIST_set  │
+           └───────────────┬───────────────┘
+                           │
+           ┌───────────────▼───────────────┐
+           │   React Browser Dashboard    │
+           │   Web Worker LTTB            │
+           │   Interactive zoom viewer    │
+           └───────────────────────────────┘
+```
 
 ---
 
-## 🚀 Execution & Developer Guides
-
-### 1. Running Computational Benchmarks
-
-You can run the simulated downsampling benchmark suite directly in your terminal to see latency and compression ratio statistics:
+## Running the Tests
 
 ```bash
-# Navigate to the Benchmarks folder
-cd Benchmarks
+# From the repository root — no database needed
+pip install pytest
+pytest tests/ -v
+```
 
-# Run the benchmark script
+Expected output:
+```
+tests/test_pipeline_processing.py::TestBackgroundSubtraction::test_positive_channels_preserved PASSED
+tests/test_pipeline_processing.py::TestBackgroundSubtraction::test_negative_channels_clamped_to_zero PASSED
+tests/test_pipeline_processing.py::TestAblationConfigs::test_p2_no_clamp_has_negatives PASSED
+tests/test_lttb_algorithm.py::TestNISTPeakLock::test_all_target_wavelengths_present PASSED
+...
+```
+
+---
+
+## Running the Benchmarks
+
+```bash
+cd Benchmarks
 python run_benchmarks.py
 ```
 
-### 2. Local Stack Execution
-
-The backend and frontend services are located under the `Core` directory.
-
-#### Start the Backend (FastAPI Server)
-```bash
-cd Core/server
-# Ensure virtual environment is active and dependencies are installed (pip install -r requirements.txt)
-uvicorn app.main:app --reload --port 8000
-```
-
-#### Start the Frontend (Vite Client)
-```bash
-cd Core/client
-# Ensure dependencies are installed (npm install)
-npm run dev
-```
+Benchmarks a 16,384-point mock LIBS spectrum at 4 reduction levels,
+reporting latency and peak preservation accuracy.
 
 ---
 
-## 🧪 Scientific Evaluation Metrics
+## Data Availability
 
-Our pipeline is quantitatively validated under three core criteria (detailed in [evaluation_framework.md](evaluation/evaluation_framework.md)):
-* **Peak Intensity Deviation ($\epsilon_I$):** $< 1\%$ for targeted elements.
-* **Peak Wavelength Shift ($\delta_\lambda$):** $0.0$ nm (Zero-shift coordinate lock).
-* **Reconstruction Mean Error (RMSE):** Optimized curve matching guaranteeing smooth SVG zoom rendering up to 60 FPS in standard browser threads.
+Raw data: [ISRO PRADAN Portal](https://pradan.issdc.gov.in/) (free registration)
+Processed data + code: [Zenodo DOI: 10.5281/zenodo.XXXXXXX](https://doi.org/10.5281/zenodo.XXXXXXX)
+
+See [`DATA_AVAILABILITY.md`](DATA_AVAILABILITY.md) for the full statement.
 
 ---
 
-## 📄 License
-This repository is open-sourced under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+## Citing LunarAtlas
+
+If you use LunarAtlas in your research, please cite:
+
+```bibtex
+@software{lunaratlas2025,
+  author    = {[YOUR FULL NAME]},
+  title     = {{LunarAtlas: A Reproducible LIBS Spectral Data Processing
+               and Visualization Infrastructure for Chandrayaan-3}},
+  year      = {2025},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.[YOUR-ZENODO-ID]},
+  url       = {https://github.com/[YOUR-GITHUB-USERNAME]/LunarAtlas}
+}
+```
+
+GitHub also shows a "Cite this repository" button (powered by [`CITATION.cff`](CITATION.cff)).
+
+---
+
+## License
+
+This project is licensed under the **MIT License** — see [`LICENSE`](LICENSE) for details.
+
+---
+
+## Contributing
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to report bugs, suggest features,
+and submit pull requests.

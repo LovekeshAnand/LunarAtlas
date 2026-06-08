@@ -1,0 +1,78 @@
+cff-version: 1.2.0
+message: "If you use LunarAtlas in your research, please cite it using the metadata below."
+
+title: "LunarAtlas: A Reproducible LIBS Spectral Data Processing and Visualization Infrastructure for Chandrayaan-3"
+
+abstract: >
+  LunarAtlas is an open-source, end-to-end data processing and visualization
+  infrastructure for Laser-Induced Breakdown Spectroscopy (LIBS) Level-1 calibrated
+  data from the ISRO Chandrayaan-3 lunar mission. It provides an 8-stage reproducible
+  ingestion pipeline that transforms raw PDS4-formatted spectral data into clean,
+  queryable spectral records with MD5-verified integrity. A FastAPI backend exposes the
+  processed data via a multi-zoom REST API using an LTTB downsampling algorithm augmented
+  with a NIST atomic line Peak-Union Lock, guaranteeing 100% retention of elemental
+  emission peaks across all zoom levels. A browser-based React/TypeScript visualization
+  dashboard completes the stack, enabling interactive exploration of Chandrayaan-3 LIBS
+  spectra by the planetary science community.
+
+authors:
+  - family-names: "[AUTHOR_LAST_NAME]"
+    given-names: "[AUTHOR_FIRST_NAME]"
+    affiliation: "[INSTITUTION NAME]"
+    orcid: "https://orcid.org/[YOUR-ORCID-ID]"
+    email: "[your-email@institution.edu]"
+  # Add co-authors below in the same format:
+  # - family-names: "[CO-AUTHOR_LAST_NAME]"
+  #   given-names: "[CO-AUTHOR_FIRST_NAME]"
+  #   affiliation: "[CO-AUTHOR INSTITUTION]"
+  #   orcid: "https://orcid.org/[CO-AUTHOR-ORCID]"
+
+type: software
+version: "1.0.0"
+date-released: "2025-08-23"
+license: MIT
+
+repository-code: "https://github.com/[YOUR-GITHUB-USERNAME]/LunarAtlas"
+url: "https://github.com/[YOUR-GITHUB-USERNAME]/LunarAtlas"
+
+# ── Replace the placeholder DOI below with your actual Zenodo DOI ──
+# To get a DOI: go to zenodo.org → log in with GitHub → enable the LunarAtlas repo
+# → create a GitHub release v1.0.0 → Zenodo will auto-assign a DOI.
+doi: "10.5281/zenodo.[YOUR-ZENODO-RECORD-ID]"
+
+keywords:
+  - "planetary science"
+  - "LIBS spectroscopy"
+  - "Chandrayaan-3"
+  - "lunar science"
+  - "data pipeline"
+  - "ISRO"
+  - "PDS4"
+  - "spectral data"
+  - "LTTB downsampling"
+  - "NIST atomic database"
+  - "open science"
+  - "reproducible research"
+
+references:
+  - type: dataset
+    title: "Chandrayaan-3 ChaSTE LIBS Calibrated Level-1 Data (lib-v2)"
+    authors:
+      - name: "Indian Space Research Organisation (ISRO)"
+    url: "https://pradan.issdc.gov.in/"
+    notes: "Raw Level-1 PDS4 calibrated LIBS data, accessed via ISRO's PRADAN data portal."
+
+  - type: article
+    title: "Largest-Triangle-Three-Buckets (LTTB) — A Downsampling Method for Visual Representation of Time Series"
+    authors:
+      - family-names: "Steinarsson"
+        given-names: "Sveinn"
+    year: 2013
+    institution:
+      name: "University of Iceland"
+
+  - type: standard
+    title: "NIST Atomic Spectra Database"
+    authors:
+      - name: "National Institute of Standards and Technology (NIST)"
+    url: "https://physics.nist.gov/asd"
