@@ -16,11 +16,11 @@ abstract: >
   spectra by the planetary science community.
 
 authors:
-  - family-names: "[AUTHOR_LAST_NAME]"
-    given-names: "[AUTHOR_FIRST_NAME]"
-    affiliation: "[INSTITUTION NAME]"
-    orcid: "https://orcid.org/[YOUR-ORCID-ID]"
-    email: "[your-email@institution.edu]"
+  - family-names: "Anand"
+    given-names: "Lovekesh"
+    affiliation: "Mahavir Swami Institute of Technology"
+    orcid: "https://orcid.org/0009-0009-4947-4040"
+    email: "lovekeshanand6@gmail.com"
   # Add co-authors below in the same format:
   # - family-names: "[CO-AUTHOR_LAST_NAME]"
   #   given-names: "[CO-AUTHOR_FIRST_NAME]"
@@ -32,8 +32,8 @@ version: "1.0.0"
 date-released: "2025-08-23"
 license: MIT
 
-repository-code: "https://github.com/[YOUR-GITHUB-USERNAME]/LunarAtlas"
-url: "https://github.com/[YOUR-GITHUB-USERNAME]/LunarAtlas"
+repository-code: "https://github.com/LovekeshAnand/LunarAtlas"
+url: "https://github.com/LovekeshAnand/LunarAtlas"
 
 # ── Replace the placeholder DOI below with your actual Zenodo DOI ──
 # To get a DOI: go to zenodo.org → log in with GitHub → enable the LunarAtlas repo

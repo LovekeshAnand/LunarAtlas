@@ -77,7 +77,7 @@ pip install -r requirements.txt
 
 ```bash
 # Copy the template and fill in your database credentials
-cp Configs/env.template core/server/.env
+cp core/server/env.template core/server/.env
 ```
 
 Edit `core/server/.env` with your PostgreSQL and Redis connection strings.
