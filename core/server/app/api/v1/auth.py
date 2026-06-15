@@ -2,11 +2,14 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from typing import Any
 from jose import JWTError, jwt
+import logging
 
-from app.schemas.auth import UserCreate, UserLogin, UserResponse, Token
+from app.schemas.auth import UserCreate, UserLogin, UserResponse, Token, UserProfileUpdate
 from app.core.security import get_password_hash, verify_password, create_access_token
 from app.database.connection import db
 from app.config import settings
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -50,7 +53,7 @@ async def register(user_in: UserCreate):
     query = """
         INSERT INTO app_users (email, institution, interest, hashed_password)
         VALUES ($1, $2, $3, $4)
-        RETURNING id, email, institution, interest
+        RETURNING id, email, institution, interest, role, created_at::text
     """
     try:
         new_user = await db.fetch_one(
@@ -60,8 +63,11 @@ async def register(user_in: UserCreate):
             user_in.interest, 
             hashed_pwd
         )
-        return dict(new_user)
+        user_dict = dict(new_user)
+        user_dict["api_key_count"] = 0
+        return user_dict
     except Exception as e:
+        logger.error(f"Failed to register user: {e}")
         raise HTTPException(status_code=500, detail="Failed to register user")
 
 @router.post("/login", response_model=Token)
@@ -85,4 +91,72 @@ async def read_users_me(current_user: Any = Depends(get_current_user)):
     """
     Get current logged in user.
     """
-    return dict(current_user)
+    user_dict = dict(current_user)
+    # Get active api keys count
+    count_row = await db.fetch_one(
+        "SELECT COUNT(*) AS cnt FROM api_keys WHERE user_id = $1 AND is_active = TRUE",
+        user_dict["id"]
+    )
+    user_dict["api_key_count"] = count_row["cnt"] if count_row else 0
+    user_dict["created_at"] = str(user_dict["created_at"]) if user_dict.get("created_at") else None
+    return user_dict
+
+@router.patch("/profile", response_model=UserResponse)
+async def update_profile(
+    body: UserProfileUpdate,
+    current_user: Any = Depends(get_current_user)
+):
+    """
+    Update profile details for the authenticated user.
+    """
+    user_id = current_user["id"]
+    
+    # Build dynamic update query
+    updates = []
+    params = []
+    param_idx = 1
+    
+    if body.role is not None:
+        updates.append(f"role = ${param_idx}")
+        params.append(body.role)
+        param_idx += 1
+        
+    if body.institution is not None:
+        updates.append(f"institution = ${param_idx}")
+        params.append(body.institution)
+        param_idx += 1
+        
+    if body.interest is not None:
+        updates.append(f"interest = ${param_idx}")
+        params.append(body.interest)
+        param_idx += 1
+        
+    if not updates:
+        # No updates requested, just return the current user
+        return await read_users_me(current_user)
+        
+    query = f"""
+        UPDATE app_users
+        SET {", ".join(updates)}
+        WHERE id = ${param_idx}
+        RETURNING id, email, institution, interest, role, created_at::text
+    """
+    params.append(user_id)
+    
+    try:
+        updated_row = await db.fetch_one(query, *params)
+        if not updated_row:
+            raise HTTPException(status_code=404, detail="User not found")
+            
+        user_dict = dict(updated_row)
+        
+        # Get active api keys count
+        count_row = await db.fetch_one(
+            "SELECT COUNT(*) AS cnt FROM api_keys WHERE user_id = $1 AND is_active = TRUE",
+            user_id
+        )
+        user_dict["api_key_count"] = count_row["cnt"] if count_row else 0
+        return user_dict
+    except Exception as e:
+        logger.error(f"Error updating user profile: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update profile info")

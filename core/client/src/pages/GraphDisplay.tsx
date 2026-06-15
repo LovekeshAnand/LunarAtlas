@@ -31,6 +31,11 @@ import {
   type MeasurementInfo,
   type HealthResponse,
 } from '../services/apiService';
+import {
+  ELEMENT_PEAKS,
+  ALL_PEAK_WAVELENGTHS,
+  getWavelengthsForElement,
+} from '../utils/spectralUtils';
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                          */
@@ -39,17 +44,13 @@ import {
 const DEFAULT_LAMBDA_MIN = 164.35;
 const DEFAULT_LAMBDA_MAX = 878.26;
 
-const ELEMENT_PEAKS: Record<string, number[]> = {
-  Mg: [279.553, 280.271, 285.213],
-  Si: [288.158, 390.553, 413.089],
-  Ti: [334.941, 336.121, 337.280, 368.520],
-  Ca: [393.366, 396.847, 422.673, 849.802, 854.209, 866.214],
-  Al: [394.401, 396.152, 308.215, 309.271],
-  Fe: [404.581, 438.355, 373.486, 385.991],
-  O: [777.194, 777.417, 777.539, 844.636],
-  Na: [588.995, 589.592],
-  'H₂O': [656.281, 486.133],
-};
+/**
+ * Element → wavelength[] lookup derived from the central ELEMENT_PEAKS.
+ * Used exclusively for downsampling target preservation.
+ */
+const ELEMENT_PEAK_WAVELENGTHS: Record<string, number[]> = Object.fromEntries(
+  Object.keys(ELEMENT_PEAKS).map((el) => [el, getWavelengthsForElement(el)])
+);
 
 /* ------------------------------------------------------------------ */
 /*  GraphDisplay                                                        */
@@ -190,15 +191,11 @@ export default function GraphDisplay() {
   /*  Derived Peak Preservation Wavelengths                           */
   /* ================================================================ */
 
-  const ALL_TARGET_WAVELENGTHS = useMemo(() => {
-    return Object.values(ELEMENT_PEAKS).flat();
-  }, []);
-
   const targetWavelengths = useMemo(() => {
     if (!lttbEnabled) return [];
-    if (!element || element === 'All') return ALL_TARGET_WAVELENGTHS;
-    return ELEMENT_PEAKS[element] || [];
-  }, [element, lttbEnabled, ALL_TARGET_WAVELENGTHS]);
+    if (!element || element === 'All') return ALL_PEAK_WAVELENGTHS;
+    return ELEMENT_PEAK_WAVELENGTHS[element] || [];
+  }, [element, lttbEnabled]);
 
   const currentProportion = lttbEnabled ? proportion : 1.0;
 
@@ -299,6 +296,7 @@ export default function GraphDisplay() {
             targetWavelengths={targetWavelengths}
             selectedElement={element}
             lttbEnabled={lttbEnabled}
+            viewMode={viewMode}
           />
         </div>
 
@@ -334,6 +332,7 @@ export default function GraphDisplay() {
                   onFocus={handleFocus}
                   targetWavelengths={targetWavelengths}
                   lttbEnabled={lttbEnabled}
+                  viewMode={viewMode}
                 />
               ))}
             </div>

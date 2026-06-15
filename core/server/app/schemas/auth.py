@@ -26,6 +26,14 @@ class UserInDB(UserBase):
 
 class UserResponse(UserBase):
     id: int
+    role: Optional[str] = "researcher"
+    created_at: Optional[str] = None
+    api_key_count: Optional[int] = 0
     
     class Config:
         from_attributes = True
+
+class UserProfileUpdate(BaseModel):
+    role: Optional[str] = None
+    institution: Optional[str] = None
+    interest: Optional[str] = None

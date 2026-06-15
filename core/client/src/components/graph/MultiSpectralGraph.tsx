@@ -65,6 +65,7 @@ interface MultiSpectralGraphProps {
   targetWavelengths?: number[];
   selectedElement?: string;
   lttbEnabled?: boolean;
+  viewMode?: 'L1' | 'L2' | 'overlay';
 }
 
 /* ------------------------------------------------------------------ */
@@ -105,6 +106,7 @@ interface DatasetLaneProps {
   isActive: boolean;
   isInactive: boolean;
   targetWavelengths?: number[];
+  viewMode: 'L1' | 'L2' | 'overlay';
 }
 
 function DatasetLane({
@@ -119,6 +121,7 @@ function DatasetLane({
   isActive,
   isInactive,
   targetWavelengths,
+  viewMode,
 }: DatasetLaneProps) {
   // LTTB + peak guarantee via Web Worker for THIS dataset independently
   const { data: lttbData } = useDownsampling(dataset.data, proportion, targetWavelengths);
@@ -132,23 +135,35 @@ function DatasetLane({
     if (visible.length < 2) return '';
     const pts = visible.map((p) => {
       const x = ((p.wavelength - minX) / domainX) * chartWidth;
-      const y = chartHeight - ((p.intensity - domainMinY) / domainRangeY) * chartHeight;
+      const val = viewMode === 'L1' ? p.rawPlasma : p.intensity;
+      const y = chartHeight - ((val - domainMinY) / domainRangeY) * chartHeight;
       return `${x.toFixed(2)},${y.toFixed(2)}`;
     });
     return `M ${pts.join(' L ')}`;
-  }, [visible, minX, domainX, domainMinY, domainRangeY, chartWidth, chartHeight]);
+  }, [visible, minX, domainX, domainMinY, domainRangeY, chartWidth, chartHeight, viewMode]);
+
+  const linePathL1 = useMemo(() => {
+    if (visible.length < 2 || viewMode !== 'overlay') return '';
+    const pts = visible.map((p) => {
+      const x = ((p.wavelength - minX) / domainX) * chartWidth;
+      const y = chartHeight - ((p.rawPlasma - domainMinY) / domainRangeY) * chartHeight;
+      return `${x.toFixed(2)},${y.toFixed(2)}`;
+    });
+    return `M ${pts.join(' L ')}`;
+  }, [visible, minX, domainX, domainMinY, domainRangeY, chartWidth, chartHeight, viewMode]);
 
   const areaPath = useMemo(() => {
     if (visible.length < 2) return '';
     const pts = visible.map((p) => {
       const x = ((p.wavelength - minX) / domainX) * chartWidth;
-      const y = chartHeight - ((p.intensity - domainMinY) / domainRangeY) * chartHeight;
+      const val = viewMode === 'L1' ? p.rawPlasma : p.intensity;
+      const y = chartHeight - ((val - domainMinY) / domainRangeY) * chartHeight;
       return `${x.toFixed(2)},${y.toFixed(2)}`;
     });
     const firstX = ((visible[0].wavelength - minX) / domainX) * chartWidth;
     const lastX = ((visible[visible.length - 1].wavelength - minX) / domainX) * chartWidth;
     return `M ${pts.join(' L ')} L ${lastX.toFixed(2)},${chartHeight} L ${firstX.toFixed(2)},${chartHeight} Z`;
-  }, [visible, minX, domainX, domainMinY, domainRangeY, chartWidth, chartHeight]);
+  }, [visible, minX, domainX, domainMinY, domainRangeY, chartWidth, chartHeight, viewMode]);
 
   const stroke = isInactive ? '#9ca3af' : dataset.color;
   const strokeWidth = isActive ? 2.0 : isInactive ? 0.7 : 1.3;
@@ -156,7 +171,7 @@ function DatasetLane({
 
   return (
     <g style={{ transition: 'opacity 200ms ease' }}>
-      {!isInactive && (
+      {!isInactive && viewMode !== 'overlay' && (
         <path
           d={areaPath}
           fill={`url(#areaGrad-${dataset.id})`}
@@ -172,6 +187,17 @@ function DatasetLane({
         opacity={opacity}
         style={{ transition: 'stroke 200ms, stroke-width 150ms, opacity 200ms' }}
       />
+      {viewMode === 'overlay' && linePathL1 && (
+        <path
+          d={linePathL1}
+          fill="none"
+          stroke={stroke}
+          strokeWidth={strokeWidth * 0.9}
+          strokeLinejoin="round"
+          strokeDasharray="3,3"
+          opacity={opacity * 0.7}
+        />
+      )}
     </g>
   );
 }
@@ -197,6 +223,7 @@ export default function MultiSpectralGraph({
   targetWavelengths,
   selectedElement,
   lttbEnabled = true,
+  viewMode = 'L2',
 }: MultiSpectralGraphProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
@@ -221,15 +248,22 @@ export default function MultiSpectralGraph({
       if (hiddenIds.has(ds.id)) continue;
       for (const p of ds.data) {
         if (p.wavelength < minX || p.wavelength > maxX) continue;
-        if (p.intensity < gMin) gMin = p.intensity;
-        if (p.intensity > gMax) gMax = p.intensity;
+        const vals = viewMode === 'L2' 
+          ? [p.intensity] 
+          : viewMode === 'L1' 
+            ? [p.rawPlasma] 
+            : [p.intensity, p.rawPlasma];
+        for (const val of vals) {
+          if (val < gMin) gMin = val;
+          if (val > gMax) gMax = val;
+        }
       }
     }
     if (!isFinite(gMin)) { gMin = 0; gMax = 1; }
     const range = gMax - gMin;
     const pad = range > 0 ? range * 0.12 : 10;
     return { domainMinY: gMin - pad, domainMaxY: gMax + pad };
-  }, [datasets, hiddenIds, minX, maxX]);
+  }, [datasets, hiddenIds, minX, maxX, viewMode]);
 
   const domainRangeY = Math.max(domainMaxY - domainMinY, 1);
 
@@ -312,12 +346,13 @@ export default function MultiSpectralGraph({
       if (hiddenIds.has(ds.id)) continue;
       for (const p of ds.data) {
         if (p.wavelength < minX || p.wavelength > maxX) continue;
+        const val = viewMode === 'L1' ? p.rawPlasma : p.intensity;
         const px = ((p.wavelength - minX) / domainX) * rect.width;
-        const py = (1 - (p.intensity - domainMinY) / domainRangeY) * rect.height;
+        const py = (1 - (val - domainMinY) / domainRangeY) * rect.height;
         const dist = Math.hypot(px - mx, py - my);
         if (dist < bestDist) {
           bestDist = dist;
-          bestPoint = { wavelength: p.wavelength, intensity: p.intensity, id: ds.id };
+          bestPoint = { wavelength: p.wavelength, intensity: val, id: ds.id };
           bestId = ds.id;
         }
       }
@@ -352,9 +387,6 @@ export default function MultiSpectralGraph({
       ...datasets.filter((d) => d.id === activeId),
     ];
   }, [datasets, activeId]);
-
-  const loadedCount = datasets.filter((d) => d.data.length > 0).length;
-  const totalPoints = datasets.reduce((s, d) => s + d.data.length, 0);
 
   return (
     <div className="w-full flex flex-col bg-white border border-solid border-gray-200 rounded-lg shadow-sm overflow-hidden">
@@ -491,6 +523,7 @@ export default function MultiSpectralGraph({
                   isActive={isActive}
                   isInactive={isInactive}
                   targetWavelengths={targetWavelengths}
+                  viewMode={viewMode}
                 />
               );
             })}

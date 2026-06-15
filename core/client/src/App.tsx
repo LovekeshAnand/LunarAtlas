@@ -6,6 +6,9 @@ import Footer from './components/footer/Footer';
 import HomePage from './pages/HomePage';
 import DocsPage from './pages/DocsPage';
 import GraphDisplay from './pages/GraphDisplay';
+import PipelinePage from './pages/PipelinePage';
+import DashboardPage from './pages/DashboardPage';
+import DeveloperApiPage from './pages/DeveloperApiPage';
 
 /**
  * @fileoverview Root Application Component for LunarAtlas.
@@ -13,7 +16,7 @@ import GraphDisplay from './pages/GraphDisplay';
  */
 
 /**
- * Higher-Order Component to guard protected routes (Docs, Graph).
+ * Higher-Order Component to guard protected routes (Docs, Graph, Dashboard).
  * Intercepts unauthenticated access and redirects to the landing page.
  */
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -37,8 +40,17 @@ function AppRoutes() {
           {/* Scientific Documentation & Context */}
           <Route path="/docs"  element={<RequireAuth><DocsPage /></RequireAuth>} />
           
+          {/* Interactive Ingestion Pipeline Tutorial & Simulator */}
+          <Route path="/pipeline" element={<RequireAuth><PipelinePage /></RequireAuth>} />
+          
           {/* Primary Spectral Analysis Dashboard */}
           <Route path="/graph" element={<RequireAuth><GraphDisplay /></RequireAuth>} />
+
+          {/* Standalone Developer API Portal */}
+          <Route path="/developers" element={<DeveloperApiPage />} />
+
+          {/* User Dashboard & API Key Portal */}
+          <Route path="/dashboard" element={<RequireAuth><DashboardPage /></RequireAuth>} />
           
           {/* Catch-all redirect to Landing */}
           <Route path="*"      element={<Navigate to="/" replace />} />
@@ -67,4 +79,3 @@ function App() {
 }
 
 export default App;
-

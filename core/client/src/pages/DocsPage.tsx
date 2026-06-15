@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { apiService } from '../services/apiService';
 
 import libsRawCleaned  from '../assets/libs_raw_vs_cleaned.png';
 import dbSchemaDiagram from '../assets/db_schema_diagram.png';
@@ -37,6 +38,7 @@ const SDESC   = 'text-[12.5px] text-[#555] dark:text-[#888] leading-[1.6]';
 
 const SECTIONS = [
   { id: 'intro',       label: 'Introduction'     },
+  { id: 'structure',   label: 'PRADAN Structure' },
   { id: 'data',        label: 'Data Structure'   },
   { id: 'pipeline',    label: 'Cleaning Pipeline' },
   { id: 'schema',      label: 'Database Model'   },
@@ -140,7 +142,7 @@ export default function DocsPage() {
               preparation and no contact requirement.
             </p>
             <p>
-              The technique was first demonstrated in a planetary setting aboard NASA's Mars Science
+              The technique was first demonstrated in a planetary setting aboard the Mars Science
               Laboratory rover <em>Curiosity</em> in 2012, where the <strong>ChemCam</strong>{' '}
               instrument acquired more than 930,000 single-shot spectra from 3,500 unique rock and
               regolith targets. The global scientific community subsequently adopted LIBS for
@@ -215,10 +217,89 @@ export default function DocsPage() {
         </section>
 
         {/* ══════════════════════════════════════════════
-            2. DATA STRUCTURE
+            1.5 PRADAN STRUCTURE
+        ══════════════════════════════════════════════ */}
+        <section id="docs-structure" className={SEC}>
+          <div className={SEC_TAG}>Section 2</div>
+          <h2 className={SEC_H2}>ISRO PRADAN Directory Structure</h2>
+          <hr className={SEC_HR} />
+
+          <div className={BODY}>
+            <p>
+              When researchers download Chandrayaan-3 LIBS datasets from the official <strong>ISRO PRADAN</strong> portal, 
+              the archive is unpacked into a strict, standardized PDS4 bundle structure. Understanding this raw directory structure 
+              is essential for tracing back how database entries map to the physical files of the spacecraft's observations.
+            </p>
+
+            <p>
+              Below is the comprehensive hierarchical layout of a raw downloaded PRADAN LIBS bundle:
+            </p>
+
+            <pre className={CODEBLK}>{`ch3_libs/
+└── lib-v2/                                          # LIBS Version 2 Bundle Root
+    ├── bundle_lib.xml                                # PDS4 Bundle manifest (Root metadata)
+    ├── readme.txt                                    # Dataset overview, mission outline & terms
+    ├── document/                                     # User guides, calibration reports & documents
+    ├── miscellaneous/                                # Support scripts & ancillary catalog metadata
+    └── data/
+        ├── collection_data_inventory.csv             # CSV list indexing all data products
+        ├── collection_data_inventory.xml             # PDS4 collection label for indexing catalog
+        ├── raw/                                      # Raw (L0) uncalibrated sensor products
+        └── calibrated/                               # Calibrated (L1) science spectral products
+            ├── 20230825/                             # Date folder (Format: YYYYMMDD)
+            │   ├── ch3_lib_002_20230825T104221_00_l1/    # Observation session folder
+            │   │   ├── ch3_lib_002_20230825T104221_00_l1.csv     # Combined session observations table
+            │   │   ├── ch3_lib_002_20230825T104221_00_l1.xml     # PDS4 XML label for the session table
+            │   │   ├── ch3_lib_002_20230825T104221_00_l1_0_1.csv # Shot 0, Zap 1 (Calibrated spectrum)
+            │   │   ├── ch3_lib_002_20230825T104221_00_l1_0_1.xml # PDS4 XML label for Shot 0, Zap 1
+            │   │   ├── ch3_lib_002_20230825T104221_00_l1_0_3.csv # Shot 0, Zap 3
+            │   │   ├── ch3_lib_002_20230825T104221_00_l1_1_2.csv # Shot 1, Zap 2
+            │   │   ├── ...                                       # Remaining measurement CSV/XML files
+            │   │   └── cleaned_libs_data/                        # Pipeline-processed output files
+            │   ├── ch3_lib_002_20230825T145453_00_l1/
+            │   ├── ch3_lib_002_20230825T145453_01_l1/
+            │   └── ch3_lib_002_20230825T145453_02_l1/
+            ├── 20230826/
+            ├── 20230827/
+            ├── 20230828/
+            ├── 20230829/
+            ├── 20230830/
+            ├── 20230831/
+            ├── 20230901/
+            └── 20230902/                             # Chandrayaan-3 active operations dates`}</pre>
+
+            <div className={SUB_H}>Folder &amp; File Naming Conventions</div>
+            <p>
+              The folder structures and files follow strict PDS4 naming conventions encoding key telemetry details:
+            </p>
+            <ul className="list-disc pl-5 space-y-2 my-4">
+              <li>
+                <strong>Bundle Root (<code>bundle_lib.xml</code>)</strong>: The entry-point manifest specifying the schema version, 
+                instrument characteristics, and collection list.
+              </li>
+              <li>
+                <strong>Observation Sessions</strong>: Folders named as <code>ch3_lib_002_&#123;date&#125;T&#123;time&#125;_&#123;sub_index&#125;_l1</code> 
+                represent a contiguous collection of laser discharges on a single target spot.
+              </li>
+              <li>
+                <strong>Individual Measurements</strong>: CSV and XML files suffixed with <code>_&#123;shot_index&#125;_&#123;zap_index&#125;</code> (e.g. <code>_0_1</code>) 
+                indicate the specific shot number (from 0 to 4) and zap index (from 1 to 5) in a sequence.
+              </li>
+            </ul>
+
+            <div className={CALLOUT}>
+              <strong>Database Integration:</strong> During ingestion, LunarAtlas automatically maps the PDS4 
+              manifests and CSV data into relative tables. An "Observation" record corresponds to a session folder, 
+              and its "Measurement" records relate directly to individual laser zap CSV entries.
+            </div>
+          </div>
+        </section>
+
+        {/* ══════════════════════════════════════════════
+            3. DATA STRUCTURE
         ══════════════════════════════════════════════ */}
         <section id="docs-data" className={SEC}>
-          <div className={SEC_TAG}>Section 2</div>
+          <div className={SEC_TAG}>Section 3</div>
           <h2 className={SEC_H2}>Data Structure</h2>
           <hr className={SEC_HR} />
 
@@ -334,7 +415,7 @@ export default function DocsPage() {
             3. CLEANING PIPELINE
         ══════════════════════════════════════════════ */}
         <section id="docs-pipeline" className={SEC}>
-          <div className={SEC_TAG}>Section 3</div>
+          <div className={SEC_TAG}>Section 4</div>
           <h2 className={SEC_H2}>The Cleaning Pipeline</h2>
           <hr className={SEC_HR} />
 
@@ -440,7 +521,7 @@ export default function DocsPage() {
             4. DATABASE MODEL
         ══════════════════════════════════════════════ */}
         <section id="docs-schema" className={SEC}>
-          <div className={SEC_TAG}>Section 4</div>
+          <div className={SEC_TAG}>Section 5</div>
           <h2 className={SEC_H2}>Database Model</h2>
           <hr className={SEC_HR} />
 
@@ -532,7 +613,7 @@ CREATE UNIQUE INDEX idx_file_version_md5
             5. PEAK PRESERVATION
         ══════════════════════════════════════════════ */}
         <section id="docs-downsampling" className={SEC}>
-          <div className={SEC_TAG}>Section 5</div>
+          <div className={SEC_TAG}>Section 6</div>
           <h2 className={SEC_H2}>Peak Preservation &amp; Adaptive Downsampling</h2>
           <hr className={SEC_HR} />
 
@@ -633,7 +714,7 @@ CREATE UNIQUE INDEX idx_file_version_md5
             6. RESULTS
         ══════════════════════════════════════════════ */}
         <section id="docs-results" className={SEC}>
-          <div className={SEC_TAG}>Section 6</div>
+          <div className={SEC_TAG}>Section 7</div>
           <h2 className={SEC_H2}>Results &amp; Validation</h2>
           <hr className={SEC_HR} />
 
@@ -716,7 +797,7 @@ CREATE UNIQUE INDEX idx_file_version_md5
             7. DATA AUTHENTICITY & INTEGRITY
         ══════════════════════════════════════════════ */}
         <section id="docs-authenticity" className={SEC}>
-          <div className={SEC_TAG}>Section 7</div>
+          <div className={SEC_TAG}>Section 8</div>
           <h2 className={SEC_H2}>Data Authenticity &amp; Integrity</h2>
           <hr className={SEC_HR} />
 
@@ -778,7 +859,7 @@ CREATE UNIQUE INDEX idx_file_version_md5
             8. PDS3 FUTURE SCOPE
         ══════════════════════════════════════════════ */}
         <section id="docs-pds3" className={SEC}>
-          <div className={SEC_TAG}>Section 8</div>
+          <div className={SEC_TAG}>Section 9</div>
           <h2 className={SEC_H2}>Future Scope — PDS3 Compatibility</h2>
           <hr className={SEC_HR} />
 
@@ -786,7 +867,7 @@ CREATE UNIQUE INDEX idx_file_version_md5
             <p>
               LunarAtlas currently ingests <strong>PDS4</strong> products exclusively.
               A planned extension targets <strong>PDS3 (Planetary Data System v3)</strong>{' '}
-              products from legacy missions — most importantly NASA's <em>ChemCam</em>{' '}
+              products from legacy missions — most importantly the <em>ChemCam</em>{' '}
               instrument on the <em>Curiosity</em> rover, which has generated the largest
               corpus of planetary LIBS spectra to date (930,000+ single-shot spectra).
             </p>

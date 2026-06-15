@@ -139,6 +139,83 @@ export const apiService = {
     return res.json();
   },
 
+  async updateProfile(data: { role?: string; institution?: string; interest?: string }) {
+    const res = await fetch(`${API_BASE}/auth/profile`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        ...this.getAuthHeader()
+      },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Failed to update profile: ${res.status}`);
+    }
+    return res.json();
+  },
+
+  async fetchApiKeys(): Promise<any[]> {
+    const res = await fetch(`${API_BASE}/auth/api-keys`, {
+      headers: this.getAuthHeader()
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Failed to fetch API keys: ${res.status}`);
+    }
+    return res.json();
+  },
+
+  async createApiKey(label = 'Default'): Promise<any> {
+    const res = await fetch(`${API_BASE}/auth/api-keys`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...this.getAuthHeader()
+      },
+      body: JSON.stringify({ label }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Failed to create API key: ${res.status}`);
+    }
+    return res.json();
+  },
+
+  async revokeApiKey(keyId: number): Promise<any> {
+    const res = await fetch(`${API_BASE}/auth/api-keys/${keyId}`, {
+      method: 'DELETE',
+      headers: this.getAuthHeader()
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Failed to revoke API key: ${res.status}`);
+    }
+    return res.json();
+  },
+
+  async fetchUsageSummary(): Promise<any> {
+    const res = await fetch(`${API_BASE}/auth/usage/summary`, {
+      headers: this.getAuthHeader()
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Failed to fetch usage summary: ${res.status}`);
+    }
+    return res.json();
+  },
+
+  async fetchUsageLog(limit = 50, offset = 0): Promise<any[]> {
+    const res = await fetch(`${API_BASE}/auth/usage/log?limit=${limit}&offset=${offset}`, {
+      headers: this.getAuthHeader()
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Failed to fetch usage log: ${res.status}`);
+    }
+    return res.json();
+  },
+
   // === Spectral Data ===
   async fetchMeasurements(limit = 50): Promise<MeasurementInfo[]> {
     const res = await fetch(`${API_BASE}/measurements?limit=${limit}`, {
@@ -177,13 +254,16 @@ export const apiService = {
     const body: SpectrumResponse = await res.json();
     
     // Both 'downsampled' and 'raw' modes now return flat SpectralApiPoint objects
-    const points: SpectralDataPoint[] = body.data.map((point) => ({
-      wavelength: point.wavelength_nm,
-      intensity: point.intensity,
-      rawPlasma: point.raw_plasma ?? point.intensity, // fallback just in case
-      rawBackground: 0,
-      measurementId: body.measurement_id,
-    }));
+    const points: SpectralDataPoint[] = body.data.map((point) => {
+      const rawPlasma = point.raw_plasma ?? point.intensity;
+      return {
+        wavelength: point.wavelength_nm,
+        intensity: point.intensity,
+        rawPlasma,
+        rawBackground: Math.max(0, rawPlasma - point.intensity),
+        measurementId: body.measurement_id,
+      };
+    });
 
     return {
       data: points,
@@ -291,5 +371,119 @@ export const apiService = {
       }
     });
     return map;
+  },
+
+  // === Public Developer APIs ===
+  async fetchPublicMissions(apiKey: string, limit = 10, offset = 0): Promise<any> {
+    const res = await fetch(`${API_BASE}/public/missions?api_key=${encodeURIComponent(apiKey)}&limit=${limit}&offset=${offset}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Failed to fetch public missions: ${res.status}`);
+    }
+    return res.json();
+  },
+
+  async fetchPublicInstruments(apiKey: string, missionCode?: string): Promise<any> {
+    const params = new URLSearchParams();
+    params.append('api_key', apiKey);
+    if (missionCode) params.append('mission_code', missionCode);
+    const res = await fetch(`${API_BASE}/public/instruments?${params}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Failed to fetch public instruments: ${res.status}`);
+    }
+    return res.json();
+  },
+
+  async fetchPublicObservations(apiKey: string, filters: { mission?: string; instrument?: string; targetName?: string; date?: string; limit?: number; offset?: number }): Promise<any> {
+    const params = new URLSearchParams({ api_key: apiKey });
+    if (filters.mission) params.append('mission', filters.mission);
+    if (filters.instrument) params.append('instrument', filters.instrument);
+    if (filters.targetName) params.append('target_name', filters.targetName);
+    if (filters.date) params.append('date', filters.date);
+    if (filters.limit) params.append('limit', String(filters.limit));
+    if (filters.offset) params.append('offset', String(filters.offset));
+    
+    const res = await fetch(`${API_BASE}/public/observations?${params}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Failed to fetch public observations: ${res.status}`);
+    }
+    return res.json();
+  },
+
+  async fetchPublicMeasurements(apiKey: string, filters: { observationId?: string; mission?: string; instrument?: string; date?: string; isBackground?: boolean; limit?: number; offset?: number }): Promise<any> {
+    const params = new URLSearchParams({ api_key: apiKey });
+    if (filters.observationId) params.append('observation_id', filters.observationId);
+    if (filters.mission) params.append('mission', filters.mission);
+    if (filters.instrument) params.append('instrument', filters.instrument);
+    if (filters.date) params.append('date', filters.date);
+    if (filters.isBackground !== undefined) params.append('is_background', String(filters.isBackground));
+    if (filters.limit) params.append('limit', String(filters.limit));
+    if (filters.offset) params.append('offset', String(filters.offset));
+
+    const res = await fetch(`${API_BASE}/public/measurements?${params}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Failed to fetch public measurements: ${res.status}`);
+    }
+    return res.json();
+  },
+
+  async fetchPublicSpectrum(
+    apiKey: string,
+    measurementId: string,
+    params: { lambdaMin?: number; lambdaMax?: number; downsample?: boolean; zoomLevel?: number; targetWavelengths?: string } = {}
+  ): Promise<any> {
+    const q = new URLSearchParams({ api_key: apiKey });
+    if (params.lambdaMin !== undefined) q.append('lambda_min', String(params.lambdaMin));
+    if (params.lambdaMax !== undefined) q.append('lambda_max', String(params.lambdaMax));
+    if (params.downsample !== undefined) q.append('downsample', String(params.downsample));
+    if (params.zoomLevel !== undefined) q.append('zoom_level', String(params.zoomLevel));
+    if (params.targetWavelengths) q.append('target_wavelengths', params.targetWavelengths);
+
+    const res = await fetch(`${API_BASE}/public/spectra/${measurementId}?${q}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Failed to fetch public spectrum: ${res.status}`);
+    }
+    return res.json();
+  },
+
+  async fetchPublicBulkSpectra(
+    apiKey: string,
+    params: {
+      observationId?: string;
+      date?: string;
+      mission?: string;
+      measurementIds?: string;
+      lambdaMin?: number;
+      lambdaMax?: number;
+      downsample?: boolean;
+      zoomLevel?: number;
+      targetWavelengths?: string;
+      limit?: number;
+      offset?: number;
+    } = {}
+  ): Promise<any> {
+    const q = new URLSearchParams({ api_key: apiKey });
+    if (params.observationId) q.append('observation_id', params.observationId);
+    if (params.date) q.append('date', params.date);
+    if (params.mission) q.append('mission', params.mission);
+    if (params.measurementIds) q.append('measurement_ids', params.measurementIds);
+    if (params.lambdaMin !== undefined) q.append('lambda_min', String(params.lambdaMin));
+    if (params.lambdaMax !== undefined) q.append('lambda_max', String(params.lambdaMax));
+    if (params.downsample !== undefined) q.append('downsample', String(params.downsample));
+    if (params.zoomLevel !== undefined) q.append('zoom_level', String(params.zoomLevel));
+    if (params.targetWavelengths) q.append('target_wavelengths', params.targetWavelengths);
+    if (params.limit !== undefined) q.append('limit', String(params.limit));
+    if (params.offset !== undefined) q.append('offset', String(params.offset));
+
+    const res = await fetch(`${API_BASE}/public/spectra?${q}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Failed to fetch public bulk spectra: ${res.status}`);
+    }
+    return res.json();
   },
 };

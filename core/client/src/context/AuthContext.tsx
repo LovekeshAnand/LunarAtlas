@@ -2,14 +2,19 @@ import { createContext, useContext, useState, useEffect, type ReactNode } from '
 import { apiService } from '../services/apiService';
 
 export interface AuthUser {
+  id: number;
   email: string;
   institution: string;
   interest: string;
+  role: string;
+  created_at: string;
+  api_key_count: number;
 }
 
 interface AuthContextValue {
   isLoggedIn: boolean;
   user: AuthUser | null;
+  setUser: (user: AuthUser | null) => void;
   login: (access_token: string) => Promise<void>;
   logout: () => void;
   loading: boolean;
@@ -18,6 +23,7 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue>({
   isLoggedIn: false,
   user: null,
+  setUser: () => {},
   login: async () => {},
   logout: () => {},
   loading: true
@@ -59,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn: !!user, user, login, logout, loading }}>
+    <AuthContext.Provider value={{ isLoggedIn: !!user, user, setUser, login, logout, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );

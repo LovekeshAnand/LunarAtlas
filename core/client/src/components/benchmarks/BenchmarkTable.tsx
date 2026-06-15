@@ -200,7 +200,7 @@ export default function BenchmarkTable() {
       {/* ── Footer Note ── */}
       <div className="px-6 py-3 bg-gray-50/40 border-t border-solid border-gray-100">
         <p className="text-[11px] font-sans text-gray-400">
-          Sources: LunarAtlas batch_process_libs.py, NASA PDS Geosciences Node, ChemCam SOC documentation, SuperCam SIS, published literature.
+          Sources: LunarAtlas batch_process_libs.py, PDS Geosciences Node, ChemCam SOC documentation, SuperCam SIS, published literature.
         </p>
       </div>
     </div>

@@ -1,0 +1,256 @@
+{
+  "info": {
+    "_postman_id": "4e73f8b0-a352-4467-9252-870081d6d84a",
+    "name": "LunarAtlas Public Developer API Reference",
+    "description": "Postman collection for the LunarAtlas PDS4 compliant REST API. Query missions, instruments, observations, clean telemetry measurements, and raw or downsampled spectra.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Missions Catalog",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{API_KEY}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/public/missions?limit=10&offset=0",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "public",
+            "missions"
+          ],
+          "query": [
+            {
+              "key": "limit",
+              "value": "10"
+            },
+            {
+              "key": "offset",
+              "value": "0"
+            }
+          ]
+        },
+        "description": "Fetch planetary science missions catalogued under the PDS4 database archive."
+      },
+      "response": []
+    },
+    {
+      "name": "Mission by Code",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{API_KEY}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/public/missions/CH3",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "public",
+            "missions",
+            "CH3"
+          ]
+        },
+        "description": "Fetch metadata for a specific mission code (e.g. CH3 for Chandrayaan-3)."
+      },
+      "response": []
+    },
+    {
+      "name": "Instruments List",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{API_KEY}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/public/instruments?mission_code=CH3",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "public",
+            "instruments"
+          ],
+          "query": [
+            {
+              "key": "mission_code",
+              "value": "CH3"
+            }
+          ]
+        },
+        "description": "List space science payload instruments, optionally filtering by mission code."
+      },
+      "response": []
+    },
+    {
+      "name": "Observations List",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{API_KEY}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/public/observations?mission=CH3&instrument=LIBS&limit=10&offset=0",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "public",
+            "observations"
+          ],
+          "query": [
+            {
+              "key": "mission",
+              "value": "CH3"
+            },
+            {
+              "key": "instrument",
+              "value": "LIBS"
+            },
+            {
+              "key": "limit",
+              "value": "10"
+            },
+            {
+              "key": "offset",
+              "value": "0"
+            }
+          ]
+        },
+        "description": "Fetch observation sessions/PDS metadata collections."
+      },
+      "response": []
+    },
+    {
+      "name": "Measurements List",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{API_KEY}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/public/measurements?observation_id=OBS_LIBS_01&limit=50",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "public",
+            "measurements"
+          ],
+          "query": [
+            {
+              "key": "observation_id",
+              "value": "OBS_LIBS_01"
+            },
+            {
+              "key": "limit",
+              "value": "50"
+            }
+          ]
+        },
+        "description": "Get individual clean LIBS shots under a specific observation session."
+      },
+      "response": []
+    },
+    {
+      "name": "Spectral Spectrum Detail",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{API_KEY}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/public/spectra/MSR_01?lambda_min=164.35&lambda_max=878.26&downsample=true&zoom_level=1",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "public",
+            "spectra",
+            "MSR_01"
+          ],
+          "query": [
+            {
+              "key": "lambda_min",
+              "value": "164.35"
+            },
+            {
+              "key": "lambda_max",
+              "value": "878.26"
+            },
+            {
+              "key": "downsample",
+              "value": "true"
+            },
+            {
+              "key": "zoom_level",
+              "value": "1"
+            }
+          ]
+        },
+        "description": "Fetch scientific spectrum wavelengths and calibrated intensity, with downsample capabilities."
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:8000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "API_KEY",
+      "value": "DEMO_KEY",
+      "type": "string"
+    }
+  ]
+}

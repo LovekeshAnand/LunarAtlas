@@ -1,8 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 import sys
 import os
+import time
 
 from app.config import settings
 from app.database.connection import db
@@ -10,6 +11,9 @@ from app.cache.redis_cache import cache
 from app.api.v1.endpoints import router as api_router
 from app.api.v1.auth import router as auth_router
 from app.api.v1.export import router as export_router
+from app.api.v1.public.endpoints import router as public_router
+from app.api.v1.api_keys import router as api_keys_router
+from app.api.v1.usage import router as usage_router
 
 os.makedirs('logs', exist_ok=True)
 
@@ -42,6 +46,41 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Middleware for tracking public API usage
+@app.middleware("http")
+async def log_api_usage_middleware(request: Request, call_next):
+    # Only run for public endpoints
+    if not request.url.path.startswith(f"{settings.API_V1_PREFIX}/public"):
+        return await call_next(request)
+        
+    start_time = time.time()
+    
+    # Initialize request state key info
+    request.state.api_key_info = None
+    
+    response = await call_next(request)
+    
+    process_time_ms = (time.time() - start_time) * 1000
+    
+    # Check if request has api key info set by dependency
+    auth = getattr(request.state, "api_key_info", None)
+    if auth:
+        content_length = response.headers.get("content-length")
+        response_bytes = int(content_length) if content_length else 0
+        try:
+            from app.api.v1.public.endpoints import log_api_usage
+            await log_api_usage(
+                request=request,
+                auth=auth,
+                status_code=response.status_code,
+                response_bytes=response_bytes,
+                response_time_ms=process_time_ms
+            )
+        except Exception as e:
+            logger.warning(f"Error logging API usage in middleware: {e}")
+            
+    return response
+
 # Startup event
 @app.on_event("startup")
 async def startup_event():
@@ -65,10 +104,21 @@ async def startup_event():
             )
         """)
         logger.info("[OK] Assured app_users table exists")
+        
+        # Read and run migration schema for api keys and usage logs
+        migration_file = os.path.join(os.path.dirname(__file__), "..", "configs", "migration_api_keys.sql")
+        if os.path.exists(migration_file):
+            logger.info(f"Running database migrations from {migration_file}...")
+            with open(migration_file, "r") as f:
+                migration_sql = f.read()
+            await db.execute(migration_sql)
+            logger.info("[OK] Applied database migration schema")
+        else:
+            logger.warning(f"Migration file not found at {migration_file}")
+            
     except Exception as e:
         logger.error(f"Failed to connect to database or init table: {e}")
         # sys.exit(1) # We might want to keep it running for testing
-
     
     # Connect to Redis
     try:
@@ -103,11 +153,32 @@ app.include_router(
     tags=["auth"]
 )
 
+# Include API Keys router
+app.include_router(
+    api_keys_router,
+    prefix=f"{settings.API_V1_PREFIX}/auth",
+    tags=["api-keys"]
+)
+
+# Include Usage router
+app.include_router(
+    usage_router,
+    prefix=f"{settings.API_V1_PREFIX}/auth",
+    tags=["usage"]
+)
+
 # Include Export router
 app.include_router(
     export_router,
     prefix=f"{settings.API_V1_PREFIX}/export",
     tags=["export"]
+)
+
+# Include Public router
+app.include_router(
+    public_router,
+    prefix=f"{settings.API_V1_PREFIX}/public",
+    tags=["public-developer-api"]
 )
 
 # Root endpoint

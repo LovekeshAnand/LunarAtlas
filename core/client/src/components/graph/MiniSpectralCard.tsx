@@ -21,6 +21,7 @@ interface MiniSpectralCardProps {
   onFocus: (id: string | null) => void;
   targetWavelengths?: number[];
   lttbEnabled?: boolean;
+  viewMode?: 'L1' | 'L2' | 'overlay';
 }
 
 const MINI_W = 600;
@@ -35,6 +36,7 @@ export default function MiniSpectralCard({
   onFocus,
   targetWavelengths,
   lttbEnabled = true,
+  viewMode = 'L2',
 }: MiniSpectralCardProps) {
   const { id, label, color, data, meta } = dataset;
 
@@ -56,16 +58,17 @@ export default function MiniSpectralCard({
     if (src.length === 0) return { min: 0, max: 0, peakWl: 0, pointCount: 0 };
     let min = Infinity, max = -Infinity, peakWl = 0;
     for (const p of src) {
-      if (p.intensity < min) min = p.intensity;
-      if (p.intensity > max) { max = p.intensity; peakWl = p.wavelength; }
+      const val = viewMode === 'L1' ? p.rawPlasma : p.intensity;
+      if (val < min) min = val;
+      if (val > max) { max = val; peakWl = p.wavelength; }
     }
     return { min, max, peakWl, pointCount: src.length };
-  }, [data, minX, maxX]);
+  }, [data, minX, maxX, viewMode]);
 
   /* ── SVG paths from LTTB-downsampled data ── */
   const { linePath, areaPath, domainMinY, domainRangeY } = useMemo(() => {
     if (visible.length < 2) return { linePath: '', areaPath: '', domainMinY: 0, domainRangeY: 1 };
-    const ys = visible.map((p) => p.intensity);
+    const ys = visible.map((p) => viewMode === 'L1' ? p.rawPlasma : p.intensity);
     const rawMin = Math.min(...ys);
     const rawMax = Math.max(...ys);
     const range = rawMax - rawMin;
@@ -75,7 +78,8 @@ export default function MiniSpectralCard({
 
     const pts = visible.map((p) => {
       const x = ((p.wavelength - minX) / domainX) * MINI_W;
-      const y = MINI_H - ((p.intensity - dMinY) / dRangeY) * MINI_H;
+      const val = viewMode === 'L1' ? p.rawPlasma : p.intensity;
+      const y = MINI_H - ((val - dMinY) / dRangeY) * MINI_H;
       return `${x.toFixed(1)},${y.toFixed(1)}`;
     });
     const firstX = ((visible[0].wavelength - minX) / domainX) * MINI_W;
@@ -83,7 +87,7 @@ export default function MiniSpectralCard({
     const line = `M ${pts.join(' L ')}`;
     const area = `${line} L ${lastX.toFixed(1)},${MINI_H} L ${firstX.toFixed(1)},${MINI_H} Z`;
     return { linePath: line, areaPath: area, domainMinY: dMinY, domainRangeY: dRangeY };
-  }, [visible, minX, domainX]);
+  }, [visible, minX, domainX, viewMode]);
 
   /* ── Peak dot position ── */
   const peakDot = useMemo(() => {
@@ -91,10 +95,11 @@ export default function MiniSpectralCard({
     const closest = visible.reduce((best, p) =>
       Math.abs(p.wavelength - stats.peakWl) < Math.abs(best.wavelength - stats.peakWl) ? p : best
     );
+    const val = viewMode === 'L1' ? closest.rawPlasma : closest.intensity;
     const x = ((closest.wavelength - minX) / domainX) * MINI_W;
-    const y = MINI_H - ((closest.intensity - domainMinY) / domainRangeY) * MINI_H;
+    const y = MINI_H - ((val - domainMinY) / domainRangeY) * MINI_H;
     return { x, y };
-  }, [stats, visible, minX, domainX, domainMinY, domainRangeY]);
+  }, [stats, visible, minX, domainX, domainMinY, domainRangeY, viewMode]);
 
   /* ── X axis ticks (3 ticks) ── */
   const xTicks = [minX, minX + domainX / 2, maxX];

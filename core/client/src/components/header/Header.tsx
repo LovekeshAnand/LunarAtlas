@@ -61,15 +61,18 @@ export default function Header() {
 
   const navLinks = [
     { label: 'Home',          to: '/' },
-    { label: 'Documentation', to: '/docs' },
-    { label: 'Graph',         to: '/graph' },
+    { label: 'Graph',         to: '/graph',    protected: true },
+    { label: 'Pipeline',      to: '/pipeline', protected: true },
+    { label: 'Documentation', to: '/docs',     protected: true },
+    { label: 'Developers',    to: '/developers' },
+    ...(isLoggedIn ? [{ label: 'Dashboard', to: '/dashboard', protected: true }] : []),
   ];
 
   const isActive = (to: string) =>
     to === '/' ? location.pathname === '/' : location.pathname.startsWith(to);
 
-  const handleProtectedLink = (e: React.MouseEvent, to: string) => {
-    if (to !== '/' && !isLoggedIn) {
+  const handleProtectedLink = (e: React.MouseEvent, to: string, isProtected?: boolean) => {
+    if (isProtected && !isLoggedIn) {
       e.preventDefault();
       setShowModal(true);
     }
@@ -96,20 +99,20 @@ export default function Header() {
 
           {/* Nav */}
           <nav className="flex items-center gap-7">
-            {navLinks.map(({ label, to }) => {
-              const active = isActive(to);
+            {navLinks.map((link) => {
+              const active = isActive(link.to);
               return (
                 <Link
-                  key={label}
-                  to={to}
-                  onClick={(e) => handleProtectedLink(e, to)}
+                  key={link.label}
+                  to={link.to}
+                  onClick={(e) => handleProtectedLink(e, link.to, link.protected)}
                   className={`text-[11px] tracking-[1px] uppercase no-underline pb-[2px] transition-colors duration-150 border-b ${
                     active
                       ? 'font-bold text-ink dark:text-[#f0f0f0] border-ink dark:border-[#f0f0f0]'
                       : 'font-medium text-[#888] dark:text-[#555] border-transparent hover:text-ink dark:hover:text-[#d0d0d0]'
                   }`}
                 >
-                  {label}
+                  {link.label}
                 </Link>
               );
             })}

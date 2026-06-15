@@ -67,7 +67,13 @@ class CacheLayer:
             if ttl is None:
                 ttl = settings.CACHE_TTL
             
-            serialized = orjson.dumps(value)
+            from pydantic import BaseModel
+            if isinstance(value, BaseModel):
+                value = value.model_dump()
+            elif isinstance(value, list):
+                value = [item.model_dump() if isinstance(item, BaseModel) else item for item in value]
+
+            serialized = orjson.dumps(value, option=orjson.OPT_SERIALIZE_DATACLASS | orjson.OPT_NON_STR_KEYS)
             await self.redis.setex(key, ttl, serialized)
             logger.debug(f"Cache SET: {key[:32]}... (TTL: {ttl}s)")
             return True
@@ -128,7 +134,14 @@ def cached(ttl: int = None, key_prefix: str = ""):
             result = await func(*args, **kwargs)
             
             # Store in cache
-            await cache.set(cache_key, result, ttl)
+            from pydantic import BaseModel
+            cachable_result = result
+            if isinstance(result, BaseModel):
+                cachable_result = result.model_dump()
+            elif isinstance(result, list):
+                cachable_result = [r.model_dump() if isinstance(r, BaseModel) else r for r in result]
+            
+            await cache.set(cache_key, cachable_result, ttl)
             
             return result
         return wrapper
