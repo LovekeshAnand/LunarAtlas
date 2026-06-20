@@ -83,7 +83,7 @@ const MISSION_TABLE: TableConfig = {
     { Feature: 'Negative Handling', 'LunarAtlas (CH-3)': 'max(0, ·) + pre-clamp stats', 'ChemCam CCS (Curiosity)': 'Continuum avoids negatives', 'SuperCam (Perseverance)': 'Model-based; rare', 'MarSCoDe (Zhurong)': 'Clamping' },
     { Feature: 'Output Formats', 'LunarAtlas (CH-3)': 'CSV + JSON + API-ready', 'ChemCam CCS (Curiosity)': 'CSV + PDS3 archive', 'SuperCam (Perseverance)': 'PDS4 archive + quick-look', 'MarSCoDe (Zhurong)': 'PDS4 archive' },
     { Feature: 'Reproducibility', 'LunarAtlas (CH-3)': 'Deterministic (MD5 logged)', 'ChemCam CCS (Curiosity)': 'Pipeline-versioned', 'SuperCam (Perseverance)': 'Pipeline-versioned', 'MarSCoDe (Zhurong)': 'Not published' },
-    { Feature: 'Open Source', 'LunarAtlas (CH-3)': '✅ Yes', 'ChemCam CCS (Curiosity)': 'Partial (PDS tools)', 'SuperCam (Perseverance)': 'Partial', 'MarSCoDe (Zhurong)': '❌ No' },
+    { Feature: 'Open Source', 'LunarAtlas (CH-3)': 'Yes', 'ChemCam CCS (Curiosity)': 'Partial (PDS tools)', 'SuperCam (Perseverance)': 'Partial', 'MarSCoDe (Zhurong)': 'No' },
   ],
 };
 

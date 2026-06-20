@@ -142,7 +142,7 @@ async def shutdown_event():
     logger.info("Shutting down...")
     await db.disconnect()
     await cache.disconnect()
-    logger.info("✓ Services shut down cleanly")
+    logger.info("Services shut down cleanly")
 
 # Include API router
 app.include_router(

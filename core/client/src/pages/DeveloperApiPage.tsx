@@ -1490,7 +1490,7 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
                 onClick={copyResponseToClipboard}
                 className="text-[9px] font-bold border border-gray-250 dark:border-[#333] px-2 py-0.5 rounded cursor-pointer text-gray-500 hover:text-gray-700 dark:hover:text-[#eee] bg-transparent"
               >
-                {copyStatus === 'copied' ? '✓ Copied' : 'Copy'}
+                {copyStatus === 'copied' ? 'Copied' : 'Copy'}
               </button>
               {response && (
                 <span className="text-[9.5px] font-mono font-bold text-green-600 bg-green-50 dark:bg-green-950/40 dark:text-green-400 px-1.5 py-0.5 rounded">

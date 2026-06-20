@@ -163,7 +163,7 @@ export default function MiniSpectralCard({
           {lttbEnabled ? 'LTTB ON' : 'LTTB OFF'}
         </span>
         <span className="text-[9px] font-sans font-bold text-blue-600 bg-blue-50 border border-solid border-blue-100 px-1.5 py-0.5 rounded uppercase tracking-widest">
-          Peak Guarantee ✓
+          Peak Guarantee
         </span>
         {metrics.executionTimeMs > 0 && (
           <span className="text-[9px] font-sans text-gray-400 ml-auto">

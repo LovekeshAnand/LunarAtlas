@@ -33,16 +33,19 @@ analysis-ready spectral records. LunarAtlas provides that tool.
 ## Quick Start (3 Commands)
 
 ```bash
-# 1. Clone and install
+# 1. Clone and install dependencies
 git clone https://github.com/LovekeshAnand/LunarAtlas.git
 cd LunarAtlas
 pip install -r requirements.txt
 
-# 2. Run the full ingestion pipeline
-#    (set RAW_DIR to your ISRO PRADAN download path)
-python Pipeline/step2_process_l1_data.py "D:\ch3_libs\lib-v2\data\calibrated"
+# 2. Run the full ingestion pipeline (using Bash or PowerShell)
+cd Pipeline
+./run_pipeline.sh      # On Linux/macOS/Git Bash
+# OR
+.\run_pipeline.ps1     # On Windows PowerShell
 
 # 3. Start the API server and dashboard
+# (In separate terminals from the repository root)
 cd core/server && uvicorn app.main:app --reload --port 8000
 cd core/client && npm install && npm run dev
 ```
@@ -61,8 +64,10 @@ docker run -p 8000:8000 lunaratlas
 LunarAtlas/
 │
 ├── Pipeline/                      # 8-stage ingestion pipeline
+│   ├── run_pipeline.sh            # Ingestion orchestrator (Bash)
+│   ├── run_pipeline.ps1           # Ingestion orchestrator (PowerShell)
 │   ├── step1_structure_study.py   # PDS4 directory scanner
-│   ├── step2_process_l1_data.py   # Core: BG subtraction + clamping (Core contribution)
+│   ├── step2_process_l1_data.py   # Core: BG subtraction + clamping
 │   ├── step3_graph_plotting.py    # NIST overlay plots (300 DPI)
 │   ├── step4_nist_verification_logs.py  # Peak detection + NIST cross-ref
 │   ├── step5_md5_checksums.py     # Digital signature manifest
@@ -103,105 +108,76 @@ LunarAtlas/
 
 ---
 
+## Ingestion Pipeline
+
+The end-to-end PDS4 LIBS data ingestion pipeline processes raw ISRO files and loads them into PostgreSQL. You can run the entire 8-stage pipeline using either a Bash script or a PowerShell script located in the `Pipeline` directory:
+
+- **Using Bash (Linux/macOS/Git Bash)**:
+  ```bash
+  cd Pipeline
+  chmod +x run_pipeline.sh
+  ./run_pipeline.sh
+  ```
+- **Using PowerShell (Windows)**:
+  ```powershell
+  cd Pipeline
+  .\run_pipeline.ps1
+  ```
+
+The scripts will guide you through running all 8 processing stages:
+1. **Directory Structure Scanner** (`step1_structure_study.py`)
+2. **L1 Ingestion & Processing Core** (`step2_process_l1_data.py`)
+3. **Publication-Quality Graph Generation** (`step3_graph_plotting.py`)
+4. **NIST peak detection & Verification logs** (`step4_nist_verification_logs.py`)
+5. **MD5 digital checksum signatures** (`step5_md5_checksums.py`)
+6. **Replicated Folder Segregation** (`step6_segregate_data_folders.py`)
+7. **PostgreSQL Database Ingestion** (`step7_db_ingestion.py`)
+8. **End-to-End Validation & Audit** (`step8_data_verification.py`)
+
+---
+
 ## Ingestion Pipeline Architecture
 
 ```mermaid
-flowchart TD
-    %% Subgraphs for Ingestion Pipeline Stages
-    subgraph StageGroup1["Data Discovery & Metadata Extraction (Stages 1 & 2)"]
-        direction TB
-        Scanner["Directory Scanner<br>(step1_structure_study.py)"]
-        Parser["XML Label Parser<br>(step2_process_l1_data.py)"]
-    end
+flowchart LR
+    Raw[Raw PDS4 Directory] --> Study[1. Directory Scan & XML Parsing]
+    Study --> Process[2. Background Subtraction & Clamping]
+    Process --> QA[3. NIST Peak Validation & Checksums]
+    QA --> Archive[4. Folder Segregation & DB Ingestion]
+    Archive --> DB[(PostgreSQL Database)]
 
-    subgraph StageGroup2["Spectral Processing Core (Stage 2)"]
-        direction TB
-        Pairing["Shot Pairing Engine<br>(Laser Fire & Force Reset flags)"]
-        Subtraction["Background Subtractor<br>(I_plasma - I_background)"]
-        Clamping["Physical Clamper<br>(np.maximum(I_diff, 0))"]
-    end
-
-    subgraph StageGroup3["Validation & Quality Assurance (Stages 3 - 5)"]
-        direction TB
-        Plotter["Plotting Engine<br>(step3_graph_plotting.py)"]
-        Verifier["NIST Peak Verifier<br>(step4_nist_verification_logs.py)"]
-        Signer["MD5 Integrity Signer<br>(step5_md5_checksums.py)"]
-    end
-
-    subgraph StageGroup4["Archive & Database Ingestion (Stages 6 - 8)"]
-        direction TB
-        Segregator["ISRO Folder Segregator<br>(step6_segregate_data_folders.py)"]
-        DBLoader["DB Bulk Loader<br>(step7_db_ingestion.py)"]
-        Auditor["Post-Ingestion Auditor<br>(step8_data_verification.py)"]
-    end
-
-    %% Flow connections with clear data/control signals
-    RawData["Raw PDS4 Directory"] -->|"Scan files"| Scanner
-    Scanner -->|"study_summary.json"| Parser
-    Parser -->|"Raw dataframes"| Pairing
-    Pairing -->|"Background / Plasma vectors"| Subtraction
-    Subtraction -->|"Raw differential spectrum"| Clamping
-    Clamping -->|"Normalized spectra"| Plotter
-    Clamping -->|"Clean long-form data"| Verifier
-    Clamping -->|"Processed L1 CSVs"| Signer
-    Signer -->|"Checksum manifest"| Segregator
-    Segregator -->|"Structured directories"| DBLoader
-    DBLoader -->|"PostgreSQL records"| Auditor
-    Auditor -->|"Audit status (PASS/FAIL)"| SuccessMark[Ingestion Verification Success]
-
-    %% Styling
-    style StageGroup1 fill:#0b132b,stroke:#00b4d8,stroke-width:2px,color:#ffffff
-    style StageGroup2 fill:#1c0f13,stroke:#e63946,stroke-width:2px,color:#ffffff
-    style StageGroup3 fill:#1a1c1a,stroke:#ffb703,stroke-width:2px,color:#ffffff
-    style StageGroup4 fill:#130e20,stroke:#8338ec,stroke-width:2px,color:#ffffff
-
-    classDef default fill:#1d2436,stroke:#4a5568,stroke-width:1px,color:#f7fafc;
+    style Raw fill:#f9fafb,stroke:#d1d5db,stroke-width:1px,color:#374151
+    style Study fill:#e0f2fe,stroke:#38bdf8,stroke-width:1px,color:#0369a1
+    style Process fill:#e0f2fe,stroke:#38bdf8,stroke-width:1px,color:#0369a1
+    style QA fill:#fef3c7,stroke:#f59e0b,stroke-width:1px,color:#78350f
+    style Archive fill:#dcfce7,stroke:#22c55e,stroke-width:1px,color:#14532d
+    style DB fill:#f3e8ff,stroke:#a855f7,stroke-width:1px,color:#581c87
 ```
 
 ---
 
-## Software Architecture & Control Flow
+## Backend Software & Serving Architecture
+
+This diagram shows how the backend serves processed spectral data efficiently using downsampling, caching, and peak preservation.
 
 ```mermaid
 flowchart TD
-    %% Subgraphs for Subsystems
-    subgraph SubClient["Presentation Layer (React Frontend Client)"]
-        direction TB
-        UIControls["Controls Panel (React UI)<br>- Observation Selector<br>- Wavelength Range [λ_min, λ_max]<br>- Proportion Mode (Ratio)<br>- NIST Element Peak Overlay<br>- LTTB Downsampling Toggle"]
-        Worker["Downsample Web Worker<br>(downsampleWorker.ts)"]
-        Dashboard["Interactive Spectral Graph<br>(MultiSpectralGraph / amCharts)"]
-    end
+    Client[Web UI / Client] -->|1. Request Range & Downsampling Ratio| Server[FastAPI Server]
+    Server -->|2. Check Cache| Cache{Redis Cache}
+    
+    Cache -->|Cache Hit| Return[3a. Return Downsampled Data]
+    Cache -->|Cache Miss| DB[(PostgreSQL Database)]
+    
+    DB -->|3b. Retrieve Raw High-Res Spectrum| Engine[Downsampling Engine]
+    Engine -->|4. Apply LTTB + Peak Preservation| Server
+    Server -->|5. Store Result| Cache
+    Server -->|6. Return Optimized Spectrum| Client
 
-    subgraph SubBackend["Logic Layer (FastAPI Backend Server)"]
-        direction TB
-        APIHandler["REST API Handler<br>(GET /api/v1/spectral)"]
-        SatCheck["Zoom-Saturation Checker<br>(Wavelength width vs pixel density)"]
-        LTTBEngine["Adaptive Downsampler<br>(LTTB + NIST Peak-Union Lock)"]
-    end
-
-    subgraph SubStorage["Persistence & Cache Layer"]
-        direction TB
-        RedisCache["Redis Cache Store<br>(Query & payload caching)"]
-        PostgresDB["PostgreSQL Database<br>(Spectral, measurement & metadata tables)"]
-    end
-
-    %% Flows indicating control parameters, requests, and datasets
-    UIControls -->|"Interactive dashboard inputs"| Dashboard
-    UIControls -->|"Downsampling settings & ratio"| Worker
-    Dashboard -->|"Zoom / Pan viewport bounds"| APIHandler
-    APIHandler -->|"Evaluate resolution constraints"| SatCheck
-    SatCheck -->|"Viewport limits & zoom level"| LTTBEngine
-    LTTBEngine -->|"Downsampled points (N' <= 150)"| Dashboard
-    LTTBEngine -->|"Query raw data"| PostgresDB
-    APIHandler -->|"Lookup/cache response payloads"| RedisCache
-    Worker -->|"Client-side downsampled paths"| Dashboard
-
-    %% Styling
-    style SubClient fill:#0a192f,stroke:#0ea5e9,stroke-width:2px,color:#ffffff
-    style SubBackend fill:#1b1912,stroke:#ffb703,stroke-width:2px,color:#ffffff
-    style SubStorage fill:#14111c,stroke:#8338ec,stroke-width:2px,color:#ffffff
-
-    classDef default fill:#1d2436,stroke:#4a5568,stroke-width:1px,color:#f7fafc;
+    style Client fill:#f9fafb,stroke:#d1d5db,stroke-width:1px,color:#374151
+    style Server fill:#e0f2fe,stroke:#38bdf8,stroke-width:1px,color:#0369a1
+    style Cache fill:#fef3c7,stroke:#f59e0b,stroke-width:1px,color:#78350f
+    style DB fill:#f3e8ff,stroke:#a855f7,stroke-width:1px,color:#581c87
+    style Engine fill:#dcfce7,stroke:#22c55e,stroke-width:1px,color:#14532d
 ```
 
 ---

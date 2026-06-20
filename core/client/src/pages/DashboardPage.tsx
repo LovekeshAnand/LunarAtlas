@@ -396,7 +396,7 @@ print(response.json())`;
 
                     {profileSuccess && (
                       <div className="text-[11px] font-medium text-emerald-600 bg-emerald-500/5 dark:bg-emerald-950/20 dark:text-[#a3e635] p-3 rounded-lg border border-emerald-500/25">
-                        ✓ Profile details saved successfully.
+                        Profile details saved successfully.
                       </div>
                     )}
 
@@ -576,7 +576,7 @@ print(response.json())`;
                         ) : (
                           <>
                             <h3 className="text-base font-bold text-emerald-600 dark:text-[#a3e635] m-0 mb-4 flex items-center gap-2 uppercase tracking-wider">
-                              ✓ Key Created Successfully
+                              Key Created Successfully
                             </h3>
                             <div className="bg-amber-500/5 border-l-[3px] border-amber-500 p-4 mb-5 rounded-r border border-[#e5e7eb] dark:border-amber-500/25">
                               <strong className="block text-[11px] text-amber-700 dark:text-amber-400 font-bold mb-1 uppercase tracking-wider">Store Secret Key Securely!</strong>

@@ -63,9 +63,9 @@ async def insert_test_data():
                 columns=['measurement_id', 'wavelength_nm', 'cleaned_intensity', 'raw_intensity']
             )
             
-            print(f"✓ Inserted data for measurement {meas_num}")
+            print(f"Inserted data for measurement {meas_num}")
         
-        print("\n✓ All test data inserted successfully")
+        print("\nAll test data inserted successfully")
         
     finally:
         await conn.close()

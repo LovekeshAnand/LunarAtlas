@@ -71,7 +71,7 @@ fi
 
 echo ""
 echo "======================================================================"
-echo " ✓ PIPELINE RUN SUCCESSFULLY COMPLETE"
+echo " PIPELINE RUN SUCCESSFULLY COMPLETE"
 echo " All generated files are in datasets/processed/"
 echo " Check step-by-step logs and outputs for details."
 echo "======================================================================"

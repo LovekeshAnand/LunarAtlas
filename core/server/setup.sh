@@ -18,7 +18,7 @@ echo -e "${BLUE}================================================================
 echo -e "${YELLOW}[1/4] Creating directory structure...${NC}"
 mkdir -p app/api/v1 app/core app/models app/schemas app/database app/cache app/utils tests/unit tests/integration configs logs scripts data/uploads data/processed
 touch app/__init__.py app/api/__init__.py app/api/v1/__init__.py app/core/__init__.py app/models/__init__.py app/schemas/__init__.py app/database/__init__.py app/cache/__init__.py app/utils/__init__.py tests/__init__.py
-echo -e "${GREEN}✓ Directories created.${NC}"
+echo -e "${GREEN}Directories created.${NC}"
 
 # 2. Create requirements.txt
 echo -e "${YELLOW}[2/4] Writing requirements.txt...${NC}"
@@ -65,7 +65,7 @@ black==24.1.1
 flake8==7.0.0
 mypy==1.8.0
 EOF
-echo -e "${GREEN}✓ requirements.txt written.${NC}"
+echo -e "${GREEN}requirements.txt written.${NC}"
 
 # 3. Create .env.example
 echo -e "${YELLOW}[3/4] Writing .env.example...${NC}"
@@ -100,7 +100,7 @@ BASE_BUCKETS=1000
 MIN_BUCKET_SIZE=0.01
 EOF
 cp .env.example .env
-echo -e "${GREEN}✓ .env.example created (copied to .env).${NC}"
+echo -e "${GREEN}.env.example created (copied to .env).${NC}"
 
 # 4. Write Application Code
 echo -e "${YELLOW}[4/4] Writing application code...${NC}"
@@ -156,9 +156,9 @@ class Database:
                 command_timeout=60,
                 timeout=30
             )
-            logger.info(f"✓ Database pool created")
+            logger.info(f"Database pool created")
         except Exception as e:
-            logger.error(f"✗ Database connection failed: {e}")
+            logger.error(f"Database connection failed: {e}")
             raise
     
     async def disconnect(self):
@@ -206,7 +206,7 @@ class CacheLayer:
             )
             await self.redis.ping()
         except Exception as e:
-            logger.error(f"✗ Redis connection failed: {e}")
+            logger.error(f"Redis connection failed: {e}")
             self.redis = None
     
     async def disconnect(self):
@@ -503,7 +503,7 @@ if __name__ == "__main__":
     asyncio.run(run())
 EOF
 
-echo -e "${GREEN}✓ All files written successfully.${NC}"
+echo -e "${GREEN}All files written successfully.${NC}"
 
 echo -e "${BLUE}======================================================================${NC}"
 echo -e "${GREEN}Setup Complete!${NC}"
