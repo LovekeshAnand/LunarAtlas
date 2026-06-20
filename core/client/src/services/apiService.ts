@@ -101,7 +101,7 @@ export const apiService = {
   },
 
   // === Authentication & User ===
-  async register(data: { email: string; institution: string; interest: string; password: string }) {
+  async register(data: { email: string; username: string; role: string; institution: string; interest: string; password: string }) {
     const res = await fetch(`${API_BASE}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -379,6 +379,15 @@ export const apiService = {
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.detail || `Failed to fetch public missions: ${res.status}`);
+    }
+    return res.json();
+  },
+
+  async fetchPublicMissionByCode(apiKey: string, missionCode: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/public/missions/${encodeURIComponent(missionCode)}?api_key=${encodeURIComponent(apiKey)}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Failed to fetch public mission by code: ${res.status}`);
     }
     return res.json();
   },

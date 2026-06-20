@@ -7,7 +7,6 @@ const CODE = 'bg-[#f4f4f4] dark:bg-[#1e1e1e] border border-gray-200 dark:border-
 const CODEBLK = 'bg-[#f7f7f7] dark:bg-[#111] border border-gray-200 dark:border-[#222] px-5 py-4 my-3 font-mono text-[12px] text-[#222] dark:text-[#c0c0c0] overflow-x-auto leading-[1.6] whitespace-pre rounded-md';
 const TABLE = 'w-full border-collapse my-3 text-[12px] text-left';
 const TH = 'text-[9px] font-bold tracking-[1.5px] text-[#888] dark:text-[#555] uppercase px-4 py-2.5 border-b border-[#ddd] dark:border-[#1e1e1e] bg-gray-50/50 dark:bg-[#141414]';
-const TD = 'px-4 py-3 border-b border-[#f0f0f0] dark:border-[#1a1a1a] text-[#444] dark:text-[#aaa] leading-[1.5] align-top';
 
 interface EndpointDoc {
   id: string;
@@ -22,7 +21,7 @@ interface EndpointDoc {
 export default function DeveloperApiPage() {
   const [activeSnippetTab, setActiveSnippetTab] = useState<'curl' | 'python' | 'node' | 'go' | 'r'>('curl');
   const [expandedEndpoint, setExpandedEndpoint] = useState<string | null>('spectra_bulk');
-  const [customKey, setCustomKey] = useState('DEMO_KEY');
+  const [customKey, setCustomKey] = useState('');
 
   // Authoritative expected responses based on real database tables
   const endpointDocs: EndpointDoc[] = [
@@ -35,7 +34,7 @@ export default function DeveloperApiPage() {
         { name: 'limit', type: 'Integer', req: false, def: '10', desc: 'Pagination size limit (1 - 100)' },
         { name: 'offset', type: 'Integer', req: false, def: '0', desc: 'Pagination index offset' }
       ],
-      curlExample: 'curl -H "X-API-Key: DEMO_KEY" "http://localhost:8000/api/v1/public/missions?limit=5"',
+      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "http://localhost:8000/api/v1/public/missions?limit=5"',
       sampleResponse: {
         meta: {
           agency: "ISRO",
@@ -72,7 +71,7 @@ export default function DeveloperApiPage() {
       params: [
         { name: 'code', type: 'String (Path)', req: true, desc: 'Target mission code, e.g., CH3 (case-insensitive)' }
       ],
-      curlExample: 'curl -H "X-API-Key: DEMO_KEY" "http://localhost:8000/api/v1/public/missions/CH3"',
+      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "http://localhost:8000/api/v1/public/missions/CH3"',
       sampleResponse: {
         meta: {
           agency: "ISRO",
@@ -106,7 +105,7 @@ export default function DeveloperApiPage() {
       params: [
         { name: 'mission_code', type: 'String', req: false, desc: 'Filter by mission short code, e.g., CH3' }
       ],
-      curlExample: 'curl -H "X-API-Key: DEMO_KEY" "http://localhost:8000/api/v1/public/instruments?mission_code=CH3"',
+      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "http://localhost:8000/api/v1/public/instruments?mission_code=CH3"',
       sampleResponse: {
         meta: {
           agency: "ISRO",
@@ -145,7 +144,7 @@ export default function DeveloperApiPage() {
         { name: 'limit', type: 'Integer', req: 'No', def: '50', desc: 'Pagination page limit size (1 - 100)' },
         { name: 'offset', type: 'Integer', req: 'No', def: '0', desc: 'Pagination offset index' }
       ],
-      curlExample: 'curl -H "X-API-Key: DEMO_KEY" "http://localhost:8000/api/v1/public/observations?date=2023-08-25&limit=2"',
+      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "http://localhost:8000/api/v1/public/observations?date=2023-08-25&limit=2"',
       sampleResponse: {
         meta: {
           agency: "ISRO",
@@ -196,7 +195,7 @@ export default function DeveloperApiPage() {
         { name: 'limit', type: 'Integer', req: 'No', def: '50', desc: 'Pagination limit size' },
         { name: 'offset', type: 'Integer', req: 'No', def: '0', desc: 'Pagination offset index' }
       ],
-      curlExample: 'curl -H "X-API-Key: DEMO_KEY" "http://localhost:8000/api/v1/public/measurements?date=2023-08-25&mission=CH3&limit=5"',
+      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "http://localhost:8000/api/v1/public/measurements?date=2023-08-25&mission=CH3&limit=5"',
       sampleResponse: {
         meta: {
           agency: "ISRO",
@@ -247,7 +246,7 @@ export default function DeveloperApiPage() {
         { name: 'limit', type: 'Integer', req: 'No', def: '10', desc: 'Limit the number of spectral profiles returned (max 50)' },
         { name: 'offset', type: 'Integer', req: 'No', def: '0', desc: 'Pagination offset index' }
       ],
-      curlExample: 'curl -H "X-API-Key: DEMO_KEY" "http://localhost:8000/api/v1/public/spectra?observation_id=LIB-20230825-145453-00&downsample=true&zoom_level=1"',
+      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "http://localhost:8000/api/v1/public/spectra?observation_id=LIB-20230825-145453-00&downsample=true&zoom_level=1"',
       sampleResponse: {
         meta: {
           agency: "ISRO",
@@ -290,7 +289,7 @@ export default function DeveloperApiPage() {
         { name: 'zoom_level', type: 'Integer', req: false, def: '0', desc: 'LTTB zoom level (0-5)' },
         { name: 'target_wavelengths', type: 'String (CSV list)', req: false, desc: 'Wavelength channels to preserve' }
       ],
-      curlExample: 'curl -H "X-API-Key: DEMO_KEY" "http://localhost:8000/api/v1/public/spectra/FI-20230825-145453-00-1?downsample=true"',
+      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "http://localhost:8000/api/v1/public/spectra/FI-20230825-145453-00-1?downsample=true"',
       sampleResponse: {
         meta: {
           agency: "ISRO",
@@ -436,6 +435,7 @@ print(data$results)
   const postmanCollectionJson = {
     "info": {
       "name": "LunarAtlas Public Developer API Reference",
+      "description": "Automated Postman Collection mapping all public catalog routes and data streams of the LunarAtlas space science database.",
       "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "item": [
@@ -444,7 +444,86 @@ print(data$results)
         "request": {
           "method": "GET",
           "header": [{"key": "X-API-Key", "value": "{{API_KEY}}"}],
-          "url": {"raw": "{{BASE_URL}}/public/missions?limit=10", "host": ["{{BASE_URL}}"], "path": ["public", "missions"], "query": [{"key": "limit", "value": "10"}]}
+          "url": {
+            "raw": "{{BASE_URL}}/public/missions?limit=10&offset=0",
+            "host": ["{{BASE_URL}}"],
+            "path": ["public", "missions"],
+            "query": [
+              {"key": "limit", "value": "10", "description": "Pagination size limit"},
+              {"key": "offset", "value": "0", "description": "Pagination index offset"}
+            ]
+          }
+        }
+      },
+      {
+        "name": "Mission Details",
+        "request": {
+          "method": "GET",
+          "header": [{"key": "X-API-Key", "value": "{{API_KEY}}"}],
+          "url": {
+            "raw": "{{BASE_URL}}/public/missions/:code",
+            "host": ["{{BASE_URL}}"],
+            "path": ["public", "missions", ":code"],
+            "variable": [
+              {"key": "code", "value": "CH3", "description": "Target mission code (case-insensitive)"}
+            ]
+          }
+        }
+      },
+      {
+        "name": "Instruments Catalog",
+        "request": {
+          "method": "GET",
+          "header": [{"key": "X-API-Key", "value": "{{API_KEY}}"}],
+          "url": {
+            "raw": "{{BASE_URL}}/public/instruments?mission_code=CH3",
+            "host": ["{{BASE_URL}}"],
+            "path": ["public", "instruments"],
+            "query": [
+              {"key": "mission_code", "value": "CH3", "description": "Filter by mission short code"}
+            ]
+          }
+        }
+      },
+      {
+        "name": "Observations Catalog",
+        "request": {
+          "method": "GET",
+          "header": [{"key": "X-API-Key", "value": "{{API_KEY}}"}],
+          "url": {
+            "raw": "{{BASE_URL}}/public/observations?mission=CH3&instrument=LIBS&date=2023-08-25&limit=50&offset=0",
+            "host": ["{{BASE_URL}}"],
+            "path": ["public", "observations"],
+            "query": [
+              {"key": "mission", "value": "CH3", "description": "Mission code filter"},
+              {"key": "instrument", "value": "LIBS", "description": "Instrument code filter"},
+              {"key": "target_name", "value": "Moon", "disabled": true, "description": "Filter by target body"},
+              {"key": "date", "value": "2023-08-25", "description": "Observation date (YYYY-MM-DD)"},
+              {"key": "limit", "value": "50"},
+              {"key": "offset", "value": "0"}
+            ]
+          }
+        }
+      },
+      {
+        "name": "Measurements Telemetry",
+        "request": {
+          "method": "GET",
+          "header": [{"key": "X-API-Key", "value": "{{API_KEY}}"}],
+          "url": {
+            "raw": "{{BASE_URL}}/public/measurements?date=2023-08-25&mission=CH3&limit=50&offset=0",
+            "host": ["{{BASE_URL}}"],
+            "path": ["public", "measurements"],
+            "query": [
+              {"key": "observation_id", "value": "LIB-20230825-145453-00", "disabled": true, "description": "Observation session ID"},
+              {"key": "mission", "value": "CH3"},
+              {"key": "instrument", "value": "LIBS", "disabled": true},
+              {"key": "date", "value": "2023-08-25"},
+              {"key": "is_background", "value": "false", "disabled": true, "description": "True for background, False for surface plasma"},
+              {"key": "limit", "value": "50"},
+              {"key": "offset", "value": "0"}
+            ]
+          }
         }
       },
       {
@@ -452,13 +531,52 @@ print(data$results)
         "request": {
           "method": "GET",
           "header": [{"key": "X-API-Key", "value": "{{API_KEY}}"}],
-          "url": {"raw": "{{BASE_URL}}/public/spectra?observation_id=LIB-20230825-145453-00&downsample=true", "host": ["{{BASE_URL}}"], "path": ["public", "spectra"], "query": [{"key": "observation_id", "value": "LIB-20230825-145453-00"}, {"key": "downsample", "value": "true"}]}
+          "url": {
+            "raw": "{{BASE_URL}}/public/spectra?observation_id=LIB-20230825-145453-00&downsample=true&zoom_level=1&limit=10&offset=0",
+            "host": ["{{BASE_URL}}"],
+            "path": ["public", "spectra"],
+            "query": [
+              {"key": "observation_id", "value": "LIB-20230825-145453-00"},
+              {"key": "date", "value": "2023-08-25", "disabled": true},
+              {"key": "mission", "value": "CH3", "disabled": true},
+              {"key": "measurement_ids", "value": "FI-20230825-145453-00-1", "disabled": true},
+              {"key": "lambda_min", "value": "164.35", "disabled": true},
+              {"key": "lambda_max", "value": "878.26", "disabled": true},
+              {"key": "downsample", "value": "true"},
+              {"key": "zoom_level", "value": "1"},
+              {"key": "target_wavelengths", "value": "393.37,396.15", "disabled": true},
+              {"key": "limit", "value": "10"},
+              {"key": "offset", "value": "0"}
+            ]
+          }
+        }
+      },
+      {
+        "name": "Single Spectrum Detail",
+        "request": {
+          "method": "GET",
+          "header": [{"key": "X-API-Key", "value": "{{API_KEY}}"}],
+          "url": {
+            "raw": "{{BASE_URL}}/public/spectra/:id?downsample=false",
+            "host": ["{{BASE_URL}}"],
+            "path": ["public", "spectra", ":id"],
+            "query": [
+              {"key": "lambda_min", "value": "164.35", "disabled": true},
+              {"key": "lambda_max", "value": "878.26", "disabled": true},
+              {"key": "downsample", "value": "false"},
+              {"key": "zoom_level", "value": "0", "disabled": true},
+              {"key": "target_wavelengths", "value": "393.37,396.15", "disabled": true}
+            ],
+            "variable": [
+              {"key": "id", "value": "FI-20230825-145453-00-1", "description": "Target measurement ID"}
+            ]
+          }
         }
       }
     ],
     "variable": [
       {"key": "BASE_URL", "value": "http://localhost:8000/api/v1", "type": "string"},
-      {"key": "API_KEY", "value": "DEMO_KEY", "type": "string"}
+      {"key": "API_KEY", "value": "YOUR_API_KEY", "type": "string"}
     ]
   };
 
@@ -474,7 +592,7 @@ print(data$results)
 
   // Quick Key Validation check
   const isKeyFormatValid = useMemo(() => {
-    return customKey === 'DEMO_KEY' || (customKey.startsWith('la_') && customKey.length >= 10);
+    return customKey.startsWith('la_') && customKey.length >= 10;
   }, [customKey]);
 
   return (
@@ -504,9 +622,9 @@ print(data$results)
         <div className="space-y-12 min-w-0">
           
           {/* Quickstart Guide for Students and First-time Users */}
-          <section className="bg-white dark:bg-[#111] border border-blue-100 dark:border-blue-900/30 p-8 rounded-lg shadow-sm">
+          <section className="bg-white dark:bg-[#111] border border-gray-250 dark:border-[#222] p-8 rounded-lg shadow-sm">
             <div className="flex items-center gap-2 mb-4">
-              <span className="bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 text-[10px] font-black tracking-widest uppercase px-2 py-0.5 rounded-sm">
+              <span className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300 text-[10px] font-black tracking-widest uppercase px-2 py-0.5 rounded-sm">
                 Student &amp; Researcher Guide
               </span>
               <h2 className="text-[16px] font-bold text-gray-800 dark:text-[#f0f0f0] m-0 tracking-tight">First-Time Integration Guide</h2>
@@ -517,21 +635,21 @@ print(data$results)
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="border border-gray-150 dark:border-[#222] p-5 rounded bg-gray-50/50 dark:bg-[#161616]/50">
-                <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px] font-bold mb-3">1</div>
+                <div className="w-6 h-6 rounded-full bg-black dark:bg-[#e0e0e0] text-white dark:text-black flex items-center justify-center text-[11px] font-bold mb-3">1</div>
                 <div className="text-[12px] font-bold text-gray-800 dark:text-gray-200 mb-1.5">Create a Profile</div>
                 <div className="text-[11.5px] text-gray-500 dark:text-gray-400 leading-normal">
                   <span className="font-semibold text-gray-700 dark:text-gray-300">Sign Up</span> for a free account. Update your role (e.g. <em>Student</em> or <em>Academic</em>) inside the user profile setup.
                 </div>
               </div>
               <div className="border border-gray-150 dark:border-[#222] p-5 rounded bg-gray-50/50 dark:bg-[#161616]/50">
-                <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px] font-bold mb-3">2</div>
+                <div className="w-6 h-6 rounded-full bg-black dark:bg-[#e0e0e0] text-white dark:text-black flex items-center justify-center text-[11px] font-bold mb-3">2</div>
                 <div className="text-[12px] font-bold text-gray-800 dark:text-gray-200 mb-1.5">Generate your API Key</div>
                 <div className="text-[11.5px] text-gray-500 dark:text-gray-400 leading-normal">
-                  Go to your <Link to="/dashboard" className="text-blue-600 dark:text-blue-400 font-semibold underline">Dashboard</Link> &rarr; API Keys tab. Generate a new key. Copy it immediately as it will only be shown once.
+                  Go to your <Link to="/dashboard" className="text-black dark:text-white font-semibold underline">Dashboard</Link> &rarr; API Keys tab. Generate a new key. Copy it immediately as it will only be shown once.
                 </div>
               </div>
               <div className="border border-gray-150 dark:border-[#222] p-5 rounded bg-gray-50/50 dark:bg-[#161616]/50">
-                <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px] font-bold mb-3">3</div>
+                <div className="w-6 h-6 rounded-full bg-black dark:bg-[#e0e0e0] text-white dark:text-black flex items-center justify-center text-[11px] font-bold mb-3">3</div>
                 <div className="text-[12px] font-bold text-gray-800 dark:text-gray-200 mb-1.5">Query the Catalog</div>
                 <div className="text-[11.5px] text-gray-500 dark:text-gray-400 leading-normal">
                   Pass the token inside the HTTP request header: <br/><code className={CODE}>X-API-Key: la_7f3...</code> or parameter: <br/><code className={CODE}>?api_key=la_7f3...</code>.
@@ -549,7 +667,7 @@ print(data$results)
                 <div className="text-[12px]">
                   <span className="font-bold text-gray-800 dark:text-gray-250 block mb-1">Method 1: Dynamic Discovery (Query-First API Workflow)</span>
                   <p className="text-gray-500 dark:text-gray-450 m-0 pl-4 leading-normal">
-                    Call the list endpoints first to search for records. For example, make a request to <code className={CODE}>GET /public/observations?date=2023-08-25</code>. Copy the returned <code className="text-blue-600 dark:text-blue-400 font-mono text-[11px] font-bold">observation_id</code> (e.g. <code className="font-mono text-[11px]">LIB-20230825-145453-00</code>) to query its child measurements, or copy the <code className="text-blue-600 dark:text-blue-400 font-mono text-[11px] font-bold">measurement_id</code> (e.g. <code className="font-mono text-[11px]">FI-20230825-145453-00-1</code>) to fetch its raw spectrum.
+                    Call the list endpoints first to search for records. For example, make a request to <code className={CODE}>GET /public/observations?date=2023-08-25</code>. Copy the returned <code className="text-black dark:text-white font-mono text-[11px] font-bold">observation_id</code> (e.g. <code className="font-mono text-[11px]">LIB-20230825-145453-00</code>) to query its child measurements, or copy the <code className="text-black dark:text-white font-mono text-[11px] font-bold">measurement_id</code> (e.g. <code className="font-mono text-[11px]">FI-20230825-145453-00-1</code>) to fetch its raw spectrum.
                   </p>
                 </div>
                 <div className="text-[12px]">
@@ -558,8 +676,8 @@ print(data$results)
                     The database identifiers are mapped deterministically from the physical file structures on disk:
                   </p>
                   <ul className="list-disc pl-8 space-y-1 mt-2 text-gray-500 dark:text-gray-405 leading-normal">
-                    <li><strong>Observation ID:</strong> Matches the session folder name formatted as <code className="font-mono text-[11px]">LIB-YYYYMMDD-HHMMSS-SS</code> (e.g. folder <code className="font-mono text-[11px] text-gray-700 dark:text-gray-350">ch3_lib_002_20230825T145453_00_l1</code> maps to ID <code className="font-mono text-[11px] text-blue-600 dark:text-blue-400">LIB-20230825-145453-00</code>).</li>
-                    <li><strong>Measurement ID:</strong> Matches the individual shot CSV file suffix formatted as <code className="font-mono text-[11px]">FI-YYYYMMDD-HHMMSS-SS-X</code> (e.g. file <code className="font-mono text-[11px] text-gray-700 dark:text-gray-350">ch3_lib_002_20230825T145453_00_l1_0_1.csv</code> maps to ID <code className="font-mono text-[11px] text-blue-600 dark:text-blue-400">FI-20230825-145453-00-1</code>).</li>
+                    <li><strong>Observation ID:</strong> Matches the session folder name formatted as <code className="font-mono text-[11px]">LIB-YYYYMMDD-HHMMSS-SS</code> (e.g. folder <code className="font-mono text-[11px] text-gray-700 dark:text-gray-350">ch3_lib_002_20230825T145453_00_l1</code> maps to ID <code className="font-mono text-[11px] text-black dark:text-white">LIB-20230825-145453-00</code>).</li>
+                    <li><strong>Measurement ID:</strong> Matches the individual shot CSV file suffix formatted as <code className="font-mono text-[11px]">FI-YYYYMMDD-HHMMSS-SS-X</code> (e.g. file <code className="font-mono text-[11px] text-gray-700 dark:text-gray-350">ch3_lib_002_20230825T145453_00_l1_0_1.csv</code> maps to ID <code className="font-mono text-[11px] text-black dark:text-white">FI-20230825-145453-00-1</code>).</li>
                   </ul>
                 </div>
               </div>
@@ -583,7 +701,7 @@ print(data$results)
               <div className="border border-gray-150 dark:border-[#222] p-4 rounded bg-gray-50/50 dark:bg-[#161616]/50">
                 <div className="flex justify-between items-start mb-2">
                   <div className="text-[12px] font-bold text-gray-800 dark:text-gray-250 flex items-center gap-2">
-                    <span className="text-blue-600 dark:text-blue-400 font-mono">Pattern A</span>
+                    <span className="text-black dark:text-white font-mono">Pattern A</span>
                     <span>Hierarchical Catalog Browsing</span>
                   </div>
                   <span className="text-[10px] text-gray-400 font-medium">Standard PDS Flow</span>
@@ -593,12 +711,12 @@ print(data$results)
                 </p>
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2 font-mono text-[10.5px]">
-                    <span className="bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 px-1 py-0.5 rounded text-[9px] font-bold">GET</span>
+                    <span className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 px-1 py-0.5 rounded text-[9px] font-bold">GET</span>
                     <span className="text-gray-700 dark:text-gray-300">/public/observations?date=2023-08-25</span>
                   </div>
                   <div className="text-gray-400 text-[10px] pl-8">&darr; Extracts observation_id, e.g., <code className="font-semibold text-gray-600 dark:text-gray-400">LIB-20230825-145453-00</code></div>
                   <div className="flex items-center gap-2 font-mono text-[10.5px]">
-                    <span className="bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 px-1 py-0.5 rounded text-[9px] font-bold">GET</span>
+                    <span className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 px-1 py-0.5 rounded text-[9px] font-bold">GET</span>
                     <span className="text-gray-700 dark:text-gray-300">/public/spectra?observation_id=LIB-20230825-145453-00</span>
                   </div>
                 </div>
@@ -632,7 +750,7 @@ print(data$results)
               <div className="border border-gray-150 dark:border-[#222] p-4 rounded bg-gray-50/50 dark:bg-[#161616]/50">
                 <div className="flex justify-between items-start mb-2">
                   <div className="text-[12px] font-bold text-gray-800 dark:text-gray-250 flex items-center gap-2">
-                    <span className="text-blue-600 dark:text-blue-400 font-mono">Pattern C</span>
+                    <span className="text-black dark:text-white font-mono">Pattern C</span>
                     <span>Specific Record Retrieval</span>
                   </div>
                   <span className="text-[10px] text-gray-400 font-medium">Direct Access</span>
@@ -641,7 +759,7 @@ print(data$results)
                   If you already know the unique identifier for a specific laser shot/measurement, retrieve its high-resolution spectral channels directly.
                 </p>
                 <div className="flex items-center gap-2 font-mono text-[10.5px]">
-                  <span className="bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 px-1 py-0.5 rounded text-[9px] font-bold">GET</span>
+                  <span className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 px-1 py-0.5 rounded text-[9px] font-bold">GET</span>
                   <span className="text-gray-700 dark:text-gray-300">/public/spectra/FI-20230825-145453-00-1</span>
                 </div>
               </div>
@@ -705,7 +823,7 @@ print(data$results)
                     key={doc.id}
                     className={`border border-solid rounded-lg transition-all duration-150 ${
                       isExpanded 
-                        ? 'border-blue-500 bg-[#fafafa]/50 dark:bg-[#161616]/40' 
+                        ? 'border-black dark:border-white bg-[#fafafa]/50 dark:bg-[#161616]/40' 
                         : 'border-gray-200 dark:border-[#222] hover:border-gray-300 dark:hover:border-[#333]'
                     }`}
                   >
@@ -757,7 +875,7 @@ print(data$results)
                                         <span className={
                                           p.req === 'Required' ? 'text-red-600 dark:text-red-400' :
                                           p.req === 'Recommended' ? 'text-green-600 dark:text-green-400' :
-                                          p.req === 'Conditional' ? 'text-blue-650 dark:text-blue-400 font-medium' :
+                                          p.req === 'Conditional' ? 'text-black dark:text-white font-medium' :
                                           'text-gray-500 dark:text-gray-400'
                                         }>
                                           {p.req}
@@ -813,7 +931,7 @@ print(data$results)
                   onClick={() => setActiveSnippetTab(tab)}
                   className={`px-4 py-2 text-[11px] font-bold tracking-wider uppercase border-b-2 cursor-pointer transition-all bg-transparent ${
                     activeSnippetTab === tab
-                      ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400'
+                      ? 'border-black text-black dark:border-white dark:text-white'
                       : 'border-transparent text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'
                   }`}
                 >
@@ -835,7 +953,7 @@ print(data$results)
               </p>
               <button
                 onClick={downloadPostmanCollection}
-                className="inline-flex items-center gap-2 border border-blue-600 bg-transparent text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-950/20 font-bold text-[11px] tracking-wider uppercase px-5 py-2.5 rounded cursor-pointer transition-colors"
+                className="inline-flex items-center gap-2 border border-black bg-transparent text-black hover:bg-gray-100 dark:border-white dark:text-white dark:hover:bg-gray-900 font-bold text-[11px] tracking-wider uppercase px-5 py-2.5 rounded cursor-pointer transition-colors"
               >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -853,41 +971,29 @@ print(data$results)
           {/* Key verification card */}
           <div className="bg-white dark:bg-[#121212] border border-gray-250 dark:border-[#222] p-6 rounded-lg shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Key Access Status</span>
-              <div className="flex items-center gap-2">
-                <span className={`w-2.5 h-2.5 rounded-full ${isKeyFormatValid ? 'bg-green-500 animate-pulse' : 'bg-red-500'} inline-block`} />
-                <span className={`text-[10.5px] font-bold ${isKeyFormatValid ? 'text-green-600' : 'text-red-500'}`}>
-                  {isKeyFormatValid ? 'Key Connected' : 'Invalid Key'}
-                </span>
-              </div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">API Playground</span>
             </div>
             
             <label className="block text-[9.5px] font-bold uppercase tracking-wide text-gray-500 mb-1.5">Enter API Authorization Key</label>
             <input
               type="text"
-              className="w-full text-[12px] bg-gray-50 dark:bg-[#161616] border border-gray-200 dark:border-[#333] px-3 py-2 text-gray-800 dark:text-[#d0d0d0] rounded focus:outline-none focus:border-blue-500 font-mono"
-              placeholder="la_xxxx..."
+              className="w-full text-[12px] bg-gray-50 dark:bg-[#161616] border border-gray-200 dark:border-[#333] px-3 py-2 text-gray-800 dark:text-[#d0d0d0] rounded focus:outline-none focus:border-black dark:focus:border-white font-mono"
+              placeholder="Paste your generated API key (la_xxxx...)"
               value={customKey}
               onChange={(e) => setCustomKey(e.target.value)}
             />
             
             <div className="mt-3 flex gap-2">
               <button 
-                onClick={() => setCustomKey('DEMO_KEY')}
-                className="text-[10px] px-2.5 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-750 border-0 rounded font-semibold text-gray-600 dark:text-gray-300 cursor-pointer"
-              >
-                Reset to DEMO_KEY
-              </button>
-              <button 
                 onClick={() => setCustomKey('')}
-                className="text-[10px] px-2.5 py-1 bg-transparent hover:bg-gray-50 dark:hover:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded font-semibold text-gray-500 cursor-pointer"
+                className="text-[10px] px-2.5 py-1 bg-transparent hover:bg-gray-50 dark:hover:bg-gray-900 border border-gray-250 dark:border-gray-800 rounded font-semibold text-gray-500 cursor-pointer"
               >
                 Clear
               </button>
             </div>
             
             <p className="text-[10.5px] text-gray-400 leading-normal mt-3.5 m-0">
-              The <code className="font-mono text-gray-500">DEMO_KEY</code> allows sandbox querying. Make sure to generate your custom key from the User profile settings for higher rate limits.
+              Generate your custom API key from the Dashboard and paste it above to execute interactive API requests.
             </p>
           </div>
 
@@ -966,7 +1072,7 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
       url += `?${queryParts.join('&')}`;
     }
 
-    return `curl -H "X-API-Key: ${apiKey}" \\\n     "${url}"`;
+    return `curl -H "X-API-Key: ${apiKey || 'YOUR_API_KEY'}" \\\n     "${url}"`;
   }, [endpoint, apiKey, mission, instrument, targetName, date, observationId, measurementId, limit, offset, downsample, zoomLevel, targetWavelengths]);
 
   // Pre-fill valid database records automatically for testing
@@ -1061,7 +1167,7 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
         </div>
         <button 
           onClick={autoFillSample}
-          className="text-[10px] bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/50 px-2 py-0.5 rounded cursor-pointer font-semibold"
+          className="text-[10px] bg-gray-150 dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-700 px-2 py-0.5 rounded cursor-pointer font-semibold"
         >
           Auto-fill Sample Data
         </button>
@@ -1072,7 +1178,7 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
         <div>
           <label className="block text-[9px] font-bold uppercase tracking-wider text-gray-500 dark:text-[#555] mb-1">Select Endpoint Route</label>
           <select
-            className="w-full text-[12px] bg-canvas border border-gray-250 dark:border-[#333] px-3 py-2 text-gray-850 dark:text-[#d0d0d0] rounded focus:outline-none focus:border-blue-500 cursor-pointer"
+            className="w-full text-[12px] bg-canvas border border-gray-250 dark:border-[#333] px-3 py-2 text-gray-850 dark:text-[#d0d0d0] rounded focus:outline-none focus:border-black dark:focus:border-white cursor-pointer"
             value={endpoint}
             onChange={(e) => {
               setEndpoint(e.target.value);
@@ -1132,7 +1238,7 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
             </div>
           )}
 
-          {(endpoint === '/public/instruments' || endpoint === '/public/observations') && endpoint !== '/public/missions/{code}' && (
+          {(endpoint === '/public/instruments' || endpoint === '/public/observations') && (
             <div>
               <label className="block text-[10px] text-gray-600 dark:text-gray-400 mb-1">Mission Code Filter</label>
               <input
@@ -1272,7 +1378,7 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
                 <label htmlFor="downsample_bulk" className="text-[11px] text-[#555] dark:text-[#aaa] cursor-pointer select-none">Enable LTTB Downsampling</label>
               </div>
               {downsample && (
-                <div className="grid grid-cols-2 gap-2 border-l-2 border-blue-500 pl-3">
+                <div className="grid grid-cols-2 gap-2 border-l-2 border-black dark:border-l-white pl-3">
                   <div>
                     <label className="block text-[10px] text-gray-650 mb-1">Zoom (0-5)</label>
                     <input
@@ -1321,7 +1427,7 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
                 <label htmlFor="downsample_detail" className="text-[11px] text-[#555] dark:text-[#aaa] cursor-pointer select-none">Enable LTTB Downsampling</label>
               </div>
               {downsample && (
-                <div className="grid grid-cols-2 gap-2 border-l-2 border-blue-500 pl-3">
+                <div className="grid grid-cols-2 gap-2 border-l-2 border-black dark:border-l-white pl-3">
                   <div>
                     <label className="block text-[10px] text-gray-650 mb-1">Zoom (0-5)</label>
                     <input
@@ -1361,7 +1467,7 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
       <button
         onClick={handleSend}
         disabled={loading}
-        className="w-full py-2.5 text-[11px] font-bold text-white dark:text-black bg-blue-600 dark:bg-blue-400 hover:bg-blue-700 dark:hover:bg-blue-500 rounded cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 uppercase tracking-wider transition-colors"
+        className="w-full py-2.5 text-[11px] font-bold text-white dark:text-black bg-black dark:bg-white text-white dark:text-black hover:bg-gray-850 dark:hover:bg-gray-100 rounded cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 uppercase tracking-wider transition-colors"
       >
         {loading ? (
           <>

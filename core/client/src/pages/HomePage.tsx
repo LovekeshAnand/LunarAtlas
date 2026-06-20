@@ -7,99 +7,109 @@ export default function HomePage() {
   const [showModal, setShowModal] = useState(false);
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyCurl = () => {
+    navigator.clipboard.writeText('curl https://api.lunaratlas.org/v1/spectra/spot_002');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   function handleCTA() {
-    if (isLoggedIn) navigate('/graph');
+    if (isLoggedIn) navigate('/analyzer');
     else setShowModal(true);
   }
 
   return (
     <div className="font-sans bg-canvas dark:bg-[#0d0d0d] transition-colors duration-200">
 
-      {/* ── HERO SECTION WITH SPECTRAL ANIMATION ── */}
+      {/* ── HERO SECTION WITH CENTERED TYPOGRAPHY ── */}
       <section id="home-hero" className="border-b border-[#eee] dark:border-[#1e1e1e] grid-mesh relative overflow-hidden">
         
-        {/* Animated Background SVG simulating LIBS emission lines */}
-        <div className="absolute right-0 bottom-0 top-0 w-full md:w-[60%] opacity-15 dark:opacity-20 pointer-events-none select-none z-[0] flex items-center justify-end pr-4">
-          <svg className="w-full h-full max-h-[480px]" viewBox="0 0 600 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M 10,250 
-                 L 120,250 L 130,120 L 140,250 
-                 L 220,250 L 230,40  L 240,250 
-                 L 310,250 L 320,180 L 330,250 
-                 L 380,250 L 390,90  L 400,250 
-                 L 460,250 L 475,200 L 490,250 
-                 L 580,250"
-              className="stroke-ink dark:stroke-white"
-              strokeWidth="1.5"
-              strokeLinejoin="round"
-              opacity="0.75"
-            />
-            {/* Pulsing highlights for peaks */}
-            <circle cx="230" cy="40" r="5" className="fill-ink dark:fill-white animate-ping" />
-            <circle cx="390" cy="90" r="4" className="fill-ink dark:fill-white animate-pulse" />
-            <circle cx="130" cy="120" r="4" className="fill-ink dark:fill-white animate-pulse" />
-          </svg>
-        </div>
+        {/* Glowing backdrop ambient gradient */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-neutral-100 to-neutral-200 dark:from-[#161616] dark:to-[#1a1a1a] rounded-full blur-3xl opacity-30 pointer-events-none" />
 
-        <div className="max-w-[1400px] mx-auto px-12 pt-[88px] pb-20 relative z-[1]">
+        <div className="max-w-[1400px] mx-auto px-12 pt-[110px] pb-24 relative z-[1]">
+          
+          <div className="flex flex-col items-center text-center max-w-[800px] mx-auto">
+            
+            {/* Mission badge */}
+            <div className="inline-flex items-center gap-2 border border-border-dark dark:border-[#2a2a2a] px-[14px] py-[5px] mb-8 bg-canvas-alt dark:bg-[#141414] rounded-full">
+              <span className="w-[6px] h-[6px] rounded-full bg-ink dark:bg-[#f0f0f0] inline-block animate-pulse" />
+              <span className="text-[9px] font-bold tracking-[2px] text-[#666] dark:text-[#888] uppercase">
+                Chandrayaan-3 · LIBS · Level-1 · PDS4
+              </span>
+            </div>
 
-          {/* Mission badge */}
-          <div className="inline-flex items-center gap-2 border border-border-dark dark:border-[#2a2a2a] px-[14px] py-[5px] mb-8 bg-canvas-alt dark:bg-[#141414]">
-            <span className="w-[6px] h-[6px] rounded-full bg-ink dark:bg-[#f0f0f0] inline-block animate-pulse" />
-            <span className="text-[9px] font-bold tracking-[2px] text-[#666] dark:text-[#888] uppercase">
-              Chandrayaan-3 · LIBS · Level-1 · PDS4
-            </span>
-          </div>
+            {/* Main wordmark */}
+            <h1 className="font-sans text-[clamp(48px,8vw,92px)] font-bold tracking-[-2px] text-ink dark:text-[#f0f0f0] m-0 mb-4 leading-none select-none">
+              LUNAR<span className="font-light">ATLAS</span>
+            </h1>
 
-          {/* Main wordmark */}
-          <h1 className="font-sans text-[clamp(42px,7vw,86px)] font-bold tracking-[-1px] text-ink dark:text-[#f0f0f0] m-0 mb-[6px] leading-none">
-            LUNAR<span className="font-light">ATLAS</span>
-          </h1>
+            {/* Tagline */}
+            <div className="text-[clamp(16px,2.5vw,22px)] font-light text-[#444] dark:text-[#aaa] tracking-[0.5px] mb-6 max-w-[650px] leading-[1.4]">
+              From PDS4 Archives to Analysis-Ready Spectra
+            </div>
 
-          {/* Tagline */}
-          <div className="text-[clamp(14px,2vw,18px)] font-light text-[#555] dark:text-[#999] tracking-[0.5px] mb-4 max-w-[600px] leading-[1.5]">
-            From PDS4 Archives to Analysis-Ready Spectra
-          </div>
+            {/* Description */}
+            <div className="text-[13px] text-[#666] dark:text-[#888] tracking-[0.3px] mb-10 max-w-[600px] leading-[1.6]">
+              Transforming 2,094 wavelength channels (164.35–878.26 nm) from
+              Chandrayaan-3 LIBS Level-1 products into cleaned, versioned,
+              machine-accessible spectral records.
+            </div>
 
-          <div className="text-[12px] text-[#999] dark:text-[#666] tracking-[0.3px] mb-10 max-w-[540px] leading-[1.6]">
-            Transforming 2,094 wavelength channels (164.35–878.26 nm) from
-            Chandrayaan-3 LIBS Level-1 products into cleaned, versioned,
-            machine-accessible spectral records.
-          </div>
+            {/* CTA buttons */}
+            <div className="flex gap-4 justify-center items-center flex-wrap mb-12">
+              <button
+                id="home-cta-signup"
+                onClick={handleCTA}
+                className="font-sans text-[11px] font-bold tracking-[2px] uppercase bg-ink dark:bg-[#f0f0f0] text-white dark:text-[#0d0d0d] border-0 px-8 py-[14px] cursor-pointer transition-colors duration-150 hover:bg-[#333] dark:hover:bg-[#d0d0d0] rounded-sm"
+              >
+                {isLoggedIn ? 'View Spectral Analyzer' : 'Request Access'}
+              </button>
+              <Link
+                to="/developers"
+                className="font-sans text-[11px] font-bold tracking-[2px] uppercase border border-[#ddd] dark:border-[#2a2a2a] text-ink dark:text-white px-8 py-[14px] no-underline transition-colors hover:bg-canvas-alt dark:hover:bg-[#141414] rounded-sm"
+              >
+                Explore API Reference
+              </Link>
+            </div>
 
-          {/* CTA buttons */}
-          <div className="flex gap-4 flex-wrap">
-            <button
-              id="home-cta-signup"
-              onClick={handleCTA}
-              className="font-sans text-[11px] font-bold tracking-[2px] uppercase bg-ink dark:bg-[#f0f0f0] text-white dark:text-[#0d0d0d] border-0 px-8 py-[14px] cursor-pointer transition-colors duration-150 hover:bg-[#333] dark:hover:bg-[#d0d0d0] rounded-sm"
-            >
-              {isLoggedIn ? 'View Spectral Graph' : 'Request Access'}
-            </button>
-            <Link
-              to="/developers"
-              className="font-sans text-[11px] font-bold tracking-[2px] uppercase border border-[#ddd] dark:border-[#2a2a2a] text-ink dark:text-white px-8 py-[14px] no-underline transition-colors hover:bg-canvas-alt dark:hover:bg-[#141414] rounded-sm"
-            >
-              Explore API Reference
-            </Link>
-          </div>
-
-          {/* Stats row */}
-          <div className="flex gap-0 mt-14 border-t border-[#eee] dark:border-[#1e1e1e] pt-7 flex-wrap justify-between max-w-[900px]">
-            {[
-              { val: '2,094',      label: 'Wavelength Channels' },
-              { val: '164–878 nm', label: 'Spectral Range' },
-              { val: '~7.1×',     label: 'Baseline Suppression' },
-              { val: '1,280',      label: 'Telemetry Shots' },
-              { val: '99.98%',     label: 'API Service Uptime' },
-            ].map(({ val, label }) => (
-              <div key={label} className="flex-[1_0_150px] pr-6 mb-3">
-                <div className="text-[20px] font-extrabold text-ink dark:text-[#f0f0f0] tracking-[-0.5px]">{val}</div>
-                <div className="text-[9px] text-[#999] dark:text-[#555] font-semibold tracking-[0.5px] uppercase mt-1">{label}</div>
+            {/* Simple API Copy Pill */}
+            <div className="flex items-center gap-4 bg-neutral-50 dark:bg-[#111111] border border-neutral-200 dark:border-[#222] rounded-full pl-6 pr-3 py-2.5 font-mono text-[13px] text-neutral-600 dark:text-[#b0b0b0] max-w-[640px] w-full justify-between shadow-sm">
+              <div className="flex items-center gap-2.5 overflow-x-auto scrollbar-none whitespace-nowrap">
+                <span className="text-emerald-500 select-none font-bold">$</span>
+                <span>curl https://api.lunaratlas.org/v1/spectra/spot_002</span>
               </div>
-            ))}
+              <button
+                onClick={handleCopyCurl}
+                className={`text-[10px] font-bold tracking-wider uppercase px-4 py-2 rounded-full cursor-pointer transition-all duration-150 shrink-0 flex items-center justify-center border-0 ${
+                  copied
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-ink text-white hover:bg-neutral-800'
+                }`}
+              >
+                {copied ? (
+                  <>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    Copied
+                  </>
+                ) : (
+                  <>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    Copy
+                  </>
+                )}
+              </button>
+            </div>
+
           </div>
+
         </div>
       </section>
 
@@ -252,7 +262,7 @@ export default function HomePage() {
                 onClick={() => setShowModal(true)}
                 className="font-sans text-[11px] font-bold tracking-[2px] uppercase bg-ink dark:bg-[#f0f0f0] text-white dark:text-[#0d0d0d] border-0 px-8 py-[14px] cursor-pointer transition-colors hover:bg-[#333] dark:hover:bg-[#d0d0d0] rounded-sm"
               >
-                Sign Up Now
+                Sign In Now
               </button>
             ) : (
               <Link

@@ -5,8 +5,8 @@ import Header from './components/header/Header';
 import Footer from './components/footer/Footer';
 import HomePage from './pages/HomePage';
 import DocsPage from './pages/DocsPage';
-import GraphDisplay from './pages/GraphDisplay';
-import PipelinePage from './pages/PipelinePage';
+import SpectralAnalyzerPage from './pages/SpectralAnalyzerPage';
+
 import DashboardPage from './pages/DashboardPage';
 import DeveloperApiPage from './pages/DeveloperApiPage';
 
@@ -38,13 +38,12 @@ function AppRoutes() {
           <Route path="/"      element={<HomePage />} />
           
           {/* Scientific Documentation & Context */}
-          <Route path="/docs"  element={<RequireAuth><DocsPage /></RequireAuth>} />
+          <Route path="/docs"  element={<DocsPage />} />
           
-          {/* Interactive Ingestion Pipeline Tutorial & Simulator */}
-          <Route path="/pipeline" element={<RequireAuth><PipelinePage /></RequireAuth>} />
+
           
           {/* Primary Spectral Analysis Dashboard */}
-          <Route path="/graph" element={<RequireAuth><GraphDisplay /></RequireAuth>} />
+          <Route path="/analyzer" element={<RequireAuth><SpectralAnalyzerPage /></RequireAuth>} />
 
           {/* Standalone Developer API Portal */}
           <Route path="/developers" element={<DeveloperApiPage />} />

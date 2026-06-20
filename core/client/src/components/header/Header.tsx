@@ -10,21 +10,6 @@ import SignUpModal from '../auth/SignUpModal';
  * Implements navigation logic that intercepts protected routes for unauthenticated users.
  */
 
-/**
- * Brand Logo Component.
- * Illustrates the LIBS (Laser-Induced Breakdown Spectroscopy) grid pattern.
- */
-const Logo = () => (
-  <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="19" cy="19" r="16" stroke="currentColor" strokeWidth="1.5" />
-    <path d="M19 4 A15 15 0 0 1 19 34 A10 10 0 0 0 19 4Z" fill="currentColor" opacity="0.12" />
-    <line x1="7"  y1="14" x2="31" y2="14" stroke="currentColor" strokeWidth="0.7" opacity="0.25" />
-    <line x1="7"  y1="19" x2="31" y2="19" stroke="currentColor" strokeWidth="0.7" opacity="0.25" />
-    <line x1="7"  y1="24" x2="31" y2="24" stroke="currentColor" strokeWidth="0.7" opacity="0.25" />
-    <line x1="14" y1="11" x2="14" y2="27" stroke="currentColor" strokeWidth="1.4" />
-    <line x1="23" y1="11" x2="23" y2="27" stroke="currentColor" strokeWidth="1.4" />
-  </svg>
-);
 
 /** Sun icon for dark-to-light theme transition */
 const SunIcon = () => (
@@ -55,15 +40,13 @@ const MoonIcon = () => (
 export default function Header() {
   const [showModal, setShowModal] = useState(false);
   const { isLoggedIn, user, logout } = useAuth();
-  const { isDark, toggle } = useTheme();
 
   const location = useLocation();
 
   const navLinks = [
     { label: 'Home',          to: '/' },
-    { label: 'Graph',         to: '/graph',    protected: true },
-    { label: 'Pipeline',      to: '/pipeline', protected: true },
-    { label: 'Documentation', to: '/docs',     protected: true },
+    { label: 'Spectral Analyzer', to: '/analyzer', protected: true },
+    { label: 'Documentation', to: '/docs' },
     { label: 'Developers',    to: '/developers' },
     ...(isLoggedIn ? [{ label: 'Dashboard', to: '/dashboard', protected: true }] : []),
   ];
@@ -71,7 +54,7 @@ export default function Header() {
   const isActive = (to: string) =>
     to === '/' ? location.pathname === '/' : location.pathname.startsWith(to);
 
-  const handleProtectedLink = (e: React.MouseEvent, to: string, isProtected?: boolean) => {
+  const handleProtectedLink = (e: React.MouseEvent, _to: string, isProtected?: boolean) => {
     if (isProtected && !isLoggedIn) {
       e.preventDefault();
       setShowModal(true);
@@ -85,8 +68,7 @@ export default function Header() {
         <div className="max-w-[1400px] mx-auto px-8 h-[61px] flex items-center justify-between">
 
           {/* Brand */}
-          <Link to="/" className="no-underline flex items-center gap-3 text-ink dark:text-[#f0f0f0] transition-colors duration-200">
-            <Logo />
+          <Link to="/" className="no-underline flex items-center text-ink dark:text-[#f0f0f0] transition-colors duration-200">
             <div>
               <div className="text-[13px] font-bold tracking-[3px] leading-none">
                 LUNAR<span className="font-light">ATLAS</span>
@@ -118,40 +100,39 @@ export default function Header() {
             })}
 
 
-            {/* Dark / light toggle */}
-            <button
-              id="header-theme-toggle"
-              onClick={toggle}
-              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-              className="p-[7px] border-0 bg-transparent cursor-pointer text-[#999] dark:text-[#555] hover:text-ink dark:hover:text-[#d0d0d0] transition-colors duration-150"
+
+
+            {/* GitHub Link */}
+            <a
+              href="https://github.com/LovekeshAnand/LunarAtlas"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#888] hover:text-ink transition-colors duration-150 flex items-center"
+              aria-label="GitHub Repository"
             >
-              {isDark ? <SunIcon /> : <MoonIcon />}
-            </button>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+              </svg>
+            </a>
 
             {/* Auth area */}
             {isLoggedIn ? (
               <div className="flex items-center gap-3">
-                <div className="border border-[#e0e0e0] dark:border-[#2a2a2a] px-3 py-1 flex items-center gap-[7px]">
-                  <div className="w-[6px] h-[6px] rounded-full bg-ink dark:bg-[#d0d0d0] shrink-0" />
-                  <span className="text-[10px] text-[#555] dark:text-[#888] tracking-[0.3px] max-w-[160px] overflow-hidden text-ellipsis whitespace-nowrap">
-                    {user?.email}
-                  </span>
-                </div>
                 <button
                   id="header-logout"
                   onClick={logout}
-                  className="font-sans text-[10px] font-medium tracking-[1px] text-[#999] dark:text-[#555] uppercase bg-transparent border-0 cursor-pointer transition-colors duration-150 p-0 hover:text-ink dark:hover:text-[#d0d0d0]"
+                  className="font-sans text-[10px] font-bold tracking-[1.5px] text-ink hover:text-white border border-ink hover:bg-ink px-[18px] py-2 cursor-pointer transition-all duration-150 rounded-sm uppercase bg-transparent"
                 >
                   Sign Out
                 </button>
               </div>
             ) : (
               <button
-                id="header-signup"
+                id="header-signin"
                 onClick={() => setShowModal(true)}
-                className="font-sans text-[10px] font-bold tracking-[1.5px] text-white dark:text-[#0d0d0d] uppercase bg-ink dark:bg-[#f0f0f0] border-0 px-[18px] py-2 cursor-pointer transition-colors duration-150 hover:bg-[#333] dark:hover:bg-[#d0d0d0]"
+                className="font-sans text-[10px] font-bold tracking-[1.5px] text-ink hover:text-white border border-ink hover:bg-ink px-[18px] py-2 cursor-pointer transition-all duration-150 rounded-sm uppercase bg-transparent"
               >
-                Sign Up
+                Sign In
               </button>
             )}
           </nav>

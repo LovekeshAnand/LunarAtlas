@@ -97,13 +97,18 @@ async def startup_event():
             CREATE TABLE IF NOT EXISTS app_users (
                 id SERIAL PRIMARY KEY,
                 email VARCHAR(255) UNIQUE NOT NULL,
+                username VARCHAR(255) UNIQUE,
+                role VARCHAR(255) DEFAULT 'researcher',
                 institution VARCHAR(255),
                 interest VARCHAR(255),
                 hashed_password VARCHAR(255) NOT NULL,
                 created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             )
         """)
-        logger.info("[OK] Assured app_users table exists")
+        # Run column migrations for existing tables
+        await db.execute("ALTER TABLE app_users ADD COLUMN IF NOT EXISTS username VARCHAR(255) UNIQUE")
+        await db.execute("ALTER TABLE app_users ADD COLUMN IF NOT EXISTS role VARCHAR(255) DEFAULT 'researcher'")
+        logger.info("[OK] Assured app_users table exists and columns are up to date")
         
         # Read and run migration schema for api keys and usage logs
         migration_file = os.path.join(os.path.dirname(__file__), "..", "configs", "migration_api_keys.sql")

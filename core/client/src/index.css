@@ -22,9 +22,9 @@
 
   /* Brand colour palette */
   --color-ink:         #111111;
-  --color-ink-mid:     #444444;
-  --color-ink-soft:    #888888;
-  --color-ink-muted:   #bbbbbb;
+  --color-ink-mid:     #333333;
+  --color-ink-soft:    #555555;
+  --color-ink-muted:   #777777;
   --color-canvas:      #ffffff;
   --color-canvas-alt:  #fafafa;
   --color-border:      #e8e8e8;

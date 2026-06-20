@@ -5,7 +5,7 @@
  * derived from NIST Atomic Spectra Database (ASD).
  *
  * Both the graph overlay (MultiSpectralGraph) and the downsampling target list
- * (GraphDisplay) import from this file to stay in sync.
+ * (SpectralAnalyzerPage) import from this file to stay in sync.
  *
  * Total peaks: 32
  */

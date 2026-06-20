@@ -11,25 +11,18 @@ const ThemeContext = createContext<ThemeContextValue>({
 });
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    // Read the class that index.html's inline script already applied,
-    // so React state is in sync with what's already rendered.
-    try {
-      return document.documentElement.classList.contains('dark');
-    } catch {
-      return false;
-    }
-  });
+  const isDark = false;
+  const toggle = () => {};
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDark);
     try {
-      localStorage.setItem('luna-theme', isDark ? 'dark' : 'light');
+      localStorage.removeItem('luna-theme');
+      document.documentElement.classList.remove('dark');
     } catch { /* ignore in restricted environments */ }
-  }, [isDark]);
+  }, []);
 
   return (
-    <ThemeContext.Provider value={{ isDark, toggle: () => setIsDark(p => !p) }}>
+    <ThemeContext.Provider value={{ isDark, toggle }}>
       {children}
     </ThemeContext.Provider>
   );

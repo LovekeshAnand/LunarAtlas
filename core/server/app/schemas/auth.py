@@ -10,6 +10,8 @@ class TokenPayload(BaseModel):
 
 class UserBase(BaseModel):
     email: EmailStr
+    username: Optional[str] = None
+    role: Optional[str] = "researcher"
     institution: Optional[str] = None
     interest: Optional[str] = None
 
@@ -26,7 +28,6 @@ class UserInDB(UserBase):
 
 class UserResponse(UserBase):
     id: int
-    role: Optional[str] = "researcher"
     created_at: Optional[str] = None
     api_key_count: Optional[int] = 0
     

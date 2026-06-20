@@ -1,8 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { apiService } from '../services/apiService';
 
-import libsRawCleaned  from '../assets/libs_raw_vs_cleaned.png';
 import dbSchemaDiagram from '../assets/db_schema_diagram.png';
+
+// Publication figures
+import fig1Architecture from '../assets/fig1_architecture.png';
+import fig2ReshapeSchematic from '../assets/fig2_reshape_schematic.png';
+import fig3PrePostOverlay from '../assets/fig3_pre_post_overlay.png';
+import fig4SpectralVariability from '../assets/fig4_spectral_variability.png';
+import fig5PeakRetention from '../assets/fig5_peak_retention.png';
+import fig6AcquisitionSequence from '../assets/fig6_acquisition_sequence.png';
+import fig7NistOverlay from '../assets/fig7_nist_overlay.png';
+import fig8AdaptiveZoom from '../assets/fig8_adaptive_zoom.png';
 
 // ─────────────────────────────────────────────────────────────
 // Tailwind class constants — defined as complete strings so that
@@ -36,16 +44,94 @@ const SNUM    = 'text-[10px] font-bold text-ink-muted dark:text-[#444] tracking-
 const STITLE  = 'text-[13px] font-semibold text-ink dark:text-[#f0f0f0] mb-[3px]';
 const SDESC   = 'text-[12.5px] text-[#555] dark:text-[#888] leading-[1.6]';
 
-const SECTIONS = [
-  { id: 'intro',       label: 'Introduction'     },
-  { id: 'structure',   label: 'PRADAN Structure' },
-  { id: 'data',        label: 'Data Structure'   },
-  { id: 'pipeline',    label: 'Cleaning Pipeline' },
-  { id: 'schema',      label: 'Database Model'   },
-  { id: 'downsampling', label: 'Peak Preservation' },
-  { id: 'results',     label: 'Results & Validation' },
-  { id: 'authenticity', label: 'Data Authenticity' },
-  { id: 'pds3',        label: 'PDS3 Future Scope' },
+const PIPELINE_STAGES = [
+  {
+    n: '01',
+    title: 'Directory Scan (Discovery)',
+    script: 'Pipeline/step1_structure_study.py',
+    desc: 'Scans the raw ISRO PDS4 directory structure to build a JSON summary metadata index. This discovers all available observation directories and prevents duplicate attempts.',
+    inputs: 'Raw PDS4 archive directories',
+    outputs: 'study_summary.json summary manifest'
+  },
+  {
+    n: '02',
+    title: 'Core Reshaping & Pairing (Melting)',
+    script: 'Pipeline/step2_process_l1_data.py',
+    desc: 'Parses XML labels for observation metadata, reshapes the 2,094 wavelength columns into long-form spectral samples, separates background/plasma shots, pairs each shot temporally, and applies paired background subtraction with zero-clamping.',
+    inputs: 'Calibrated L1 CSV data tables + XML metadata labels',
+    outputs: 'Cleaned spectral CSVs mapped by Measurement ID'
+  },
+  {
+    n: '03',
+    title: 'NIST Graph Plotting (Visualization)',
+    script: 'Pipeline/step3_graph_plotting.py',
+    desc: 'Renders publication-quality overlay plots of each cleaned spectrum with a 32-line NIST atomic spectra overlay. Figures are saved at 300 DPI for paper submission.',
+    inputs: 'Cleaned spectral CSV files',
+    outputs: '300 DPI publication overlay plots (PNG)'
+  },
+  {
+    n: '04',
+    title: 'Peak Detection (Verification)',
+    script: 'Pipeline/step4_nist_verification_logs.py',
+    desc: 'Performs peak detection on each cleaned spectrum and cross-references them against the NIST database within a 0.5 nm offset tolerance. Creates a verification audit trail.',
+    inputs: 'Cleaned spectral CSV files',
+    outputs: 'nist_verification_log.csv logs'
+  },
+  {
+    n: '05',
+    title: 'Integrity Checksums (Signing)',
+    script: 'Pipeline/step5_md5_checksums.py',
+    desc: 'Generates MD5 digital checksum signatures for every processed CSV and PNG plot. Ensures full traceability and scientific auditability.',
+    inputs: 'Processed CSV and PNG files',
+    outputs: 'checksums.md5 manifest file'
+  },
+  {
+    n: '06',
+    title: 'Folder Hierarchy Replication',
+    script: 'Pipeline/step6_segregate_data_folders.py',
+    desc: 'Re-organizes and moves all outputs (CSVs, PNGs, logs, checksums) into directories replicating the official ISRO folder structure for clean archival storage.',
+    inputs: 'All generated pipeline outputs',
+    outputs: 'Structured PDS4-compliant folder architecture'
+  },
+  {
+    n: '07',
+    title: 'Database Bulk Loading (Ingestion)',
+    script: 'Pipeline/step7_db_ingestion.py',
+    desc: 'Bulk loads observations, measurements, file versions, and all cleaned spectral channels into PostgreSQL tables using page-size batching for optimized ingestion.',
+    inputs: 'Structured processed directories',
+    outputs: 'Relational PostgreSQL database tables'
+  },
+  {
+    n: '08',
+    title: 'Post-Ingestion Audit (Auditing)',
+    script: 'Pipeline/step8_data_verification.py',
+    desc: 'Performs an end-to-end database integrity scan, verifying that file row counts, relational measurement links, and database checksums match the checksum manifest.',
+    inputs: 'Database tables + checksums.md5 manifest',
+    outputs: 'PASS/FAIL system audit report'
+  }
+];
+
+const SIDEBAR_GROUPS = [
+  {
+    title: 'Science Reference',
+    items: [
+      { id: 'intro',       label: 'Introduction'     },
+      { id: 'data',        label: 'Data Structure'   },
+      { id: 'pipeline',    label: 'Cleaning Pipeline' },
+      { id: 'schema',      label: 'Database Model'   },
+      { id: 'downsampling', label: 'Peak Preservation' },
+      { id: 'results',     label: 'Results & Validation' },
+      { id: 'authenticity', label: 'Data Authenticity' },
+      { id: 'pds3',        label: 'PDS3 Future Scope' },
+    ]
+  },
+  {
+    title: 'Ingestion & Data Tutorial',
+    items: [
+      { id: 'structure',   label: 'PRADAN Structure' },
+      { id: 'ingestion',   label: 'Ingestion & Download' },
+    ]
+  }
 ];
 
 // ─── Sidebar nav with scrollspy ─────────────────────────────
@@ -57,26 +143,29 @@ function Sidebar({ activeId }: { activeId: string }) {
 
   return (
     <aside className="w-[220px] shrink-0 sticky top-[61px] h-[calc(100vh-61px)] overflow-y-auto border-r border-border dark:border-[#222] pt-10 pb-10 pl-8 box-border transition-colors duration-200">
-      <div className="text-[9px] font-bold tracking-[2px] text-ink-muted dark:text-[#444] uppercase mb-5 pr-5">
-        Documentation
-      </div>
-
-      {SECTIONS.map(({ id, label }) => (
-        <div key={id} className="mb-[6px]">
-          <button
-            className={`block text-[11.5px] py-[6px] border-0 border-l-2 pl-3 -ml-[14px] tracking-[0.3px] transition-colors duration-150 cursor-pointer bg-transparent font-sans text-left w-full ${
-              activeId === id
-                ? 'text-ink dark:text-[#f0f0f0] font-bold border-l-ink dark:border-l-[#f0f0f0]'
-                : 'text-[#888] dark:text-[#555] font-normal border-l-transparent hover:text-ink dark:hover:text-[#d0d0d0]'
-            }`}
-            onClick={() => scrollTo(id)}
-          >
-            {label}
-          </button>
+      {SIDEBAR_GROUPS.map((group) => (
+        <div key={group.title} className="mb-6">
+          <div className="text-[9px] font-bold tracking-[2px] text-ink-muted dark:text-[#555] uppercase mb-3 pr-5">
+            {group.title}
+          </div>
+          {group.items.map(({ id, label }) => (
+            <div key={id} className="mb-[6px]">
+              <button
+                className={`block text-[11.5px] py-[6px] border-0 border-l-2 pl-3 -ml-[14px] tracking-[0.3px] transition-colors duration-150 cursor-pointer bg-transparent font-sans text-left w-full ${
+                  activeId === id
+                    ? 'text-ink dark:text-[#f0f0f0] font-bold border-l-ink dark:border-l-[#f0f0f0]'
+                    : 'text-[#888] dark:text-[#555] font-normal border-l-transparent hover:text-ink dark:hover:text-[#d0d0d0]'
+                }`}
+                onClick={() => scrollTo(id)}
+              >
+                {label}
+              </button>
+            </div>
+          ))}
         </div>
       ))}
 
-      <div className="mt-8 pr-5">
+      <div className="mt-8 pr-5 border-t border-border dark:border-[#222] pt-4">
         <div className="text-[9px] font-bold tracking-[1.5px] text-[#ccc] dark:text-[#333] uppercase mb-2">
           Source
         </div>
@@ -92,12 +181,15 @@ function Sidebar({ activeId }: { activeId: string }) {
 // ═══════════════════════════════════════════════════════════════
 export default function DocsPage() {
   const [activeId, setActiveId] = useState('intro');
+  const [ingestTab, setIngestTab] = useState<'tutorial' | 'pipeline'>('tutorial');
+  const [ingestStep, setIngestStep] = useState(1);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    const targets = SECTIONS
+    const targets = SIDEBAR_GROUPS
+      .flatMap((g) => g.items)
       .map(({ id }) => document.getElementById(`docs-${id}`))
       .filter(Boolean) as HTMLElement[];
 
@@ -213,6 +305,30 @@ export default function DocsPage() {
               account for the specific plasma/background interleaving scheme used by Pragyan's LIBS
               instrument.
             </p>
+
+            <div className={SUB_H}>LunarAtlas System Architecture</div>
+            <p>
+              To support open science and reproducible planetary research, LunarAtlas provides an end-to-end processing and interactive visualization infrastructure. The architecture spans from physical PDS4 label parsing to web-based telemetry rendering, structured across three distinct tiers:
+            </p>
+
+            <div className={FIGURE}>
+              <img src={fig1Architecture} alt="LunarAtlas system architecture diagram" className="w-full block" />
+              <div className={FIG_CAP}>
+                <strong>Figure 1. End-to-end LunarAtlas architecture.</strong> The system diagram outlines data flow and component interactions across three functional layers: the PostgreSQL Data Layer, Python/FastAPI Logic Layer, and React Presentation Layer.
+              </div>
+            </div>
+
+            <ul className="list-disc pl-5 space-y-2 my-4">
+              <li>
+                <strong>Data Layer (PostgreSQL 16.3)</strong>: Stores mission contexts, instrument schemas, observations, measurements, and individual spectral records. Long-form storage of spectral data is optimized using a composite primary key <code className={CODE}>(measurement_id, wavelength_nm)</code> and indexed using a **BRIN (Block Range Index)** for efficient range-based wavelength scans across millions of data points.
+              </li>
+              <li>
+                <strong>Logic Layer (Python 3.11 &amp; FastAPI 0.111)</strong>: Handles raw PDS4 ingestion, XML metadata extraction, MD5 signing, background-subtraction pairing, peak detection, and NIST Atomic Spectra matching. It serves spectral API endpoints at sub-500 ms latency using a Largest Triangle Three Buckets (LTTB) downsampling implementation integrated with a Peak-Union Lock.
+              </li>
+              <li>
+                <strong>Presentation Layer (React 18 &amp; TypeScript)</strong>: Features an interactive telemetry dashboard with smooth multi-curve graphs, raw vs. cleaned overlays, individual measurement grids, and responsive dark-mode styling. High-performance browser rendering is achieved via Web Workers executing client-side downsampling off the main thread.
+              </li>
+            </ul>
           </div>
         </section>
 
@@ -287,6 +403,33 @@ export default function DocsPage() {
               </li>
             </ul>
 
+            <div className={SUB_H}>Laser-Induced Breakdown Spectroscopy Acquisition Sequence</div>
+            <p>
+              Pragyan's LIBS data acquisition follows a strict operational sequence designed to calibrate the detector against ambient thermal and electronic noise in the harsh lunar vacuum. Each observation sequence comprises alternating plasma shots (laser zaps) and dark-field calibrations (laser off).
+            </p>
+
+            <div className={FIGURE}>
+              <img src={fig6AcquisitionSequence} alt="ISRO LIBS acquisition sequence timeline" className="w-full block" />
+              <div className={FIG_CAP}>
+                <strong>Figure 2. In-situ data acquisition sequence.</strong> The timeline diagram shows the alternating interleaving pattern of high-power laser discharges (Plasma Shots) and background dark-field calibrations (Background darks) recorded sequentially.
+              </div>
+            </div>
+
+            <p>
+              During active rover operations:
+            </p>
+            <ol className="list-decimal pl-5 space-y-2 my-4">
+              <li>
+                The instrument first fires a set of laser pulses on a target site, generating a short-lived plasma plume whose emission is gathered by a spectrometer.
+              </li>
+              <li>
+                In between laser pulses, the detector registers dark-field counts without any laser ignition.
+              </li>
+              <li>
+                These acquisitions are interleaved inside a single observation session file, marked by binary housekeeping status flags. The pipeline pairs each plasma shot with the nearest preceding or succeeding background measurement.
+              </li>
+            </ol>
+
             <div className={CALLOUT}>
               <strong>Database Integration:</strong> During ingestion, LunarAtlas automatically maps the PDS4 
               manifests and CSV data into relative tables. An "Observation" record corresponds to a session folder, 
@@ -296,10 +439,224 @@ export default function DocsPage() {
         </section>
 
         {/* ══════════════════════════════════════════════
+            2.5 INGESTION PIPELINE & DOWNLOAD
+        ══════════════════════════════════════════════ */}
+        <section id="docs-ingestion" className={SEC}>
+          <div className={SEC_TAG}>Section 3</div>
+          <h2 className={SEC_H2}>Ingestion Pipeline &amp; Data Tutorial</h2>
+          <hr className={SEC_HR} />
+
+          <div className="flex gap-2 mb-6 border-b border-border dark:border-[#222] pb-px bg-canvas-alt dark:bg-[#121215]/40 p-1.5 rounded-lg max-w-md">
+            {[
+              { id: 'tutorial', label: 'PRADAN Download Guide' },
+              { id: 'pipeline', label: '8-Stage Ingestion Pipeline' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setIngestTab(tab.id as any)}
+                className={`flex-1 py-2 text-center text-[10px] font-bold tracking-widest uppercase rounded-md transition-all cursor-pointer ${
+                  ingestTab === tab.id
+                    ? 'bg-canvas dark:bg-[#1b1b22] text-ink dark:text-white border border-border dark:border-[#2a2a35]'
+                    : 'text-[#888] hover:text-[#bbb] border border-transparent'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {ingestTab === 'tutorial' && (
+            <div className={BODY}>
+              <p>
+                The Indian Space Research Organisation (ISRO) releases scientific data from planetary missions
+                through its <strong>Indian Space Science Data Centre (ISSDC)</strong> web portal. Calibrated Level-1 (L1) LIBS data tables
+                for the Pragyan rover are archived under PDS4 compliance and are free for public download.
+              </p>
+
+              <div className={SUB_H}>Step-by-Step Data Acquisition Guide</div>
+              <p>
+                To obtain raw LIBS telemetry data from ISRO, follow these steps:
+              </p>
+              <ol className="list-decimal pl-6 mb-5 flex flex-col gap-2.5 text-[13px]">
+                <li>
+                  Navigate to the official <strong>ISRO PRADAN</strong> portal at{' '}
+                  <a href="https://pradan.issdc.gov.in/pradan/" target="_blank" rel="noreferrer" className="text-emerald-500 font-semibold hover:underline">
+                    https://pradan.issdc.gov.in/pradan/
+                  </a>.
+                </li>
+                <li>
+                  On the portal landing page, click on the <strong>Chandrayaan-3</strong> mission category.
+                </li>
+                <li>
+                  Perform a <strong>Login</strong> with your credentials, or <strong>Sign Up</strong> to create a free account if you do not have one.
+                </li>
+                <li>
+                  Select the <strong>LIBS</strong> payload dataset, which is directly visible on the page (no deep folder navigation required).
+                </li>
+                <li>
+                  Download the selected data, which will download a <strong>ZIP file</strong> onto your system.
+                </li>
+              </ol>
+
+              <div className={SUB_H}>Extracting and Archiving the ZIP Dataset</div>
+              <p>
+                Once the ZIP file is installed on your local computer, extract its contents to a local directory (e.g., <code className={CODE}>D:\\ch3_libs\\</code>). The extracted directory will automatically preserve the PDS4 compliant structure, containing both the <code className={CODE}>data/calibrated/</code> subdirectory and its corresponding XML descriptors.
+              </p>
+
+              <div className={SUB_H}>Understanding the PDS4 Naming Standard</div>
+              <p>
+                Files are structured using Planetary Data System version 4 (PDS4) descriptors. A typical observation
+                comprises two paired files:
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+                <div className="border border-border dark:border-[#2b2b2b] p-4 rounded bg-canvas-alt dark:bg-[#151515]">
+                  <span className="font-mono text-[12.5px] font-bold text-ink dark:text-gray-200 block">
+                    *.xml (PDS4 Label)
+                  </span>
+                  <span className="text-[12px] text-ink-muted dark:text-gray-400 mt-2 block leading-normal">
+                    Contains logical identifiers (LID), target metadata coordinates, timestamps, and column descriptors for the CSV file.
+                  </span>
+                </div>
+                <div className="border border-border dark:border-[#2b2b2b] p-4 rounded bg-canvas-alt dark:bg-[#151515]">
+                  <span className="font-mono text-[12.5px] font-bold text-ink dark:text-gray-200 block">
+                    *.csv (Data Table)
+                  </span>
+                  <span className="text-[12px] text-ink-muted dark:text-gray-400 mt-2 block leading-normal">
+                    The tabular data where each row contains flag bytes, housekeeping variables, and the 2,049 wide intensity columns.
+                  </span>
+                </div>
+              </div>
+
+              <div className={CALLOUT}>
+                <strong>Naming Breakdown Example:</strong><br />
+                <code className={CODE}>ch3_lib_002_20230825T104221_00_l1.csv</code><br />
+                - <strong>ch3</strong>: Chandrayaan-3 Mission<br />
+                - <strong>lib</strong>: LIBS payload instrument<br />
+                - <strong>002</strong>: Ingestion index sequence<br />
+                - <strong>20230825T104221</strong>: Timestamp of initial measurement (UTC)<br />
+                - <strong>l1</strong>: Calibrated Level-1 processing standard
+              </div>
+
+              <div className={SUB_H}>Ingesting Downloaded Data in LunarAtlas</div>
+              <p>
+                After downloading and extracting the entire LIBS dataset ZIP from the ISRO PRADAN portal, execute the ingestion pipeline by pointing the script directly to the extracted <code className={CODE}>calibrated/</code> subdirectory.
+              </p>
+              <pre className={CODEBLK}>{`# Ingest and process extracted files automatically by pointing to the calibrated folder
+python Pipeline/step2_process_l1_data.py "path/to/extracted/LIBS/data/calibrated/"`}</pre>
+            </div>
+          )}
+
+          {ingestTab === 'pipeline' && (
+            <div>
+              <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6 items-start">
+                
+                {/* Steps Left List */}
+                <div className="bg-canvas-alt dark:bg-[#121212] border border-border dark:border-[#222] rounded-lg p-4 flex flex-col gap-1.5 shadow-sm">
+                  <span className="text-[10px] font-bold tracking-[2px] text-ink-muted dark:text-[#555] uppercase mb-4 block">
+                    Pipeline Stages
+                  </span>
+                  {PIPELINE_STAGES.map((stage, idx) => {
+                    const isCurrent = ingestStep === (idx + 1);
+                    return (
+                      <button
+                        key={stage.n}
+                        type="button"
+                        onClick={() => setIngestStep(idx + 1)}
+                        className={`text-left text-[11.5px] font-medium py-2 px-3 border-0 border-l-2 pl-3 tracking-[0.2px] transition-all cursor-pointer bg-transparent w-full ${
+                          isCurrent
+                            ? 'text-emerald-600 dark:text-[#a3e635] font-bold border-l-emerald-500 dark:border-l-[#a3e635] bg-canvas dark:bg-[#181818]'
+                            : 'text-[#888] dark:text-[#555] border-l-transparent hover:text-ink dark:hover:text-[#fff]'
+                        }`}
+                      >
+                        Stage {stage.n}: {stage.title}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Stepper Content Frame */}
+                <div className="bg-canvas-alt dark:bg-[#121212] p-6 border border-border dark:border-[#222] rounded-lg shadow-sm">
+                  {(() => {
+                    const stage = PIPELINE_STAGES[ingestStep - 1];
+                    return (
+                      <div>
+                        <div className={SEC_TAG}>Pipeline Stage {stage.n} of 08</div>
+                        <h3 className="text-[16px] font-bold text-ink dark:text-[#f0f0f0] m-0 mb-4 tracking-[-0.3px] leading-tight">{stage.title}</h3>
+                        <hr className={SEC_HR} />
+
+                        <div className="flex flex-col gap-5">
+                          <div>
+                            <span className="text-[10.5px] text-[#888] dark:text-[#555] uppercase font-bold tracking-wide">
+                              Underlying Python Module File
+                            </span>
+                            <div className="mt-1 font-mono text-[12px] bg-canvas dark:bg-[#181818] border border-border dark:border-[#2b2b2b] px-4 py-2 text-ink dark:text-white font-semibold w-fit rounded">
+                              {stage.script}
+                            </div>
+                          </div>
+
+                          <div className={BODY}>
+                            <span className="text-[10.5px] text-[#888] dark:text-[#555] uppercase font-bold tracking-wide block mb-1">
+                              Purpose and Logic
+                            </span>
+                            <p className="m-0 leading-relaxed text-[13px]">
+                              {stage.desc}
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                            <div className="bg-canvas dark:bg-[#181818] border border-border dark:border-[#222] p-4 rounded">
+                              <span className="text-[10.5px] text-[#888] dark:text-[#555] uppercase font-bold tracking-wider">
+                                Input Assets
+                              </span>
+                              <span className="block mt-1.5 text-[12px] text-ink dark:text-gray-300 font-medium">
+                                {stage.inputs}
+                              </span>
+                            </div>
+                            <div className="bg-canvas dark:bg-[#181818] border border-border dark:border-[#222] p-4 rounded">
+                              <span className="text-[10.5px] text-[#888] dark:text-[#555] uppercase font-bold tracking-wider">
+                                Output Results
+                              </span>
+                              <span className="block mt-1.5 text-[12px] text-ink dark:text-gray-300 font-medium">
+                                {stage.outputs}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Navigation Stepper Buttons */}
+                          <div className="mt-6 flex justify-between border-t border-border dark:border-[#1e1e1e] pt-5">
+                            <button
+                              type="button"
+                              disabled={ingestStep === 1}
+                              onClick={() => setIngestStep(s => s - 1)}
+                              className="px-4 py-2 border border-border dark:border-[#333] text-[11px] font-bold uppercase tracking-wide rounded cursor-pointer hover:bg-canvas-alt dark:hover:bg-[#1e1e1e] disabled:opacity-40 disabled:cursor-not-allowed text-ink dark:text-white bg-transparent"
+                            >
+                              Previous Stage
+                            </button>
+                            <button
+                              type="button"
+                              disabled={ingestStep === PIPELINE_STAGES.length}
+                              onClick={() => setIngestStep(s => s + 1)}
+                              className="px-4 py-2 bg-emerald-600 dark:bg-[#a3e635] text-white dark:text-black border-0 text-[11px] font-bold uppercase tracking-wide rounded cursor-pointer hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+                            >
+                              Next Stage
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* ══════════════════════════════════════════════
             3. DATA STRUCTURE
         ══════════════════════════════════════════════ */}
         <section id="docs-data" className={SEC}>
-          <div className={SEC_TAG}>Section 3</div>
+          <div className={SEC_TAG}>Section 4</div>
           <h2 className={SEC_H2}>Data Structure</h2>
           <hr className={SEC_HR} />
 
@@ -384,8 +741,18 @@ export default function DocsPage() {
             <p>
               The pipeline identifies all columns parseable as floating-point wavelength values and
               reshapes each wide L1 row using a pandas <code className={CODE}>melt</code> operation
-              into long-form records. Each row in the output represents a single
-              (measurement, wavelength, intensity) triple with full metadata attached:
+              into long-form records.
+            </p>
+
+            <div className={FIGURE}>
+              <img src={fig2ReshapeSchematic} alt="Wide to long reshape schema" className="w-full block" />
+              <div className={FIG_CAP}>
+                <strong>Figure 3. Wide-to-long schema reshaping.</strong> This schematic shows how wide-format rows containing 2,049 wavelength columns are normalized and melted into a relational database layout (long format) key-linked by measurement IDs.
+              </div>
+            </div>
+
+            <p>
+              Each row in the output represents a single (measurement, wavelength, intensity) triple with full metadata attached:
             </p>
             <div className={FLIST}>
               {[
@@ -415,7 +782,7 @@ export default function DocsPage() {
             3. CLEANING PIPELINE
         ══════════════════════════════════════════════ */}
         <section id="docs-pipeline" className={SEC}>
-          <div className={SEC_TAG}>Section 4</div>
+          <div className={SEC_TAG}>Section 5</div>
           <h2 className={SEC_H2}>The Cleaning Pipeline</h2>
           <hr className={SEC_HR} />
 
@@ -448,16 +815,13 @@ export default function DocsPage() {
 
             {/* Spectral figure */}
             <div className={FIGURE}>
-              <img src={libsRawCleaned} alt="Raw vs Cleaned LIBS spectrum comparison" className="w-full block" />
+              <img src={fig3PrePostOverlay} alt="Raw vs Cleaned LIBS spectrum comparison" className="w-full block" />
               <div className={FIG_CAP}>
-                <strong>Figure 1.</strong> Full-range Chandrayaan-3 LIBS spectrum. Raw L1 counts
-                (blue) and cleaned intensity (orange) for a single plasma measurement spanning
-                164.35–878.26 nm. Cleaning removes the continuum background while preserving
-                emission features.
+                <strong>Figure 4. Pre and post background subtraction overlay.</strong> Full-range Chandrayaan-3 LIBS spectrum showing Raw L1 counts (grey dashed) and cleaned intensity (solid blue/purple) for a single plasma measurement spanning 164.35–878.26 nm. Background subtraction successfully removes the underlying thermal/electronic baseline while preserving narrow emission features.
               </div>
             </div>
 
-            <div className={SUB_H}>The Measurement ID</div>
+            <div className={SUB_H}>The Measurement ID &amp; Spectral Variability</div>
             <p>
               The <strong>Measurement ID</strong> is the cornerstone identifier of the LunarAtlas
               data model. It is a sequential integer — starting at 1 for the first valid plasma–
@@ -469,6 +833,14 @@ export default function DocsPage() {
               acquisition share the <em>same</em> timestamp, the Measurement ID is the only
               unambiguous grouping key.
             </p>
+
+            <div className={FIGURE}>
+              <img src={fig4SpectralVariability} alt="Spectral variability across multiple shots" className="w-full block" />
+              <div className={FIG_CAP}>
+                <strong>Figure 5. Shot-to-shot spectral variability.</strong> Overlay of five consecutive cleaned spectra taken on the same spot target. The figure highlights significant intensity and profile fluctuations between individual laser discharges, emphasizing why averaging hiding this variability must be avoided and why individual Measurement IDs are essential.
+              </div>
+            </div>
+
             <table className={TABLE}>
               <thead>
                 <tr>
@@ -503,7 +875,7 @@ export default function DocsPage() {
                 { n: '05', title: 'Background Subtraction',   desc: 'Apply the cleaning formula per wavelength channel: cleaned intensity = max(0, plasma − background).' },
                 { n: '06', title: 'Quality Metric',           desc: 'Compute the negative-fraction metric per acquisition to flag anomalous measurements before clamping.' },
                 { n: '07', title: 'Metadata Association',     desc: 'Attach 19 metadata columns — timing, laser parameters, flags — to every long-form spectral row.' },
-                { n: '08', title: 'Database Insertion',       desc: 'Write cleaned spectra into the spectral data table, keyed by Measurement ID, wavelength, and cleaned intensity.' },
+                { n: '08', title: 'Database Ingestion',       desc: 'Write cleaned spectra into the spectral data table, keyed by Measurement ID, wavelength, and cleaned intensity.' },
               ].map(({ n, title, desc }) => (
                 <div key={n} className={SROW}>
                   <div className={SNUM}>{n}</div>
@@ -521,7 +893,7 @@ export default function DocsPage() {
             4. DATABASE MODEL
         ══════════════════════════════════════════════ */}
         <section id="docs-schema" className={SEC}>
-          <div className={SEC_TAG}>Section 5</div>
+          <div className={SEC_TAG}>Section 6</div>
           <h2 className={SEC_H2}>Database Model</h2>
           <hr className={SEC_HR} />
 
@@ -541,7 +913,7 @@ export default function DocsPage() {
             <div className={FIGURE}>
               <img src={dbSchemaDiagram} alt="LunarAtlas PostgreSQL schema hierarchy" className="w-full block" />
               <div className={FIG_CAP}>
-                <strong>Figure 2.</strong> LunarAtlas PostgreSQL schema hierarchy. Each level preserves
+                <strong>Figure 6.</strong> LunarAtlas PostgreSQL schema hierarchy. Each level preserves
                 provenance from PDS4 logical identifiers down to individual wavelength–intensity pairs.
               </div>
             </div>
@@ -613,7 +985,7 @@ CREATE UNIQUE INDEX idx_file_version_md5
             5. PEAK PRESERVATION
         ══════════════════════════════════════════════ */}
         <section id="docs-downsampling" className={SEC}>
-          <div className={SEC_TAG}>Section 6</div>
+          <div className={SEC_TAG}>Section 7</div>
           <h2 className={SEC_H2}>Peak Preservation &amp; Adaptive Downsampling</h2>
           <hr className={SEC_HR} />
 
@@ -634,6 +1006,24 @@ CREATE UNIQUE INDEX idx_file_version_md5
               for elemental identification.
             </div>
 
+            <div className={SUB_H}>The NIST Peak-Union Lock Solution</div>
+            <p>
+              To solve the visual preservation vs. scientific fidelity trade-off, LunarAtlas introduces the <strong>NIST Peak-Union Lock</strong>. The algorithm enforces a Peak-Union selection:
+            </p>
+            <div className={FORMULA}>
+              P<sub>final</sub> = LTTB(data) ∪ Peaks<sub>NIST</sub>(data)
+            </div>
+            <p>
+              where <code className={CODE}>Peaks_NIST(data)</code> is the set of raw channel indices nearest to each of the curated NIST reference wavelengths for target elements. This guarantees that diagnostic lines (e.g., Ca, Mg, Si, Fe) are never decimated out, regardless of zoom level or bucket width.
+            </p>
+
+            <div className={FIGURE}>
+              <img src={fig5PeakRetention} alt="Peak retention downsampling comparison" className="w-full block" />
+              <div className={FIG_CAP}>
+                <strong>Figure 7. Downsampling algorithm comparison.</strong> Visual comparison of Uniform Decimation, Max-Binning, Standard LTTB, and LTTB + NIST Peak Lock at 10% density. Standard LTTB and decimation drop crucial narrow emission peaks, whereas the Peak Lock guarantees 100% peak retention.
+              </div>
+            </div>
+
             <div className={SUB_H}>Adaptive Min-Max Algorithm</div>
             <p>
               LunarAtlas uses a zoom-aware min-max downsampling approach. For zoom level{' '}
@@ -651,7 +1041,7 @@ CREATE UNIQUE INDEX idx_file_version_md5
               b<sub>final</sub>(z) = max(b<sub>size</sub>(z), b<sub>min</sub>)
             </div>
 
-            <div className={SUB_H}>Zoom Saturation</div>
+            <div className={SUB_H}>Zoom Saturation &amp; Level Transitions</div>
             <p>
               Beyond a maximum unsaturated zoom level, bucket size clamps to{' '}
               <code className={CODE}>b_min</code> and the API returns <em>raw spectral samples</em>:
@@ -659,6 +1049,14 @@ CREATE UNIQUE INDEX idx_file_version_md5
             <div className={FORMULA}>
               z<sub>max</sub>(Δλ) = ⌊log₂(Δλ / (BASE_BUCKETS × b<sub>min</sub>))⌋
             </div>
+
+            <div className={FIGURE}>
+              <img src={fig8AdaptiveZoom} alt="Adaptive zoom levels details" className="w-full block" />
+              <div className={FIG_CAP}>
+                <strong>Figure 8. Adaptive zoom and downsampling levels.</strong> Detailed transitions showing how spectral resolution adjusts dynamically from full-range view down to highly focused zoom windows, keeping peak detail intact.
+              </div>
+            </div>
+
             <table className={TABLE}>
               <thead>
                 <tr>
@@ -694,7 +1092,7 @@ CREATE UNIQUE INDEX idx_file_version_md5
               </tbody>
             </table>
 
-            <div className={SUB_H}>Overlapping Buckets &amp; NIST Insertion</div>
+            <div className={SUB_H}>Overlapping Buckets</div>
             <p>
               To prevent narrow peaks from splitting across two adjacent bucket boundaries, each
               bucket is extended by a fractional overlap (5%):
@@ -714,7 +1112,7 @@ CREATE UNIQUE INDEX idx_file_version_md5
             6. RESULTS
         ══════════════════════════════════════════════ */}
         <section id="docs-results" className={SEC}>
-          <div className={SEC_TAG}>Section 7</div>
+          <div className={SEC_TAG}>Section 8</div>
           <h2 className={SEC_H2}>Results &amp; Validation</h2>
           <hr className={SEC_HR} />
 
@@ -760,7 +1158,18 @@ CREATE UNIQUE INDEX idx_file_version_md5
               Peak detection applies 3σ prominence thresholds to mitigate the variance increase.
             </p>
 
-            <div className={SUB_H}>Element Identification</div>
+            <div className={SUB_H}>Element Identification &amp; NIST Overlay</div>
+            <p>
+              To confirm the elemental presence in lunar regolith target sites, detected peaks are cross-referenced directly with the atomic line positions registered in the NIST Atomic Spectra Database. 
+            </p>
+
+            <div className={FIGURE}>
+              <img src={fig7NistOverlay} alt="NIST database spectral line overlay" className="w-full block" />
+              <div className={FIG_CAP}>
+                <strong>Figure 9. Cleaned spectrum with NIST overlays.</strong> Cleaned spectrum of a Chandrayaan-3 target overlaying NIST emission reference wavelengths for key element species (Ca II, Mg II, Si I). Prominent peaks show precise matches within the 0.5 nm threshold.
+              </div>
+            </div>
+
             <p>
               Cross-matching detected emission lines against NIST reference lines yields identification
               of the following elements in high-quality Chandrayaan-3 spectra:
@@ -774,11 +1183,31 @@ CREATE UNIQUE INDEX idx_file_version_md5
                 </tr>
               </thead>
               <tbody className={TBODY}>
-                <tr><td className={TD}><strong>Mg II</strong></td><td className={TD}>279.6, 280.3, 284.0</td><td className={TD}>Confirmed (≥2 measurements)</td></tr>
-                <tr><td className={TD}><strong>Ca II</strong></td><td className={TD}>393.4, 396.8</td>        <td className={TD}>Confirmed (≥2 measurements)</td></tr>
-                <tr><td className={TD}><strong>Si I</strong></td> <td className={TD}>288.2</td>              <td className={TD}>Tentative (1 measurement)</td></tr>
-                <tr><td className={TD}><strong>Al I</strong></td> <td className={TD}>308.2, 309.3</td>        <td className={TD}>Not confirmed</td></tr>
-                <tr><td className={TD}><strong>Fe I</strong></td> <td className={TD}>373.5, 374.9</td>        <td className={TD}>Not confirmed</td></tr>
+                <tr>
+                  <td className={TD}><strong>Mg II</strong></td>
+                  <td className={TD}>279.6, 280.3, 284.0</td>
+                  <td className={TD}>Confirmed (≥2 measurements)</td>
+                </tr>
+                <tr>
+                  <td className={TD}><strong>Ca II</strong></td>
+                  <td className={TD}>393.4, 396.8</td>
+                  <td className={TD}>Confirmed (≥2 measurements)</td>
+                </tr>
+                <tr>
+                  <td className={TD}><strong>Si I</strong></td>
+                  <td className={TD}>288.2</td>
+                  <td className={TD}>Tentative (1 measurement)</td>
+                </tr>
+                <tr>
+                  <td className={TD}><strong>Al I</strong></td>
+                  <td className={TD}>308.2, 309.3</td>
+                  <td className={TD}>Not confirmed</td>
+                </tr>
+                <tr>
+                  <td className={TD}><strong>Fe I</strong></td>
+                  <td className={TD}>373.5, 374.9</td>
+                  <td className={TD}>Not confirmed</td>
+                </tr>
               </tbody>
             </table>
 
@@ -797,7 +1226,7 @@ CREATE UNIQUE INDEX idx_file_version_md5
             7. DATA AUTHENTICITY & INTEGRITY
         ══════════════════════════════════════════════ */}
         <section id="docs-authenticity" className={SEC}>
-          <div className={SEC_TAG}>Section 8</div>
+          <div className={SEC_TAG}>Section 9</div>
           <h2 className={SEC_H2}>Data Authenticity &amp; Integrity</h2>
           <hr className={SEC_HR} />
 
@@ -859,7 +1288,7 @@ CREATE UNIQUE INDEX idx_file_version_md5
             8. PDS3 FUTURE SCOPE
         ══════════════════════════════════════════════ */}
         <section id="docs-pds3" className={SEC}>
-          <div className={SEC_TAG}>Section 9</div>
+          <div className={SEC_TAG}>Section 10</div>
           <h2 className={SEC_H2}>Future Scope — PDS3 Compatibility</h2>
           <hr className={SEC_HR} />
 

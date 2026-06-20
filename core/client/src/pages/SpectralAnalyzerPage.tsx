@@ -1,5 +1,5 @@
 /**
- * @fileoverview GraphDisplay — Primary research interface for LunarAtlas.
+ * @fileoverview SpectralAnalyzerPage — Primary research interface for LunarAtlas.
  *
  * Orchestrates the full multi-measurement spectral analysis workflow:
  *   Context → Observations → All Measurements (parallel fetch) → Overlap Render → Mini Cards
@@ -23,7 +23,6 @@ import type { SpectralDataset } from '../components/graph/MultiSpectralGraph';
 import MiniSpectralCard from '../components/graph/MiniSpectralCard';
 import RangeSelectorPanel from '../components/rangeSelector/rangeSelector';
 import ScientificBoard from '../components/education/ScientificBoard';
-import BenchmarkTable from '../components/benchmarks/BenchmarkTable';
 import NistValidationPanel from '../components/benchmarks/NistValidationPanel';
 import {
   apiService,
@@ -53,10 +52,10 @@ const ELEMENT_PEAK_WAVELENGTHS: Record<string, number[]> = Object.fromEntries(
 );
 
 /* ------------------------------------------------------------------ */
-/*  GraphDisplay                                                        */
+/*  SpectralAnalyzerPage                                                */
 /* ------------------------------------------------------------------ */
 
-export default function GraphDisplay() {
+export default function SpectralAnalyzerPage() {
   /* ── Database hierarchy ── */
   const [observations, setObservations] = useState<any[]>([]);
   const [selectedObservationId, setSelectedObservationId] = useState('');
@@ -350,60 +349,6 @@ export default function GraphDisplay() {
           activeMeasurementIds={activeMeasurementIds}
         />
         <ScientificBoard />
-        <BenchmarkTable />
-
-        {/* ══════════════════════════════════════════════════════════ */}
-        {/* SECTION 4: NIST Reference Table                           */}
-        {/* ══════════════════════════════════════════════════════════ */}
-        <div className="bg-white p-6 border border-solid border-gray-200 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between mb-4 pb-2 border-b border-solid border-gray-100">
-            <h3 className="text-[15px] font-sans font-bold text-gray-800">
-              C-3 Spectral Reference{' '}
-              <span className="text-gray-400 font-normal text-[13px]">(NIST ASD)</span>
-            </h3>
-            <span className="text-[12px] font-sans font-medium text-gray-400">Units: nm</span>
-          </div>
-          <div className="w-full overflow-hidden border border-gray-100 rounded-md bg-white">
-            <table className="w-full text-left text-[12px] border-collapse">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  {['Element', 'Ion Stage', 'Wavelength (nm)', 'Rel. Intensity', 'Status'].map((h) => (
-                    <th key={h} className="py-3 px-5 uppercase tracking-widest text-[10px] font-black text-gray-600">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="font-mono">
-                {visibleNistLines.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="py-12 text-center text-gray-400 italic text-[12px] font-sans">
-                      No NIST reference lines matching current criteria found in database.
-                    </td>
-                  </tr>
-                ) : (
-                  visibleNistLines.map((line, idx) => {
-                    const isMatch = element === line.element;
-                    return (
-                      <tr
-                        key={idx}
-                        className={`border-b border-gray-50 hover:bg-blue-50/30 transition-colors ${isMatch ? 'bg-blue-50/50' : ''}`}
-                      >
-                        <td className="py-3 px-5 font-bold">{line.element}</td>
-                        <td className="py-3 px-5 text-gray-400">{line.ionization_stage}</td>
-                        <td className="py-3 px-5 font-bold text-blue-600">{line.wavelength_nm?.toFixed(4)}</td>
-                        <td className="py-3 px-5 text-gray-500">{line.relative_intensity}</td>
-                        <td className="py-3 px-5">
-                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold tracking-widest uppercase ${isMatch ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
-                            {isMatch ? 'Active Match' : 'Reference'}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
 
       </div>
     </div>

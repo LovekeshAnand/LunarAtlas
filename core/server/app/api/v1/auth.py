@@ -47,18 +47,30 @@ async def register(user_in: UserCreate):
             detail="User with this email already exists."
         )
         
+    # Check if username already exists
+    if user_in.username and user_in.username.strip():
+        username_clean = user_in.username.strip()
+        exists_username = await db.fetch_one("SELECT id FROM app_users WHERE username = $1", username_clean)
+        if exists_username:
+            raise HTTPException(
+                status_code=400,
+                detail="User with this username already exists."
+            )
+            
     hashed_pwd = get_password_hash(user_in.password)
     
     # Insert new user
     query = """
-        INSERT INTO app_users (email, institution, interest, hashed_password)
-        VALUES ($1, $2, $3, $4)
-        RETURNING id, email, institution, interest, role, created_at::text
+        INSERT INTO app_users (email, username, role, institution, interest, hashed_password)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING id, email, username, role, institution, interest, created_at::text
     """
     try:
         new_user = await db.fetch_one(
             query, 
             user_in.email, 
+            user_in.username.strip() if user_in.username else None,
+            user_in.role.strip() if user_in.role else "researcher",
             user_in.institution, 
             user_in.interest, 
             hashed_pwd
@@ -139,7 +151,7 @@ async def update_profile(
         UPDATE app_users
         SET {", ".join(updates)}
         WHERE id = ${param_idx}
-        RETURNING id, email, institution, interest, role, created_at::text
+        RETURNING id, email, username, role, institution, interest, created_at::text
     """
     params.append(user_id)
     
