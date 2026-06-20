@@ -14,21 +14,17 @@ tags:
   - LTTB downsampling
 
 authors:
-  - name: "[AUTHOR FULL NAME]"
-    orcid: "[YOUR-ORCID]"
+  - name: "Lovekesh Anand"
+    orcid: "0009-0009-4947-4040"
     affiliation: 1
-  # Add co-authors here:
-  # - name: "[CO-AUTHOR NAME]"
-  #   orcid: "[CO-AUTHOR-ORCID]"
-  #   affiliation: 2
+  - name: "Dua Saeed"
+    affiliation: 1
 
 affiliations:
-  - name: "[Your Department, Your Institution, Your City, Your Country]"
+  - name: "Mahavir Swami Institute of Technology, India"
     index: 1
-  # - name: "[Co-author Institution]"
-  #   index: 2
 
-date: 2025-08-23
+date: 2026-06-20
 bibliography: paper.bib
 ---
 

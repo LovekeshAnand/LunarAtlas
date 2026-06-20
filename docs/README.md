@@ -47,14 +47,12 @@ These documents also form part of the research-grade repository standard:
 
 ---
 
-## Validation and Experiments
+## Validation and Performance Benchmarks
 
 | File | Purpose |
 |---|---|
-| [`../evaluation/evaluation_framework.md`](../evaluation/evaluation_framework.md) | Formal metric definitions (ε_I, δ_λ, SNR, RMSE) |
-| [`../experiment/LunarAtlas_Ablation_Study_Guide.pdf`](../experiment/LunarAtlas_Ablation_Study_Guide.pdf) | Full quantitative validation PDF guide |
-| [`../experiment/run_full_ablation.py`](../experiment/run_full_ablation.py) | Automated validation experiment runner |
-| [`../Benchmarks/benchmarks.md`](../Benchmarks/benchmarks.md) | Downsampling performance benchmarks |
+| [`../Benchmarks/benchmarks.md`](../Benchmarks/benchmarks.md) | Downsampling performance benchmarks and latency reports |
+| [`../Benchmarks/run_benchmarks.py`](../Benchmarks/run_benchmarks.py) | Automated benchmarking script for downsampling algorithms |
 
 ---
 
@@ -62,10 +60,10 @@ These documents also form part of the research-grade repository standard:
 
 Before submitting to Elsevier SoftwareX, verify:
 
-- [ ] `CITATION.cff` has real author names, institution, and Zenodo DOI filled in
-- [ ] `DATA_AVAILABILITY.md` has the actual Zenodo DOI for processed dataset
-- [ ] `README.md` badges link to real CI and Zenodo DOI
-- [ ] `paper/paper.md` has author names and ORCID IDs
-- [ ] All tests pass: `python -m pytest tests/ -v` → 33 passed
-- [ ] GitHub repository is **public**
-- [ ] At least one GitHub release tagged (e.g. `v1.0.0`) for Zenodo auto-DOI
+- [x] `CITATION.cff` has real author names, institution, and Zenodo DOI filled in
+- [x] `DATA_AVAILABILITY.md` has the actual Zenodo DOI for processed dataset
+- [x] `README.md` badges link to real CI and Zenodo DOI
+- [x] `paper/paper.md` has author names and ORCID IDs
+- [x] All tests pass: `python -m pytest tests/ -v` → 33 passed
+- [x] GitHub repository is **public**
+- [x] At least one GitHub release tagged (e.g. `v1.0.0`) for Zenodo auto-DOI

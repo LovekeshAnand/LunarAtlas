@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Initial Public Release
 
 This is the first public, citable release of LunarAtlas, archived at
-[Zenodo DOI: 10.5281/zenodo.XXXXXXX].
+[Zenodo DOI: 10.5281/zenodo.20771541].
 
 #### Pipeline (Steps 1–8)
 

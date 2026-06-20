@@ -1265,10 +1265,10 @@ CREATE UNIQUE INDEX idx_file_version_md5
               ))}
             </div>
 
-            <div className={SUB_H}>L1 → L2 Re-Derivability</div>
+            <div className={SUB_H}>L1-Raw → L1-Processed Re-Derivability</div>
             <p>
               The cleaning operation is <strong>fully reversible</strong> in principle: given
-              the original L1 plasma and background spectra (both stored), the cleaned L2
+              the original L1 plasma and background spectra (both stored), the L1-processed
               spectrum can be recomputed at any time. LunarAtlas stores both raw plasma
               counts and background counts alongside the cleaned intensity, enabling
               researchers to apply alternative cleaning methods or validate our subtraction.

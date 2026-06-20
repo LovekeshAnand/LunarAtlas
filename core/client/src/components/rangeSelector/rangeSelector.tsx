@@ -85,9 +85,9 @@ function ModeToggle({
   health?: any;
 }) {
   const modes: { key: 'L1' | 'L2' | 'overlay'; label: string }[] = [
-    { key: 'L2', label: 'L2 Cleaned' },
-    { key: 'L1', label: 'L1 Raw' },
-    { key: 'overlay', label: 'L1 vs L2 Overlay' },
+    { key: 'L2', label: 'L1-Processed' },
+    { key: 'L1', label: 'L1-Raw' },
+    { key: 'overlay', label: 'L1-Raw vs L1-Processed' },
   ];
 
   return (

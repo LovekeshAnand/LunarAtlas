@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![CI](https://github.com/LovekeshAnand/LunarAtlas/actions/workflows/ci.yml/badge.svg)](https://github.com/LovekeshAnand/LunarAtlas/actions)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.[YOUR-ZENODO-ID].svg)](https://doi.org/10.5281/zenodo.[YOUR-ZENODO-ID])
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20771541.svg)](https://doi.org/10.5281/zenodo.20771541)
 [![Elsevier SoftwareX](https://img.shields.io/badge/Paper-SoftwareX-orange)](docs/paper/paper.md)
 
 ---
@@ -89,10 +89,6 @@ LunarAtlas/
 ├── docs/paper/
 │   ├── paper.md                   # SoftwareX submission manuscript
 │   └── paper.bib                  # Bibliography
-│
-├── experiment/                    # Ablation and validation scripts
-│   ├── run_full_ablation.py       # Full validation experiment suite
-│   └── LunarAtlas_Ablation_Study_Guide.pdf
 │
 ├── Benchmarks/                    # Performance benchmarking
 │   └── run_benchmarks.py
@@ -216,7 +212,7 @@ reporting latency and peak preservation accuracy.
 ## Data Availability
 
 Raw data: [ISRO PRADAN Portal](https://pradan.issdc.gov.in/) (free registration)
-Processed data + code: [Zenodo DOI: 10.5281/zenodo.[YOUR-ZENODO-ID]](https://doi.org/10.5281/zenodo.[YOUR-ZENODO-ID])
+Processed data + code: [Zenodo DOI: 10.5281/zenodo.20771541](https://doi.org/10.5281/zenodo.20771541)
 
 See [`DATA_AVAILABILITY.md`](DATA_AVAILABILITY.md) for the full statement.
 
@@ -227,13 +223,13 @@ See [`DATA_AVAILABILITY.md`](DATA_AVAILABILITY.md) for the full statement.
 If you use LunarAtlas in your research, please cite:
 
 ```bibtex
-@software{lunaratlas2025,
-  author    = {Anand, Lovekesh},
+@software{lunaratlas2026,
+  author    = {Anand, Lovekesh and Saeed, Dua},
   title     = {{LunarAtlas: A Reproducible LIBS Spectral Data Processing
                and Visualization Infrastructure for Chandrayaan-3}},
-  year      = {2025},
+  year      = {2026},
   publisher = {Zenodo},
-  doi       = {10.5281/zenodo.[YOUR-ZENODO-ID]},
+  doi       = {10.5281/zenodo.20771541},
   url       = {https://github.com/LovekeshAnand/LunarAtlas}
 }
 ```

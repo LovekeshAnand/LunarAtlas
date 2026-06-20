@@ -21,15 +21,14 @@ authors:
     affiliation: "Mahavir Swami Institute of Technology"
     orcid: "https://orcid.org/0009-0009-4947-4040"
     email: "lovekeshanand6@gmail.com"
-  # Add co-authors below in the same format:
-  # - family-names: "[CO-AUTHOR_LAST_NAME]"
-  #   given-names: "[CO-AUTHOR_FIRST_NAME]"
-  #   affiliation: "[CO-AUTHOR INSTITUTION]"
-  #   orcid: "https://orcid.org/[CO-AUTHOR-ORCID]"
+  - family-names: "Saeed"
+    given-names: "Dua"
+    affiliation: "Mahavir Swami Institute of Technology"
+    email: "duasaeed641@gmail.com"
 
 type: software
 version: "1.0.0"
-date-released: "2025-08-23"
+date-released: "2026-06-20"
 license: MIT
 
 repository-code: "https://github.com/LovekeshAnand/LunarAtlas"
@@ -38,7 +37,7 @@ url: "https://github.com/LovekeshAnand/LunarAtlas"
 # ── Replace the placeholder DOI below with your actual Zenodo DOI ──
 # To get a DOI: go to zenodo.org → log in with GitHub → enable the LunarAtlas repo
 # → create a GitHub release v1.0.0 → Zenodo will auto-assign a DOI.
-doi: "10.5281/zenodo.[YOUR-ZENODO-RECORD-ID]"
+doi: "10.5281/zenodo.20771541"
 
 keywords:
   - "planetary science"

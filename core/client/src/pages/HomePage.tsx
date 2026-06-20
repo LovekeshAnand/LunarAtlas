@@ -246,6 +246,79 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── CONTRIBUTIONS SECTION ── */}
+      <section id="home-contributions" className="border-b border-[#eee] dark:border-[#1e1e1e] py-16 bg-white dark:bg-[#0d0d0d] transition-colors duration-200">
+        <div className="max-w-[1400px] mx-auto px-12">
+          <div className="max-w-[800px] mx-auto">
+            <div className="text-[9px] font-bold tracking-[2.5px] text-[#999] dark:text-[#555] uppercase mb-6 text-center">
+              Paper Contributions
+            </div>
+            
+            <div className="space-y-6">
+              <div className="flex gap-4 items-start border-b border-[#f5f5f5] dark:border-[#161616] pb-4">
+                <div className="font-mono text-[14px] font-bold text-ink dark:text-white shrink-0">C1</div>
+                <div>
+                  <h4 className="text-[13.5px] font-bold text-ink dark:text-[#f0f0f0] uppercase tracking-wide mb-1">
+                    Reproducible L1 Processing Pipeline
+                  </h4>
+                  <p className="text-[12.5px] text-[#666] dark:text-[#888] leading-relaxed m-0">
+                    A documented Python workflow that ingests PDS4 products, reshapes wide-format spectra, identifies plasma-background pairs, performs background subtraction, and records processing provenance.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 items-start border-b border-[#f5f5f5] dark:border-[#161616] pb-4">
+                <div className="font-mono text-[14px] font-bold text-ink dark:text-white shrink-0">C2</div>
+                <div>
+                  <h4 className="text-[13.5px] font-bold text-ink dark:text-[#f0f0f0] uppercase tracking-wide mb-1">
+                    Measurement-ID Semantics
+                  </h4>
+                  <p className="text-[12.5px] text-[#666] dark:text-[#888] leading-relaxed m-0">
+                    A shot-resolved data model that preserves links between processed spectra, acquisition metadata, and instrument operating conditions.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 items-start border-b border-[#f5f5f5] dark:border-[#161616] pb-4">
+                <div className="font-mono text-[14px] font-bold text-ink dark:text-white shrink-0">C3</div>
+                <div>
+                  <h4 className="text-[13.5px] font-bold text-ink dark:text-[#f0f0f0] uppercase tracking-wide mb-1">
+                    PDS4-Aware Data Model
+                  </h4>
+                  <p className="text-[12.5px] text-[#666] dark:text-[#888] leading-relaxed m-0">
+                    A normalised PostgreSQL schema supporting efficient storage, querying, and provenance tracking of spectral observations.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 items-start border-b border-[#f5f5f5] dark:border-[#161616] pb-4">
+                <div className="font-mono text-[14px] font-bold text-ink dark:text-white shrink-0">C4</div>
+                <div>
+                  <h4 className="text-[13.5px] font-bold text-ink dark:text-[#f0f0f0] uppercase tracking-wide mb-1">
+                    Interactive Spectral Visualisation
+                  </h4>
+                  <p className="text-[12.5px] text-[#666] dark:text-[#888] leading-relaxed m-0">
+                    An adaptive LTTB+peaks downsampling strategy that preserves diagnostically important spectral features during interactive exploration [20].
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 items-start pb-4">
+                <div className="font-mono text-[14px] font-bold text-ink dark:text-white shrink-0">C5</div>
+                <div>
+                  <h4 className="text-[13.5px] font-bold text-ink dark:text-[#f0f0f0] uppercase tracking-wide mb-1">
+                    Processing Validation
+                  </h4>
+                  <p className="text-[12.5px] text-[#666] dark:text-[#888] leading-relaxed m-0">
+                    Quantitative evaluation of background subtraction and preprocessing effects on Chandrayaan-3 LE-LIBS spectra.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── CALL TO ACTION FOOTER ── */}
       <section className="bg-canvas-alt dark:bg-[#141414] py-20 text-center transition-colors duration-200">
         <div className="max-w-[800px] mx-auto px-12">

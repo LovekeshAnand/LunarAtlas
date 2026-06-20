@@ -548,10 +548,10 @@ export default function SpectralGraph({
              </span>
            )}
            {viewMode === 'overlay' && (
-             <div className="flex items-center gap-3 border-l border-gray-200 pl-3 ml-1">
-               <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-blue-600 inline-block rounded" /> L2</span>
-               <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-amber-500 inline-block rounded" /> L1</span>
-             </div>
+            <div className="flex items-center gap-3 border-l border-gray-200 pl-3 ml-1">
+              <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-blue-600 inline-block rounded" /> L1-Processed</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-amber-500 inline-block rounded" /> L1-Raw</span>
+            </div>
            )}
            <span className="font-semibold text-gray-800 text-[11px]">Pts: {visibleData.length}</span>
            <span className="text-gray-400 text-[11px]">(Scroll to Zoom · Drag to Pan)</span>

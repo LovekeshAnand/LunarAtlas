@@ -11,7 +11,8 @@ license = {file = "LICENSE"}
 requires-python = ">=3.10"
 
 authors = [
-    {name = "[YOUR FULL NAME]", email = "[your-email@institution.edu]"},
+    {name = "Lovekesh Anand", email = "lovekeshanand6@gmail.com"},
+    {name = "Dua Saeed", email = "duasaeed641@gmail.com"},
 ]
 
 keywords = [
@@ -65,11 +66,11 @@ dev = [
 all = ["lunaratlas[db,api,report,dev]"]
 
 [project.urls]
-Homepage = "https://github.com/[YOUR-GITHUB-USERNAME]/LunarAtlas"
-Repository = "https://github.com/[YOUR-GITHUB-USERNAME]/LunarAtlas"
-Documentation = "https://github.com/[YOUR-GITHUB-USERNAME]/LunarAtlas/tree/main/docs"
-"Bug Tracker" = "https://github.com/[YOUR-GITHUB-USERNAME]/LunarAtlas/issues"
-Paper = "https://doi.org/10.5281/zenodo.[YOUR-ZENODO-ID]"
+Homepage = "https://github.com/LovekeshAnand/LunarAtlas"
+Repository = "https://github.com/LovekeshAnand/LunarAtlas"
+Documentation = "https://github.com/LovekeshAnand/LunarAtlas/tree/main/docs"
+"Bug Tracker" = "https://github.com/LovekeshAnand/LunarAtlas/issues"
+Paper = "https://doi.org/10.5281/zenodo.20771541"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
