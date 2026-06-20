@@ -53,9 +53,7 @@ export default function HomePage() {
 
             {/* Description */}
             <div className="text-[13px] text-[#666] dark:text-[#888] tracking-[0.3px] mb-10 max-w-[600px] leading-[1.6]">
-              Transforming 2,094 wavelength channels (164.35–878.26 nm) from
-              Chandrayaan-3 LIBS Level-1 products into cleaned, versioned,
-              machine-accessible spectral records.
+              A Reproducible Infrastructure for Chandrayaan-3 LIBS Level-1 Data
             </div>
 
             {/* CTA buttons */}
@@ -211,35 +209,24 @@ export default function HomePage() {
                 Abstract
               </div>
               <div className="text-[13px] font-bold text-ink dark:text-[#f0f0f0] leading-[1.4]">
-                Reproducible Spectral Data Infrastructure for Chandrayaan-3 LIBS
+                From PDS4 Archives to Analysis-Ready Spectra
               </div>
               <div className="mt-5 text-[11px] text-[#999] dark:text-[#555] leading-[1.6]">
                 Anand, L. &amp; Saeed, D.<br />
                 Independent Researchers, India<br />
-                April 2026
+                June 2026
               </div>
             </div>
 
             <div className="border-l-2 border-[#eee] dark:border-[#222] md:pl-10 pl-4">
               <p className="text-[13px] text-[#333] dark:text-[#aaa] leading-[1.75] mb-4 tracking-[0.2px]">
-                We present <strong className="text-ink dark:text-[#f0f0f0]">LunarAtlas</strong>, a reproducible data-processing infrastructure
-                that transforms publicly available Chandrayaan-3 Laser-Induced Breakdown Spectroscopy
-                (LIBS) Level-1 products into cleaned, machine-accessible, long-form spectral records
-                suitable for quantitative lunar science.
+                We present <strong className="text-ink dark:text-[#f0f0f0]">LunarAtlas</strong>, a reproducible data processing infrastructure that transforms publicly available Chandrayaan-3 laser-induced breakdown spectroscopy (LIBS) level 1 (L1) products into clean, machine accessible, analysis ready spectral records suitable for quantitative lunar science. While ISRO's Chandrayaan-3 LIBS data is publicly available through PDS4-compliant archive, a reproducible infrastructure for transforming these products into analysis ready records suitable for downstream scientific workflows has not been publicly documented. Starting from calibrated L1 tables, LunarAtlas implements a transparent and robust Python pipeline that: (i) Parses XML metadata; (ii) Reshapes wide-format Chandrayaan-3 L1 data in which <strong className="text-ink dark:text-[#f0f0f0]">2,094 wavelength channels spanning from minimum value of 164.35 nm to maximum value of 878.26 nm</strong> appear as column headers (in accordance with PDS4 label, wavelength), into normalised per-wavelength long-form records; (iii) Identifies and correctly pairs plasma and background measurements using mission flag columns (Laser fire status, Force reset status); and (iv) Performs physically motivated background subtraction (<code className="font-mono bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded text-[11px] text-ink dark:text-[#eee]">Iclean(λ) = max(0, Iplasma(λ) − Ibackground(λ))</code>), with non-physical values clamped to zero. Each processed file receives an MD5 checksum and an algorithm record to ensure reproducibility and traceability.
               </p>
               <p className="text-[13px] text-[#333] dark:text-[#aaa] leading-[1.75] mb-4 tracking-[0.2px]">
-                Starting from calibrated L1 tables released through ISRO's PDS4-compliant archive,
-                LunarAtlas implements a transparent Python pipeline that parses XML metadata, reshapes
-                wide-format tables in which <strong className="text-ink dark:text-[#f0f0f0]">2,094 wavelength channels appear as column headers
-                spanning 164.35–878.26 nm</strong>, identifies and correctly pairs plasma and background
-                measurements, and performs physically motivated background subtraction.
+                The processing workflow generates cleaned spectral measurements, each comprising 2,094 wavelength-channel records. Background subtraction substantially reduces continuum and instrumental baseline contributions while preserving diagnostically important emission features, producing analysis-ready spectra suitable for downstream scientific workflows. Analysis of the cleaned spectra reveals substantial shot-to-shot variability between measurements, highlighting the importance of preserving individual Measurement IDs during analysis rather than relying solely on bulk-averaged spectra.
               </p>
               <p className="text-[13px] text-[#333] dark:text-[#aaa] leading-[1.75] m-0 tracking-[0.2px]">
-                Applied to real Chandrayaan-3 L1 data, the pipeline yields cleaned measurements with a
-                <strong className="text-ink dark:text-[#f0f0f0]"> baseline suppression factor of ~7.1</strong>. The Measurement ID is the cornerstone
-                identifier linking each spectral record to its originating plasma shot — shot-to-shot
-                variability ranges from 0.5% to 76.8% negative samples, a variability that would be
-                completely hidden in bulk averaging.
+                Beyond data cleaning, LunarAtlas provides a PDS4-aware database, a web accessible spectral analysis platform, adaptive LTTB-based downsampling with explicit peak-union preservation that retains 100% of detected spectral elemental peaks across all tested spectra, and a versioned API capable of latency less than 500 ms response time for data rendering on commodity consumer hardware. By establishing a reproducible and auditable “Single source of scientific truth” for Chandrayaan-3 LIBS data, LunarAtlas provides a scalable foundation for future planetary LIBS missions and data-intensive lunar science workflows.
               </p>
             </div>
           </div>

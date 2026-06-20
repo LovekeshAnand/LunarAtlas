@@ -285,7 +285,7 @@ class EnhancedPublicationFiguresGenerator:
         
         # Plot spectrum overlay lines
         ax.plot(w_raw, v_raw, color='#94a3b8', linestyle='-', lw=1.2, alpha=0.9, label='Raw L1 Intensity counts')
-        ax.plot(w_clean, v_clean, color='#0284c7', linestyle='-', lw=1.2, alpha=0.9, label='Cleaned L2 Intensity counts')
+        ax.plot(w_clean, v_clean, color='#0284c7', linestyle='-', lw=1.2, alpha=0.9, label='Cleaned L1-Processed Intensity counts')
         
         # Draw mean level lines
         ax.axhline(mean_raw, color='#b91c1c', linestyle='--', lw=1.0, alpha=0.8)

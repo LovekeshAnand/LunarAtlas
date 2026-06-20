@@ -1,6 +1,5 @@
 ---
-title: 'LunarAtlas: A Reproducible LIBS Spectral Data Processing and Visualization
-  Infrastructure for Chandrayaan-3'
+title: 'LunarAtlas: From PDS4 Archives to Analysis-Ready Spectra - A Reproducible Infrastructure for Chandrayaan-3 LIBS Level-1 Data'
 
 tags:
   - planetary science

@@ -1,6 +1,4 @@
-# LunarAtlas
-
-**A Reproducible LIBS Spectral Data Processing and Visualization Infrastructure for Chandrayaan-3**
+# LunarAtlas: From PDS4 Archives to Analysis-Ready Spectra - A Reproducible Infrastructure for Chandrayaan-3 LIBS Level-1 Data
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
@@ -225,8 +223,7 @@ If you use LunarAtlas in your research, please cite:
 ```bibtex
 @software{lunaratlas2026,
   author    = {Anand, Lovekesh and Saeed, Dua},
-  title     = {{LunarAtlas: A Reproducible LIBS Spectral Data Processing
-               and Visualization Infrastructure for Chandrayaan-3}},
+  title     = {{LunarAtlas: From PDS4 Archives to Analysis-Ready Spectra - A Reproducible Infrastructure for Chandrayaan-3 LIBS Level-1 Data}},
   year      = {2026},
   publisher = {Zenodo},
   doi       = {10.5281/zenodo.20771541},
