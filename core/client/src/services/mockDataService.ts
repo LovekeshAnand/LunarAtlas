@@ -63,7 +63,7 @@ export function generateMockSpectrum(measurementId: string = 'm_001'): { data: S
   const data: SpectralData[] = [];
   const minWavelength = 164.35;
   const maxWavelength = 878.26;
-  const numChannels = 2049; // Standard Chandrayaan-3 LIBS detector resolution
+  const numChannels = 2094; // Standard Chandrayaan-3 LIBS detector resolution
   const step = (maxWavelength - minWavelength) / (numChannels - 1);
 
   // Background continuum baseline (simulating thermal and instrument noise)

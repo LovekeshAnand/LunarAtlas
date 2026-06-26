@@ -30,11 +30,11 @@ async def insert_test_data():
             
             print(f"\nGenerating spectrum for measurement {meas_num} (DB ID: {meas_id})")
             
-            # Generate synthetic spectrum (200-800 nm, 2049 points)
-            wavelengths = np.linspace(200.0, 800.0, 2049)
+            # Generate synthetic spectrum (200-800 nm, 2094 points)
+            wavelengths = np.linspace(200.0, 800.0, 2094)
             
             # Baseline with noise
-            baseline = 50 + np.random.normal(0, 5, 2049)
+            baseline = 50 + np.random.normal(0, 5, 2094)
             intensities = baseline.copy()
             
             # Add 10 Gaussian peaks (emission lines)

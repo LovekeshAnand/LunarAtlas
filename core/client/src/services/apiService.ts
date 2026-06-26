@@ -38,6 +38,8 @@ interface SpectralApiPoint {
   raw_plasma: number;
 }
 
+export type DenoiseMode = 'none' | 'als' | 'savgol';
+
 interface SpectrumResponse {
   mode: 'downsampled' | 'raw' | 'empty';
   measurement_id: string;
@@ -51,6 +53,10 @@ interface SpectrumResponse {
     n_buckets?: number | null;
     reduction_factor?: number | null;
     b_final?: number | null;
+    denoising?: {
+      als_applied: boolean;
+      savgol_applied: boolean;
+    };
   };
   cached: boolean;
   query_time_ms: number;
@@ -91,6 +97,10 @@ export interface SpectrumMeta {
   n_buckets: number | null;
   reduction_factor: number | null;
   b_final: number | null;
+  denoising?: {
+    als_applied: boolean;
+    savgol_applied: boolean;
+  };
 }
 
 export const apiService = {
@@ -232,7 +242,9 @@ export const apiService = {
     lambdaMin = 164.35,
     lambdaMax = 878.26,
     zoomLevel = 0,
-    forceRaw = false
+    forceRaw = false,
+    als = false,
+    savgol = false
   ): Promise<{ data: SpectralDataPoint[]; meta: SpectrumMeta }> {
     const params = new URLSearchParams({
       measurement_id: measurementId,
@@ -241,6 +253,8 @@ export const apiService = {
       zoom_level: String(zoomLevel),
       use_cache: 'true',
       force_raw: String(forceRaw),
+      als: String(als),
+      savgol: String(savgol),
     });
 
     const res = await fetch(`${API_BASE}/spectrum?${params}`, {
@@ -274,6 +288,7 @@ export const apiService = {
         n_buckets: body.metadata.n_buckets ?? null,
         reduction_factor: body.metadata.reduction_factor ?? null,
         b_final: body.metadata.b_final ?? null,
+        denoising: body.metadata.denoising,
       },
     };
   },
@@ -352,11 +367,13 @@ export const apiService = {
   async fetchMultipleSpectra(
     measurementIds: string[],
     lambdaMin: number,
-    lambdaMax: number
+    lambdaMax: number,
+    als = false,
+    savgol = false
   ): Promise<Map<string, SpectralDataPoint[]>> {
     const results = await Promise.allSettled(
       measurementIds.map((id) =>
-        this.fetchSpectrum(id, lambdaMin, lambdaMax, 0, true)
+        this.fetchSpectrum(id, lambdaMin, lambdaMax, 0, true, als, savgol)
       )
     );
 

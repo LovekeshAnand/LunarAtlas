@@ -14,6 +14,7 @@ from app.schemas.spectral import (
     ObservationInfo
 )
 from app.core.downsampling import lttb_downsample
+from app.core.denoising import apply_denoising_pipeline
 from app.database.connection import db
 from app.cache.redis_cache import cache, cached
 from app.config import settings
@@ -182,7 +183,9 @@ async def get_spectrum(
     proportion: Optional[float] = Query(None, description="LTTB density ratio (0.0–1.0). Overrides zoom_level when set."),
     target_wavelengths: Optional[str] = Query(None, description="Comma-separated target wavelengths (nm) for Targeted Peak Preservation."),
     use_cache: bool = Query(True, description="Enable Redis caching"),
-    force_raw: bool = Query(False, description="Bypass server downsampling and return raw data")
+    force_raw: bool = Query(False, description="Bypass server downsampling and return raw data"),
+    als: bool = Query(False, description="Apply ALS baseline correction (visualization only — does not modify stored data)"),
+    savgol: bool = Query(False, description="Apply Savitzky-Golay smoothing (visualization only — does not modify stored data)")
 ):
     """
     Retrieve spectral data with LTTB downsampling.
@@ -230,7 +233,8 @@ async def get_spectrum(
         except ValueError:
             logger.warning(f"Invalid target_wavelengths format: {target_wavelengths}")
 
-    # Generate cache key
+    # Generate cache key — als/savgol flags are included so each of the four
+    # denoising combinations gets its own isolated Redis entry.
     cache_key = cache.generate_key(
         "spectrum",
         measurement_id,
@@ -238,7 +242,9 @@ async def get_spectrum(
         lambda_max,
         zoom_level,
         proportion,
-        target_wavelengths or ""
+        target_wavelengths or "",
+        als,
+        savgol
     )
     
     # Try cache first
@@ -298,6 +304,23 @@ async def get_spectrum(
             [float(row['wavelength_nm']), float(row['intensity']), float(row['raw_plasma'])]
             for row in rows
         ])
+
+        # --- Optional denoising pipeline (ALS → Savitzky-Golay) ---
+        # Operates exclusively in the visualization layer.
+        # The database (spectral_data_clean) is never modified.
+        als_applied = False
+        savgol_applied = False
+        if als or savgol:
+            raw_intensities = data[:, 1]
+            denoised, als_applied, savgol_applied = apply_denoising_pipeline(
+                raw_intensities, als=als, savgol=savgol
+            )
+            data = data.copy()
+            data[:, 1] = denoised
+            logger.info(
+                "Denoising applied for measurement %s: als=%s savgol=%s",
+                measurement_id, als_applied, savgol_applied
+            )
         
         logger.info(
             f"Fetched {len(data)} points for measurement {measurement_id} "
@@ -307,11 +330,11 @@ async def get_spectrum(
         if force_raw:
             formatted_data = [
                 {
-                    "wavelength_nm": float(row['wavelength_nm']), 
-                    "intensity": float(row['intensity']),
-                    "raw_plasma": float(row['raw_plasma'])
+                    "wavelength_nm": float(data[i, 0]),
+                    "intensity": float(data[i, 1]),
+                    "raw_plasma": float(data[i, 2])
                 }
-                for row in rows
+                for i in range(len(data))
             ]
             result = {
                 "mode": "raw",
@@ -325,7 +348,11 @@ async def get_spectrum(
                     "original_points": len(data),
                     "n_buckets": len(data),
                     "reduction_factor": 1.0,
-                    "b_final": 0.0
+                    "b_final": 0.0,
+                    "denoising": {
+                        "als_applied": als_applied,
+                        "savgol_applied": savgol_applied
+                    }
                 },
                 "cached": False,
                 "query_time_ms": db_time
@@ -360,7 +387,11 @@ async def get_spectrum(
                 "original_points": downsample_result.get('original_points', len(data)),
                 "n_buckets": downsample_result.get('n_buckets'),
                 "reduction_factor": downsample_result.get('reduction_factor'),
-                "b_final": downsample_result.get('b_final')
+                "b_final": downsample_result.get('b_final'),
+                "denoising": {
+                    "als_applied": als_applied,
+                    "savgol_applied": savgol_applied
+                }
             },
             "cached": False,
             "query_time_ms": db_time

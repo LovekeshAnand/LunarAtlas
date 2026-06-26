@@ -522,7 +522,12 @@ class EnhancedPublicationFiguresGenerator:
         wl = sub['Wavelength_nm'].values
         val = sub['Cleaned_Intensity'].values
         
-        raw_peaks_idx, _ = find_peaks(val, prominence=50, distance=5)
+        # Compute noise floor from a continuum region (560-580 nm)
+        cont_mask = (wl >= 560.0) & (wl <= 580.0)
+        noise_floor = np.std(val[cont_mask])
+        prominence = 3 * noise_floor
+        
+        raw_peaks_idx, _ = find_peaks(val, prominence=prominence, distance=5)
         n_raw_peaks = len(raw_peaks_idx)
         
         threshold = 200

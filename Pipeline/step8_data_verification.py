@@ -6,29 +6,23 @@ Establishes a quantitative verification audit. Recalculates MD5 digital signatur
 for all files and cross-references them with the records stored in PostgreSQL.
 """
 
-import os
 import hashlib
 import psycopg2
 from pathlib import Path
 
-ENV_PATH = r"c:\Users\ZBook\Desktop\LunarAtlas\core\server\.env"
 DEFAULT_PROCESSED_DIR = r"c:\Users\ZBook\Desktop\LunarAtlas\datasets\processed"
 
-def get_db_connection():
-    """Parses database URL from .env file and establishes connection."""
-    if not os.path.exists(ENV_PATH):
-        raise FileNotFoundError(f"Server .env configuration not found at {ENV_PATH}")
-        
-    db_url = None
-    with open(ENV_PATH, "r") as f:
-        for line in f:
-            if line.startswith("DATABASE_URL="):
-                db_url = line.strip().split("=", 1)[1]
-                break
-                
+def get_db_connection(db_url=None):
+    """Establishes connection to PostgreSQL using a provided or interactively entered database URL."""
     if not db_url:
-        raise ValueError("DATABASE_URL parameter not set in server .env file.")
-        
+        print("\n[INPUT REQUIRED] Enter the PostgreSQL database URL.")
+        print("  Format: postgresql://user:password@host:port/dbname")
+        db_url = input("  DATABASE_URL: ").strip()
+
+    if not db_url:
+        raise ValueError("DATABASE_URL cannot be empty.")
+
+    print(f"[INFO] Connecting to database...")
     return psycopg2.connect(db_url)
 
 def get_md5_checksum(file_path):
@@ -39,7 +33,7 @@ def get_md5_checksum(file_path):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
-def verify_datasets(processed_dir):
+def verify_datasets(processed_dir, db_url=None):
     print("====================================================")
     print(" STAGE 8: COMPREHENSIVE DATA & MD5 VERIFICATION")
     print("====================================================")
@@ -55,7 +49,7 @@ def verify_datasets(processed_dir):
         return False
         
     try:
-        conn = get_db_connection()
+        conn = get_db_connection(db_url)
         cursor = conn.cursor()
         
         # 1. Fetch count stats from database
@@ -142,4 +136,5 @@ def verify_datasets(processed_dir):
 if __name__ == "__main__":
     import sys
     processed = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_PROCESSED_DIR
-    verify_datasets(processed)
+    db_url = sys.argv[2] if len(sys.argv) > 2 else None
+    verify_datasets(processed, db_url=db_url)

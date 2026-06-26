@@ -16,8 +16,7 @@
  */
 
 import { useState, useRef, useMemo, useEffect, useCallback } from 'react';
-import { type SpectralDataPoint } from '../../services/apiService';
-import { type MeasurementInfo } from '../../services/apiService';
+import { type SpectralDataPoint, type MeasurementInfo, type DenoiseMode } from '../../services/apiService';
 import { useDownsampling } from '../../hooks/useDownsampling';
 import { ELEMENT_PEAKS, type ElementalPeak } from '../../utils/spectralUtils';
 
@@ -66,6 +65,7 @@ interface MultiSpectralGraphProps {
   selectedElement?: string;
   lttbEnabled?: boolean;
   viewMode?: 'L1' | 'L2' | 'overlay';
+  denoiseMode?: DenoiseMode;
 }
 
 /* ------------------------------------------------------------------ */
@@ -224,6 +224,7 @@ export default function MultiSpectralGraph({
   selectedElement,
   lttbEnabled = true,
   viewMode = 'L2',
+  denoiseMode = 'none',
 }: MultiSpectralGraphProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
@@ -695,6 +696,16 @@ export default function MultiSpectralGraph({
         <div className="flex items-center gap-4">
           <span>λ range: <strong className="text-gray-700">{minX.toFixed(2)}–{maxX.toFixed(2)} nm</strong></span>
           <span>Span: <strong className="text-gray-700">{domainX.toFixed(2)} nm</strong></span>
+          {denoiseMode === 'als' && (
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide shrink-0 bg-slate-100 text-slate-800 border border-solid border-slate-200 flex items-center gap-1 font-sans">
+              <span>⚗</span> ALS Baseline Corrected
+            </span>
+          )}
+          {denoiseMode === 'savgol' && (
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide shrink-0 bg-slate-100 text-slate-800 border border-solid border-slate-200 flex items-center gap-1 font-sans">
+              <span>〰</span> Savitzky-Golay Smoothed
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-4">
           <span className="text-[10px] text-gray-400 select-none hidden sm:inline">

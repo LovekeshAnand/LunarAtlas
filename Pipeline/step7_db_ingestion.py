@@ -6,7 +6,6 @@ Programmatically parses the local server .env, establishes connection to Postgre
 and ingests processed observations, file info, clean measurements, and spectral curves.
 """
 
-import os
 import re
 import json
 import hashlib
@@ -16,26 +15,19 @@ from pathlib import Path
 import pandas as pd
 from datetime import datetime
 
-ENV_PATH = r"c:\Users\ZBook\Desktop\LunarAtlas\core\server\.env"
 DEFAULT_PROCESSED_DIR = r"c:\Users\ZBook\Desktop\LunarAtlas\datasets\processed"
 
-def get_db_connection():
-    """Parses database URL from .env file and establishes connection."""
-    if not os.path.exists(ENV_PATH):
-        raise FileNotFoundError(f"Server .env configuration not found at {ENV_PATH}")
-        
-    db_url = None
-    with open(ENV_PATH, "r") as f:
-        for line in f:
-            if line.startswith("DATABASE_URL="):
-                db_url = line.strip().split("=", 1)[1]
-                break
-                
+def get_db_connection(db_url=None):
+    """Establishes connection to PostgreSQL using a provided or interactively entered database URL."""
     if not db_url:
-        raise ValueError("DATABASE_URL parameter not set in server .env file.")
-        
-    # Standard postgresql://user:pass@host:port/dbname
-    print(f"[INFO] Connecting to database using URL from .env...")
+        print("\n[INPUT REQUIRED] Enter the PostgreSQL database URL.")
+        print("  Format: postgresql://user:password@host:port/dbname")
+        db_url = input("  DATABASE_URL: ").strip()
+
+    if not db_url:
+        raise ValueError("DATABASE_URL cannot be empty.")
+
+    print(f"[INFO] Connecting to database...")
     return psycopg2.connect(db_url)
 
 def get_md5_checksum(file_path):
@@ -84,7 +76,7 @@ def ingest_core_records(cursor):
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, ('CH3_LIBS_V2', 'LIBS_SPEC_001', 'lib-v2', 'v2', 'l1', 'calibrated', 'D:\\ch3_libs\\lib-v2\\data\\calibrated', 'Calibrated LIBS v2', '2024-08-23', '2024-05-16 12:12:34+05:30'))
 
-def ingest_cleaned_datasets(processed_dir):
+def ingest_cleaned_datasets(processed_dir, db_url=None):
     print("====================================================")
     print(" STAGE 7: POSTGRESQL DATABASE INGESTION")
     print("====================================================")
@@ -100,7 +92,7 @@ def ingest_cleaned_datasets(processed_dir):
         return
         
     try:
-        conn = get_db_connection()
+        conn = get_db_connection(db_url)
         cursor = conn.cursor()
         
         # 1. Ingest core structures
@@ -249,10 +241,13 @@ if __name__ == "__main__":
     import sys
     # Only ingest if y/yes parameter passed or interactively selected
     ingest = True
+    db_url = None
     if len(sys.argv) > 1:
         ingest = sys.argv[1].lower() in ['y', 'yes', 'true', '1']
-        
+    if len(sys.argv) > 2:
+        db_url = sys.argv[2]
+
     if ingest:
-        ingest_cleaned_datasets(DEFAULT_PROCESSED_DIR)
+        ingest_cleaned_datasets(DEFAULT_PROCESSED_DIR, db_url=db_url)
     else:
         print("[INFO] DB Ingestion bypassed based on command parameters.")

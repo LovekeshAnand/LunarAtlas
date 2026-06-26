@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { apiService } from '../services/apiService';
 
-// Layout style helpers with modern neutral, green, and amber tones
-const CARD_BASE = 'bg-[#fcfcfc] dark:bg-[#121215] border border-[#e5e7eb] dark:border-[#1e1e24] rounded-xl p-6 shadow-sm transition-all duration-200 hover:shadow-md';
-const INPUT_TXT = 'w-full text-[12px] bg-canvas dark:bg-[#1a1a1f] border border-[#d1d5db] dark:border-[#2e2e38] px-3.5 py-2.5 text-ink dark:text-[#d0d0d0] rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all font-sans';
-const BTN_PRIMARY = 'px-5 py-2.5 text-[10px] font-bold tracking-widest text-white dark:text-black bg-emerald-600 hover:bg-emerald-700 dark:bg-[#a3e635] dark:hover:bg-[#bef264] rounded-lg uppercase transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-emerald-500/10 active:scale-95';
-const BTN_SECONDARY = 'px-4 py-2 border border-border dark:border-[#2e2e38] text-ink-muted dark:text-[#888] hover:text-ink dark:hover:text-white bg-transparent text-[10px] font-bold uppercase tracking-wider rounded-lg cursor-pointer transition-colors';
+// Layout style helpers with professional, clean grayscale design
+const CARD_BASE = 'bg-white dark:bg-[#0f0f11] border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 shadow-sm transition-all duration-200 hover:shadow-md';
+const INPUT_TXT = 'w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2.5 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 focus:border-neutral-400 dark:focus:border-neutral-700 transition-all font-sans';
+const BTN_PRIMARY = 'px-5 py-2.5 text-[10px] font-bold tracking-widest text-white dark:text-neutral-950 bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 rounded-lg uppercase transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 shadow-sm border-0';
+const BTN_SECONDARY = 'px-5 py-2.5 border border-neutral-300 dark:border-neutral-800 text-neutral-800 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:border-neutral-400 dark:hover:border-neutral-600 bg-transparent text-[10px] font-bold uppercase tracking-wider rounded-lg cursor-pointer transition-all duration-150';
 
 export default function DashboardPage() {
   const { user, setUser } = useAuth();
@@ -188,14 +188,9 @@ print(response.json())`;
     setTimeout(() => setCopiedLangCode(false), 2000);
   };
 
-  // Role Badge Styling Mapper
-  const getRoleColor = (roleStr?: string) => {
-    const r = (roleStr || '').toLowerCase();
-    if (r.includes('researcher')) return 'bg-emerald-500/10 text-emerald-600 dark:text-[#a3e635] border-emerald-500/20';
-    if (r.includes('developer')) return 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20';
-    if (r.includes('student')) return 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20';
-    if (r.includes('scientist')) return 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20';
-    return 'bg-neutral-500/10 text-neutral-600 dark:text-neutral-400 border-neutral-500/20';
+  // Role Badge Styling Mapper (Unified Grayscale)
+  const getRoleColor = () => {
+    return 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700';
   };
 
   return (
@@ -203,18 +198,18 @@ print(response.json())`;
       <div className="max-w-[1300px] mx-auto px-6">
         
         {/* Workspace Title & Host banner */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#e5e7eb] dark:border-[#1a1a1f] pb-6 mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-neutral-200 dark:border-neutral-800 pb-6 mb-8">
           <div>
-            <div className="text-[10px] font-bold tracking-[3px] text-emerald-500 dark:text-[#a3e635] uppercase mb-1">
+            <div className="text-[10px] font-bold tracking-[3px] text-neutral-800 dark:text-neutral-300 uppercase mb-1">
               Secure Environment
             </div>
-            <h1 className="text-2xl font-black tracking-tight text-ink dark:text-white m-0">
+            <h1 className="text-2xl font-black tracking-tight text-neutral-900 dark:text-white m-0">
               Researcher Workspace
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="text-[11px] text-[#666] dark:text-[#888] font-mono tracking-wider">
+            <span className="w-2.5 h-2.5 rounded-full bg-neutral-400 dark:bg-neutral-600 animate-pulse"></span>
+            <span className="text-[11px] text-neutral-800 dark:text-neutral-300 font-mono tracking-wider">
               Connected to api.libs.isro
             </span>
           </div>
@@ -224,57 +219,51 @@ print(response.json())`;
         <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-8 items-start">
           
           {/* LEFT COLUMN: Persistent user profile card (Fills empty space permanently) */}
-          <div className="bg-[#fcfcfc] dark:bg-[#121215] border border-[#e5e7eb] dark:border-[#1e1e24] p-6 rounded-xl shadow-sm space-y-6">
-            <div className="text-center relative pb-6 border-b border-[#e5e7eb] dark:border-[#1a1a1f]">
+          <div className="bg-white dark:bg-[#0f0f11] border border-neutral-200 dark:border-neutral-800 p-6 rounded-xl shadow-sm space-y-6">
+            <div className="text-center relative pb-6 border-b border-neutral-200 dark:border-neutral-800">
               
-              {/* Initials Avatar Ring */}
-              <div className="w-20 h-20 bg-gradient-to-tr from-emerald-500 via-[#a3e635] to-amber-500 p-[3px] rounded-full mx-auto mb-4 shadow-lg shadow-emerald-500/5">
-                <div className="w-full h-full bg-[#fcfcfc] dark:bg-[#121215] rounded-full flex items-center justify-center font-black text-xl text-ink dark:text-white tracking-wide uppercase">
+              {/* Initials Avatar Circle */}
+              <div className="w-20 h-20 border border-neutral-200 dark:border-neutral-800 p-1 rounded-full mx-auto mb-4 bg-neutral-50 dark:bg-[#18181d] flex items-center justify-center">
+                <div className="w-full h-full bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center font-semibold text-xl text-neutral-900 dark:text-neutral-200 tracking-wide uppercase border border-neutral-200 dark:border-neutral-700/50">
                   {user?.username ? user.username.substring(0, 2) : (user?.email ? user.email.substring(0, 2) : 'RE')}
                 </div>
               </div>
               
-              <h2 className="text-lg font-bold text-ink dark:text-white m-0 tracking-tight">
+              <h2 className="text-lg font-semibold text-neutral-900 dark:text-white m-0 tracking-tight">
                 @{user?.username || 'libs_analyst'}
               </h2>
               
-              <div className={`inline-block mt-2.5 px-3 py-0.5 text-[9px] font-extrabold tracking-wider border rounded-full uppercase ${getRoleColor(user?.role)}`}>
+              <div className={`inline-block mt-2.5 px-3 py-0.5 text-[9px] font-semibold tracking-wider border rounded-full uppercase ${getRoleColor()}`}>
                 {user?.role || 'researcher'}
               </div>
             </div>
 
             {/* Profile info details block */}
-            <div className="space-y-4 text-[12px] border-b border-[#e5e7eb] dark:border-[#1a1a1f] pb-6">
+            <div className="space-y-4 text-[12px] border-b border-neutral-200 dark:border-neutral-800 pb-6">
               <div>
-                <span className="block text-[9px] font-bold text-ink-muted dark:text-[#555] uppercase tracking-wider mb-1">Email Address</span>
-                <span className="font-mono text-ink dark:text-[#ccc] block break-all font-semibold">{user?.email}</span>
+                <span className="block text-[9px] font-semibold text-neutral-800 dark:text-neutral-300 uppercase tracking-wider mb-1">Email Address</span>
+                <span className="text-neutral-900 dark:text-neutral-200 block break-all font-normal">{user?.email}</span>
               </div>
               <div>
-                <span className="block text-[9px] font-bold text-ink-muted dark:text-[#555] uppercase tracking-wider mb-1">Affiliation</span>
-                <span className="text-ink dark:text-[#ccc] block font-medium">{user?.institution || 'Academic Institution (Not Added)'}</span>
+                <span className="block text-[9px] font-semibold text-neutral-800 dark:text-neutral-300 uppercase tracking-wider mb-1">Affiliation</span>
+                <span className="text-neutral-900 dark:text-neutral-200 block font-normal">{user?.institution || 'Academic Institution (Not Added)'}</span>
               </div>
               <div>
-                <span className="block text-[9px] font-bold text-ink-muted dark:text-[#555] uppercase tracking-wider mb-1">Research Field</span>
-                <span className="text-ink dark:text-[#ccc] block italic font-medium">{user?.interest || 'Spectroscopy Composition Research'}</span>
+                <span className="block text-[9px] font-semibold text-neutral-800 dark:text-neutral-300 uppercase tracking-wider mb-1">Research Field</span>
+                <span className="text-neutral-900 dark:text-neutral-200 block font-normal">{user?.interest || 'Spectroscopy Composition Research'}</span>
               </div>
               <div>
-                <span className="block text-[9px] font-bold text-ink-muted dark:text-[#555] uppercase tracking-wider mb-1">Registration Date</span>
-                <span className="text-ink dark:text-[#ccc] block font-mono text-[11px]">
+                <span className="block text-[9px] font-semibold text-neutral-800 dark:text-neutral-300 uppercase tracking-wider mb-1">Registration Date</span>
+                <span className="text-neutral-900 dark:text-neutral-200 block text-[11px] font-normal">
                   {user?.created_at ? new Date(user.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}
                 </span>
               </div>
             </div>
 
-            {/* Micro KPI Quick Stats */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-canvas-alt dark:bg-[#1a1a1f] p-3 rounded-lg border border-[#e5e7eb] dark:border-[#1c1c22]">
-                <div className="text-[8px] font-bold text-[#888] dark:text-[#555] uppercase tracking-wider mb-1">Active Keys</div>
-                <div className="text-base font-black text-emerald-500 dark:text-[#a3e635]">{user?.api_key_count || 0}</div>
-              </div>
-              <div className="bg-canvas-alt dark:bg-[#1a1a1f] p-3 rounded-lg border border-[#e5e7eb] dark:border-[#1c1c22]">
-                <div className="text-[8px] font-bold text-[#888] dark:text-[#555] uppercase tracking-wider mb-1">Verified Role</div>
-                <div className="text-[10px] font-bold text-emerald-600 dark:text-[#a3e635] uppercase tracking-widest mt-1">VERIFIED</div>
-              </div>
+            {/* Micro KPI Quick Stats - Removed verified card, Active Keys spans full width */}
+            <div className="bg-neutral-50 dark:bg-[#18181d] p-4 rounded-lg border border-neutral-200 dark:border-neutral-800/80 flex justify-between items-center">
+              <span className="text-[10px] font-semibold text-neutral-800 dark:text-neutral-300 uppercase tracking-wider">Active API Keys</span>
+              <span className="text-base font-bold text-neutral-900 dark:text-white">{user?.api_key_count || 0}</span>
             </div>
           </div>
 
@@ -282,13 +271,13 @@ print(response.json())`;
           <div className="space-y-6">
             
             {/* Custom high-fidelity tab switcher */}
-            <div className="flex border border-[#e5e7eb] dark:border-[#1e1e24] bg-canvas-alt dark:bg-[#121215]/50 p-1 rounded-xl">
+            <div className="flex border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-[#121215]/50 p-1 rounded-xl">
               <button
                 onClick={() => setActiveTab('profile')}
                 className={`flex-1 py-3 text-center text-[10px] font-bold tracking-widest uppercase rounded-lg transition-all cursor-pointer ${
                   activeTab === 'profile'
-                    ? 'bg-canvas dark:bg-[#1e1e24] text-ink dark:text-white shadow-sm border border-[#e5e7eb] dark:border-[#2e2e38]'
-                    : 'text-[#6b7280] dark:text-[#666] hover:text-[#111] dark:hover:text-white border border-transparent'
+                    ? 'bg-white dark:bg-[#1e1e24] text-neutral-900 dark:text-white shadow-sm border border-neutral-200 dark:border-neutral-700'
+                    : 'text-neutral-800 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white border border-transparent'
                 }`}
               >
                 Profile Settings
@@ -297,8 +286,8 @@ print(response.json())`;
                 onClick={() => setActiveTab('keys')}
                 className={`flex-1 py-3 text-center text-[10px] font-bold tracking-widest uppercase rounded-lg transition-all cursor-pointer ${
                   activeTab === 'keys'
-                    ? 'bg-canvas dark:bg-[#1e1e24] text-ink dark:text-white shadow-sm border border-[#e5e7eb] dark:border-[#2e2e38]'
-                    : 'text-[#6b7280] dark:text-[#666] hover:text-[#111] dark:hover:text-white border border-transparent'
+                    ? 'bg-white dark:bg-[#1e1e24] text-neutral-900 dark:text-white shadow-sm border border-neutral-200 dark:border-neutral-700'
+                    : 'text-neutral-800 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white border border-transparent'
                 }`}
               >
                 Developer API Keys
@@ -307,8 +296,8 @@ print(response.json())`;
                 onClick={() => setActiveTab('usage')}
                 className={`flex-1 py-3 text-center text-[10px] font-bold tracking-widest uppercase rounded-lg transition-all cursor-pointer ${
                   activeTab === 'usage'
-                    ? 'bg-canvas dark:bg-[#1e1e24] text-ink dark:text-white shadow-sm border border-[#e5e7eb] dark:border-[#2e2e38]'
-                    : 'text-[#6b7280] dark:text-[#666] hover:text-[#111] dark:hover:text-white border border-transparent'
+                    ? 'bg-white dark:bg-[#1e1e24] text-neutral-900 dark:text-white shadow-sm border border-neutral-200 dark:border-neutral-700'
+                    : 'text-neutral-800 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white border border-transparent'
                 }`}
               >
                 Usage Analytics
@@ -321,30 +310,30 @@ print(response.json())`;
               {/* TAB 1: Profile Configuration settings */}
               {activeTab === 'profile' && (
                 <div className={CARD_BASE}>
-                  <div className="border-b border-[#e5e7eb] dark:border-[#1a1a1f] pb-3 mb-6">
-                    <h3 className="text-sm font-bold text-ink dark:text-white uppercase tracking-wider m-0">
+                  <div className="border-b border-neutral-200 dark:border-neutral-800 pb-3 mb-6">
+                    <h3 className="text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider m-0">
                       Configure Academic details
                     </h3>
-                    <p className="text-[11px] text-ink-muted mt-1 m-0">Modify institutional affiliation details and research context fields.</p>
+                    <p className="text-[11px] text-neutral-800 dark:text-neutral-300 mt-1 m-0">Modify institutional affiliation details and research context fields.</p>
                   </div>
                   
                   <form onSubmit={handleSaveProfile} className="space-y-6">
                     <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-ink-muted dark:text-[#666] mb-2">Registered Login Email</label>
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-300 mb-2">Registered Login Email</label>
                       <input
                         type="text"
                         disabled
-                        className={`${INPUT_TXT} opacity-40 bg-[#f3f4f6] dark:bg-[#111115] cursor-not-allowed border-dashed`}
+                        className={`${INPUT_TXT} bg-neutral-100/80 text-neutral-800 dark:text-neutral-200 dark:bg-neutral-900/60 cursor-not-allowed border-dashed`}
                         value={user?.email || ''}
                       />
-                      <span className="text-[9px] text-[#888] mt-1.5 block">Login email credentials cannot be altered. Contact administrator to change root credentials.</span>
+                      <span className="text-[9px] text-neutral-700 dark:text-neutral-300 mt-1.5 block">Login email credentials cannot be altered. Contact administrator to change root credentials.</span>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div>
-                        <label className="block text-[10px] font-bold uppercase tracking-wider text-ink-muted dark:text-[#666] mb-2">Researcher Category / Role</label>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-300 mb-2">Researcher Category / Role</label>
                         <select
-                          className="w-full text-[12px] bg-canvas dark:bg-[#1a1a1f] border border-[#d1d5db] dark:border-[#2e2e38] px-3 py-2.5 text-ink dark:text-[#d0d0d0] rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500/50 cursor-pointer"
+                          className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2.5 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 cursor-pointer"
                           value={role}
                           onChange={(e) => setRole(e.target.value)}
                           style={{ colorScheme: 'dark' }}
@@ -356,18 +345,18 @@ print(response.json())`;
                         </select>
                       </div>
                       <div>
-                        <label className="block text-[10px] font-bold uppercase tracking-wider text-ink-muted dark:text-[#666] mb-2">Joined Date</label>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-300 mb-2">Joined Date</label>
                         <input
                           type="text"
                           disabled
-                          className={`${INPUT_TXT} opacity-40 bg-[#f3f4f6] dark:bg-[#111115] cursor-not-allowed border-dashed`}
+                          className={`${INPUT_TXT} bg-neutral-100/80 text-neutral-800 dark:text-neutral-200 dark:bg-neutral-900/60 cursor-not-allowed border-dashed`}
                           value={user?.created_at ? new Date(user.created_at).toLocaleString() : 'N/A'}
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-ink-muted dark:text-[#666] mb-2">Academic Institution / Organization</label>
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-300 mb-2">Academic Institution / Organization</label>
                       <input
                         type="text"
                         className={INPUT_TXT}
@@ -378,7 +367,7 @@ print(response.json())`;
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-ink-muted dark:text-[#666] mb-2">Scientific Research Interest</label>
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-300 mb-2">Scientific Research Interest</label>
                       <input
                         type="text"
                         className={INPUT_TXT}
@@ -395,7 +384,7 @@ print(response.json())`;
                     )}
 
                     {profileSuccess && (
-                      <div className="text-[11px] font-medium text-emerald-600 bg-emerald-500/5 dark:bg-emerald-950/20 dark:text-[#a3e635] p-3 rounded-lg border border-emerald-500/25">
+                      <div className="text-[11px] font-medium text-neutral-800 dark:text-neutral-200 bg-neutral-100 dark:bg-neutral-800 p-3 rounded-lg border border-neutral-300 dark:border-neutral-700">
                         Profile details saved successfully.
                       </div>
                     )}
@@ -417,12 +406,12 @@ print(response.json())`;
                   
                   {/* API Key management list */}
                   <div className={CARD_BASE}>
-                    <div className="flex justify-between items-center mb-6 border-b border-[#e5e7eb] dark:border-[#1a1a1f] pb-3">
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6 border-b border-neutral-200 dark:border-neutral-800 pb-3">
                       <div>
-                        <h3 className="text-sm font-bold text-ink dark:text-white uppercase tracking-wider m-0">
+                        <h3 className="text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider m-0">
                           Active API Keys
                         </h3>
-                        <p className="text-[11px] text-ink-muted mt-1 m-0">Generate tokens to interact programmatically with the database server.</p>
+                        <p className="text-[11px] text-neutral-800 dark:text-neutral-300 mt-1 m-0">Generate tokens to interact programmatically with the database server.</p>
                       </div>
                       <button
                         onClick={() => {
@@ -435,10 +424,10 @@ print(response.json())`;
                       </button>
                     </div>
 
-                    {keysLoading && <div className="text-[11px] font-mono text-ink-muted py-4">Querying workspace keys...</div>}
+                    {keysLoading && <div className="text-[11px] font-mono text-neutral-400 py-4">Querying workspace keys...</div>}
 
                     {!keysLoading && keys.length === 0 && (
-                      <div className="text-[12px] text-ink-muted py-8 text-center border border-dashed border-[#e5e7eb] dark:border-[#2e2e38] rounded-xl bg-canvas-alt dark:bg-[#121215]/20">
+                      <div className="text-[12px] text-neutral-400 py-8 text-center border border-dashed border-neutral-200 dark:border-neutral-800 rounded-xl bg-neutral-50 dark:bg-[#121215]/20">
                         No programmatic API keys associated with this account. Click "Generate New Key" above.
                       </div>
                     )}
@@ -447,38 +436,38 @@ print(response.json())`;
                       <div className="overflow-x-auto">
                         <table className="w-full border-collapse text-[12px] text-left">
                           <thead>
-                            <tr className="border-b border-[#e5e7eb] dark:border-[#1c1c22]">
-                              <th className="font-bold text-[#888] dark:text-[#555] uppercase text-[9px] tracking-wider pb-3">Label</th>
-                              <th className="font-bold text-[#888] dark:text-[#555] uppercase text-[9px] tracking-wider pb-3">Key Prefix</th>
-                              <th className="font-bold text-[#888] dark:text-[#555] uppercase text-[9px] tracking-wider pb-3">Status</th>
-                              <th className="font-bold text-[#888] dark:text-[#555] uppercase text-[9px] tracking-wider pb-3">Created</th>
-                              <th className="font-bold text-[#888] dark:text-[#555] uppercase text-[9px] tracking-wider pb-3">Last Used</th>
-                              <th className="font-bold text-[#888] dark:text-[#555] uppercase text-[9px] tracking-wider pb-3 text-right">Action</th>
+                            <tr className="border-b border-neutral-200 dark:border-neutral-800">
+                              <th className="font-bold text-neutral-800 dark:text-neutral-300 uppercase text-[9px] tracking-wider pb-3">Label</th>
+                              <th className="font-bold text-neutral-800 dark:text-neutral-300 uppercase text-[9px] tracking-wider pb-3">Key Prefix</th>
+                              <th className="font-bold text-neutral-800 dark:text-neutral-300 uppercase text-[9px] tracking-wider pb-3">Status</th>
+                              <th className="font-bold text-neutral-800 dark:text-neutral-300 uppercase text-[9px] tracking-wider pb-3">Created</th>
+                              <th className="font-bold text-neutral-800 dark:text-neutral-300 uppercase text-[9px] tracking-wider pb-3">Last Used</th>
+                              <th className="font-bold text-neutral-800 dark:text-neutral-300 uppercase text-[9px] tracking-wider pb-3 text-right">Action</th>
                             </tr>
                           </thead>
                           <tbody>
                             {keys.map((k) => (
-                              <tr key={k.id} className="hover:bg-canvas-alt dark:hover:bg-[#16161c]/50 transition-colors duration-150">
-                                <td className="py-4 border-b border-[#e5e7eb] dark:border-[#1a1a1f] text-ink dark:text-white font-semibold">{k.label}</td>
-                                <td className="py-4 border-b border-[#e5e7eb] dark:border-[#1a1a1f] font-mono text-[11px] text-[#444] dark:text-[#bbb]">{k.key_prefix}...</td>
-                                <td className="py-4 border-b border-[#e5e7eb] dark:border-[#1a1a1f]">
+                              <tr key={k.id} className="hover:bg-neutral-50 dark:hover:bg-[#16161c]/50 transition-colors duration-150">
+                                <td className="py-4 border-b border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white font-semibold">{k.label}</td>
+                                <td className="py-4 border-b border-neutral-200 dark:border-neutral-800 font-mono text-[11px] text-[#444] dark:text-[#bbb]">{k.key_prefix}...</td>
+                                <td className="py-4 border-b border-neutral-200 dark:border-neutral-800">
                                   {k.is_active ? (
-                                    <span className="bg-emerald-500/10 text-emerald-600 dark:text-[#a3e635] border border-emerald-500/20 font-bold px-2 py-0.5 rounded-full text-[9px] uppercase tracking-wide">Active</span>
+                                    <span className="bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-700 font-bold px-2 py-0.5 rounded-full text-[9px] uppercase tracking-wide">Active</span>
                                   ) : (
-                                    <span className="bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 font-bold px-2 py-0.5 rounded-full text-[9px] uppercase tracking-wide">Revoked</span>
+                                    <span className="bg-neutral-100 text-neutral-800 dark:text-neutral-300 dark:bg-neutral-800 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700 font-bold px-2 py-0.5 rounded-full text-[9px] uppercase tracking-wide line-through">Revoked</span>
                                   )}
                                 </td>
-                                <td className="py-4 border-b border-[#e5e7eb] dark:border-[#1a1a1f] text-ink-soft text-[11px]">
+                                <td className="py-4 border-b border-neutral-200 dark:border-neutral-800 text-neutral-800 dark:text-neutral-300 text-[11px]">
                                   {k.created_at ? new Date(k.created_at).toLocaleDateString() : 'N/A'}
                                 </td>
-                                <td className="py-4 border-b border-[#e5e7eb] dark:border-[#1a1a1f] font-mono text-ink-soft text-[10px]">
+                                <td className="py-4 border-b border-neutral-200 dark:border-neutral-800 font-mono text-neutral-800 dark:text-neutral-300 text-[10px]">
                                   {k.last_used ? new Date(k.last_used).toLocaleString() : 'Never'}
                                 </td>
-                                <td className="py-4 border-b border-[#e5e7eb] dark:border-[#1a1a1f] text-right">
+                                <td className="py-4 border-b border-neutral-200 dark:border-neutral-800 text-right">
                                   {k.is_active && (
                                     <button
                                       onClick={() => handleRevokeKey(k.id)}
-                                      className="text-[9px] font-bold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 border-0 bg-transparent cursor-pointer uppercase tracking-wider transition-colors"
+                                      className="text-[9px] font-bold text-neutral-800 dark:text-neutral-300 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200 border-0 bg-transparent cursor-pointer uppercase tracking-wider transition-colors"
                                     >
                                       Revoke
                                     </button>
@@ -494,24 +483,24 @@ print(response.json())`;
 
                   {/* Programmatic API Quickstart Guide */}
                   <div className={CARD_BASE}>
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#e5e7eb] dark:border-[#1a1a1f] pb-4 mb-5">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200 dark:border-neutral-800 pb-4 mb-5">
                       <div>
-                        <h3 className="text-sm font-bold text-ink dark:text-white uppercase tracking-wider m-0">
+                        <h3 className="text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider m-0">
                           Developer Quickstart Guide
                         </h3>
-                        <p className="text-[11px] text-ink-muted mt-1 m-0">Query LIBS spectral datasets directly from your workflow scripts.</p>
+                        <p className="text-[11px] text-neutral-800 dark:text-neutral-300 mt-1 m-0">Query LIBS spectral datasets directly from your workflow scripts.</p>
                       </div>
                       
                       {/* Language Toggler Buttons */}
-                      <div className="flex border border-[#e5e7eb] dark:border-[#2e2e38] rounded-lg p-0.5 bg-canvas-alt dark:bg-[#16161c]">
+                      <div className="flex border border-neutral-200 dark:border-neutral-800 rounded-lg p-0.5 bg-neutral-50 dark:bg-[#16161c]">
                         {(['curl', 'python', 'js'] as const).map((lang) => (
                           <button
                             key={lang}
                             onClick={() => setActiveLang(lang)}
                             className={`px-3 py-1.5 text-[9px] font-bold tracking-wider uppercase rounded-md transition-all cursor-pointer ${
                               activeLang === lang
-                                ? 'bg-canvas dark:bg-[#282830] text-ink dark:text-white border border-[#d1d5db] dark:border-[#3a3a46]'
-                                : 'text-[#888] hover:text-ink dark:hover:text-white border border-transparent'
+                                ? 'bg-white dark:bg-[#282830] text-neutral-900 dark:text-white border border-neutral-200 dark:border-[#3a3a46]'
+                                : 'text-neutral-800 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white border border-transparent'
                             }`}
                           >
                             {lang === 'js' ? 'JavaScript' : lang === 'curl' ? 'cURL' : 'Python'}
@@ -521,12 +510,12 @@ print(response.json())`;
                     </div>
 
                     {/* Styled code container */}
-                    <div className="relative group bg-[#f3f4f6] dark:bg-[#0f0f12] border border-[#e5e7eb] dark:border-[#1e1e24] rounded-xl overflow-hidden shadow-inner">
-                      <div className="flex justify-between items-center bg-[#e5e7eb] dark:bg-[#181820] px-4 py-2 text-[10px] text-ink-muted dark:text-[#888] font-mono border-b border-[#d1d5db] dark:border-[#1c1c24]">
+                    <div className="relative group bg-neutral-50 dark:bg-[#0f0f12] border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden shadow-inner">
+                      <div className="flex justify-between items-center bg-neutral-100 dark:bg-[#181820] px-4 py-2 text-[10px] text-neutral-800 dark:text-neutral-300 dark:text-neutral-300 font-mono border-b border-neutral-200 dark:border-[#1c1c24]">
                         <span>libs_query.{activeLang === 'js' ? 'js' : activeLang === 'curl' ? 'sh' : 'py'}</span>
                         <button
                           onClick={handleCopySnippet}
-                          className="bg-transparent border-0 text-emerald-600 dark:text-[#a3e635] hover:underline cursor-pointer font-semibold uppercase tracking-wider text-[9px] transition-colors"
+                          className="bg-transparent border-0 text-neutral-700 dark:text-[#bbb] hover:text-neutral-900 dark:hover:text-white hover:underline cursor-pointer font-semibold uppercase tracking-wider text-[9px] transition-colors"
                         >
                           {copiedLangCode ? 'Copied' : 'Copy Code'}
                         </button>
@@ -540,13 +529,13 @@ print(response.json())`;
                   {/* Secure API Key Generation Modal */}
                   {showKeyGenModal && (
                     <div className="fixed inset-0 bg-black/60 backdrop-blur-[4px] z-[9999] flex items-center justify-center p-4">
-                      <div className="bg-canvas dark:bg-[#121215] border border-[#e5e7eb] dark:border-[#2e2e38] rounded-xl max-w-[500px] w-full p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-150">
+                      <div className="bg-white dark:bg-[#121215] border border-neutral-200 dark:border-neutral-800 rounded-xl max-w-[500px] w-full p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-150">
                         
                         {!generatedKey ? (
                           <>
-                            <h3 className="text-base font-bold text-ink dark:text-white m-0 mb-4 uppercase tracking-wider">Generate API Access Key</h3>
+                            <h3 className="text-base font-bold text-neutral-900 dark:text-white m-0 mb-4 uppercase tracking-wider">Generate API Access Key</h3>
                             <div className="mb-5">
-                              <label className="block text-[10px] font-bold uppercase tracking-wider text-ink-muted dark:text-[#666] mb-2">Friendly Key Label</label>
+                              <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-300 mb-2">Friendly Key Label</label>
                               <input
                                 type="text"
                                 value={newKeyLabel}
@@ -555,10 +544,10 @@ print(response.json())`;
                                 placeholder="e.g. Local Analytics Server"
                               />
                             </div>
-                            <div className="text-[11px] text-ink-muted leading-relaxed mb-6 bg-canvas-alt dark:bg-[#1c1c22] p-3 rounded-lg border border-[#e5e7eb] dark:border-[#1e1e26]">
+                            <div className="text-[11px] text-neutral-800 dark:text-neutral-300 leading-relaxed mb-6 bg-neutral-50 dark:bg-[#1c1c22] p-3 rounded-lg border border-neutral-200 dark:border-neutral-800/80">
                               This key permits programmatic access to all search and measurement endpoints. You may configure up to 5 active credentials.
                             </div>
-                            <div className="flex justify-end gap-3 border-t border-[#e5e7eb] dark:border-[#1a1a1f] pt-4">
+                            <div className="flex justify-end gap-3 border-t border-neutral-200 dark:border-neutral-800 pt-4">
                               <button
                                 onClick={() => setShowKeyGenModal(false)}
                                 className={BTN_SECONDARY}
@@ -575,33 +564,33 @@ print(response.json())`;
                           </>
                         ) : (
                           <>
-                            <h3 className="text-base font-bold text-emerald-600 dark:text-[#a3e635] m-0 mb-4 flex items-center gap-2 uppercase tracking-wider">
+                            <h3 className="text-base font-bold text-neutral-900 dark:text-white m-0 mb-4 flex items-center gap-2 uppercase tracking-wider">
                               Key Created Successfully
                             </h3>
-                            <div className="bg-amber-500/5 border-l-[3px] border-amber-500 p-4 mb-5 rounded-r border border-[#e5e7eb] dark:border-amber-500/25">
-                              <strong className="block text-[11px] text-amber-700 dark:text-amber-400 font-bold mb-1 uppercase tracking-wider">Store Secret Key Securely!</strong>
-                              <span className="text-[11px] text-[#6b7280] dark:text-[#888] leading-normal">
+                            <div className="bg-neutral-50 dark:bg-[#1c1c22] border-l-[3px] border-neutral-500 p-4 mb-5 rounded-r border border-neutral-200 dark:border-neutral-800">
+                              <strong className="block text-[11px] text-neutral-800 dark:text-white font-bold mb-1 uppercase tracking-wider">Store Secret Key Securely!</strong>
+                              <span className="text-[11px] text-neutral-800 dark:text-neutral-300 leading-normal">
                                 For security reasons, we only store the hash of this credentials. You will **not** be able to see this plaintext key again after closing this window.
                               </span>
                             </div>
                             <div className="mb-6">
-                              <label className="block text-[10px] font-bold uppercase tracking-wider text-ink-muted dark:text-[#666] mb-2">Plaintext API Key</label>
+                              <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-300 mb-2">Plaintext API Key</label>
                               <div className="flex gap-2">
                                 <input
                                   type="text"
                                   readOnly
                                   value={generatedKey}
-                                  className={`${INPUT_TXT} font-mono bg-[#f4f4f4] dark:bg-[#1a1a20] text-[13px] text-emerald-600 dark:text-[#a3e635] border-emerald-500/25`}
+                                  className={`${INPUT_TXT} font-mono bg-neutral-100 dark:bg-[#18181d] text-[13px] text-neutral-800 dark:text-neutral-200 border-neutral-300 dark:border-neutral-800`}
                                 />
                                 <button
                                   onClick={handleCopyKey}
-                                  className="px-4 bg-emerald-600 dark:bg-[#a3e635] text-white dark:text-black font-bold text-[10px] tracking-wider rounded-lg uppercase cursor-pointer transition-colors"
+                                  className={BTN_PRIMARY}
                                 >
                                   {copySuccess ? 'Copied' : 'Copy'}
                                 </button>
                               </div>
                             </div>
-                            <div className="flex justify-end border-t border-[#e5e7eb] dark:border-[#1a1a1f] pt-4">
+                            <div className="flex justify-end border-t border-neutral-200 dark:border-neutral-800 pt-4">
                               <button
                                 onClick={() => {
                                   setShowKeyGenModal(false);
@@ -627,13 +616,13 @@ print(response.json())`;
                   {/* Summary KPIs Row */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {[
-                      { label: 'Total Requests (30d)', value: usageSummary?.total_requests_30d || 0, color: 'text-emerald-500 dark:text-[#a3e635]' },
-                      { label: 'Data Transferred', value: formatBytes(usageSummary?.total_bytes_30d || 0), color: 'text-ink dark:text-white' },
-                      { label: 'Primary Endpoint', value: usageSummary?.most_used_endpoint || 'N/A', color: 'text-amber-500 dark:text-amber-400 font-mono text-[10px]' },
-                      { label: 'Registered Keys', value: usageSummary?.active_keys || 0, color: 'text-ink dark:text-white' },
+                      { label: 'Total Requests (30d)', value: usageSummary?.total_requests_30d || 0, color: 'text-neutral-900 dark:text-white' },
+                      { label: 'Data Transferred', value: formatBytes(usageSummary?.total_bytes_30d || 0), color: 'text-neutral-900 dark:text-white' },
+                      { label: 'Primary Endpoint', value: usageSummary?.most_used_endpoint || 'N/A', color: 'text-neutral-800 dark:text-neutral-200 font-mono text-[10px]' },
+                      { label: 'Registered Keys', value: usageSummary?.active_keys || 0, color: 'text-neutral-900 dark:text-white' },
                     ].map(({ label, value, color }) => (
-                      <div key={label} className="bg-[#fcfcfc] dark:bg-[#121215] border border-[#e5e7eb] dark:border-[#1e1e24] p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-                        <div className="text-[8px] font-bold text-ink-muted dark:text-[#555] uppercase tracking-wider mb-2">{label}</div>
+                      <div key={label} className="bg-white dark:bg-[#0f0f11] border border-neutral-200 dark:border-neutral-800 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                        <div className="text-[8px] font-bold text-neutral-800 dark:text-neutral-300 uppercase tracking-wider mb-2">{label}</div>
                         <div className={`text-lg font-black tracking-tight truncate ${color}`}>{value}</div>
                       </div>
                     ))}
@@ -642,9 +631,9 @@ print(response.json())`;
                   {/* Chart and Route Breakdown */}
                   <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-6">
                     
-                    {/* SVG Chart with Emerald Glowing Gradient */}
+                    {/* SVG Chart with Grayscale Gradient */}
                     <div className={CARD_BASE}>
-                      <h3 className="text-[11px] font-bold uppercase tracking-wider text-ink-muted dark:text-[#555] mb-5 border-b border-[#e5e7eb] dark:border-[#1a1a1f] pb-3">
+                      <h3 className="text-[11px] font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-300 mb-5 border-b border-neutral-200 dark:border-neutral-800 pb-3">
                         Daily API Request Distribution (30 Days)
                       </h3>
                       {usageSummary?.daily_breakdown?.length > 0 ? (
@@ -652,8 +641,8 @@ print(response.json())`;
                           <svg viewBox="0 0 500 160" className="w-full h-[160px] overflow-visible">
                             <defs>
                               <linearGradient id="barGlowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stopColor="#a3e635" />
-                                <stop offset="100%" stopColor="#059669" />
+                                <stop offset="0%" stopColor="#888888" />
+                                <stop offset="100%" stopColor="#404040" />
                               </linearGradient>
                             </defs>
                             
@@ -687,7 +676,7 @@ print(response.json())`;
                                       x={x + barWidth / 2}
                                       y={y - 4}
                                       textAnchor="middle"
-                                      className="text-[7.5px] font-bold font-mono fill-emerald-600 dark:fill-[#a3e635] opacity-0 group-hover:opacity-100 transition-opacity"
+                                      className="text-[7.5px] font-bold font-mono fill-neutral-900 dark:fill-white opacity-0 group-hover:opacity-100 transition-opacity"
                                     >
                                       {requests}
                                     </text>
@@ -699,16 +688,16 @@ print(response.json())`;
                             {/* Axis */}
                             <line x1="30" y1="120" x2="480" y2="120" stroke="#888" strokeWidth="1" className="opacity-30" />
                             
-                            <text x="35" y="138" textAnchor="start" className="text-[8.5px] font-mono fill-ink-muted dark:fill-[#555] font-semibold">
+                            <text x="35" y="138" textAnchor="start" className="text-[8.5px] font-mono fill-neutral-400 dark:fill-[#555] font-semibold">
                               {usageSummary.daily_breakdown[0]?.day}
                             </text>
-                            <text x="480" y="138" textAnchor="end" className="text-[8.5px] font-mono fill-ink-muted dark:fill-[#555] font-semibold">
+                            <text x="480" y="138" textAnchor="end" className="text-[8.5px] font-mono fill-neutral-400 dark:fill-[#555] font-semibold">
                               {usageSummary.daily_breakdown[usageSummary.daily_breakdown.length - 1]?.day}
                             </text>
                           </svg>
                         </div>
                       ) : (
-                        <div className="h-[120px] flex items-center justify-center text-[11px] text-ink-muted font-mono">
+                        <div className="h-[120px] flex items-center justify-center text-[11px] text-neutral-400 font-mono">
                           No programmatic API operations logged.
                         </div>
                       )}
@@ -716,14 +705,14 @@ print(response.json())`;
 
                     {/* Endpoint route breakdown list */}
                     <div className={CARD_BASE}>
-                      <h3 className="text-[11px] font-bold uppercase tracking-wider text-ink-muted dark:text-[#555] mb-4 border-b border-[#e5e7eb] dark:border-[#1a1a1f] pb-3">
+                      <h3 className="text-[11px] font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-300 mb-4 border-b border-neutral-200 dark:border-neutral-800 pb-3">
                         Routes Breakdown (30 Days)
                       </h3>
                       {usageSummary?.endpoint_breakdown?.length > 0 ? (
                         <div className="max-h-[140px] overflow-y-auto">
                           <table className="w-full border-collapse text-[11px] text-left">
                             <thead>
-                              <tr className="text-ink-muted dark:text-[#555] font-bold">
+                              <tr className="text-neutral-800 dark:text-neutral-300 font-bold">
                                 <th className="pb-2 text-[9px] uppercase tracking-wider">Route</th>
                                 <th className="pb-2 text-right text-[9px] uppercase tracking-wider">Calls</th>
                                 <th className="pb-2 text-right text-[9px] uppercase tracking-wider">Latency</th>
@@ -731,17 +720,17 @@ print(response.json())`;
                             </thead>
                             <tbody>
                               {usageSummary.endpoint_breakdown.map((item: any) => (
-                                <tr key={item.endpoint} className="border-b border-[#e5e7eb] dark:border-[#1c1c22]/50 last:border-0 hover:bg-canvas-alt dark:hover:bg-[#16161c]/30">
-                                  <td className="py-2.5 font-mono truncate max-w-[140px] text-ink dark:text-[#ccc]">{item.endpoint}</td>
-                                  <td className="py-2.5 text-right font-black text-emerald-600 dark:text-[#a3e635]">{item.requests}</td>
-                                  <td className="py-2.5 text-right text-ink-muted font-mono">{item.avg_response_ms} ms</td>
+                                <tr key={item.endpoint} className="border-b border-neutral-200 dark:border-neutral-800 last:border-0 hover:bg-neutral-50 dark:hover:bg-[#16161c]/30">
+                                  <td className="py-2.5 font-mono truncate max-w-[140px] text-neutral-900 dark:text-[#ccc]">{item.endpoint}</td>
+                                  <td className="py-2.5 text-right font-bold text-neutral-800 dark:text-neutral-200">{item.requests}</td>
+                                  <td className="py-2.5 text-right text-neutral-800 dark:text-neutral-300 font-mono">{item.avg_response_ms} ms</td>
                                 </tr>
                               ))}
                             </tbody>
                           </table>
                         </div>
                       ) : (
-                        <div className="py-8 flex items-center justify-center text-[11px] text-ink-muted font-mono">
+                        <div className="py-8 flex items-center justify-center text-[11px] text-neutral-400 font-mono">
                           No active endpoint calls recorded.
                         </div>
                       )}
@@ -750,12 +739,12 @@ print(response.json())`;
 
                   {/* Raw logs list table */}
                   <div className={CARD_BASE}>
-                    <h3 className="text-[11px] font-bold uppercase tracking-wider text-ink-muted dark:text-[#555] mb-4 border-b border-[#e5e7eb] dark:border-[#1a1a1f] pb-3">
+                    <h3 className="text-[11px] font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-300 mb-4 border-b border-neutral-200 dark:border-neutral-800 pb-3">
                       Recent Programmatic API Logs
                     </h3>
 
                     {usageLogs.length === 0 ? (
-                      <div className="text-[11px] text-ink-muted py-6 text-center font-mono">
+                      <div className="text-[11px] text-neutral-400 py-6 text-center font-mono">
                         No programmatic API logs recorded.
                       </div>
                     ) : (
@@ -763,7 +752,7 @@ print(response.json())`;
                         <div className="overflow-x-auto">
                           <table className="w-full border-collapse text-[11.5px] text-left">
                             <thead>
-                              <tr className="border-b border-[#e5e7eb] dark:border-[#1c1c22] text-ink-muted dark:text-[#555]">
+                              <tr className="border-b border-neutral-200 dark:border-neutral-800 text-neutral-800 dark:text-neutral-300">
                                 <th className="pb-2.5 font-bold uppercase text-[9px] tracking-wider">Timestamp</th>
                                 <th className="pb-2.5 font-bold uppercase text-[9px] tracking-wider">API Key</th>
                                 <th className="pb-2.5 font-bold uppercase text-[9px] tracking-wider">Method</th>
@@ -775,28 +764,26 @@ print(response.json())`;
                             </thead>
                             <tbody>
                               {usageLogs.map((log) => (
-                                <tr key={log.id} className="hover:bg-canvas-alt dark:hover:bg-[#16161c]/50 border-b border-[#e5e7eb] dark:border-[#181820]/30 last:border-b-0 transition-colors">
-                                  <td className="py-2.5 text-ink-soft font-mono text-[10px]">
+                                <tr key={log.id} className="hover:bg-neutral-50 dark:hover:bg-[#16161c]/50 border-b border-neutral-200 dark:border-neutral-800 last:border-b-0 transition-colors">
+                                  <td className="py-2.5 text-neutral-800 dark:text-neutral-300 font-mono text-[10px]">
                                     {log.created_at ? new Date(log.created_at).toLocaleString() : 'N/A'}
                                   </td>
-                                  <td className="py-2.5 font-mono text-[#555] dark:text-[#bbb]">{log.key_prefix ? `${log.key_prefix}...` : 'DEFAULT_KEY'}</td>
+                                  <td className="py-2.5 font-mono text-neutral-800 dark:text-neutral-200">{log.key_prefix ? `${log.key_prefix}...` : 'DEFAULT_KEY'}</td>
                                   <td className="py-2.5">
-                                    <span className={`px-2 py-0.5 rounded-full text-[8.5px] font-extrabold border ${
-                                      log.method === 'GET' 
-                                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-[#a3e635] border-emerald-500/10' 
-                                        : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/10'
-                                    }`}>{log.method}</span>
+                                    <span className="px-2 py-0.5 rounded-full text-[8.5px] font-extrabold border bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border-neutral-200 dark:border-neutral-700">
+                                      {log.method}
+                                    </span>
                                   </td>
-                                  <td className="py-2.5 font-mono truncate max-w-[180px] text-ink dark:text-white">{log.endpoint}</td>
+                                  <td className="py-2.5 font-mono truncate max-w-[180px] text-neutral-900 dark:text-white">{log.endpoint}</td>
                                   <td className="py-2.5 text-center">
                                     <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold font-mono border ${
                                       log.status_code >= 200 && log.status_code < 300
-                                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-[#a3e635] border-emerald-500/10'
-                                        : 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/10'
+                                        ? 'bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 border-neutral-200 dark:border-neutral-700'
+                                        : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400 border-neutral-300 dark:border-neutral-600 line-through'
                                     }`}>{log.status_code}</span>
                                   </td>
-                                  <td className="py-2.5 text-right text-ink-soft font-mono text-[11px]">{formatBytes(log.response_bytes)}</td>
-                                  <td className="py-2.5 text-right text-ink-soft font-mono text-[11px]">
+                                  <td className="py-2.5 text-right text-neutral-800 dark:text-neutral-300 font-mono text-[11px]">{formatBytes(log.response_bytes)}</td>
+                                  <td className="py-2.5 text-right text-neutral-800 dark:text-neutral-300 font-mono text-[11px]">
                                     {log.response_time_ms ? `${log.response_time_ms.toFixed(1)} ms` : 'N/A'}
                                   </td>
                                 </tr>
@@ -806,7 +793,7 @@ print(response.json())`;
                         </div>
 
                         {/* Pagination footer bar */}
-                        <div className="flex justify-between items-center mt-5 pt-4 border-t border-[#e5e7eb] dark:border-[#1a1a1f]">
+                        <div className="flex justify-between items-center mt-5 pt-4 border-t border-neutral-200 dark:border-neutral-800">
                           <button
                             onClick={() => setLogPage(Math.max(0, logPage - 1))}
                             disabled={logPage === 0 || usageLoading}
@@ -814,7 +801,7 @@ print(response.json())`;
                           >
                             Previous
                           </button>
-                          <span className="text-[11px] font-mono text-ink-muted font-bold">Page {logPage + 1}</span>
+                          <span className="text-[11px] font-mono text-neutral-800 dark:text-neutral-300 font-bold">Page {logPage + 1}</span>
                           <button
                             onClick={() => setLogPage(logPage + 1)}
                             disabled={usageLogs.length < logsPerPage || usageLoading}

@@ -76,9 +76,11 @@ LunarAtlas/
 │
 ├── core/
 │   ├── server/                    # FastAPI REST API
-│   │   └── app/core/downsampling.py  # LTTB + NIST Peak-Union Lock (Novel algorithm)
+│   │   ├── app/core/downsampling.py  # LTTB + NIST Peak-Union Lock (Novel algorithm)
+│   │   └── app/core/denoising.py  # Optional ALS + Savitzky-Golay Denoising Layer
 │   └── client/                    # React/TypeScript dashboard
-│       └── src/workers/downsampleWorker.ts  # Web Worker LTTB
+│       ├── src/workers/downsampleWorker.ts  # Web Worker LTTB
+│       └── src/components/graph/DenoiseToggle.tsx  # Denoising control UI
 │
 ├── tests/
 │   ├── test_lttb_algorithm.py     # LTTB unit tests (pytest)
@@ -152,17 +154,18 @@ flowchart LR
 
 ## Backend Software & Serving Architecture
 
-This diagram shows how the backend serves processed spectral data efficiently using downsampling, caching, and peak preservation.
+This diagram shows how the backend serves processed spectral data efficiently using an optional denoising pipeline, caching, and peak-preserving downsampling.
 
 ```mermaid
 flowchart TD
-    Client[Web UI / Client] -->|1. Request Range & Downsampling Ratio| Server[FastAPI Server]
+    Client[Web UI / Client] -->|1. Request Range, Downsampling & Denoising| Server[FastAPI Server]
     Server -->|2. Check Cache| Cache{Redis Cache}
     
-    Cache -->|Cache Hit| Return[3a. Return Downsampled Data]
+    Cache -->|Cache Hit| Return[3a. Return Processed Data]
     Cache -->|Cache Miss| DB[(PostgreSQL Database)]
     
-    DB -->|3b. Retrieve Raw High-Res Spectrum| Engine[Downsampling Engine]
+    DB -->|3b. Retrieve Raw Clean Spectrum| Denoise[3c. Denoising Pipeline: ALS -> SG]
+    Denoise -->|3d. Denoised Spectrum| Engine[Downsampling Engine]
     Engine -->|4. Apply LTTB + Peak Preservation| Server
     Server -->|5. Store Result| Cache
     Server -->|6. Return Optimized Spectrum| Client
@@ -171,17 +174,26 @@ flowchart TD
     style Server fill:#e0f2fe,stroke:#38bdf8,stroke-width:1px,color:#0369a1
     style Cache fill:#fef3c7,stroke:#f59e0b,stroke-width:1px,color:#78350f
     style DB fill:#f3e8ff,stroke:#a855f7,stroke-width:1px,color:#581c87
+    style Denoise fill:#e0e7ff,stroke:#6366f1,stroke-width:1px,color:#312e81
     style Engine fill:#dcfce7,stroke:#22c55e,stroke-width:1px,color:#14532d
 ```
+
+### Optional Spectral Denoising Layer
+To allow downstream analysis without irreversible database changes, the server exposes an optional, visualization-only denoising pipeline via the `/spectrum` endpoint:
+- **Asymmetric Least Squares (ALS)** baseline correction (`?als=true`): Estimates and subtracts slowly-varying blackbody background continuum.
+- **Savitzky-Golay (SG)** smoothing (`?savgol=true`): Fits local polynomials to suppress detector high-frequency shot noise.
+
+The pipeline always runs in the fixed logical order: **ALS $\rightarrow$ Savitzky-Golay**. Each denoising parameter combination is cached independently in Redis.
 
 ---
 
 ## Running the Tests
 
 ```bash
-# From the repository root — no database needed
+# From the repository root
 pip install pytest
 pytest tests/ -v
+pytest core/server/tests/ -v
 ```
 
 Expected output:
@@ -190,7 +202,10 @@ tests/test_pipeline_processing.py::TestBackgroundSubtraction::test_positive_chan
 tests/test_pipeline_processing.py::TestBackgroundSubtraction::test_negative_channels_clamped_to_zero PASSED
 tests/test_pipeline_processing.py::TestAblationConfigs::test_p2_no_clamp_has_negatives PASSED
 tests/test_lttb_algorithm.py::TestNISTPeakLock::test_all_target_wavelengths_present PASSED
-...
+core/server/tests/test_denoising.py::test_als_baseline_correction PASSED
+core/server/tests/test_denoising.py::test_savitzky_golay_smooth PASSED
+core/server/tests/test_denoising.py::test_savitzky_golay_validation PASSED
+core/server/tests/test_denoising.py::test_apply_denoising_pipeline PASSED
 ```
 
 ---
@@ -202,8 +217,7 @@ cd Benchmarks
 python run_benchmarks.py
 ```
 
-Benchmarks a 16,384-point mock LIBS spectrum at 4 reduction levels,
-reporting latency and peak preservation accuracy.
+Benchmarks the performance of the downsampling algorithm, reporting execution latency and elemental peak preservation accuracy.
 
 ---
 

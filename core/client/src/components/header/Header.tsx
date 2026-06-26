@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { useTheme } from '../../context/ThemeContext';
 import SignUpModal from '../auth/SignUpModal';
 
 // ─── Spectral / lunar logo — uses currentColor so it adapts to dark mode
@@ -11,7 +10,8 @@ import SignUpModal from '../auth/SignUpModal';
  */
 
 
-/** Sun icon for dark-to-light theme transition */
+// Unused icons commented out to resolve TypeScript warnings
+/*
 const SunIcon = () => (
   <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
     <circle cx="7.5" cy="7.5" r="2.8" />
@@ -26,12 +26,12 @@ const SunIcon = () => (
   </svg>
 );
 
-/** Moon icon for light-to-dark theme transition */
 const MoonIcon = () => (
   <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12.5 9.5 A5.5 5.5 0 1 1 5.5 2.5 A4 4 0 0 0 12.5 9.5Z" />
   </svg>
 );
+*/
 
 /**
  * Primary Navigation Header.
@@ -39,7 +39,7 @@ const MoonIcon = () => (
  */
 export default function Header() {
   const [showModal, setShowModal] = useState(false);
-  const { isLoggedIn, user, logout } = useAuth();
+  const { isLoggedIn, logout } = useAuth();
 
   const location = useLocation();
 

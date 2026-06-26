@@ -4,6 +4,7 @@ import { apiService } from '../services/apiService';
 export interface AuthUser {
   id: number;
   email: string;
+  username?: string;
   institution: string;
   interest: string;
   role: string;

@@ -1,0 +1,124 @@
+{
+    "measurements": {
+        "1": {
+            "noise_floor": 59.16868859345459,
+            "prominence": 177.50606578036377,
+            "n_peaks": 52,
+            "n_nist_peaks": 2
+        },
+        "2": {
+            "noise_floor": 24.414529747312397,
+            "prominence": 73.24358924193719,
+            "n_peaks": 51,
+            "n_nist_peaks": 3
+        },
+        "3": {
+            "noise_floor": 70.7613009507833,
+            "prominence": 212.28390285234988,
+            "n_peaks": 76,
+            "n_nist_peaks": 5
+        },
+        "4": {
+            "noise_floor": 46.881757935369514,
+            "prominence": 140.64527380610855,
+            "n_peaks": 91,
+            "n_nist_peaks": 3
+        }
+    },
+    "comparison_id3": {
+        "Uniform decimation": {
+            "retention": 34.21052631578947,
+            "rmse": 79.46756901655154,
+            "size": 209,
+            "latency_mean": 0.027995500364340842,
+            "latency_std": 0.0030081805722060287
+        },
+        "Max-binning": {
+            "retention": 94.73684210526315,
+            "rmse": 120.04551412547809,
+            "size": 209,
+            "latency_mean": 0.5164690999808954,
+            "latency_std": 0.0530286313353949
+        },
+        "Standard LTTB": {
+            "retention": 64.47368421052632,
+            "rmse": 90.10418355058393,
+            "size": 209,
+            "latency_mean": 3.181567100211396,
+            "latency_std": 0.3872163921474554
+        },
+        "LTTB + Peaks": {
+            "retention": 100.0,
+            "rmse": 92.24780615329132,
+            "size": 245,
+            "latency_mean": 3.258610300021246,
+            "latency_std": 0.2523753364615329
+        }
+    },
+    "dual_metrics_id3": {
+        "Standard LTTB": {
+            "local_maxima": 64.47368421052632,
+            "nist_matched": 40.0
+        },
+        "LTTB + Peaks": {
+            "local_maxima": 100.0,
+            "nist_matched": 100.0
+        }
+    },
+    "density_sweep_id3": {
+        "Uniform decimation": [
+            21.052631578947366,
+            34.21052631578947,
+            43.42105263157895,
+            52.63157894736842,
+            100.0
+        ],
+        "Max-binning": [
+            82.89473684210526,
+            94.73684210526315,
+            100.0,
+            100.0,
+            100.0
+        ],
+        "Standard LTTB": [
+            47.368421052631575,
+            64.47368421052632,
+            76.31578947368422,
+            85.52631578947368,
+            100.0
+        ],
+        "LTTB + Peaks": [
+            100.0,
+            100.0,
+            100.0,
+            100.0,
+            100.0
+        ]
+    },
+    "fidelity": {
+        "3": {
+            "pos_mean": 0.0,
+            "pos_std": 0.0,
+            "height_mean": 0.0,
+            "height_std": 0.0,
+            "pct_mean": 0.0,
+            "pct_std": 0.0
+        },
+        "4": {
+            "pos_mean": 0.0,
+            "pos_std": 0.0,
+            "height_mean": 0.0,
+            "height_std": 0.0,
+            "pct_mean": 0.0,
+            "pct_std": 0.0
+        },
+        "mean": {
+            "pos_mean": 0.0,
+            "pos_std": 0.0,
+            "height_mean": 0.0,
+            "height_std": 0.0,
+            "pct_mean": 0.0,
+            "pct_std": 0.0
+        }
+    }
+}

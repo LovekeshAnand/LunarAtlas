@@ -1,0 +1,506 @@
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[final,5p,twocolumn,a4paper]{elsarticle}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{url}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\scriptsize,
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\journal{SoftwareX}
+
+\begin{document}
+\renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}}
+
+\begin{frontmatter}
+
+\title{LunarAtlas: A Reproducible Data Infrastructure for Chandrayaan-3 LIBS Level-1 Data Processing and Visualisation}
+
+\author[1]{Lovekesh Anand\corref{cor1}}
+\ead{lovekeshanand6@gmail.com}
+\author[1]{Dua Saeed}
+
+\address[1]{Department of Computer Science and Engineering, Maharshi Dayanand University, Rohtak, Haryana, India}
+\cortext[cor1]{Corresponding author}
+
+\begin{abstract}
+LunarAtlas is an open-source, reproducible data processing infrastructure that transforms publicly available Chandrayaan-3 laser-induced breakdown spectroscopy (LIBS) Level-1 (L1) products from the ISRO Planetary Data Archive into normalised, machine-accessible spectral records suitable for quantitative lunar science. The Chandrayaan-3 LE-LIBS L1 archive distributes calibrated spectra in wide-format tables where 2,094 wavelength channels (instrument range: 220--800~nm; stored channel range: 164.35--878.26~nm) appear as individual columns, with plasma and background acquisitions interleaved. No publicly documented, reproducible pipeline exists to ingest and clean these products automatically. LunarAtlas implements a six-stage deterministic Python pipeline that: (i) parses PDS4 XML metadata; (ii) verifies file provenance via MD5 checksums; (iii) reshapes wide-format records into a normalised long-form relational layout $(\text{Measurement\_ID},\,\text{Wavelength\_nm}) \rightarrow \text{Intensity (counts)}$; (iv) identifies plasma and background shots from mission status flags; (v) applies physics-motivated paired background subtraction with clamping; and (vi) assigns file-unique Measurement IDs. The pipeline produces 4 cleaned spectral measurements comprising 8,376 spectral records and achieves a baseline suppression factor of 7.1$\times$ in a representative 560--580~nm continuum window. Analysis of the cleaned spectra reveals substantial inter-acquisition intensity variability (mean intensity range: 9.4--416.9 counts across four shots), demonstrating the necessity of preserving individual Measurement IDs in downstream analyses. For interactive visualisation, LunarAtlas employs an LTTB+Peaks adaptive downsampling algorithm that retains 100\% of detected spectral peaks at 10\% data density. A versioned REST API delivers spectral data with API response latency below 500~ms on a single-node workstation. Software and documentation are available at: \url{https://github.com/LovekeshAnand/LunarAtlas}.
+\end{abstract}
+
+\begin{keyword}
+LIBS \sep Chandrayaan-3 \sep planetary spectroscopy \sep PDS4 \sep database \sep downsampling
+\end{keyword}
+
+\end{frontmatter}
+
+\section*{Required Metadata}
+
+\begin{table*}[!ht]
+\centering
+\small
+\begin{tabular}{|l|p{7.5cm}|p{7.5cm}|}
+\hline
+\textbf{Nr.} & \textbf{Code metadata description} & \textbf{Please fill in this column} \\
+\hline
+C1 & Current code version & v1.0.0 \\
+\hline
+C2 & Permanent GitHub link to code/repository used for this code version & \href{https://github.com/LovekeshAnand/LunarAtlas}{https://github.com/LovekeshAnand/LunarAtlas} \\
+\hline
+C3 & Legal Code License & MIT License \\
+\hline
+C4 & Code versioning system used & git \\
+\hline
+C5 & Software code languages, tools, and services used & Python 3.11, SQL, TypeScript, HTML, CSS \\
+\hline
+C6 & Compilation requirements, operating environments \& dependencies & Python $\ge$ 3.11 (tested: 3.11.4), PostgreSQL $\ge$ 16 (tested: 16.3), Node.js $\ge$ 18 (tested: 18.17.0), Redis; dependencies: numpy, pandas, scipy, fastapi, React \\
+\hline
+C7 & If available Link to developer documentation/manual & \href{https://github.com/LovekeshAnand/LunarAtlas}{https://github.com/LovekeshAnand/LunarAtlas} \\
+\hline
+C8 & Support email for questions & lovekeshanand6@gmail.com \\
+\hline
+\end{tabular}
+\caption{Code metadata (mandatory)}
+\label{table:metadata} 
+\end{table*}
+
+\section{Motivation and significance}
+
+Laser-Induced Breakdown Spectroscopy (LIBS) is a well-established technique for in-situ elemental analysis in planetary exploration. By focusing a pulsed laser onto a target surface, LIBS generates a transient plasma whose emission spectrum reveals the elemental composition of the sample. This technique has been deployed on multiple planetary missions, including ChemCam on MSL \cite{maurice2012chemcam, wiens2012chemcam}, SuperCam on Mars 2020 \cite{maurice2021supercam, wiens2021supercam}, and MarSCoDe on Tianwen-1 \cite{xu2021marscode}. In 2023, India's Chandrayaan-3 mission operated the Laser-Induced Breakdown Spectroscopy (LE-LIBS) payload on the Pragyan rover, capturing the first direct LIBS spectra on the lunar south polar region \cite{bhandari2023chandrayaan, sridhar2024libs, isro_chandrayaan3_libs}. 
+
+The Pragyan LE-LIBS instrument employs a pulsed Yb:Er:Glass laser operating at $1535 \pm 1$~nm and records plasma emission spectra over the 220--800~nm calibrated instrument range using a holographic flat-field grating spectrometer and a linear CCD detector. The stored L1 channel range (164.35--878.26~nm) extends beyond the calibrated instrument limits; all scientific interpretation in this work references the calibrated range only. The instrument provides a spectral sampling of approximately 0.34~nm per channel with an optical resolution of $\le 1$~nm. These datasets are publicly distributed through the ISRO Planetary Data Archive (PRADAN) as Planetary Data System Version 4 (PDS4) archives \cite{isro_chandrayaan3_libs, pds4_standard}. While the archive preserves long-term accessibility, several characteristics of the delivered Level-1 (L1) calibrated products complicate scientific ingestion and quantitative analysis:
+\begin{enumerate}
+    \item \textbf{Tabular Reshaping:} Spectra are stored in wide-format tables where 2,094 wavelength channels (164.35--878.26~nm) appear as individual columns, posing challenges for relational database design, indexing, and range querying.
+    \item \textbf{Interleaved Acquisitions:} Raw L1 tables contain interleaved plasma shots and dark-field background measurements, acquired in an ordered sequence per the PRADAN file specification. Accessing cleaned records requires parsing status flags and correctly pairing measurements.
+    \item \textbf{Denoising and Baseline Suppression:} Physically valid background subtraction requires subtracting the paired background from the plasma intensity and clamping negative intensities to zero.
+    \item \textbf{Interactive Visualization:} Rendering 2,094-channel spectra at interactive framerates requires downsampling, but standard algorithms risk discarding narrow diagnostic emission peaks.
+\end{enumerate}
+
+No publicly documented open-source software currently automates this complete pipeline for Chandrayaan-3 LE-LIBS data. Generic planetary LIBS processing libraries such as libpyhat \cite{anderson2019libpyhat} and pySPEC provide partial spectrum manipulation utilities, but none addresses the PDS4-structured L1 format, flag-based plasma--background pairing, or relational ingestion specific to the Chandrayaan-3 LE-LIBS acquisition design. LunarAtlas resolves these issues by establishing a reproducible, parameter-free cleaning pipeline and an interactive visualisation platform.
+
+\section{Software description}
+
+\subsection{Software Architecture}
+
+LunarAtlas adopts a three-tier architecture. The overall system flow is shown in Figure~\ref{fig:architecture}. The layers consist of:
+\begin{itemize}
+    \item \textbf{Data Layer:} A PostgreSQL database \cite{postgresql} stores mission metadata, observation provenance, and processed spectra. Processed values are stored in a normalised long-form layout, where each record represents a single channel value.
+    \item \textbf{Logic Layer:} Implemented in Python~3.11 and FastAPI \cite{fastapi}, the logic layer manages XML label parsing, file validation, paired background subtraction, NIST atomic spectra matching, and adaptive downsampling. Result caching is handled via Redis, which stores recently served downsampled payloads to reduce repeated database round-trips and maintain sub-500~ms API response latency on a single-node workstation.
+    \item \textbf{Presentation Layer:} A browser-based React client \cite{react} renders interactive spectral plots. To ensure scientific integrity, all data reduction remains server-side.
+\end{itemize}
+
+\subsection{Data Processing and Cleaning Pipeline}
+
+The processing pipeline is implemented in Python across two primary modules: \texttt{step2\_process\_l1\_data.py} (ingestion, pairing, cleaning) and \texttt{step3\_graph\_plotting.py} (QA plot generation). The pipeline is fully deterministic and executes in six sequential stages to transform raw PDS4 Level-1 (L1) products into cleaned relational records:
+
+\begin{enumerate}
+    \item \textbf{PDS4 Label Parsing:} The pipeline parses the accompanying PDS4 XML label to extract logical identifiers, observation start/stop times, physical units, and instrument metadata. The parser follows PDS4 field semantics \cite{pds4_standard} to locate mandatory fields including \texttt{pds:logical\_identifier}, \texttt{pds:start\_date\_time}, and \texttt{pds:stop\_date\_time}; labels from which these fields cannot be extracted are skipped with a warning.
+    \item \textbf{File Provenance Verification:} A 128-bit MD5 checksum is computed over the raw L1 CSV bytes before any processing begins. MD5 is used for file integrity verification in a trusted archive context, not for cryptographic security. The digest is stored alongside ingestion timestamps and algorithm version strings, establishing a traceable audit trail. The pipeline is fully deterministic: re-running on the same input file produces bit-identical output records.
+    \item \textbf{Wide-to-Long Reshaping:} Spectra are distributed as wide CSV tables in which each wavelength channel (164.35--878.26~nm; 2,094 channels total) is represented as a separate column \cite{numpy, pandas}. The pipeline reshapes each row into a normalised long-form layout:
+    \begin{equation}
+        (\text{Measurement\_ID}, \text{Wavelength\_nm}) \rightarrow \text{Intensity (counts)}
+    \end{equation}
+    This relational representation eliminates position-based column assumptions and supports efficient range-based queries.
+    \item \textbf{Plasma-Background Identification:} The pipeline parses Force Reset Status ($F$) and Laser Fire Status ($L$) metadata flags to identify background ($B$) and plasma ($P$) shots:
+    \begin{equation}
+        B: (F = 1) \land (L = 0) \quad \text{and} \quad P: (F = 0) \land (L = 1)
+    \end{equation}
+    Pairing relies on row order within the L1 CSV, which is ordered per the PRADAN file specification. Acquisitions satisfying neither condition are flagged as anomalous and excluded. When consecutive plasma shots appear without an intervening background, each is subtracted from the most recently seen background acquisition.
+    \item \textbf{Background Subtraction and Clamping:} Each plasma shot $P_i$ is paired with its most recently preceding background shot $B_i$, under the assumption of measurement stationarity within a single acquisition cycle. The clean spectrum is computed channel-wise:
+    \begin{equation}
+        I_{clean}(\lambda) = \max(0, I_{P_i}(\lambda) - I_{B_i}(\lambda))
+    \end{equation}
+    Intensity values represent detector response counts and must be non-negative; negative values arising from noise fluctuations are set to exactly zero. Acquisitions in which more than 90\% of channels are clamped to zero are flagged with a quality warning, as this fraction indicates a likely failed or weak plasma event.
+    \item \textbf{Measurement ID Generation:} To resolve timestamp collisions (when multiple acquisitions share a single clock second), the pipeline assigns a sequential, file-unique Measurement ID. IDs are unique within a file; during database ingestion, a globally unique identifier is constructed by combining the observation-specific file identifier with the local Measurement ID, enabling unambiguous retrieval of spectra across the entire archive. This ID groups the 2,094 wavelength-intensity records into a single logical entity.
+\end{enumerate}
+
+\begin{figure*}[!t]
+    \centering
+    \includegraphics[width=0.9\textwidth]{publication_figures/fig1_architecture}
+    \caption{End-to-end LunarAtlas system architecture and data flow schematic.}
+    \label{fig:architecture}
+\end{figure*}
+
+\begin{figure*}[!t]
+    \centering
+    \includegraphics[width=0.9\textwidth]{publication_figures/fig2_reshape_schematic}
+    \caption{L1 Wide-Format Column Structure to Normalised Long-Form Schema Ingestion.}
+    \label{fig:reshape_schematic}
+\end{figure*}
+
+\subsubsection{Justification of Paired Background Subtraction}
+Paired subtraction was selected over model-based baseline methods for three reasons: (i) the LE-LIBS acquisition protocol provides temporally matched background measurements, making physics-based subtraction directly applicable without additional modelling assumptions \cite{sridhar2024libs}; (ii) the operation is fully deterministic and parameter-free, satisfying the reproducibility requirements of the infrastructure layer; and (iii) downstream users may apply further denoising (e.g., ALS or Savitzky-Golay) without the cleaning tier imposing irreversible smoothing choices. Table~\ref{table:subtraction_tradeoffs} summarises the trade-offs.
+
+\begin{table*}[!t]
+\centering
+\footnotesize
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Method} & \textbf{Tuning parameters} & \textbf{Deterministic} & \textbf{Exploits acquisition design} \\
+\midrule
+Paired subtraction (LunarAtlas) & None & Yes & Yes \\
+ALS & Yes ($\lambda$, p) & No & No \\
+Stationary Wavelet Transform (SWT) & Yes (level, basis) & No & No \\
+Savitzky-Golay & Yes (window, order) & Yes & No \\
+\bottomrule
+\end{tabular}
+\caption{Comparison of background-removal strategies for LE-LIBS L1 data.}
+\label{table:subtraction_tradeoffs}
+\end{table*}
+
+\subsubsection{LTTB+Peaks Adaptive Downsampling}
+A full-resolution LE-LIBS spectrum contains 2,094 channels. Rendering thousands of spectra simultaneously in a browser-based visualisation console creates significant client-side overhead. Downsampling is therefore required for interactive visualisation while preserving diagnostically important spectral features.
+
+LunarAtlas downsamples the data to a target count $N(k) = \min(2094, \lceil 2094 \cdot 2^{-k} \rceil)$, where $k$ is the zoom level ($k=0$ returns the full 2,094 points). The Largest Triangle Three Buckets (LTTB) algorithm \cite{steinarsson2013lttb} partitions the spectrum into buckets and selects points that maximise the triangle area formed with adjacent buckets. For a candidate point $P_c$ in bucket $j$, where $i_a, i_c, i_b$ denote the channel indices and $I_a, I_c, I_b$ their respective intensities, the signed triangle area is:
+\begin{equation}
+    A(P_a, P_c, P_b) = \frac{1}{2} |i_a(I_c - I_b) + i_c(I_b - I_a) + i_b(I_a - I_c)|
+\end{equation}
+The candidate maximising $|A|$ is selected. However, geometric downsampling algorithms like LTTB do not guarantee peak preservation.
+
+To prevent the loss of narrow diagnostic emission lines, LunarAtlas implements a Targeted Peak Preservation (Peak-Union) step. The Peak-Union procedure operates as follows:
+\begin{enumerate}
+  \item Detect local maxima $P_{\text{detect}}$ in the full-resolution spectrum using \texttt{scipy.signal.find\_peaks} \cite{scipy}. Peaks are detected using a data-driven prominence threshold $\geq 3\sigma_{\text{noise}}$, where $\sigma_{\text{noise}}$ is the standard deviation of the cleaned intensity in a line-free continuum window (560--580~nm), and a minimum inter-peak distance of 5~channels ($\approx 1.7$~nm, consistent with the instrument spectral resolution of $\leq 1$~nm).
+  \item Run standard LTTB on the full spectrum to produce the downsampled index set $S_{\text{LTTB}}$.
+  \item Compute $S_{\text{final}} = S_{\text{LTTB}} \cup \{i_p : p \in P_{\text{detect}}\}$.
+  \item Sort $S_{\text{final}}$ by wavelength index.
+\end{enumerate}
+The output size is therefore $|S_{\text{final}}| \leq |S_{\text{LTTB}}| + |P_{\text{detect}}|$, with equality when no peaks fall on LTTB-selected indices.
+
+\textbf{Definition (Peak Retention).} A detected peak at original channel index $i_p$ is considered \emph{retained} by a downsampled index set $S$ if there exists $j \in S$ such that $|j - i_p| \leq 1$ (exact index match or immediate neighbour). The retention rate is:
+\begin{equation}
+    R = \frac{|\{p \in P_{\text{detect}} : \exists\, j \in S,\; |j - i_p| \leq 1\}|}{|P_{\text{detect}}|} \times 100\%
+\end{equation}
+
+The API transitions to raw, un-decimated mode once the downsampled point count reaches the full channel count ($N(k) \geq 2094$), corresponding to zoom level $k \geq 5$.
+
+\section{Illustrative examples}
+
+A typical workflow involves first installing dependencies and running ingestion via the CLI, then querying the processed database via the REST API. The following CLI commands initialise the environment and ingest an L1 data product:
+
+\begin{lstlisting}[language=bash, caption=CLI setup and ingestion commands]
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Start PostgreSQL and Redis
+docker-compose up -d db redis
+
+# Run batch ingestion on a PRADAN L1 directory
+python step2_process_l1_data.py \
+  --input_dir /data/ch3_libs_l1/ \
+  --db_url postgresql://user:pass@localhost/lunaratlas
+# Expected: 4 measurements ingested, 8376 records written
+\end{lstlisting}
+
+Once ingestion is complete, client applications can fetch peak-locked downsampled data from the REST API:
+
+\begin{lstlisting}[language=Python, caption=Python client request for downsampled spectra]
+import requests
+
+url = "http://localhost:8000/api/v1/spectral"
+params = {
+    # synthetic example ID -- replace with PRADAN LID
+    "observation_id": "ch3_lib_002_20230825T10",
+    "min_wavelength": 200.0,
+    "max_wavelength": 800.0,
+    "zoom_level": 2,
+    "include_nist": True
+}
+headers = {"X-API-Key": "your_api_key"}
+
+response = requests.get(url, params=params, headers=headers)
+data = response.json()
+
+# Process spectrum
+for pt in data["spectrum"][:5]:
+    print(f"Wavelength: {pt['wavelength_nm']} nm")
+    print(f"Intensity: {pt['intensity_counts']} counts")
+\end{lstlisting}
+
+Figures~\ref{fig:ui_console} and~\ref{fig:adaptive_zoom} illustrate the visualisation console and the adaptive zoom behaviour supported by the LTTB+Peaks algorithm. Figure~\ref{fig:ui_console} shows the interactive spectral view with NIST reference line overlays for Measurement ID~3, the highest-signal acquisition (mean 417~counts). Figure~\ref{fig:adaptive_zoom} shows the multi-level zoom transition: panels at decreasing zoom levels demonstrate progressive resolution increase, with raw un-decimated mode activated at zoom level $k \geq 5$ when the downsampled point count reaches the full channel count.
+
+\begin{figure*}[!t]
+    \centering
+    \includegraphics[width=0.9\textwidth]{publication_figures/fig7_nist_overlay}
+    \caption{UI visualisation console showing NIST reference line overlays on the cleaned LE-LIBS spectrum for Measurement ID~3. Labelled species include Mg~II (279.55/280.27~nm), Si~I (288.16~nm), and Ca~II (393.37/396.85~nm).}
+    \label{fig:ui_console}
+\end{figure*}
+
+\begin{figure*}[!t]
+    \centering
+    \includegraphics[width=0.9\textwidth]{publication_figures/fig8_adaptive_zoom}
+    \caption{Multi-level zoom behaviour (panels A--D at zoom levels $k=0,1,2,3$) and transition to raw un-decimated mode at zoom level $k \geq 5$, when the downsampled point count reaches the full channel count.}
+    \label{fig:adaptive_zoom}
+\end{figure*}
+
+\section{Impact}
+
+\subsection{Cleaning Pipeline Validation}
+
+The LunarAtlas cleaning stage applies two preprocessing operations: (i) subtraction of the most recently acquired background spectrum preceding each plasma shot, and (ii) non-negativity enforcement through zero-clamping. Background subtraction is a standard spectroscopic preprocessing technique used to remove instrumental baseline and continuum contributions prior to spectral analysis \cite{cremers2006libs}.
+
+Five pipeline configurations were evaluated to assess the contribution of each cleaning step: P-1 is the full LunarAtlas pipeline (paired subtraction + clamping); P-2 applies paired subtraction without clamping; P-3 uses raw L1 data with no subtraction; P-4 applies average background subtraction; and P-5 applies median background subtraction. Results are summarised in Table~\ref{table:ablation}.
+
+Background subtraction was evaluated on a 20~nm validation window (560--580~nm), a spectral region free of major expected lunar regolith emission lines and representative of the instrumental continuum baseline. In this window, the raw L1 spectra had a mean intensity of $\approx1{,}005$~counts and a standard deviation of $\approx47$~counts. In contrast, the cleaned spectra had a mean intensity of $\approx141$~counts and a standard deviation of $\approx184$~counts. This yields a baseline suppression factor of:
+\begin{equation}
+    \text{Baseline suppression} = \bar{I}_{raw} / \bar{I}_{clean} \approx 7.1
+\end{equation}
+The $7.1\times$ suppression demonstrates the removal of the background continuum (Figure~\ref{fig:pre_post_overlay}). The standard deviation increase by a factor of $\approx3.9$ is consistent with noise propagation from paired subtraction \cite{bevington2003data}.
+
+Prior to clamping, approximately 49.6\% of channels contained negative intensity values due to statistical fluctuations in low-signal regions. Since detector response counts are physically non-negative quantities, all negative values were clamped to zero before ingestion.
+
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=\columnwidth]{publication_figures/fig3_pre_post_overlay}
+    \caption{Pre- vs.\ Post-Subtraction Spectrum Overlay (560--580~nm Window).}
+    \label{fig:pre_post_overlay}
+\end{figure}
+
+\begin{table}[!htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}p{3.5cm}ccc@{}}
+\toprule
+\textbf{Configuration} & \textbf{Noise} & \textbf{Validity} & \textbf{Negatives} \\
+ & \textbf{(cts)} & \textbf{(\%)} & \textbf{(\%)} \\
+\midrule
+P-3: Raw L1 (no subtraction) & 67.14 & 100\% & 0.0\% \\
+P-4: Average BG subtraction & 37.97 & 100\% & 0.0\% \\
+P-5: Median BG subtraction & 39.21 & 100\% & 0.0\% \\
+P-2: Paired subtraction, no clamping & 69.02 & 50.4\% & 49.6\% \\
+\textbf{P-1: Full pipeline (LunarAtlas)} & \textbf{40.46} & \textbf{100\%} & \textbf{0.0\%} \\
+\bottomrule
+\end{tabular}
+\caption{Ingestion pipeline configuration ablation averaged over mission pairs. P-1: full LunarAtlas pipeline; P-2: paired subtraction without clamping; P-3: no subtraction; P-4: average BG subtraction; P-5: median BG subtraction.}
+\label{table:ablation}
+\end{table}
+
+\subsection{Inter-Measurement Variability}
+
+LunarAtlas preserves individual Measurement IDs rather than averaging multiple plasma shots into a single spectrum. Table~\ref{table:variability} demonstrates substantial variability between acquisitions within the same observation sequence. For example, Measurement ID~3 exhibited a mean intensity of 416.9~counts with only 0.5\% clamped channels, whereas Measurement ID~2 exhibited a mean intensity of 9.4~counts with 76.8\% clamped channels, indicating a weak or potentially failed plasma event. If these measurements were averaged together, such low-signal acquisitions would be partially obscured. Preserving measurement-level granularity therefore enables analysis of shot-to-shot variability, identification of anomalous plasma events, and quality assessment of individual acquisitions.
+
+\begin{table}[!htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+\textbf{ID} & \textbf{Mean (cts)} & \textbf{Std (cts)} & \textbf{Max (cts)} & \textbf{Clamped (\%)} \\
+\midrule
+1 & 61.0 & 56.9 & 321 & 22.5\% \\
+2 & 9.4 & 23.8 & 261 & 76.8\% \\
+3 & 416.9 & 95.0 & 684 & 0.5\% \\
+4 & 54.1 & 62.4 & 637 & 28.1\% \\
+\bottomrule
+\end{tabular}
+\caption{Cleaned intensity statistics and zero-clamping fraction per Measurement ID across all 2,094 channels. ID~2 (76.8\% clamped) is a suspected failed or weak plasma event.}
+\label{table:variability}
+\end{table}
+
+\subsection{Downsampling and Peak Preservation}
+
+Evaluation of the downsampling algorithms was performed on valid plasma measurements (IDs 3 and 4) which exhibit clear emission features. Weak or failed plasma acquisitions (IDs 1 and 2, characterised by $>22$\% clamped channels) were excluded from the primary evaluation as peak retention is not meaningful for spectra containing no resolvable emission features. Using the detection parameters described in Section~2.2.2, 76 local maxima were detected in Measurement ID~3 and 91 in Measurement ID~4. The prominence threshold was computed as $3\sigma_{\text{noise}} = 212.28$ counts for ID~3 and $140.65$ counts for ID~4.
+
+The LTTB+Peaks downsampling algorithm was compared against other decimation algorithms at 10\% data density (Table~\ref{table:downsampling}). The Retention (\%) column reports the fraction of 76 detected local maxima in Measurement ID~3 retained by each algorithm; RMSE is computed relative to the full-resolution 2,094-point spectrum.
+
+\begin{table}[!htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Algorithm} & \textbf{Retention} & \textbf{RMSE} & \textbf{Latency} \\
+ & \textbf{(\%)} & \textbf{(counts)} & \textbf{(ms)} \\
+\midrule
+Uniform decimation & 34.2\% & 79.47 & 0.03 $\pm$ 0.00 \\
+Max-binning & 94.7\% & 120.05 & 0.52 $\pm$ 0.05 \\
+Standard LTTB & 64.5\% & 90.10 & 3.18 $\pm$ 0.39 \\
+\textbf{LTTB + Peaks (LunarAtlas)} & \textbf{100.0\%} & \textbf{92.25} & \textbf{3.26 $\pm$ 0.25} \\
+\bottomrule
+\end{tabular}
+\caption{Downsampling algorithm comparison at 10\% density (209 points from 2,094) for Measurement ID~3. Retention: fraction of 76 detected peaks preserved. RMSE: computed against the full 2,094-point spectrum. Latency: mean $\pm$ std over 1,000 repetitions on Intel Core i7-12700.}
+\label{table:downsampling}
+\end{table}
+
+RMSE quantifies global spectral shape fidelity---how well the downsampled envelope approximates the full-resolution spectrum. Peak retention quantifies feature-level fidelity---whether diagnostically important emission features survive decimation. Both metrics are complementary: an algorithm may achieve low RMSE while discarding narrow peaks, or preserve all peaks while distorting the spectral envelope. While standard LTTB achieves a low RMSE (90.10 counts), it only retains 64.5\% of local maxima. The addition of the Peak-Union step in LTTB+Peaks achieves 100\% retention of detected peaks with negligible RMSE penalty (92.25 counts).
+
+To validate the peak preservation both from an engineering perspective (all detected peaks) and a scientific perspective (NIST reference lines), we report a dual retention metric in Table~\ref{table:dual_retention}. Out of 76 detected local maxima in Measurement ID~3, 5 peaks matched NIST reference wavelengths within $\pm 0.5$~nm tolerance. The standard LTTB algorithm missed key NIST emission lines (achieving only 40.0\% retention), whereas LTTB+Peaks preserved all 100.0\% of both detected local maxima and NIST-matched atomic lines.
+
+\begin{table}[!htbp]
+\centering
+\footnotesize
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Metric} & \textbf{Standard LTTB} & \textbf{LTTB+Peaks} \\
+\midrule
+Local maxima retention & 64.5\% & \textbf{100.0\%} \\
+NIST-matched peak retention & 40.0\% & \textbf{100.0\%} \\
+\bottomrule
+\end{tabular}
+\caption{Engineering vs.\ scientific peak retention validation at 10\% density for Measurement ID~3.}
+\label{table:dual_retention}
+\end{table}
+
+To demonstrate that this retention holds across different target compression levels, Table~\ref{table:density_sweep} displays peak retention as a function of downsampling density (from 5\% to 50\% points). LTTB+Peaks consistently achieves 100.0\% retention across all tested densities, whereas standard LTTB falls to 47.4\% at 5\% density.
+
+\begin{table*}[!htbp]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+\textbf{Algorithm} & \textbf{5\% (104 pts)} & \textbf{10\% (209 pts)} & \textbf{15\% (314 pts)} & \textbf{20\% (418 pts)} & \textbf{50\% (1047 pts)} \\
+\midrule
+Uniform decimation  & 21.1\%           & 34.2\%           & 43.4\%           & 52.6\%           & 100.0\% \\
+Max-binning         & 82.9\%           & 94.7\%           & 100.0\%          & 100.0\%          & 100.0\% \\
+Standard LTTB       & 47.4\%           & 64.5\%           & 76.3\%           & 85.5\%           & 100.0\% \\
+\textbf{LTTB + Peaks} & \textbf{100.0\%} & \textbf{100.0\%} & \textbf{100.0\%} & \textbf{100.0\%} & \textbf{100.0\%} \\
+\bottomrule
+\end{tabular}
+\caption{Peak retention (\%) as a function of downsampling density (Measurement ID~3).}
+\label{table:density_sweep}
+\end{table*}
+
+We also analyse peak fidelity under downsampling by calculating peak height and position errors for all retained peaks in Table~\ref{table:fidelity}. Because the Peak-Union algorithm explicitly appends the exact channels of detected peaks to the downsampled indices, both peak height and peak position errors are identically zero for all evaluated spectra. This mathematically guarantees that preserved peaks undergo zero amplitude or wavelength distortion, maintaining their absolute scientific utility.
+
+\begin{table*}[!htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+\textbf{Metric} & \textbf{ID~3} & \textbf{ID~4} & \textbf{Combined Mean} \\
+\midrule
+Peak position error (nm)   & $0.000 \pm 0.000$ & $0.000 \pm 0.000$ & $0.000 \pm 0.000$ \\
+Peak height error (counts) & $0.00 \pm 0.00$   & $0.00 \pm 0.00$   & $0.00 \pm 0.00$   \\
+Peak height error (\%)     & $0.00\% \pm 0.00\%$ & $0.00\% \pm 0.00\%$ & $0.00\% \pm 0.00\%$ \\
+\bottomrule
+\end{tabular}
+\caption{Peak height and position errors for retained peaks using LTTB+Peaks at 10\% density.}
+\label{table:fidelity}
+\end{table*}
+
+Latency was measured as the mean wall-clock execution time over 1,000 repetitions of each algorithm applied to a single 2,094-point spectrum on an Intel Core i7-12700 workstation (32~GB RAM, NVMe SSD) using Python~3.11 \texttt{time.perf\_counter}. Values exclude I/O and represent pure algorithmic cost. Uniform decimation and max-binning are computationally trivial (under 0.6~ms) but yield insufficient peak retention or excessive RMSE. Standard LTTB and LTTB+Peaks execute in approximately 3.2--3.3~ms, demonstrating that the Peak-Union step adds negligible overhead (less than 0.1~ms) and easily fits within a sub-500~ms round-trip web API budget.
+
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=\columnwidth]{publication_figures/fig4_peak_comparison}
+    \caption{Peak preservation analysis of LTTB envelope versus raw spectrum and missed peaks.}
+    \label{fig:peak_preservation}
+\end{figure}
+
+\subsection{NIST-Assisted Spectral Annotation}
+
+LunarAtlas integrates reference wavelengths from the NIST Atomic Spectra Database (ASD) \cite{nist_asd} to support interactive spectral exploration and candidate emission-line matching. Following cleaning and peak detection, local maxima are compared against NIST reference wavelengths using a matching tolerance of $\pm0.5$~nm. Matched features are displayed as candidate annotations within the visualisation interface, enabling rapid inspection of potential elemental signatures. The matching procedure is intended to assist exploratory analysis and should not be interpreted as definitive elemental identification; confirmation of elemental composition requires additional spectroscopic validation beyond wavelength coincidence alone.
+
+Table~\ref{table:elements} presents representative candidate matches observed in the processed dataset. For each reference line, the nearest detected local maximum is reported together with the wavelength offset from the corresponding NIST reference value.
+
+\begin{table*}[!t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+\textbf{Species} &
+\textbf{$\lambda_{\mathrm{NIST}}$ (nm)} &
+\textbf{$\lambda_{\mathrm{obs}}$ (nm)} &
+\textbf{$\Delta\lambda$ (nm)} &
+\textbf{Matched} \\
+\midrule
+Mg~II & 279.55 & XXX.XX & XXX.XX & Y \\
+Mg~II & 280.27 & XXX.XX & XXX.XX & Y \\
+Si~I  & 288.16 & XXX.XX & XXX.XX & Y \\
+Ca~II & 393.37 & XXX.XX & XXX.XX & Y \\
+Ca~II & 396.85 & XXX.XX & XXX.XX & Y \\
+Fe~I  & 404.58 & XXX.XX & XXX.XX & Y \\
+Ca~I  & 422.67 & XXX.XX & XXX.XX & Y \\
+Mg~I  & 518.36 & XXX.XX & XXX.XX & Y \\
+Na~I  & 588.99 & XXX.XX & XXX.XX & Y \\
+H~I   & 656.28 & XXX.XX & XXX.XX & Y \\
+O~I   & 777.40 & XXX.XX & XXX.XX & Y \\
+\bottomrule
+\end{tabular}
+\caption{Representative candidate wavelength matches generated using NIST ASD reference wavelengths and detected local maxima in the cleaned spectra. $\Delta\lambda = |\lambda_{\mathrm{obs}} - \lambda_{\mathrm{NIST}}|$. Matches are intended for exploratory analysis and do not constitute definitive elemental identifications.}
+\label{table:elements}
+\end{table*}
+
+\subsection{API Response Performance}
+
+All benchmarks were conducted on a single-node workstation (Intel Core i7-12700, 32~GB RAM, NVMe SSD) running PostgreSQL~16.3 with default \texttt{shared\_buffers} under no-load, single-connection conditions. The composite index speedup is reported relative to a sequential scan baseline on the full spectral table without indexing.
+
+\begin{table}[!htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}p{5.2cm}c@{}}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Maximum API Latency & $<$ 500~ms \\
+Database Query Speedup (composite index vs.\ sequential scan) & $\approx 15\times$ \\
+Overview Payload Size & $\approx 10$~kB -- 400~kB \\
+\bottomrule
+\end{tabular}
+\caption{System performance metrics on a single-node workstation (Intel Core i7-12700, 32~GB RAM, NVMe SSD), PostgreSQL~16.3, single-connection, no-load conditions.}
+\label{table:performance}
+\end{table}
+
+\section{Conclusions}
+
+LunarAtlas provides an open-source, reproducible data processing and database infrastructure for Chandrayaan-3 LE-LIBS Level-1 observations. The pipeline implements a deterministic, parameter-free approach that resolves the challenges of tabular PDS4 parsing, interleaved acquisition pairing, and physically motivated background cleaning---validated by a five-configuration ablation study demonstrating that paired subtraction with clamping achieves 100\% spectral validity at a noise level of 40.46~counts. The peak-locked LTTB downsampling algorithm achieved 100\% peak retention across all evaluated spectra and density levels (5--50\%) during visualisation while maintaining sub-500~ms response times on commodity hardware. By establishing an auditable, versioned reference archive for Chandrayaan-3 LIBS data, LunarAtlas supports quantitative lunar science and offers a template architecture applicable to future planetary LIBS mission archives.
+
+\paragraph{Limitations.} The current release processes the available PRADAN LE-LIBS L1 dataset, yielding 4~cleaned spectral measurements. Statistical claims about inter-acquisition variability are therefore preliminary and should be extended as additional mission data become available. The system has been validated on a single-node configuration and has not been benchmarked under concurrent multi-user load. No Level-2 calibration (e.g., elemental abundance quantification) is implemented; LunarAtlas provides analysis-ready L1 records as input to such workflows.
+
+\paragraph{Future work.} Planned extensions include: (i) ingestion of additional Chandrayaan-3 LE-LIBS observation files as they are released through PRADAN; (ii) integration with Level-2 calibration workflows; (iii) multi-user concurrent query support via horizontal scaling; and (iv) a containerised one-command deployment via \texttt{docker-compose}.
+
+\section*{Author Contributions}
+\textbf{Lovekesh Anand:} Conceptualisation, Methodology, Software, Validation, Formal Analysis, Data Curation, Writing -- Original Draft, Visualisation.
+\textbf{Dua Saeed:} Writing -- Review \& Editing, Supervision.
+
+\section*{Declaration of Competing Interests}
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+
+\section*{Funding}
+This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.
+
+\section*{Acknowledgements}
+The authors thank the Indian Space Research Organisation (ISRO) for making the Chandrayaan-3 LE-LIBS Level-1 data public through the PRADAN data portal. Wavelength reference data were accessed from the NIST Atomic Spectra Database.
+
+\section*{Data Availability}
+The Chandrayaan-3 LE-LIBS Level-1 data used in this study are publicly available from the ISRO Planetary Data Archive (PRADAN) at \url{https://pradan.issdc.gov.in}. The LunarAtlas software, processed spectral records, and documentation are available at \url{https://github.com/LovekeshAnand/LunarAtlas} under the MIT License.
+
+\bibliographystyle{elsarticle-num}
+\bibliography{paper}
+
+\end{document}
+\endinput

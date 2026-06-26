@@ -1,5 +1,6 @@
 import { useMemo, useEffect, useRef, useState } from 'react';
-import { type MeasurementInfo } from '../../services/apiService';
+import { type MeasurementInfo, type DenoiseMode } from '../../services/apiService';
+import DenoiseToggle from '../graph/DenoiseToggle';
 
 const ELEMENTS = ['All', 'Fe', 'Mg', 'Si', 'Al', 'Ca', 'Ti', 'Na', 'H₂O', 'O'];
 
@@ -379,6 +380,7 @@ export default function RangeSelectorPanel({
   lttbEnabled, onLttbEnabledChange,
   activeMeasurementIds, onActiveMeasurementIdsChange,
   showConsole, setShowConsole, health,
+  denoiseMode, onDenoiseModeChange,
 }: { 
   mode: 'L1' | 'L2' | 'overlay', 
   onModeChange: (m: 'L1' | 'L2' | 'overlay') => void,
@@ -401,6 +403,8 @@ export default function RangeSelectorPanel({
   showConsole?: boolean,
   setShowConsole?: (v: boolean) => void,
   health?: any,
+  denoiseMode: DenoiseMode,
+  onDenoiseModeChange: (mode: DenoiseMode) => void,
 }) {
   const ABS_MIN = 164.35;
   const ABS_MAX = 878.26;
@@ -624,6 +628,11 @@ export default function RangeSelectorPanel({
             <div>
               <FieldLabel text="Downsample Toggle" />
               <LttbToggle enabled={lttbEnabled} onChange={onLttbEnabledChange} />
+            </div>
+
+            {/* Row 2: Denoising Toggle */}
+            <div>
+              <DenoiseToggle value={denoiseMode} onChange={onDenoiseModeChange} />
             </div>
 
             {/* Row 2: Data Density Slider */}

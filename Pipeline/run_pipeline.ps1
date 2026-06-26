@@ -20,9 +20,20 @@ if ([string]::IsNullOrWhiteSpace($ingestInput)) {
 if ($ingestInput.ToLower() -eq "y" -or $ingestInput.ToLower() -eq "yes") {
     $ingest = "yes"
     $ingestFlag = "y"
+
+    # Collect database credentials directly (no .env dependency)
+    Write-Host ""
+    Write-Host "[INPUT REQUIRED] Enter the PostgreSQL database URL." -ForegroundColor Cyan
+    Write-Host "  Format: postgresql://user:password@host:port/dbname"
+    $dbUrl = Read-Host "  DATABASE_URL"
+    if ([string]::IsNullOrWhiteSpace($dbUrl)) {
+        Write-Host "[ERROR] DATABASE_URL cannot be empty when ingestion is enabled." -ForegroundColor Red
+        Exit 1
+    }
 } else {
     $ingest = "no"
     $ingestFlag = "n"
+    $dbUrl = ""
 }
 
 Write-Host ""
@@ -36,10 +47,11 @@ Write-Host "--------------------------------------------------------------------
 Write-Host ""
 
 # Helper to run python script and check status
-function Run-Step($script, $argsList) {
-    Write-Host "[RUNNING] python $script $argsList" -ForegroundColor Yellow
-    if ($argsList) {
-        python $script $argsList
+function Run-Step {
+    param([string]$script, [string[]]$argsList)
+    Write-Host "[RUNNING] python $script $($argsList -join ' ')" -ForegroundColor Yellow
+    if ($argsList.Count -gt 0) {
+        python $script @argsList
     } else {
         python $script
     }
@@ -68,11 +80,11 @@ Run-Step "step5_md5_checksums.py"
 Run-Step "step6_segregate_data_folders.py" $ingestFlag
 
 # Stage 7: Database Ingestion
-Run-Step "step7_db_ingestion.py" $ingestFlag
+Run-Step "step7_db_ingestion.py" -argsList @($ingestFlag, $dbUrl)
 
 # Stage 8: Quantitative Data & Checksum Verification
 if ($ingest -eq "yes") {
-    Run-Step "step8_data_verification.py"
+    Run-Step "step8_data_verification.py" -argsList @($DEFAULT_PROCESSED_DIR, $dbUrl)
 } else {
     Write-Host "======================================================================" -ForegroundColor Yellow
     Write-Host " [STAGE 8: SKIPPED]" -ForegroundColor Yellow

@@ -19,9 +19,20 @@ INGEST_INPUT=${INGEST_INPUT:-y}
 if [[ "$INGEST_INPUT" =~ ^[Yy]$ ]]; then
     INGEST="yes"
     INGEST_FLAG="y"
+
+    # Collect database credentials directly (no .env dependency)
+    echo ""
+    echo "[INPUT REQUIRED] Enter the PostgreSQL database URL."
+    echo "  Format: postgresql://user:password@host:port/dbname"
+    read -p "  DATABASE_URL: " DB_URL
+    if [ -z "$DB_URL" ]; then
+        echo "[ERROR] DATABASE_URL cannot be empty when ingestion is enabled."
+        exit 1
+    fi
 else
     INGEST="no"
     INGEST_FLAG="n"
+    DB_URL=""
 fi
 
 echo ""
@@ -54,14 +65,14 @@ python step6_segregate_data_folders.py "$INGEST_FLAG"
 
 # Stage 7: Database Ingestion
 if [ "$INGEST" == "yes" ]; then
-    python step7_db_ingestion.py "y"
+    python step7_db_ingestion.py "y" "$DB_URL"
 else
     python step7_db_ingestion.py "n"
 fi
 
 # Stage 8: Quantitative Data & Checksum Verification
 if [ "$INGEST" == "yes" ]; then
-    python step8_data_verification.py
+    python step8_data_verification.py "$DEFAULT_PROCESSED_DIR" "$DB_URL"
 else
     echo "======================================================================"
     echo " [STAGE 8: SKIPPED]"

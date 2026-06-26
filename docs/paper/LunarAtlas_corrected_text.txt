@@ -1,0 +1,516 @@
+LunarAtlas: From PDS4 Archives to Analysis-Ready Spectra
+A Reproducible Infrastructure for Chandrayaan-3 LIBS Level-1 Data
+Lovekesh Ananda1,2, Dua Saeed1,2
+¹ Department of Computer Science and Engineering, Maharshi Dayanand University, Rohtak, Haryana, India
+² Independent Researchers
+Corresponding author: lovekeshanand6@gmail.com
+Abstract
+We present LunarAtlas, a reproducible data processing infrastructure that transforms publicly available Chandrayaan-3 laser-induced breakdown spectroscopy (LIBS) level 1 (L1) products into clean, machine accessible, analysis ready spectral records suitable for quantitative lunar science. While ISRO's Chandrayaan-3 LIBS data is publicly available through PDS4-compliant archive, a reproducible infrastructure for transforming these products into analysis ready records suitable for downstream scientific workflows has not been publicly documented. Starting from calibrated L1 tables, LunarAtlas implements a transparent and robust Python pipeline that: (i) Parses XML metadata; (ii) Reshapes wide-format Chandrayaan-3 L1 data in which 2,094 wavelength channels spanning from minimum value of 164.35 nm to maximum value of 878.26 nm appear as column headers (in accordance with PDS4 label, wavelength), into normalised per-wavelength long-form records; (iii) Identifies and correctly pairs plasma and background measurements using mission flag columns (Laser fire status, Force reset status); and (iv) Performs physically motivated background subtraction (Iclean(λ) = max(0, Iplasma(λ) − Ibackground(λ))), with non-physical values clamped to zero. Each processed file receives an MD5 checksum and an algorithm record to ensure reproducibility and traceability.
+The processing workflow generates 4 cleaned spectral measurements, each comprising 2,094 wavelength-channel records (8,376 spectral values in total). Background subtraction substantially reduces continuum and instrumental baseline contributions while preserving diagnostically important emission features, producing analysis-ready spectra suitable for downstream scientific workflows. Analysis of the cleaned spectra reveals substantial shot-to-shot variability between measurements, highlighting the importance of preserving individual Measurement IDs during analysis rather than relying solely on bulk-averaged spectra.
+Beyond data cleaning, LunarAtlas provides a PDS4-aware database, a web accessible spectral analysis platform, adaptive LTTB-based downsampling with explicit peak-union preservation that retains 100% of detected spectral elemental peaks across all tested spectra, and a versioned API capable of latency less than 500 ms response time for data rendering on commodity consumer hardware. By establishing a reproducible and auditable “Single source of scientific truth” for Chandrayaan-3 LIBS data, LunarAtlas provides a scalable foundation for future planetary LIBS missions and data-intensive lunar science workflows.
+Keywords: LIBS; Chandrayaan-3; planetary spectroscopy; PDS4; data pipeline; reproducibility; PostgreSQL; FastAPI; downsampling; lunar science
+Software Metadata
+Field
+Value
+Current code version
+v1.0.0
+Permanent link to code/repository
+[GITHUB_URL — INSERT BEFORE SUBMISSION]
+Legal code licence
+MIT
+Code versioning system used
+Git
+Software code languages, tools, and services used
+Python 3.11, FastAPI 0.111, PostgreSQL 16.3, React 18, amCharts 5
+Compilation requirements, operating environments & dependencies
+Python ≥ 3.11; PostgreSQL ≥ 16; Node.js ≥ 18 (frontend build); see requirements.txt in repository
+If available, link to developer documentation/manual
+[GITHUB_URL/docs — INSERT BEFORE SUBMISSION]
+Support email for questions
+lovekeshanand6@gmail.com
+
+1. Introduction
+1.1 The Need for Reproducible Lunar LIBS Data Processing
+Laser-Induced Breakdown Spectroscopy (LIBS) is a well-established technique for in-situ elemental analysis in planetary exploration. By focusing a pulsed laser onto a target surface, LIBS generates a transient plasma whose emission spectrum can be used to determine elemental composition without sample preparation or physical contact [1]. LIBS has been successfully deployed on multiple planetary missions, including ChemCam on NASA's Mars Science Laboratory rover [2,3], SuperCam on the Mars 2020 rover [4], and MarSCoDe on China's Tianwen-1 mission [9].
+Chandrayaan-3 extended LIBS operations to the lunar surface through the Laser-Induced Breakdown Spectroscopy payload (LE-LIBS) carried by the Pragyan rover [5]. The resulting observations were released through a Planetary Data System Version 4 (PDS4) archive, providing the first publicly available LIBS dataset acquired directly on the Moon [5,7,8]. While the archive preserves the data and metadata required for long-term accessibility, transforming the released products into analysis-ready spectra remains a non-trivial task.
+1.2 The Data Accessibility Gap
+The Chandrayaan-3 LE-LIBS archive is distributed as calibrated Level-1 (L1) products accompanied by PDS4 XML labels [7,8]. Each acquisition is stored in a wide-format table containing metadata fields, 2,094 wavelength channels spanning 164.35–878.26 nm, and instrument housekeeping parameters. Although suitable for archival purposes, this structure complicates common scientific workflows such as relational storage, plasma-background pairing, background subtraction, spectral feature extraction, and interactive visualisation.
+Furthermore, the archive does not provide a documented end-to-end processing workflow for transforming the delivered L1 products into cleaned, queryable, and analysis-ready spectra. Researchers must therefore implement their own ingestion, validation, and preprocessing procedures before scientific analysis can begin.
+1.3 Research Question and Contributions
+How can Chandrayaan-3 LE-LIBS Level-1 data be transformed into a reproducible, queryable, and machine-accessible resource for scientific analysis while preserving spectral fidelity and provenance?
+To address this problem, we developed LunarAtlas, a reproducible data-processing and storage infrastructure for Chandrayaan-3 LE-LIBS observations. The principal contributions of this work are:
+C1. Reproducible L1 processing pipeline. A documented Python workflow that ingests PDS4 products, reshapes wide-format spectra, identifies plasma-background pairs, performs background subtraction, and records processing provenance.
+C2. Measurement-ID semantics. A shot-resolved data model that preserves links between processed spectra, acquisition metadata, and instrument operating conditions.
+C3. PDS4-aware data model. A normalised PostgreSQL schema supporting efficient storage, querying, and provenance tracking of spectral observations.
+C4. Interactive spectral visualisation. An adaptive LTTB+peaks downsampling strategy that preserves diagnostically important spectral features during interactive exploration [20].
+C5. Processing validation. Quantitative evaluation of background subtraction and preprocessing effects on Chandrayaan-3 LE-LIBS spectra.
+1.4 Paper Organisation
+Section 2 reviews related work. Section 3 describes the Chandrayaan-3 LE-LIBS dataset and its PDS4 representation. Section 4 presents the LunarAtlas architecture and data model. Section 5 details the processing workflow. Section 6 describes the visualisation strategy. Section 7 presents the API and user interface. Section 8 reports validation results. Sections 9 and 10 discuss limitations and conclusions.
+2. Related Work
+2.1 Planetary LIBS Instruments and Mission Heritage
+LIBS has been deployed on several planetary exploration missions, including ChemCam [2,3], SuperCam [4], and MarSCoDe [9]. Processing workflows developed for these instruments are generally mission-specific and rely on instrument-dependent calibration procedures and environmental assumptions [13,15]. For Chandrayaan-3, Sridhar et al. [5] reported initial processing of LE-LIBS observations using Savitzky-Golay smoothing [18] and baseline-correction approaches [17]. However, no publicly available software currently provides automated ingestion, validation, preprocessing, and relational storage of the archived Chandrayaan-3 LE-LIBS dataset. LunarAtlas addresses this gap through a reproducible workflow designed specifically for the publicly released PDS4 archive.
+2.2 Planetary Data Systems and PDS4 Standards
+The PDS4 standard provides a structured framework for archiving planetary science data and metadata [7,8]. Existing tools such as the GDAL PDS4 driver [12] provide access to archived products but do not encode instrument-specific acquisition semantics or automated transformations required for scientific analysis. Similarly, repositories including the USGS Spectral Library [23], RELAB [25], and the PDS Geosciences Node [28] focus on data distribution rather than plasma-background pairing, provenance tracking, or relational querying. LunarAtlas extends these capabilities through automated PDS4 ingestion, metadata validation, and a queryable data model tailored to Chandrayaan-3 LE-LIBS observations. Spectral line identification is supported through integration with the NIST Atomic Spectra Database [26].
+2.3 Interactive Spectral Visualisation
+Interactive exploration of high-resolution spectral data commonly relies on downsampling algorithms to reduce rendering overhead. The Largest Triangle Three Buckets (LTTB) algorithm [20] preserves overall signal structure while substantially reducing the number of plotted points. However, LIBS spectra often contain narrow emission features that span only a few wavelength channels and may be lost during conventional downsampling.
+To address this limitation, LunarAtlas implements an LTTB+peaks strategy that combines LTTB-selected samples with detected local maxima. This approach preserves diagnostically important emission peaks while maintaining interactive rendering performance for Chandrayaan-3 LE-LIBS spectra.
+3. Chandrayaan-3 LE-LIBS Dataset and PDS4 Context
+3.1 Mission Overview
+Chandrayaan-3 successfully deployed the Pragyan rover at Shiv Shakti Point in the lunar south polar region. Pragyan carried two in-situ science instruments: the Laser-Induced Breakdown Spectroscopy payload (LE-LIBS) and the Alpha Particle X-ray Spectrometer (APXS). The LE-LIBS observations were archived using the Planetary Data System Version 4 (PDS4) standard and form the primary dataset supported by LunarAtlas [5,7,8].
+3.2 The Pragyan LE-LIBS Instrument
+LE-LIBS is a miniaturised laser-induced breakdown spectroscopy instrument designed for elemental analysis of the lunar surface [5,14]. It employs a pulsed Yb:Er:Glass laser operating at 1535 ± 1 nm and records plasma emission spectra over the 220–800 nm range using a holographic flat-field grating spectrometer and a linear CCD detector [5,14]. The instrument provides spectral sampling of approximately 0.34 nm per channel with an optical resolution of ≤1 nm [5,14].
+Each observation consists of alternating background and plasma acquisitions. Background measurements record ambient signal without laser firing, while plasma measurements capture laser-induced emission together with the ambient contribution. Associated housekeeping parameters, including gate delay, integration time, pulse count, and laser operating conditions, are recorded for every acquisition [5].
+3.3 Level-1 Data Format
+The archived Level-1 LE-LIBS products are distributed as wide-format CSV files accompanied by PDS4 XML labels [7,8]. Each row represents a single acquisition, either a background or plasma measurement. The first six columns contain metadata, followed by 2,094 wavelength channels spanning 164.35–878.26 nm, and eight housekeeping parameters describing instrument operating conditions.
+Spectral intensities are recorded in analogue-to-digital units (ADU), while housekeeping fields include delay time, integration time, pulse count, X-factor, laser energy, pump current, pulse repetition rate (PRR), and power status. During ingestion, LunarAtlas separates metadata, spectral measurements, and housekeeping information into dedicated database structures while validating column consistency against the accompanying PDS4 label [7,8].
+3.4 Plasma and Background Flag Semantics
+Two metadata fields determine acquisition type: Force Reset Status (F) and Laser Fire Status (L). Plasma and background acquisitions are defined as:
+P: (F = 0) ∧ (L = 1)
+B: (F = 1) ∧ (L = 0)
+Rows that satisfy neither condition are treated as anomalous and excluded from processing.
+Acquisitions follow an alternating sequence of background and plasma measurements. LunarAtlas pairs each plasma acquisition with its immediately preceding background acquisition and computes the cleaned spectrum through background subtraction: Iclean(λ) = max(0, Iplasma(λ) − Ibackground(λ)).
+Negative values are clamped to zero to avoid non-physical intensities arising from detector noise. The resulting cleaned spectrum is assigned a Measurement ID used throughout the LunarAtlas data model.
+3.5 PDS4 Label Parsing and Validation
+Each Level-1 CSV file is accompanied by a PDS4 XML label containing column definitions, physical units, observation metadata, and archive provenance information [7,8]. LunarAtlas parses these labels using Python XML-processing libraries and maps the extracted information into the relational database schema.
+Table 1. Column organisation of Chandrayaan-3 LIBS Level-1 CSV files. The first six columns are metadata; the following 2,094 columns are wavelength channels; the final eight columns are instrument housekeeping parameters.
+Group
+Count
+Description
+Metadata
+6
+Time, Measurement Count, Operation Mode, Measurement Type, Force Reset Status, Laser Fire Status
+Wavelength Channels
+2,094
+Spectral intensity values (ADU) indexed by wavelength columns spanning 164.35–878.26 nm
+Housekeeping
+8
+Delay Time, Integration Time, Number of Pulses, X-Factor, Laser Energy, Pump Current, PRR, On/Off Status
+
+Validation checks verify XML structure, required attributes, units, and consistency between label metadata and tabular content. This process ensures compliance with PDS4 standards and prevents schema inconsistencies from propagating into processed spectral products [7,8].
+4. LunarAtlas System Architecture
+4.1 Design Principles
+LunarAtlas was designed as a reproducible scientific data service rather than a collection of analysis scripts. The architecture follows three principles: single source of scientific truth, reproducibility by design, and separation of concerns [24].
+All scientific operations, including plasma–background pairing, background subtraction, peak detection, spectral matching, and adaptive downsampling, are implemented exclusively in the backend. The frontend functions only as a visualisation client and performs no scientific computation.
+To support reproducibility, each ingestion event records the source file identifier, ingestion timestamp, processing version, and MD5 checksum. These metadata allow processed spectra and visualisations to be traced back to the original Chandrayaan-3 Level-1 products [7,8].
+LunarAtlas adopts a three-tier architecture in which data persistence, scientific processing, and presentation are implemented as independent components. This separation reduces coupling between system layers and supports maintainability and reproducibility [24].
+4.2 System Architecture
+The overall LunarAtlas architecture is illustrated in Figure 1.
+(Figure 1. End-to-end LunarAtlas architecture showing data flow from PDS4 products through ingestion, processing, storage, API services, and visualisation. Figure to be inserted.)
+The system consists of three layers:
+Data Layer. PostgreSQL 16.3 stores mission metadata, observations, processed measurements, spectral values, and provenance information. Spectral observations are stored in long format using a composite primary key (measurement_id, wavelength_nm). A BRIN index on wavelength values supports efficient range-based spectral queries across the 2,094-channel wavelength dimension.
+Logic Layer. Implemented in Python 3.11 and FastAPI 0.111, the logic layer performs PDS4 label parsing [7,8], ingestion, plasma–background pairing, background subtraction, peak detection, NIST spectral-line matching [26], adaptive downsampling [20], and API generation.
+Presentation Layer. Implemented using React 18 and amCharts 5, the frontend provides interactive spectral visualisation while all scientific computation remains server-side.
+4.3 Database Schema
+The database schema is illustrated in Figure 2, while the principal entities are summarised in Table 2.
+(Figure 2. Entity–relationship diagram of the LunarAtlas database schema. Figure to be inserted.)
+The schema follows a hierarchical structure linking missions, instruments, observations, file versions, measurements, and processed spectra. Provenance metadata are maintained through the file_version entity, which records source identifiers, ingestion timestamps, checksums, and processing versions. The spectral_data table stores wavelength–intensity pairs for cleaned spectra.
+The schema is normalised to third normal form (3NF), and referential integrity is enforced through foreign-key constraints.
+Table 2. Principal entities in the LunarAtlas relational schema and their key attributes.
+Table
+Key Columns
+Purpose
+mission
+id, name, agency, launch_date
+Stores mission-level metadata
+instrument
+id, mission_id, name, type
+Stores instrument information associated with a mission
+observation
+id, instrument_id, start_time, stop_time, site
+Records observation-level metadata
+file_version
+id, observation_id, filename, md5, ingested_at, algorithm_version
+Maintains provenance and version-tracking information
+measurement
+id, file_version_id, measurement_id, time_utc, laser_energy_v, n_pulses
+Stores shot-level acquisition metadata
+spectral_data
+measurement_id (FK), wavelength_nm, cleaned_intensity
+Stores processed spectral intensity values
+
+5. Data Processing and Cleaning Pipeline
+5.1 Pipeline Overview
+The LunarAtlas processing pipeline is implemented in Python across two primary modules. batch_process_libs.py performs PDS4 label parsing, provenance verification, wide-to-long reshaping, plasma–background pairing, background subtraction, and database ingestion. plot_libs_spectra.py generates diagnostic visualisations — overlaid spectra, individual spectral plots, intensity heatmaps, and peak comparison plots — used for quality assurance and pipeline verification.
+All processing stages are deterministic: identical inputs processed with the same algorithm version produce byte-for-byte identical outputs, verified by MD5 comparison. The workflow consists of six sequential stages from PDS4 ingestion to cleaned spectral storage.
+Figure 3. Six-step LunarAtlas processing workflow from PDS4 ingestion to cleaned spectral output. (Figure to be inserted.)
+5.2 Step 1 — PDS4 Label Parsing
+Each Level-1 CSV file is accompanied by a PDS4 XML label describing observation metadata, column definitions, physical units, and instrument context [7,8]. During ingestion, the pipeline extracts the Logical Identifier (LID), observation start and stop times, source filename, file size, column name–unit pairs, and instrument context metadata. Validation confirms that all required fields and namespace definitions conform to the PDS4 standard [7,8]; files failing validation are rejected prior to ingestion. Extracted metadata are persisted to the file_version, observation, and measurement entities of the LunarAtlas database.
+5.3 Step 2 — File Provenance Verification
+A 128-bit MD5 digest [22] is computed over the raw Level-1 CSV bytes before any processing begins. The digest is stored as a 32-character hexadecimal string in the file_version table alongside the ingestion timestamp and algorithm version string. MD5 is used exclusively for file identification, provenance tracking, and duplicate detection; its output format is natively compatible with the PDS4 ASCII_MD5_Checksum data type [7]. Re-ingestion of a previously processed file is detected by checksum comparison and recorded for audit purposes.
+5.4 Step 3 — Wide-to-Long Reshaping
+Each Level-1 acquisition contains 2,094 wavelength-labelled intensity channels together with metadata and housekeeping fields. The spectral columns are reshaped into a normalised long-form representation [21] in which each record stores a single (measurement_id, wavelength_nm, intensity_adu) triple. Column headers are parsed as floating-point wavelength values; non-numeric columns are classified as metadata or housekeeping fields. This structure enables efficient relational storage, indexed wavelength range queries, and channel-wise arithmetic without column-position assumptions.
+5.5 Step 4 — Plasma and Background Identification
+Acquisition type is determined from two binary metadata flags: Force Reset Status (F) and Laser Fire Status (L). Valid acquisition types are defined as:
+	B: (F = 1) ∧ (L = 0)	(1)
+	P: (F = 0) ∧ (L = 1)	(2)
+Rows satisfying neither condition are classified as anomalous and excluded from further processing. Each plasma acquisition Pᵢ is paired with its immediately preceding background acquisition Bᵢ in temporal order. When unequal numbers of plasma and background rows are encountered, only complete pairs are retained; unpaired acquisitions are logged for review.
+5.6 Step 5 — Background Subtraction and Clamping
+The cleaned spectrum for each plasma–background pair is computed channel-wise as:
+	Iₜₗₑₐₙ(λ) = max(0, Iₚᵢ(λ) − Iᴮᵢ(λ))	(3)
+Clamping to zero is physically motivated: spectral intensity represents photon counts, which are non-negative by definition [27]. The proportion of clamped channels is recorded as a quality-control metric per pair; fractions exceeding 50% may indicate a near-null acquisition or an incorrectly matched pair and are flagged for inspection.
+Emission peaks in the cleaned spectrum are screened against a 3σ prominence threshold, where σ is estimated from the standard deviation of a 50-channel sliding window over the cleaned spectrum. Sub-threshold peaks are retained in the spectral record but excluded from the peak-detection index used for automated NIST line matching [26].
+5.6.1 Justification of Paired Background Subtraction
+Paired subtraction is selected over model-based baseline methods for three reasons: (i) the LE-LIBS acquisition protocol provides temporally matched background measurements, making physics-based subtraction directly applicable without additional modelling assumptions; (ii) the operation is fully deterministic and parameter-free, satisfying the reproducibility requirements of the infrastructure layer; and (iii) downstream users may apply further denoising — ALS [17], SWT [13], or Savitzky-Golay [18] — without the cleaning tier imposing irreversible smoothing choices. Table 3 summarises the principal trade-offs.
+Table 3. Comparison of background-removal strategies for LE-LIBS L1 data. LunarAtlas adopts paired subtraction as the infrastructure cleaning tier.
+Method
+Tuning parameters
+Deterministic
+Exploits acquisition design
+Notes
+Paired subtraction (LunarAtlas)
+None
+Yes
+Yes
+Parameter-free; ∼3.9× higher residual variance, mitigated by 3σ peak screening
+ALS [17]
+Yes (λ, p)
+No
+No
+Iterative baseline modelling; implementation-dependent convergence
+SWT [13]
+Yes (level, basis)
+No
+No
+Risk of decomposition artefacts; independent noise model required
+Savitzky-Golay [18]
+Yes (window, order)
+Yes
+No
+Smoothing only; not a physics-based subtraction method
+
+5.7 Step 6 — Measurement ID Generation and Output Formatting
+A Measurement ID — a sequential integer starting at 1 per Level-1 file — is assigned to each valid plasma–background pair after pair formation and broadcast to all 2,094 per-wavelength records of the corresponding cleaned spectrum. Assignment proceeds by sorting background and plasma sub-sequences independently by acquisition time; pair index k (zero-based) receives Measurement ID = k + 1.
+The Measurement ID fulfils three functions within the system architecture: it groups the 2,094 per-wavelength records of a single cleaned spectrum into one logical unit; it provides the foreign key linking spectral_data to measurement in the relational schema; and it serves as the primary selection axis for visualisation, querying, and API retrieval. Acquisitions sharing identical one-second-resolution timestamps — which occur when multiple pairs are recorded within the same clock interval — cannot be distinguished by timestamp alone; the Measurement ID resolves this ambiguity unambiguously.
+The 19-column output schema (Table 4) comprises pipeline-assigned measurement keys (columns 1–3), spectral data (columns 4–5), mission flag fields (columns 6–11), and instrument housekeeping parameters (columns 12–19).
+Table 4. Output schema of the LunarAtlas cleaned dataset (19 columns total).
+Col.
+Name
+Description
+1
+Measurement ID
+Pipeline-assigned identifier for a plasma–background pair
+2
+Time UTC
+Acquisition timestamp
+3
+Measurement Count
+Instrument acquisition counter
+4
+Wavelength nm
+Channel centre wavelength (nm)
+5
+Cleaned Intensity
+Background-subtracted intensity (ADU)
+6
+Operation Mode
+Instrument operation mode
+7
+Measurement Type
+Acquisition type identifier
+8
+Force Reset Status
+Binary flag F used for background identification (Eq. 1)
+9
+Laser Fire Status
+Binary flag L used for plasma identification (Eq. 2)
+10
+Is Valid Plasma
+Pipeline-derived plasma indicator
+11
+Is Background
+Pipeline-derived background indicator
+12
+Delay Time µs
+Laser-to-gate delay
+13
+Integration Time µs
+Detector integration period
+14
+Number of Pulses
+Laser pulses per acquisition
+15
+X Factor
+Detector gain scaling factor
+16
+Laser Energy V
+Laser drive voltage
+17
+Laser Pump A
+Pump diode current
+18
+PRR Hz
+Pulse repetition rate
+19
+On/Off Status
+Instrument power status
+
+6. LTTB+Peaks Adaptive Downsampling: Mathematical Formulation
+6.1 Problem Statement and Design Goals
+Let S = {(λᵢ, Iᵢ) : i = 0, …, Ntot − 1} be a cleaned LIBS spectrum sorted by wavelength, with Ntot = 2,094 for Chandrayaan-3. A reduced representation S’ with N’ ≪ Ntot points is constructed to satisfy four design goals: all local maxima are preserved in S’; the visual envelope at each zoom level matches the full-resolution spectrum; zoom saturation — the point at which further decimation would discard instrumentally resolved features — is mathematically defined; and computation supports interactive visualization of Chandrayaan-3 spectra. Standard downsampling algorithms, including the Largest Triangle Three Buckets (LTTB) method [20], preserve overall spectral shape efficiently but do not guarantee retention of narrow emission peaks. LunarAtlas introduces a peak-union strategy, Pfinal = PLTTB ∪ Ppeaks, designed specifically for scientific LIBS spectral visualisation to provide this guarantee.
+6.2 LTTB in Channel-Index Space
+Chandrayaan-3 LE-LIBS has a fixed 2,094-channel wavelength grid. Channels are indexed by integer i ∈ [0, 2093] and zoom level by k ∈ ℤ≥0, where k = 0 corresponds to the widest view. The target number of downsampled points at zoom level k is:
+	N(k) = min(2094, ⌈2094 · 2⁻ᵏ⌉)	(4)
+Representative values are given in Table 5.
+Table 5. Target downsampled point count N(k) as a function of zoom level k.
+k
+N(k)
+Reduction
+Comment
+0
+2,094
+1.0×
+Full resolution (no LTTB)
+1
+1,047
+2.0×
+Half decimation
+2
+524
+4.0×
+Quarter decimation
+3
+262
+8.0×
+Eighth decimation
+4
+131
+16×
+Strong overview
+
+The LTTB algorithm [20] partitions the index range [0, Ntot − 1] into N(k) buckets and selects one representative point per bucket by maximising the triangle area formed with the previously selected point Pa and the centroid Pb of the next bucket. For a candidate point Pc in bucket j, where ia, ic, ib denote the channel indices and Ia, Ic, Ib their respective intensities, the signed triangle area is:
+	A(Pₐ, Pᶜ, Pᵇ) = ½|iₐ(Iᶜ − Iᵇ) + iᶜ(Iᵇ − Iₐ) + iᵇ(Iₐ − Iᶜ)|	(5)
+The candidate maximising |A| is selected. The first and last points of the spectrum are always retained.
+Figure 4. LTTB triangle-area maximisation — algorithmic illustration showing bucket partitioning, candidate selection, and triangle-area computation. (Figure to be inserted.)
+6.3 Peak-Union Guarantee
+LTTB is a greedy envelope-preservation algorithm and provides no guarantee of retaining local maxima. Standard alternatives — mean aggregation, median aggregation, and Douglas–Peucker simplification — share this limitation. For LIBS spectroscopy, where diagnostically critical emission features such as the Ca II doublet at 393–397 nm may span only two to three channels, loss of peak positions during downsampling is scientifically unacceptable.
+The set of all local maximum indices is computed as:
+	Pₚₑₐᵏₛ = {i | Iᵢ > Iᵢ₋₁ ∧ Iᵢ > Iᵢ₊₁}	(6)
+Let PLTTB = {ij : j = 0, …, N(k)−1} denote the set of channel indices selected by the LTTB algorithm at zoom level k, where each ij is the index maximising the triangle area in bucket j (Eq. 5).
+The final point set is formed by taking the union of LTTB-selected indices and all detected peak indices:
+	Pᶠᵢₙₐₗ = Pₗₜₜᴮ ∪ Pₚₑₐᵏₛ	(7)
+The corresponding (λᵢ, Iᵢ) pairs are extracted in sorted wavelength order to form S’. Because Ppeaks ⊆ Pfinal, every detected local maximum is guaranteed to appear in S’ regardless of bucket size or zoom level. The peak-union operation constitutes the principal algorithmic contribution of LunarAtlas, combining the envelope-preservation properties of LTTB with guaranteed retention of all detected local maxima.
+Figure 5. Demonstration of the peak-union guarantee on real Chandrayaan-3 LE-LIBS data, showing retained peaks at multiple zoom levels. (Figure to be inserted.)
+6.4 Dual Zoom-Saturation Criteria
+Zoom saturation is defined by two independent constraints: instrumental resolution and data density. For a wavelength window [λmin, λmax] with Δλ = λmax − λmin, the zoom-adjusted bucket width at level k is:
+	b(k) = Δλ / (B₀ · 2ᵏ)	(8)
+where B0 = 1,000 is the baseline bucket count, chosen to approximate the horizontal pixel resolution of a typical desktop display, ensuring one bucket per screen pixel at k = 0. The minimum permissible bucket width is bmin = 0.01 nm, a conservative lower bound relative to the LE-LIBS instrumental resolution of ≤1 nm, which ensures that raw mode activates before visually meaningful spectral structure is lost.
+The maximum zoom level before saturation is:
+	zᵐₐˣ = log₂(Δλ / (B₀ · bᵐᵢₙ))	(9)
+For k ≤ zmax, the system operates in LTTB+peaks mode. For k > zmax, it transitions to raw mode, returning all points within the visible window at full instrumental resolution. Table 6 tabulates zmax for representative Chandrayaan-3 LE-LIBS spectral windows.
+Table 6. Zoom saturation analysis for representative Chandrayaan-3 LE-LIBS windows. Parameters: B₀ = 1,000, bᵐᵢₙ = 0.01 nm.
+Window
+Δλ (nm)
+zᵐₐˣ
+b(zᵐₐˣ) (nm)
+Full spectrum
+713.91
+6
+0.011
+UV window (164–400 nm)
+235.65
+4
+0.015
+Visible window (400–700 nm)
+300.00
+4
+0.019
+Narrow diagnostic (390–410 nm)
+20.00
+1
+0.010
+
+6.5 Multi-Level Zoom Behaviour
+Figure 6. Multi-level zoom behaviour of the LTTB+peaks strategy across four zoom levels for a representative 250–450 nm Chandrayaan-3 LE-LIBS segment, illustrating the transition from decimated to raw mode at zᵐₐˣ. (Figure to be inserted.)
+At zoom levels below zmax, LTTB+peaks provides progressive decimation with guaranteed peak retention. At zoom levels exceeding zmax, raw mode exposes the full 2,094-channel instrumental resolution within the visible window.
+6.6 Computational Performance
+The LTTB+peaks implementation operates in O(Ntot) time with respect to the number of wavelength channels: peak detection (Eq. 6) requires a single linear pass; LTTB bucket assignment and triangle-area selection (Eq. 5) require one pass per zoom level; and set union (Eq. 7) requires O(N) merge. Performance measurements on Chandrayaan-3 LE-LIBS data are reported in Section 8.
+7. API Design and Visualisation Workflow
+7.1 API Architecture and Design Rationale
+The LunarAtlas API exposes processed Chandrayaan-3 LE-LIBS spectra through a versioned REST interface implemented in FastAPI. All scientific computation — LTTB+peaks downsampling [20], peak detection, NIST line matching [26], and quality metric calculation — is performed exclusively in the backend. The frontend acts only as a stateless rendering client, issuing HTTP requests and rendering returned data without performing any numerical operations. This separation ensures that API responses are reproducible across clients and prevents client-side numerical divergence [24].
+FastAPI was selected for its support of typed request and response models, automatic input validation, and native OpenAPI/Swagger specification generation. React was selected for component-based UI composition and efficient viewport state management. amCharts was selected for high-performance rendering of large spectral point arrays, supporting smooth zoom and pan interactions across the full 2,094-channel spectrum. The REST interface is documented through FastAPI-generated OpenAPI/Swagger specifications.
+7.2 Primary Spectral Endpoint
+The primary data endpoint is:
+GET /api/v1/spectral
+Query parameters: observation_id, min_wavelength, max_wavelength, zoom_level, include_nist.
+The response conforms to the following schema:
+{
+  "metadata": { "observation_id": <str>, "file_md5": <str>, "algorithm_version": <str> },
+  "downsampling": { "n_points": <int>, "z_max": <int>, "mode": <"lttb" | "raw"> },
+  "spectrum": [ { "wavelength_nm": <float>, "intensity_adu": <float> }, ... ]
+}
+The metadata block carries the source file MD5 and algorithm version, enabling any returned spectrum to be traced to its originating L1 product. The downsampling block reports the active mode (lttb or raw), determined by the dual zoom-saturation criteria defined in Section 6. When include_nist is set, NIST reference lines [26] falling within the requested wavelength window are appended to the response. API latency measurements and performance evaluation are reported in Section 8.
+The endpoint specification is automatically exported through the OpenAPI schema generated by FastAPI, enabling machine-readable client integration and API discovery.
+7.3 Authentication and Access Control
+API access is controlled through key-based authentication. Each request is validated by middleware that checks for a valid API key in the request header before processing proceeds. Rate limiting is applied per key to prevent resource exhaustion, and all requests are logged with their key identifier, endpoint, query parameters, and response time to support usage auditing. Implementation details are described in the architecture documentation accompanying the software repository.
+7.4 Visualisation Workflow
+The frontend follows a five-stage adaptive rendering workflow:
+Overview request. On initial load, the frontend requests an overview spectrum covering the full wavelength range.
+Zoom or pan event. Each user interaction extracts the updated viewport window [λₐ, λᵇ] and submits a new request with the corresponding min_wavelength, max_wavelength, and incremented zoom_level.
+Adaptive retrieval. The backend determines whether downsampled or raw spectral data should be returned according to the adaptive criteria in Section 6.
+Raw mode transition. When k > zᵐₐˣ, the backend returns all points within the window at full instrumental resolution, exposing individual channel-level structure without interpolation.
+Rendering. The frontend renders the returned point array via amCharts. No downsampling, interpolation, or peak detection is performed client-side.
+Figure 7. LunarAtlas web interface showing interactive spectral visualisation, adaptive downsampling, NIST reference-line overlays, and measurement-level exploration tools. (Figure to be inserted.)
+7.5 Additional Endpoints
+Supplementary endpoints expose the following resources:
+Mission and instrument metadata — observation identifiers, site coordinates, and instrument operating parameters.
+Measurement catalogue — per-file measurement lists with acquisition timestamps and housekeeping summaries.
+File provenance — MD5 digests and algorithm version strings for integrity verification.
+NIST reference lines — element, ionisation state, reference wavelength, and transition probability for a requested wavelength range [26].
+Cleaning diagnostics — per-measurement quality metrics including the fraction of channels clamped to zero and the baseline suppression factor. Aggregate statistics derived from these diagnostics are reported in Section 8.
+8. Results and Experimental Validation
+Validation is performed on a representative Chandrayaan-3 LE-LIBS Level-1 file (ch3_lib_002_20230825T104221_00_L1.csv) containing four plasma–background acquisition pairs, yielding 4 cleaned spectral measurements, each comprising 2,094 wavelength-channel records (8,376 spectral values in total). Broader validation across the full L1 archive is identified as future work. Scripts used to reproduce all validation figures and statistics are provided in the software repository.
+8.1 Cleaning Effectiveness
+Background subtraction effectiveness is quantified using two metrics: the baseline suppression factor, which measures reduction in the low-frequency continuum level, and the variance ratio, which characterises the change in high-frequency noise after subtraction. These metrics together confirm that the pipeline produces the physically expected effect, suppression of the ambient background while preserving diagnostically important emission features.
+Analysis is performed on a representative 20 nm window (560–580 nm), selected as a region relatively free of strong emission lines and therefore suitable for characterising background behaviour. The raw L1 spectrum in this window has a mean intensity Īraw ≈ 1,005 counts and a root-mean-square fluctuation σraw ≈ 47 counts. The cleaned spectrum has a mean intensity Īclean ≈ 141 counts and a root-mean-square fluctuation σclean ≈ 184 counts, where Ī denotes the arithmetic mean, yielding:
+	Baseline suppression factor = Īᵣₐᵣ / Īᶜₗₑₐₙ ≈ 7.1	(10)
+	High-frequency variance increase = σᶜₗₑₐₙ / σᵣₐᵣ ≈ 3.9	(11)
+The ∼7.1× reduction in mean continuum level confirms effective removal of the ambient background, increasing the peak-to-continuum ratio for downstream emission line detection. The ∼3.9× increase in high-frequency variance is physically expected: both plasma and background measurements are shot-noise-limited, so their difference carries the combined Poisson noise of both acquisitions. This variance increase is mitigated by the 3σ prominence threshold applied during peak detection (Section 5.6), which suppresses sub-threshold noise fluctuations from the peak index without discarding them from the cleaned spectral record.
+Collectively, these results demonstrate that the cleaning pipeline removes background contributions while preserving the spectral information required for downstream analysis and visualisation.
+Figure 8. Pre- and post-cleaning spectral comparison. (Figure to be inserted.)
+8.2 Inter-Measurement Variability
+Table 7 summarises cleaned-intensity statistics across the four Measurement IDs. The contrast between Measurement ID 3 (mean intensity 417 counts, 0.5% of channels clamped) and Measurement ID 2 (mean intensity 9 counts, 76.8% of channels clamped) — despite similar integration times and pulse counts — demonstrates the extent of shot-to-shot variability present in the LE-LIBS dataset. Measurement ID 2 is consistent with a near-null acquisition in which detector noise dominated the plasma signal; Measurement ID 3 shows a strong emission response. Aggregating all four measurements into a single averaged spectrum would mask this variability entirely, obscuring physically distinct plasma conditions. This result validates the Measurement ID as a necessary data model concept rather than a bookkeeping convenience.
+Table 7. Cleaned intensity statistics per Measurement ID for the full spectral range (164.35–878.26 nm). The % Clamped column reports the fraction of wavelength channels with negative Iₚᵢ(λ) − Iᴮᵢ(λ) values before zero-clamping — a per-shot acquisition quality diagnostic.
+ID
+Mean (cts)
+Std (cts)
+Max (cts)
+% Clamped
+Laser Energy (V)
+1
+61.0
+56.9
+321
+22.5
+3,327
+2
+9.4
+23.8
+261
+76.8
+3,280
+3
+416.9
+95.0
+684
+0.5
+3,194
+4
+54.1
+62.4
+637
+28.1
+3,202
+
+Figure 9. Inter-measurement variability across Measurement IDs. (Figure to be inserted.)
+8.3 Peak-Preservation Validation
+The peak-union strategy introduced in Section 6 is validated by comparing LTTB-only and LTTB+peaks downsampling on the full 2,094-channel spectrum at zoom level k = 2, where the target point count is N(2) = 524 (Eq. 4). Local maxima are identified using Eq. 6.
+The raw spectrum contains 87 detected local maxima. Standard LTTB without the union step retains 63 of 87 peaks (72.4% retention), silently discarding 24 narrow emission features whose triangle-area contribution is insufficient to win bucket selection. The lost peaks are predominantly narrow emission features occupying one to three wavelength channels, illustrating the limitation of geometry-based downsampling alone for LIBS spectroscopy. LTTB+peaks retains all 87 peaks (100% retention) by appending the 24 unselected peak indices via Eq. 7, yielding a final point count of 548. The resulting 4.6% increase in point count (524 → 548) is negligible with respect to rendering performance while providing absolute peak fidelity — confirming that the union strategy achieves its design objective without meaningful computational overhead.
+8.4 Emission Line Identification
+Candidate emission line identifications in the cleaned spectra are listed in Table 8. Assignments are based on wavelength coincidence with NIST Atomic Spectra Database reference lines [26] and represent candidate identifications only; they are not quantitative abundance estimates. Confirmation requires wavelength calibration, instrument response correction, and chemometric modelling, which are outside the scope of this infrastructure paper.
+The identified features are consistent with the expected composition of lunar highland regolith and with the preliminary element detections reported by Sridhar et al. for the Chandrayaan-3 LE-LIBS instrument [5].
+Table 8. Candidate LIBS emission line identifications in cleaned Chandrayaan-3 spectra, matched against NIST reference wavelengths [26].
+Line
+λₙᴵˢᵀ (nm)
+Significance
+Mg II
+279.55 / 280.27
+Dominant doublet; major regolith constituent
+Si I
+288.16
+Major silicate component
+Ca II
+393.37 / 396.85
+Strong lines; abundant in highland regolith
+Fe I
+404.58
+Iron abundance diagnostic
+Ca I
+422.67
+Neutral calcium complement
+Mg I
+518.36
+Neutral magnesium
+Na I
+588.99
+Sodium doublet
+H I
+656.28
+Hydrogen; potential hydration indicator
+O I
+777.40
+Oxygen; major lunar regolith component
+
+8.5 API Performance Evaluation
+API performance is benchmarked on a single-node deployment comprising an Intel Core i7 processor, 16 GB RAM, and a PostgreSQL 16 instance on SSD storage. End-to-end response latency — encompassing database query, LTTB+peaks computation [20], and JSON serialisation — remains below 500 ms for full-range spectral retrieval across all zoom levels tested. Compressed payload sizes range from approximately 10 kB at high zoom levels to approximately 400 kB for full-spectrum raw-mode responses under HTTP compression. The composite index on (measurement_id, wavelength_nm) delivers approximately 15× query speedup relative to an unindexed full table scan for spectral range queries, as measured by comparing EXPLAIN ANALYZE output in PostgreSQL before and after index creation. These results confirm that the LunarAtlas API meets the interactive 500 ms response target on commodity hardware without requiring specialised infrastructure. Key metrics are summarised in Table 9.
+Table 9. API performance benchmark results on single-node commodity hardware.
+Metric
+Value
+Hardware
+Intel Core i7, 16 GB RAM
+Database
+PostgreSQL 16
+Max API latency
+< 500 ms
+Payload size
+10–400 kB
+Query speedup from index
+∼15×
+Downsampling method
+LTTB+peaks
+
+9. Discussion
+9.1 Addressing the Reproducibility Gap in Planetary LIBS
+Planetary LIBS archives provide calibrated data products but do not in themselves constitute reproducible processing infrastructure. Published ChemCam and SuperCam analyses provide sophisticated processing methodologies [13,15], but reproducible end-to-end software infrastructures for ingestion, provenance tracking, and archive-to-analysis transformation remain comparatively uncommon. The same gap applies to Chandrayaan-3 LE-LIBS, where no publicly documented processing workflow existed prior to this work [5,7,8]. LunarAtlas addresses this gap by formalising the wide-to-long reshaping as an explicit, documented transformation; recording the algorithm version and MD5 checksum with every processed product; and providing the cleaning pipeline as an open Python module rather than an embedded research-group script. The result is a cleaning tier in which any processed spectrum can be traced deterministically to its originating L1 file, algorithm version, and ingestion timestamp.
+The ∼3.9× variance increase following background subtraction (Section 8.1) is physically expected rather than a pipeline artefact. Both plasma and background acquisitions are shot-noise-limited, so their channel-wise difference carries the combined Poisson noise of both measurements. This property is intrinsic to the paired subtraction method and is mitigated by the 3σ prominence threshold applied during peak detection, which suppresses sub-threshold noise fluctuations from the peak index without removing them from the cleaned spectral record.
+9.2 Deterministic Peak Preservation
+Standard LTTB [20] preserves the visual envelope of a spectrum efficiently but provides no guarantee of retaining local maxima. For LIBS spectroscopy, where narrow emission features spanning two to three channels carry primary diagnostic information, this heuristic behaviour is scientifically unacceptable. The LTTB+peaks strategy introduced in Section 6 resolves this by forming the union Pfinal = PLTTB ∪ Ppeaks (Eq. 7), converting a heuristic selection method into a deterministic guarantee: every detected local maximum appears in the downsampled output regardless of bucket size or zoom level. The validation in Section 8.3 confirms this guarantee: standard LTTB retains 72.4% of peaks at k = 2, while LTTB+peaks achieves 100% retention at a cost of 4.6% additional points — a negligible rendering overhead relative to the scientific benefit. This paradigm is applicable to any fixed-channel spectroscopic instrument — including Raman, XRF, and FTIR systems — where narrow features carry diagnostic significance.
+9.3 Importance of Measurement-Level Representation
+The Measurement ID introduced in Section 5.7 encodes a scientifically meaningful unit of analysis: a single background-subtracted plasma acquisition under a specific set of instrument operating conditions. The inter-measurement variability demonstrated in Table 7 illustrates why this granularity is necessary. Measurement ID 3 and Measurement ID 2 were acquired within the same observation file under similar integration times and pulse counts, yet their mean cleaned intensities differ by a factor of approximately 44 (417 counts versus 9 counts), and their clamped-channel fractions differ by 76 percentage points. Measurement IDs 1 and 2 share an identical UTC timestamp at one-second resolution, making timestamp-based identification ambiguous without the pipeline-assigned identifier. Aggregating these four acquisitions into a single averaged spectrum would suppress all of this variability, concealing physically distinct plasma conditions and potentially misrepresenting surface composition. The Measurement ID provides the relational key that enables per-shot quality assessment, targeted multi-shot averaging, and provenance tracing from any derived result back to its exact L1 source.
+9.4 Generalisability
+The LunarAtlas architecture is designed for adaptation to other planetary LIBS missions. The core components — PDS4 XML ingestion, wide-to-long reshaping, flag-based acquisition pairing, channel-wise background subtraction, MD5 provenance recording, the PostgreSQL schema, the LTTB+peaks algorithm, and the API layer — are mission-agnostic. As a concrete example, adaptation for ChemCam data [13] would require mapping ChemCam's passive and active acquisition flags to the Force Reset and Laser Fire semantics used in the Chandrayaan-3 ingestion adapter, and updating the housekeeping field definitions to reflect ChemCam's RMI mode, LIBS operating distance, and laser configuration columns. The database schema, provenance tracking, visualisation system, and API endpoints would require no structural modification. The mission-specific ingestion adapter constitutes a small, isolated configuration component, making LunarAtlas extensible to future Indian lunar missions, proposed asteroid LIBS instruments, and any mission delivering PDS4-compliant wide-format L1 spectral products [7,8].
+9.5 Limitations
+Several limitations of the current implementation should be noted. First, quantitative validation metrics are reported for a single representative L1 file; broader characterisation of cleaning performance across the full Chandrayaan-3 archive is required and is identified as immediate future work. Second, plasma and background acquisitions are paired by temporal order, which is appropriate for the standard alternating acquisition sequence but may not generalise to observations with irregular or interrupted interleaving. Third, the core pipeline applies no denoising beyond the paired subtraction and 3σ peak screening; downstream users requiring SWT or Savitzky-Golay denoising [13,18] must apply those methods as post-processing steps. Fourth, emission line identifications reported in Section 8.4 are based on wavelength coincidence with NIST reference lines [26] and do not constitute quantitative abundance estimates. Fifth, each new mission requires a dedicated ingestion adapter; while the adapter is a small configuration component, it must be authored and validated for each instrument before the remaining infrastructure can be reused.
+10. Conclusion
+LunarAtlas addresses a structural gap between ISRO's publicly archived Chandrayaan-3 LE-LIBS Level-1 products and the analysis-ready, reproducible spectral records required for quantitative lunar science. The system delivers five integrated contributions: a deterministic PDS4 ingestion and validation framework; a reproducible six-step cleaning pipeline with MD5-based provenance tracking; a normalised PostgreSQL schema embedding the full mission hierarchy from observation to per-channel intensity; a Measurement ID abstraction that preserves shot-level identity through all downstream operations; and an LTTB+peaks adaptive downsampling algorithm with mathematically defined zoom-saturation criteria and a peak-union guarantee.
+Applied to a representative Chandrayaan-3 L1 file, the pipeline produces 4 cleaned spectral measurements, each comprising 2,094 wavelength-channel records (8,376 spectral values in total). Background subtraction achieves a baseline suppression factor of approximately 7.1× in a representative continuum window. The LTTB+peaks algorithm retains 100% of detected local maxima at zoom level k = 2, compared with 72.4% retention under standard LTTB [20], at a cost of 4.6% additional rendered points. The versioned REST API delivers spectral responses below 500 ms on commodity hardware, with approximately 15× query acceleration provided by the composite database index.
+The Measurement ID is the conceptual cornerstone of the data model. By assigning a stable, human-readable identifier to each background-subtracted plasma acquisition, LunarAtlas enables per-shot quality assessment, targeted multi-shot averaging, and unambiguous provenance tracing from any derived result back to its originating L1 product, algorithm version, and MD5 checksum. The inter-measurement variability demonstrated in Section 8 — where mean cleaned intensity varies by a factor of approximately 44 across acquisitions within a single observation file — confirms that this shot-level granularity carries genuine scientific information that bulk-averaged representations would suppress.
+Beyond Chandrayaan-3, LunarAtlas provides reusable infrastructure for reproducible planetary spectroscopy. The database schema, API layer, LTTB+peaks visualisation algorithm, and provenance framework are mission-agnostic; only the ingestion adapter requires modification for each new instrument. As the global space community expands in-situ spectroscopic coverage of the Moon, asteroids, and other planetary bodies, the gap between archived data and analysis-ready infrastructure will recur for each new mission. LunarAtlas demonstrates that this gap can be closed systematically through open, documented, and reproducible software engineering — and provides a working blueprint for doing so.
+Acknowledgements
+The authors thank the Indian Space Research Organisation (ISRO) and the Indian Space Science Data Centre (ISSDC) for making the Chandrayaan-3 LE-LIBS Level-1 data publicly available through the PRADAN archive. [INSERT ANY FUNDING SOURCES OR ADDITIONAL ACKNOWLEDGEMENTS HERE.]
+Data Availability
+GitHub Repository: [GITHUB_URL — INSERT BEFORE SUBMISSION]
+Zenodo archive (v1.0.0): [ZENODO_DOI — INSERT BEFORE SUBMISSION]
+The LunarAtlas source code, documentation, reproducibility scripts, and example datasets are publicly available at the links above. The Zenodo archive contains the exact software version (v1.0.0) used to generate all results reported in this manuscript, including processing scripts, the database schema, and validation outputs.
+Raw Chandrayaan-3 LE-LIBS Level-1 data products are publicly available from ISRO's PDS4-compliant PRADAN archive at https://pradan.issdc.gov.in/ [16].
+Software licence: MIT
+Competing Interests
+The authors declare no competing interests.
+References
+[1] Cremers, D.A., Radziemski, L.J. Handbook of Laser-Induced Breakdown Spectroscopy, 2nd Edition. Wiley, 2013. https://doi.org/10.1002/9781118567708
+[2] Maurice, S., Wiens, R.C., Saccoccio, M., et al. The ChemCam Instrument Suite on the Mars Science Laboratory Rover: Science Objectives and Mast Unit Description. Space Science Reviews, 170, 95–166, 2012. https://doi.org/10.1007/s11214-012-9912-2
+[3] Clegg, S.M., Wiens, R.C., Anderson, R., et al. Recalibration of the Mars Science Laboratory ChemCam Instrument with an Expanded Geochemical Database. Spectrochimica Acta Part B, 129, 64–85, 2017. https://doi.org/10.1016/j.sab.2016.12.003
+[4] Wiens, R.C., Maurice, S., Robinson, S.H., et al. The SuperCam Instrument Suite on the NASA Mars 2020 Rover. Space Science Reviews, 217, 4, 2021. https://doi.org/10.1007/s11214-020-00777-5
+[5] Sridhar, R.V.L.N., Goswami, A., Lohar, K.A., et al. Chandrayaan-3 LIBS Sensor: Preflight Characterization, Inflight Operations, and Preliminary Observations. IEEE Sensors Journal, 25(2), 2554–2566, 2025. https://doi.org/10.1109/JSEN.2024.3506770
+[6] Laxmiprasad, A.S., Sridhar Raja, V.L.N., Menon, S., et al. Laser Induced Breakdown Spectroscope on Chandrayaan-2 Rover. Current Science, 118(4), 573–581, 2020. https://www.currentscience.ac.in/Volumes/118/04/0573.pdf
+[7] NASA Planetary Data System. PDS4 Concepts, Version 1.25.0. [Accessed: INSERT ACCESS DATE] https://pds.nasa.gov/datastandards/documents/current-version.shtml
+[8] NASA Planetary Data System. PDS4 Standards Reference. [Accessed: INSERT ACCESS DATE] https://pds.nasa.gov/datastandards/documents/sr/
+[9] Xu, W., Liu, X., Yan, Z., et al. The MarSCoDe Instrument Suite on the Mars Rover of China's Tianwen-1 Mission. Space Science Reviews, 217, 64, 2021. https://doi.org/10.1007/s11214-021-00836-7
+[10] Anderson, R.B., Forni, O., Cousin, A., et al. Post-Landing Major Element Quantification Using SuperCam LIBS. Spectrochimica Acta Part B, 188, 106347, 2022. https://doi.org/10.1016/j.sab.2021.106347
+[11] Tucker, J.M., Dyar, M.D., Schaefer, M.W., Clegg, S.M., Wiens, R.C. Optimization of laser-induced breakdown spectroscopy for rapid geochemical analysis. Chemical Geology, 277(1–2), 137–148, 2010. https://doi.org/10.1016/j.chemgeo.2010.07.016
+[12] GDAL/OGR contributors. GDAL Geospatial Data Abstraction software Library, Open Source Geospatial Foundation. [Accessed: INSERT ACCESS DATE] https://gdal.org
+[13] Wiens, R.C., Maurice, S., Lasue, J., et al. Pre-flight calibration and initial data processing for the ChemCam laser-induced breakdown spectroscopy instrument on the Mars Science Laboratory rover. Spectrochimica Acta Part B, 82, 1–27, 2013. https://doi.org/10.1016/j.sab.2013.02.003
+[14] Laxmiprasad, A.S., Sridhar Raja, V.L.N., Rao, M.V.H., et al. In situ payload LE-LIBS: lunar surface elemental analyzer on Pragyan rover of Chandrayaan-3 mission. Advances in Space Research, 73(12), 6219–6237, 2024. https://doi.org/10.1016/j.asr.2024.03.029
+[15] Anderson, R.B., Wiens, R.C., Clegg, S.M., et al. Remote compositional analysis techniques in development for the ChemCam remote sensing instrument. Spectrochimica Acta Part B, 61, 2008. https://doi.org/10.1016/j.sab.2006.09.007
+[16] Indian Space Science Data Centre (ISSDC). PRADAN: Planetary Data Archive. [Accessed: INSERT ACCESS DATE] https://pradan.issdc.gov.in/
+[17] Eilers, P.H.C., Boelens, H.F.M. Baseline Correction with Asymmetric Least Squares Smoothing. Leiden University Medical Centre Report, 2005. https://www.researchgate.net/publication/228961729
+[18] Savitzky, A., Golay, M.J.E. Smoothing and Differentiation of Data by Simplified Least Squares Procedures. Analytical Chemistry, 36(8), 1627–1639, 1964. https://doi.org/10.1021/ac60214a047
+[19] [NOTE TO AUTHORS: INSERT CORRECT SWT/LIBS BASELINE PAPER HERE — the original draft cited SWT for baseline correction in Table 3; verify the correct primary SWT-for-LIBS reference and replace this entry.]
+[20] Steinarsson, S. Downsampling Time Series for Visual Representation. MSc Thesis, University of Iceland, 2013. https://skemman.is/handle/1946/15343
+[21] Wickham, H. Tidy Data. Journal of Statistical Software, 59(10), 1–23, 2014. https://doi.org/10.18637/jss.v059.i10
+[22] Rivest, R.L. The MD5 Message-Digest Algorithm. RFC 1321, Internet Engineering Task Force, 1992. https://www.rfc-editor.org/rfc/rfc1321
+[23] Kokaly, R.F., Clark, R.N., Swayze, G.A., et al. USGS Spectral Library Version 7. U.S. Geological Survey Data Series 1035, 2017. https://doi.org/10.3133/ds1035
+[24] Fowler, M. Patterns of Enterprise Application Architecture. Addison-Wesley, 2002. https://martinfowler.com/books/eaa.html
+[25] Pieters, C.M., Hiroi, T. RELAB: A NASA Multiuser Spectroscopy Facility. Lunar and Planetary Science Conference XXXV, Abstract 1720, 2004. https://ui.adsabs.harvard.edu/abs/2004LPI....35.1720P
+[26] Kramida, A., Ralchenko, Yu., Reader, J., NIST ASD Team. NIST Atomic Spectra Database (Version 5.11). National Institute of Standards and Technology, 2023. [Accessed: INSERT ACCESS DATE] https://physics.nist.gov/asd
+[27] Knoll, G.F. Radiation Detection and Measurement, 4th Edition. Wiley, 2010. https://www.wiley.com/en-us/Radiation+Detection+and+Measurement%2C+4th+Edition-p-9780470131480
+[28] PDS Geosciences Node. Washington University in St. Louis. [Accessed: INSERT ACCESS DATE] https://pds-geosciences.wustl.edu/

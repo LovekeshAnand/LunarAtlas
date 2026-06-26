@@ -11,6 +11,7 @@
 import { useMemo } from 'react';
 import { type SpectralDataset } from './MultiSpectralGraph';
 import { useDownsampling } from '../../hooks/useDownsampling';
+import { type DenoiseMode } from '../../services/apiService';
 
 interface MiniSpectralCardProps {
   dataset: SpectralDataset;
@@ -22,6 +23,7 @@ interface MiniSpectralCardProps {
   targetWavelengths?: number[];
   lttbEnabled?: boolean;
   viewMode?: 'L1' | 'L2' | 'overlay';
+  denoiseMode?: DenoiseMode;
 }
 
 const MINI_W = 600;
@@ -37,6 +39,7 @@ export default function MiniSpectralCard({
   targetWavelengths,
   lttbEnabled = true,
   viewMode = 'L2',
+  denoiseMode = 'none',
 }: MiniSpectralCardProps) {
   const { id, label, color, data, meta } = dataset;
 
@@ -162,9 +165,19 @@ export default function MiniSpectralCard({
         }`}>
           {lttbEnabled ? 'LTTB ON' : 'LTTB OFF'}
         </span>
-        <span className="text-[9px] font-sans font-bold text-blue-600 bg-blue-50 border border-solid border-blue-100 px-1.5 py-0.5 rounded uppercase tracking-widest">
+        <span className="text-[9px] font-sans font-bold text-blue-600 bg-blue-50 border border-solid border-blue-100 px-1.5 py-0.5 rounded uppercase tracking-widest shrink-0">
           Peak Guarantee
         </span>
+        {denoiseMode === 'als' && (
+          <span className="text-[9px] font-sans font-bold text-slate-800 bg-slate-100 border border-solid border-slate-200 px-1.5 py-0.5 rounded uppercase tracking-widest shrink-0">
+            ALS
+          </span>
+        )}
+        {denoiseMode === 'savgol' && (
+          <span className="text-[9px] font-sans font-bold text-slate-800 bg-slate-100 border border-solid border-slate-200 px-1.5 py-0.5 rounded uppercase tracking-widest shrink-0">
+            SG
+          </span>
+        )}
         {metrics.executionTimeMs > 0 && (
           <span className="text-[9px] font-sans text-gray-400 ml-auto">
             {metrics.executionTimeMs.toFixed(1)}ms

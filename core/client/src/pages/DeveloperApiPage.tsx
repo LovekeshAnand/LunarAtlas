@@ -2,11 +2,11 @@ import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { apiService } from '../services/apiService';
 
-// Styling constants matching DocsPage and modern research layout
-const CODE = 'bg-[#f4f4f4] dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#2a2a2a] px-[6px] py-[2px] font-mono text-[11.5px] text-[#333] dark:text-[#d0d0d0] tracking-[0.1px] rounded-sm';
-const CODEBLK = 'bg-[#f7f7f7] dark:bg-[#111] border border-gray-200 dark:border-[#222] px-5 py-4 my-3 font-mono text-[12px] text-[#222] dark:text-[#c0c0c0] overflow-x-auto leading-[1.6] whitespace-pre rounded-md';
+// Styling constants matching DocsPage and modern professional research layout
+const CODE = 'bg-neutral-100 dark:bg-[#18181d] border border-neutral-200 dark:border-neutral-800 px-[6px] py-[2px] font-mono text-[11.5px] text-neutral-800 dark:text-[#d0d0d0] tracking-[0.1px] rounded-sm';
+const CODEBLK = 'bg-neutral-50 dark:bg-[#0f0f12] border border-neutral-200 dark:border-neutral-800 px-5 py-4 my-3 font-mono text-[12px] text-neutral-800 dark:text-[#c0c0c0] overflow-x-auto leading-[1.6] whitespace-pre rounded-md';
 const TABLE = 'w-full border-collapse my-3 text-[12px] text-left';
-const TH = 'text-[9px] font-bold tracking-[1.5px] text-[#888] dark:text-[#555] uppercase px-4 py-2.5 border-b border-[#ddd] dark:border-[#1e1e1e] bg-gray-50/50 dark:bg-[#141414]';
+const TH = 'text-[9px] font-bold tracking-[1.5px] text-neutral-800 dark:text-neutral-300 uppercase px-4 py-2.5 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-[#141414]';
 
 interface EndpointDoc {
   id: string;
@@ -590,10 +590,7 @@ print(data$results)
     downloadAnchor.remove();
   }
 
-  // Quick Key Validation check
-  const isKeyFormatValid = useMemo(() => {
-    return customKey.startsWith('la_') && customKey.length >= 10;
-  }, [customKey]);
+
 
   return (
     <div className="bg-canvas dark:bg-[#0d0d0d] transition-colors duration-200 overflow-x-hidden">
@@ -601,13 +598,13 @@ print(data$results)
       {/* Hero Header */}
       <section className="border-b border-gray-200 dark:border-[#1e1e1e] bg-[#f8f9fa] dark:bg-[#141414] py-14">
         <div className="max-w-[1400px] mx-auto px-8">
-          <div className="text-[9px] font-bold tracking-[3px] text-gray-500 dark:text-[#444] uppercase mb-3">
+          <div className="text-[9px] font-bold tracking-[3px] text-neutral-700 dark:text-neutral-400 uppercase mb-3">
             Open Science Catalogs
           </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-[#f0f0f0] m-0 mb-4">
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-900 dark:text-white m-0 mb-4">
             LunarAtlas Public API
           </h1>
-          <p className="text-[13.5px] text-gray-600 dark:text-[#888] leading-relaxed max-w-[760px] m-0">
+          <p className="text-[13.5px] text-gray-600 dark:text-neutral-300 leading-relaxed max-w-[760px] m-0">
             A PDS4-compliant REST API serving normalized space science products. Integrate raw or downsampled 
             laser-induced breakdown spectroscopy (LIBS) data directly into your analytical pipelines, python notebooks, 
             and research systems.
@@ -622,62 +619,62 @@ print(data$results)
         <div className="space-y-12 min-w-0">
           
           {/* Quickstart Guide for Students and First-time Users */}
-          <section className="bg-white dark:bg-[#111] border border-gray-250 dark:border-[#222] p-8 rounded-lg shadow-sm">
+          <section className="bg-white dark:bg-[#111] border border-neutral-200 dark:border-[#222] p-8 rounded-lg shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <span className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300 text-[10px] font-black tracking-widest uppercase px-2 py-0.5 rounded-sm">
                 Student &amp; Researcher Guide
               </span>
-              <h2 className="text-[16px] font-bold text-gray-800 dark:text-[#f0f0f0] m-0 tracking-tight">First-Time Integration Guide</h2>
+              <h2 className="text-[16px] font-bold text-neutral-900 dark:text-neutral-100 m-0 tracking-tight">First-Time Integration Guide</h2>
             </div>
-            <p className="text-[13px] text-gray-600 dark:text-[#999] leading-relaxed mb-6">
+            <p className="text-[13px] text-neutral-800 dark:text-neutral-300 leading-relaxed mb-6">
               Welcome to the LunarAtlas developer portal! If you are a student, educator, or independent researcher looking to access actual Chandrayaan-3 LIBS datasets programmatically, follow these three steps to make your first API request:
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="border border-gray-150 dark:border-[#222] p-5 rounded bg-gray-50/50 dark:bg-[#161616]/50">
+              <div className="border border-neutral-100 dark:border-[#222] p-5 rounded bg-gray-50/50 dark:bg-[#161616]/50">
                 <div className="w-6 h-6 rounded-full bg-black dark:bg-[#e0e0e0] text-white dark:text-black flex items-center justify-center text-[11px] font-bold mb-3">1</div>
-                <div className="text-[12px] font-bold text-gray-800 dark:text-gray-200 mb-1.5">Create a Profile</div>
-                <div className="text-[11.5px] text-gray-500 dark:text-gray-400 leading-normal">
-                  <span className="font-semibold text-gray-700 dark:text-gray-300">Sign Up</span> for a free account. Update your role (e.g. <em>Student</em> or <em>Academic</em>) inside the user profile setup.
+                <div className="text-[12px] font-bold text-neutral-800 dark:text-neutral-200 mb-1.5">Create a Profile</div>
+                <div className="text-[11.5px] text-neutral-700 dark:text-neutral-300 leading-normal">
+                  <span className="font-semibold text-neutral-800 dark:text-neutral-200">Sign Up</span> for a free account. Update your role (e.g. <em>Student</em> or <em>Academic</em>) inside the user profile setup.
                 </div>
               </div>
-              <div className="border border-gray-150 dark:border-[#222] p-5 rounded bg-gray-50/50 dark:bg-[#161616]/50">
+              <div className="border border-neutral-100 dark:border-[#222] p-5 rounded bg-gray-50/50 dark:bg-[#161616]/50">
                 <div className="w-6 h-6 rounded-full bg-black dark:bg-[#e0e0e0] text-white dark:text-black flex items-center justify-center text-[11px] font-bold mb-3">2</div>
-                <div className="text-[12px] font-bold text-gray-800 dark:text-gray-200 mb-1.5">Generate your API Key</div>
-                <div className="text-[11.5px] text-gray-500 dark:text-gray-400 leading-normal">
+                <div className="text-[12px] font-bold text-neutral-800 dark:text-neutral-200 mb-1.5">Generate your API Key</div>
+                <div className="text-[11.5px] text-neutral-700 dark:text-neutral-300 leading-normal">
                   Go to your <Link to="/dashboard" className="text-black dark:text-white font-semibold underline">Dashboard</Link> &rarr; API Keys tab. Generate a new key. Copy it immediately as it will only be shown once.
                 </div>
               </div>
-              <div className="border border-gray-150 dark:border-[#222] p-5 rounded bg-gray-50/50 dark:bg-[#161616]/50">
+              <div className="border border-neutral-100 dark:border-[#222] p-5 rounded bg-gray-50/50 dark:bg-[#161616]/50">
                 <div className="w-6 h-6 rounded-full bg-black dark:bg-[#e0e0e0] text-white dark:text-black flex items-center justify-center text-[11px] font-bold mb-3">3</div>
-                <div className="text-[12px] font-bold text-gray-800 dark:text-gray-200 mb-1.5">Query the Catalog</div>
-                <div className="text-[11.5px] text-gray-500 dark:text-gray-400 leading-normal">
+                <div className="text-[12px] font-bold text-neutral-800 dark:text-neutral-200 mb-1.5">Query the Catalog</div>
+                <div className="text-[11.5px] text-neutral-700 dark:text-neutral-300 leading-normal">
                   Pass the token inside the HTTP request header: <br/><code className={CODE}>X-API-Key: la_7f3...</code> or parameter: <br/><code className={CODE}>?api_key=la_7f3...</code>.
                 </div>
               </div>
             </div>
 
             {/* ID Discovery & Construction Guide */}
-            <div className="mt-8 pt-6 border-t border-gray-150 dark:border-[#222]">
-              <h3 className="text-[13px] font-bold text-gray-800 dark:text-[#f0f0f0] mb-2">How to Discover or Construct Identifiers</h3>
-              <p className="text-[12.5px] text-gray-650 dark:text-gray-400 leading-relaxed mb-4">
-                To query specific measurements or spectral details, you will need identifiers like <code className="font-semibold text-gray-700 dark:text-gray-300">observation_id</code> or <code className="font-semibold text-gray-700 dark:text-gray-300">measurement_id</code>. You can obtain these in two ways:
+            <div className="mt-8 pt-6 border-t border-neutral-100 dark:border-[#222]">
+              <h3 className="text-[13px] font-bold text-neutral-900 dark:text-neutral-100 mb-2">How to Discover or Construct Identifiers</h3>
+              <p className="text-[12.5px] text-neutral-800 dark:text-neutral-300 leading-relaxed mb-4">
+                To query specific measurements or spectral details, you will need identifiers like <code className="font-semibold text-neutral-800 dark:text-neutral-200">observation_id</code> or <code className="font-semibold text-neutral-800 dark:text-neutral-200">measurement_id</code>. You can obtain these in two ways:
               </p>
               <div className="space-y-4">
                 <div className="text-[12px]">
-                  <span className="font-bold text-gray-800 dark:text-gray-250 block mb-1">Method 1: Dynamic Discovery (Query-First API Workflow)</span>
-                  <p className="text-gray-500 dark:text-gray-450 m-0 pl-4 leading-normal">
+                  <span className="font-bold text-gray-800 dark:text-neutral-200 block mb-1">Method 1: Dynamic Discovery (Query-First API Workflow)</span>
+                  <p className="text-gray-500 dark:text-neutral-400 m-0 pl-4 leading-normal">
                     Call the list endpoints first to search for records. For example, make a request to <code className={CODE}>GET /public/observations?date=2023-08-25</code>. Copy the returned <code className="text-black dark:text-white font-mono text-[11px] font-bold">observation_id</code> (e.g. <code className="font-mono text-[11px]">LIB-20230825-145453-00</code>) to query its child measurements, or copy the <code className="text-black dark:text-white font-mono text-[11px] font-bold">measurement_id</code> (e.g. <code className="font-mono text-[11px]">FI-20230825-145453-00-1</code>) to fetch its raw spectrum.
                   </p>
                 </div>
                 <div className="text-[12px]">
-                  <span className="font-bold text-gray-800 dark:text-gray-250 block mb-1">Method 2: Static Mapping (Matching the ISRO PRADAN structure)</span>
-                  <p className="text-gray-500 dark:text-gray-450 m-0 pl-4 leading-normal">
+                  <span className="font-bold text-gray-800 dark:text-neutral-200 block mb-1">Method 2: Static Mapping (Matching the ISRO PRADAN structure)</span>
+                  <p className="text-gray-500 dark:text-neutral-400 m-0 pl-4 leading-normal">
                     The database identifiers are mapped deterministically from the physical file structures on disk:
                   </p>
-                  <ul className="list-disc pl-8 space-y-1 mt-2 text-gray-500 dark:text-gray-405 leading-normal">
-                    <li><strong>Observation ID:</strong> Matches the session folder name formatted as <code className="font-mono text-[11px]">LIB-YYYYMMDD-HHMMSS-SS</code> (e.g. folder <code className="font-mono text-[11px] text-gray-700 dark:text-gray-350">ch3_lib_002_20230825T145453_00_l1</code> maps to ID <code className="font-mono text-[11px] text-black dark:text-white">LIB-20230825-145453-00</code>).</li>
-                    <li><strong>Measurement ID:</strong> Matches the individual shot CSV file suffix formatted as <code className="font-mono text-[11px]">FI-YYYYMMDD-HHMMSS-SS-X</code> (e.g. file <code className="font-mono text-[11px] text-gray-700 dark:text-gray-350">ch3_lib_002_20230825T145453_00_l1_0_1.csv</code> maps to ID <code className="font-mono text-[11px] text-black dark:text-white">FI-20230825-145453-00-1</code>).</li>
+                  <ul className="list-disc pl-8 space-y-1 mt-2 text-gray-500 dark:text-neutral-400 leading-normal">
+                    <li><strong>Observation ID:</strong> Matches the session folder name formatted as <code className="font-mono text-[11px]">LIB-YYYYMMDD-HHMMSS-SS</code> (e.g. folder <code className="font-mono text-[11px] text-gray-700 dark:text-neutral-300">ch3_lib_002_20230825T145453_00_l1</code> maps to ID <code className="font-mono text-[11px] text-black dark:text-white">LIB-20230825-145453-00</code>).</li>
+                    <li><strong>Measurement ID:</strong> Matches the individual shot CSV file suffix formatted as <code className="font-mono text-[11px]">FI-YYYYMMDD-HHMMSS-SS-X</code> (e.g. file <code className="font-mono text-[11px] text-gray-700 dark:text-neutral-300">ch3_lib_002_20230825T145453_00_l1_0_1.csv</code> maps to ID <code className="font-mono text-[11px] text-black dark:text-white">FI-20230825-145453-00-1</code>).</li>
                   </ul>
                 </div>
               </div>
@@ -685,82 +682,82 @@ print(data$results)
           </section>
 
           {/* Recommended Workflows Section */}
-          <section className="bg-white dark:bg-[#111] border border-green-150 dark:border-green-900/30 p-8 rounded-lg shadow-sm">
+          <section className="bg-white dark:bg-[#0f0f11] border border-neutral-200 dark:border-neutral-800 p-8 rounded-xl shadow-sm">
             <div className="flex items-center gap-2 mb-4">
-              <span className="bg-green-100 text-green-800 dark:bg-green-950/40 dark:text-green-300 text-[10px] font-black tracking-widest uppercase px-2 py-0.5 rounded-sm">
+              <span className="bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-300 text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-md border border-neutral-200 dark:border-neutral-700">
                 Recommended Access Patterns
               </span>
-              <h2 className="text-[16px] font-bold text-gray-800 dark:text-[#f0f0f0] m-0 tracking-tight">Flexible Query Workflows</h2>
+              <h2 className="text-[16px] font-bold text-neutral-900 dark:text-[#f0f0f0] m-0 tracking-tight">Flexible Query Workflows</h2>
             </div>
-            <p className="text-[13px] text-gray-600 dark:text-[#999] leading-relaxed mb-6">
+            <p className="text-[13px] text-neutral-800 dark:text-neutral-300 leading-relaxed mb-6">
               Depending on your research goals, you can navigate the data catalog using one of three standard patterns. Note how the newer cascading filters allow you to skip the entity hierarchy entirely:
             </p>
 
             <div className="space-y-4">
               {/* Pattern A */}
-              <div className="border border-gray-150 dark:border-[#222] p-4 rounded bg-gray-50/50 dark:bg-[#161616]/50">
+              <div className="border border-neutral-100 dark:border-[#222] p-4 rounded bg-gray-50/50 dark:bg-[#161616]/50">
                 <div className="flex justify-between items-start mb-2">
-                  <div className="text-[12px] font-bold text-gray-800 dark:text-gray-250 flex items-center gap-2">
+                  <div className="text-[12px] font-bold text-gray-800 dark:text-neutral-200 flex items-center gap-2">
                     <span className="text-black dark:text-white font-mono">Pattern A</span>
                     <span>Hierarchical Catalog Browsing</span>
                   </div>
-                  <span className="text-[10px] text-gray-400 font-medium">Standard PDS Flow</span>
+                  <span className="text-[10px] text-neutral-800 dark:text-neutral-300 font-semibold">Standard PDS Flow</span>
                 </div>
-                <p className="text-[11.5px] text-gray-500 dark:text-gray-400 m-0 mb-3">
+                <p className="text-[11.5px] text-neutral-700 dark:text-neutral-300 m-0 mb-3">
                   Start by listing observations on a specific date, retrieve the matching ID, then query for its spectra. Best for broad catalog exploration.
                 </p>
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2 font-mono text-[10.5px]">
                     <span className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 px-1 py-0.5 rounded text-[9px] font-bold">GET</span>
-                    <span className="text-gray-700 dark:text-gray-300">/public/observations?date=2023-08-25</span>
+                    <span className="text-neutral-800 dark:text-neutral-200">/public/observations?date=2023-08-25</span>
                   </div>
-                  <div className="text-gray-400 text-[10px] pl-8">&darr; Extracts observation_id, e.g., <code className="font-semibold text-gray-600 dark:text-gray-400">LIB-20230825-145453-00</code></div>
+                  <div className="text-neutral-700 dark:text-neutral-300 text-[10px] pl-8">&darr; Extracts observation_id, e.g., <code className="font-semibold text-neutral-800 dark:text-neutral-300">LIB-20230825-145453-00</code></div>
                   <div className="flex items-center gap-2 font-mono text-[10.5px]">
                     <span className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 px-1 py-0.5 rounded text-[9px] font-bold">GET</span>
-                    <span className="text-gray-700 dark:text-gray-300">/public/spectra?observation_id=LIB-20230825-145453-00</span>
+                    <span className="text-neutral-800 dark:text-neutral-200">/public/spectra?observation_id=LIB-20230825-145453-00</span>
                   </div>
                 </div>
               </div>
 
               {/* Pattern B */}
-              <div className="border border-green-150 dark:border-green-950/30 p-4 rounded bg-green-50/20 dark:bg-[#162519]/25">
+              <div className="border border-neutral-200 dark:border-neutral-800 p-4 rounded-lg bg-neutral-50/40 dark:bg-neutral-900/25">
                 <div className="flex justify-between items-start mb-2">
-                  <div className="text-[12px] font-bold text-green-800 dark:text-green-400 flex items-center gap-2">
+                  <div className="text-[12px] font-bold text-neutral-800 dark:text-neutral-200 flex items-center gap-2">
                     <span className="font-mono">Pattern B</span>
                     <span>Direct Filtering (Cascading Query)</span>
                   </div>
-                  <span className="text-[10px] text-green-600 dark:text-green-500 font-bold uppercase tracking-wider bg-green-100/70 dark:bg-green-900/30 px-1.5 py-0.5 rounded-sm">Recommended</span>
+                  <span className="text-[10px] text-neutral-800 dark:text-neutral-300 font-bold uppercase tracking-wider bg-neutral-200/70 dark:bg-neutral-800/80 px-1.5 py-0.5 rounded-sm">Recommended</span>
                 </div>
-                <p className="text-[11.5px] text-gray-500 dark:text-gray-400 m-0 mb-3">
+                <p className="text-[11.5px] text-neutral-700 dark:text-neutral-300 m-0 mb-3">
                   Query spectra or measurements directly by specifying the mission code and date. This bypasses the need to look up internal observation IDs.
                 </p>
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2 font-mono text-[10.5px]">
-                    <span className="bg-green-100/60 text-green-700 dark:bg-green-950/50 dark:text-green-400 px-1 py-0.5 rounded text-[9px] font-bold">GET</span>
-                    <span className="text-gray-700 dark:text-gray-300">/public/measurements?date=2023-08-25&amp;mission=CH3</span>
+                    <span className="bg-neutral-200/80 text-neutral-800 dark:bg-neutral-800/80 dark:text-neutral-300 px-1 py-0.5 rounded text-[9px] font-bold">GET</span>
+                    <span className="text-neutral-800 dark:text-neutral-200">/public/measurements?date=2023-08-25&amp;mission=CH3</span>
                   </div>
                   <div className="flex items-center gap-2 font-mono text-[10.5px]">
-                    <span className="bg-green-100/60 text-green-700 dark:bg-green-950/50 dark:text-green-400 px-1 py-0.5 rounded text-[9px] font-bold">GET</span>
-                    <span className="text-gray-700 dark:text-gray-300">/public/spectra?date=2023-08-25&amp;mission=CH3</span>
+                    <span className="bg-neutral-200/80 text-neutral-800 dark:bg-neutral-800/80 dark:text-neutral-300 px-1 py-0.5 rounded text-[9px] font-bold">GET</span>
+                    <span className="text-neutral-800 dark:text-neutral-200">/public/spectra?date=2023-08-25&amp;mission=CH3</span>
                   </div>
                 </div>
               </div>
 
               {/* Pattern C */}
-              <div className="border border-gray-150 dark:border-[#222] p-4 rounded bg-gray-50/50 dark:bg-[#161616]/50">
+              <div className="border border-neutral-100 dark:border-[#222] p-4 rounded bg-gray-50/50 dark:bg-[#161616]/50">
                 <div className="flex justify-between items-start mb-2">
-                  <div className="text-[12px] font-bold text-gray-800 dark:text-gray-250 flex items-center gap-2">
+                  <div className="text-[12px] font-bold text-gray-800 dark:text-neutral-200 flex items-center gap-2">
                     <span className="text-black dark:text-white font-mono">Pattern C</span>
                     <span>Specific Record Retrieval</span>
                   </div>
-                  <span className="text-[10px] text-gray-400 font-medium">Direct Access</span>
+                  <span className="text-[10px] text-neutral-800 dark:text-neutral-300 font-semibold">Direct Access</span>
                 </div>
-                <p className="text-[11.5px] text-gray-500 dark:text-gray-400 m-0 mb-3">
+                <p className="text-[11.5px] text-neutral-700 dark:text-neutral-300 m-0 mb-3">
                   If you already know the unique identifier for a specific laser shot/measurement, retrieve its high-resolution spectral channels directly.
                 </p>
                 <div className="flex items-center gap-2 font-mono text-[10.5px]">
                   <span className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 px-1 py-0.5 rounded text-[9px] font-bold">GET</span>
-                  <span className="text-gray-700 dark:text-gray-300">/public/spectra/FI-20230825-145453-00-1</span>
+                  <span className="text-neutral-800 dark:text-neutral-200">/public/spectra/FI-20230825-145453-00-1</span>
                 </div>
               </div>
             </div>
@@ -768,7 +765,7 @@ print(data$results)
 
           {/* Section: Overview */}
           <section className="bg-white dark:bg-[#121212] p-8 border border-gray-200 dark:border-[#222] rounded-lg shadow-sm">
-            <h2 className="text-xl font-bold tracking-tight text-gray-800 dark:text-[#f0f0f0] mt-0 mb-3">API Overview</h2>
+            <h2 className="text-xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 mt-0 mb-3">API Overview</h2>
             <div className="text-[13px] text-gray-600 dark:text-[#b0b0b0] leading-[1.8] space-y-4">
               <p>
                 To support peer-reviewable planetary research, LunarAtlas exposes standard catalog REST APIs for spectral 
@@ -785,7 +782,7 @@ print(data$results)
 
           {/* Section: Standard Response Envelope */}
           <section className="bg-white dark:bg-[#121212] p-8 border border-gray-200 dark:border-[#222] rounded-lg shadow-sm">
-            <h2 className="text-xl font-bold tracking-tight text-gray-800 dark:text-[#f0f0f0] mt-0 mb-3">Standard Response Envelope</h2>
+            <h2 className="text-xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 mt-0 mb-3">Standard Response Envelope</h2>
             <p className="text-[13px] text-gray-600 dark:text-[#b0b0b0] leading-[1.75] mb-4">
               All responses are wrapped in a standard metadata envelope detailing space agency licensing, schema standards, and rate limits:
             </p>
@@ -810,8 +807,8 @@ print(data$results)
 
           {/* Section: Interactive API Route Documentation */}
           <section className="bg-white dark:bg-[#121212] p-8 border border-gray-200 dark:border-[#222] rounded-lg shadow-sm">
-            <h2 className="text-xl font-bold tracking-tight text-gray-800 dark:text-[#f0f0f0] mt-0 mb-2">Endpoint Reference Catalog</h2>
-            <p className="text-[13px] text-gray-500 dark:text-gray-400 mb-6">
+            <h2 className="text-xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 mt-0 mb-2">Endpoint Reference Catalog</h2>
+            <p className="text-[13px] text-neutral-700 dark:text-neutral-300 mb-6">
               Click any API route below to view parameter definitions, sample requests, and complete JSON response layouts.
             </p>
 
@@ -833,28 +830,28 @@ print(data$results)
                       className="w-full text-left py-3.5 px-5 flex items-center justify-between bg-transparent border-0 cursor-pointer"
                     >
                       <div className="flex items-center gap-3 flex-wrap">
-                        <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-green-50 text-green-700 dark:bg-green-950/40 dark:text-green-400">
+                        <span className="font-mono text-[9px] font-bold px-2 py-0.5 rounded border border-neutral-200 dark:border-neutral-700 bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
                           {doc.method}
                         </span>
-                        <code className="font-mono text-[12px] font-bold text-gray-800 dark:text-gray-250">
+                        <code className="font-mono text-[12px] font-bold text-gray-800 dark:text-neutral-200">
                           {doc.path}
                         </code>
                       </div>
-                      <span className="text-[11.5px] text-gray-400">
+                      <span className="text-[11.5px] text-neutral-800 dark:text-neutral-300">
                         {isExpanded ? 'Collapse ▲' : 'Expand ▼'}
                       </span>
                     </button>
 
                     {isExpanded && (
                       <div className="px-5 pb-6 border-t border-solid border-gray-100 dark:border-[#222] pt-4 space-y-4">
-                        <p className="text-[13px] text-gray-650 dark:text-[#a0a0a0] leading-relaxed m-0">
+                        <p className="text-[13px] text-neutral-800 dark:text-neutral-300 leading-relaxed m-0">
                           {doc.description}
                         </p>
 
                         {/* Parameter list */}
                         <div>
-                          <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-[#555] mb-2">Parameters</div>
-                          <div className="overflow-x-auto border border-solid border-gray-150 dark:border-[#222] rounded">
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-300 mb-2">Parameters</div>
+                          <div className="overflow-x-auto border border-solid border-neutral-100 dark:border-[#222] rounded">
                             <table className={TABLE}>
                               <thead>
                                 <tr className="bg-gray-50/50 dark:bg-[#161616]/60 border-b border-gray-200 dark:border-[#222]">
@@ -868,26 +865,26 @@ print(data$results)
                               <tbody>
                                 {doc.params.map((p) => (
                                   <tr key={p.name} className="border-b border-gray-100 dark:border-[#1e1e1e]/50 last:border-0 hover:bg-gray-50/10">
-                                    <td className="py-2.5 px-4 font-mono font-bold text-[11.5px] text-gray-800 dark:text-gray-200">{p.name}</td>
-                                    <td className="py-2.5 px-4 text-gray-500 dark:text-gray-400">{p.type}</td>
+                                    <td className="py-2.5 px-4 font-mono font-bold text-[11.5px] text-neutral-800 dark:text-neutral-200">{p.name}</td>
+                                    <td className="py-2.5 px-4 text-neutral-700 dark:text-neutral-300">{p.type}</td>
                                     <td className="py-2.5 px-4 font-semibold text-[11px]">
                                       {typeof p.req === 'string' ? (
                                         <span className={
                                           p.req === 'Required' ? 'text-red-600 dark:text-red-400' :
                                           p.req === 'Recommended' ? 'text-green-600 dark:text-green-400' :
                                           p.req === 'Conditional' ? 'text-black dark:text-white font-medium' :
-                                          'text-gray-500 dark:text-gray-400'
+                                          'text-neutral-700 dark:text-neutral-300'
                                         }>
                                           {p.req}
                                         </span>
                                       ) : p.req ? (
                                         <span className="text-red-600 dark:text-red-400">Yes</span>
                                       ) : (
-                                        <span className="text-gray-500 dark:text-gray-400">No</span>
+                                        <span className="text-neutral-700 dark:text-neutral-300">No</span>
                                       )}
                                     </td>
-                                    <td className="py-2.5 px-4 font-mono text-gray-400">{p.def || '—'}</td>
-                                    <td className="py-2.5 px-4 text-gray-500 dark:text-gray-400 leading-normal">{p.desc}</td>
+                                    <td className="py-2.5 px-4 font-mono text-neutral-800 dark:text-neutral-300">{p.def || '—'}</td>
+                                    <td className="py-2.5 px-4 text-neutral-700 dark:text-neutral-300 leading-normal">{p.desc}</td>
                                   </tr>
                                 ))}
                               </tbody>
@@ -897,13 +894,13 @@ print(data$results)
 
                         {/* Copyable cURL preview */}
                         <div>
-                          <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-[#555] mb-2">Request Example (cURL)</div>
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-300 mb-2">Request Example (cURL)</div>
                           <pre className={CODEBLK}>{doc.curlExample}</pre>
                         </div>
 
                         {/* Expected JSON Response Schema block */}
                         <div>
-                          <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-[#555] mb-2">Expected JSON Response</div>
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-300 mb-2">Expected JSON Response</div>
                           <pre className={`${CODEBLK} max-h-[300px]`}>
                             {JSON.stringify(doc.sampleResponse, null, 2)}
                           </pre>
@@ -918,8 +915,8 @@ print(data$results)
 
           {/* Section: Integration Guides (Multi-language template) */}
           <section className="bg-white dark:bg-[#121212] p-8 border border-gray-200 dark:border-[#222] rounded-lg shadow-sm">
-            <h2 className="text-xl font-bold tracking-tight text-gray-800 dark:text-[#f0f0f0] mb-2 font-sans">Multi-Language Code Snippets</h2>
-            <p className="text-[13px] text-gray-500 dark:text-gray-400 mb-5 leading-normal">
+            <h2 className="text-xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 mb-2 font-sans">Multi-Language Code Snippets</h2>
+            <p className="text-[13px] text-neutral-700 dark:text-neutral-300 mb-5 leading-normal">
               Copy this bootstrap client code directly into your local scripts or Jupyter Notebooks to begin querying LunarAtlas.
             </p>
 
@@ -932,7 +929,7 @@ print(data$results)
                   className={`px-4 py-2 text-[11px] font-bold tracking-wider uppercase border-b-2 cursor-pointer transition-all bg-transparent ${
                     activeSnippetTab === tab
                       ? 'border-black text-black dark:border-white dark:text-white'
-                      : 'border-transparent text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'
+                      : 'border-transparent text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white'
                   }`}
                 >
                   {tab === 'node' ? 'Node.js' : tab === 'curl' ? 'cURL' : tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -945,8 +942,8 @@ print(data$results)
 
           {/* Section: Postman */}
           <section className="bg-white dark:bg-[#121212] p-8 border border-gray-200 dark:border-[#222] rounded-lg shadow-sm">
-            <h2 className="text-xl font-bold tracking-tight text-gray-800 dark:text-[#f0f0f0] mb-3">Postman Workspace Schema</h2>
-            <div className="text-[13px] text-gray-650 dark:text-[#a0a0a0] leading-[1.75]">
+            <h2 className="text-xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 mb-3">Postman Workspace Schema</h2>
+            <div className="text-[13px] text-neutral-800 dark:text-neutral-300 leading-[1.75]">
               <p className="mb-4">
                 We maintain an up-to-date Postman API schema. Import this collection into your Postman 
                 client to run automated queries and visualize raw lunar response models.
@@ -967,17 +964,16 @@ print(data$results)
         
         {/* Right column: Interactive Console Sidebar */}
         <aside className="sticky top-[80px] space-y-6 min-w-0 w-full overflow-hidden">
-          
-          {/* Key verification card */}
-          <div className="bg-white dark:bg-[#121212] border border-gray-250 dark:border-[#222] p-6 rounded-lg shadow-sm">
+            {/* Key verification card */}
+          <div className="bg-white dark:bg-[#0f0f11] border border-neutral-200 dark:border-neutral-800 p-6 rounded-xl shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">API Playground</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-300">API Playground</span>
             </div>
             
-            <label className="block text-[9.5px] font-bold uppercase tracking-wide text-gray-500 mb-1.5">Enter API Authorization Key</label>
+            <label className="block text-[9.5px] font-bold uppercase tracking-wide text-neutral-800 dark:text-neutral-300 mb-1.5">Enter API Authorization Key</label>
             <input
               type="text"
-              className="w-full text-[12px] bg-gray-50 dark:bg-[#161616] border border-gray-200 dark:border-[#333] px-3 py-2 text-gray-800 dark:text-[#d0d0d0] rounded focus:outline-none focus:border-black dark:focus:border-white font-mono"
+              className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2.5 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 focus:border-neutral-400 dark:focus:border-neutral-700 transition-all font-mono"
               placeholder="Paste your generated API key (la_xxxx...)"
               value={customKey}
               onChange={(e) => setCustomKey(e.target.value)}
@@ -986,13 +982,13 @@ print(data$results)
             <div className="mt-3 flex gap-2">
               <button 
                 onClick={() => setCustomKey('')}
-                className="text-[10px] px-2.5 py-1 bg-transparent hover:bg-gray-50 dark:hover:bg-gray-900 border border-gray-250 dark:border-gray-800 rounded font-semibold text-gray-500 cursor-pointer"
+                className="px-4 py-1.5 border border-neutral-300 dark:border-neutral-800 text-neutral-800 dark:text-neutral-300 hover:text-neutral-950 dark:hover:text-white hover:border-neutral-400 dark:hover:border-neutral-600 bg-transparent text-[10px] font-bold uppercase tracking-wider rounded-lg cursor-pointer transition-all duration-150"
               >
                 Clear
               </button>
             </div>
             
-            <p className="text-[10.5px] text-gray-400 leading-normal mt-3.5 m-0">
+            <p className="text-[10.5px] text-neutral-400 leading-normal mt-3.5 m-0">
               Generate your custom API key from the Dashboard and paste it above to execute interactive API requests.
             </p>
           </div>
@@ -1160,26 +1156,27 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
   };
 
   return (
-    <div className="bg-[#fcfcfc] dark:bg-[#121212] border border-gray-250 dark:border-[#222] rounded-lg p-5">
-      <div className="flex items-center justify-between mb-4 border-b border-gray-200 dark:border-[#222] pb-2">
-        <div className="text-[12px] font-bold text-gray-800 dark:text-[#f0f0f0] tracking-tight uppercase">
+    <div className="bg-white dark:bg-[#0f0f11] border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 shadow-sm">
+      <div className="flex items-center justify-between mb-5 border-b border-neutral-200 dark:border-neutral-800 pb-3">
+        <div className="text-[12px] font-bold text-neutral-800 dark:text-[#f0f0f0] tracking-wider uppercase">
           Interactive Console
         </div>
         <button 
           onClick={autoFillSample}
-          className="text-[10px] bg-gray-150 dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-700 px-2 py-0.5 rounded cursor-pointer font-semibold"
+          className="px-3 py-1.5 border border-neutral-300 dark:border-neutral-800 text-neutral-800 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:border-neutral-400 dark:hover:border-neutral-600 bg-transparent text-[9px] font-bold uppercase tracking-wider rounded-lg cursor-pointer transition-all duration-150"
         >
           Auto-fill Sample Data
         </button>
       </div>
       
       {/* Endpoint Selector */}
-      <div className="space-y-4 mb-4">
+      <div className="space-y-4 mb-5">
         <div>
-          <label className="block text-[9px] font-bold uppercase tracking-wider text-gray-500 dark:text-[#555] mb-1">Select Endpoint Route</label>
+          <label className="block text-[9.5px] font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-300 mb-2">Select Endpoint Route</label>
           <select
-            className="w-full text-[12px] bg-canvas border border-gray-250 dark:border-[#333] px-3 py-2 text-gray-850 dark:text-[#d0d0d0] rounded focus:outline-none focus:border-black dark:focus:border-white cursor-pointer"
+            className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2.5 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 cursor-pointer"
             value={endpoint}
+            style={{ colorScheme: 'dark' }}
             onChange={(e) => {
               setEndpoint(e.target.value);
               setResponse(null);
@@ -1198,16 +1195,16 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
       </div>
 
       {/* Dynamic Parameters block */}
-      <div className="border-t border-gray-150 dark:border-[#1e1e1e] pt-4 mb-4">
-        <div className="text-[9px] font-bold text-gray-400 dark:text-[#666] mb-3 uppercase tracking-wider">Configure Query Parameters</div>
-        <div className="space-y-3">
+      <div className="border-t border-neutral-200 dark:border-neutral-800 pt-5 mb-5">
+        <div className="text-[9.5px] font-bold text-neutral-800 dark:text-neutral-300 mb-4 uppercase tracking-wider">Configure Query Parameters</div>
+        <div className="space-y-4">
           
           {endpoint === '/public/missions/{code}' && (
             <div>
-              <label className="block text-[10px] text-gray-600 dark:text-gray-400 mb-1">Mission Code (Path)</label>
+              <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Mission Code (Path)</label>
               <input
                 type="text"
-                className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2.5 py-1.5 text-gray-800 dark:text-[#d0d0d0] rounded"
+                className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-sans"
                 value={mission}
                 onChange={(e) => setMission(e.target.value)}
                 placeholder="e.g. CH3"
@@ -1216,21 +1213,21 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
           )}
 
           {(endpoint === '/public/missions' || endpoint === '/public/observations' || endpoint === '/public/measurements' || endpoint === '/public/spectra') && (
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[10px] text-gray-600 dark:text-gray-400 mb-1">Limit</label>
+                <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Limit</label>
                 <input
                   type="number"
-                  className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2 py-1 text-gray-800 dark:text-[#d0d0d0] rounded"
+                  className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-sans"
                   value={limit}
                   onChange={(e) => setLimit(parseInt(e.target.value) || 0)}
                 />
               </div>
               <div>
-                <label className="block text-[10px] text-gray-600 dark:text-gray-400 mb-1">Offset</label>
+                <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Offset</label>
                 <input
                   type="number"
-                  className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2 py-1 text-gray-800 dark:text-[#d0d0d0] rounded"
+                  className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-sans"
                   value={offset}
                   onChange={(e) => setOffset(parseInt(e.target.value) || 0)}
                 />
@@ -1240,10 +1237,10 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
 
           {(endpoint === '/public/instruments' || endpoint === '/public/observations') && (
             <div>
-              <label className="block text-[10px] text-gray-600 dark:text-gray-400 mb-1">Mission Code Filter</label>
+              <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Mission Code Filter</label>
               <input
                 type="text"
-                className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2.5 py-1.5 text-gray-800 dark:text-[#d0d0d0] rounded"
+                className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2.5 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-sans"
                 value={mission}
                 onChange={(e) => setMission(e.target.value)}
                 placeholder="e.g. CH3"
@@ -1252,33 +1249,33 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
           )}
 
           {endpoint === '/public/observations' && (
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] text-gray-600 dark:text-gray-400 mb-1">Instrument</label>
+                  <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Instrument</label>
                   <input
                     type="text"
-                    className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2 py-1 text-gray-800 dark:text-[#d0d0d0] rounded"
+                    className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-sans"
                     value={instrument}
                     onChange={(e) => setInstrument(e.target.value)}
                     placeholder="e.g. LIBS"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-600 dark:text-gray-400 mb-1">Target Body</label>
+                  <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Target Body</label>
                   <input
                     type="text"
-                    className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2 py-1 text-gray-800 dark:text-[#d0d0d0] rounded"
+                    className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-sans"
                     value={targetName}
                     onChange={(e) => setTargetName(e.target.value)}
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-[10px] text-gray-600 dark:text-gray-400 mb-1">Capture Date (YYYY-MM-DD)</label>
+                <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Capture Date (YYYY-MM-DD)</label>
                 <input
                   type="text"
-                  className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2.5 py-1.5 text-gray-800 dark:text-[#d0d0d0] rounded font-mono"
+                  className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2.5 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-mono"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                   placeholder="e.g. 2023-08-25"
@@ -1288,33 +1285,33 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
           )}
 
           {endpoint === '/public/measurements' && (
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div>
-                <label className="block text-[10px] text-gray-650 dark:text-gray-450 mb-1">Observation / File ID</label>
+                <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Observation / File ID</label>
                 <input
                   type="text"
-                  className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2.5 py-1.5 text-gray-800 dark:text-[#d0d0d0] rounded"
+                  className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2.5 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-mono"
                   value={observationId}
                   onChange={(e) => setObservationId(e.target.value)}
                   placeholder="LIB-20230825-145453-00"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] text-gray-650 dark:text-gray-450 mb-1">Mission Filter</label>
+                  <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Mission Filter</label>
                   <input
                     type="text"
-                    className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2 py-1 text-gray-800 dark:text-[#d0d0d0] rounded"
+                    className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-sans"
                     value={mission}
                     onChange={(e) => setMission(e.target.value)}
                     placeholder="e.g. CH3"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-650 dark:text-gray-450 mb-1">Instrument Filter</label>
+                  <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Instrument Filter</label>
                   <input
                     type="text"
-                    className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2 py-1 text-gray-800 dark:text-[#d0d0d0] rounded"
+                    className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-sans"
                     value={instrument}
                     onChange={(e) => setInstrument(e.target.value)}
                     placeholder="e.g. LIBS"
@@ -1322,10 +1319,10 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
                 </div>
               </div>
               <div>
-                <label className="block text-[10px] text-gray-650 dark:text-gray-450 mb-1">Capture Date (YYYY-MM-DD)</label>
+                <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Capture Date (YYYY-MM-DD)</label>
                 <input
                   type="text"
-                  className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2.5 py-1.5 text-gray-800 dark:text-[#d0d0d0] rounded font-mono"
+                  className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2.5 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-mono"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                   placeholder="e.g. 2023-08-25"
@@ -1335,23 +1332,23 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
           )}
 
           {endpoint === '/public/spectra' && (
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] text-gray-600 dark:text-gray-400 mb-1">Observation ID</label>
+                  <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Observation ID</label>
                   <input
                     type="text"
-                    className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2.5 py-1.5 text-gray-800 dark:text-[#d0d0d0] rounded"
+                    className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2.5 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-mono"
                     value={observationId}
                     onChange={(e) => setObservationId(e.target.value)}
                     placeholder="LIB-20230825-145453-00"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-600 dark:text-gray-400 mb-1">Mission Filter</label>
+                  <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Mission Filter</label>
                   <input
                     type="text"
-                    className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2 py-1 text-gray-800 dark:text-[#d0d0d0] rounded"
+                    className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-sans"
                     value={mission}
                     onChange={(e) => setMission(e.target.value)}
                     placeholder="e.g. CH3"
@@ -1359,10 +1356,10 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
                 </div>
               </div>
               <div>
-                <label className="block text-[10px] text-gray-600 dark:text-gray-400 mb-1">Date Filter (YYYY-MM-DD)</label>
+                <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Date Filter (YYYY-MM-DD)</label>
                 <input
                   type="text"
-                  className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2.5 py-1.5 text-gray-850 dark:text-[#d0d0d0] rounded font-mono"
+                  className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2.5 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-mono"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                   placeholder="e.g. 2023-08-25"
@@ -1374,16 +1371,17 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
                   id="downsample_bulk"
                   checked={downsample}
                   onChange={(e) => setDownsample(e.target.checked)}
+                  className="rounded border-neutral-300 dark:border-neutral-800 text-neutral-900 focus:ring-neutral-400 h-4 w-4"
                 />
-                <label htmlFor="downsample_bulk" className="text-[11px] text-[#555] dark:text-[#aaa] cursor-pointer select-none">Enable LTTB Downsampling</label>
+                <label htmlFor="downsample_bulk" className="text-[12px] text-neutral-800 dark:text-neutral-300 cursor-pointer select-none">Enable LTTB Downsampling</label>
               </div>
               {downsample && (
-                <div className="grid grid-cols-2 gap-2 border-l-2 border-black dark:border-l-white pl-3">
+                <div className="grid grid-cols-2 gap-3 border-l-2 border-neutral-300 dark:border-l-neutral-700 pl-3">
                   <div>
-                    <label className="block text-[10px] text-gray-650 mb-1">Zoom (0-5)</label>
+                    <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Zoom (0-5)</label>
                     <input
                       type="number"
-                      className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2 py-1 text-gray-850 dark:text-[#d0d0d0] rounded"
+                      className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-sans"
                       value={zoomLevel}
                       min={0}
                       max={5}
@@ -1391,10 +1389,10 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] text-gray-650 mb-1">Keep Peaks</label>
+                    <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Keep Peaks</label>
                     <input
                       type="text"
-                      className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2 py-1 text-gray-850 dark:text-[#d0d0d0] rounded"
+                      className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-sans"
                       value={targetWavelengths}
                       placeholder="393.37"
                       onChange={(e) => setTargetWavelengths(e.target.value)}
@@ -1406,12 +1404,12 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
           )}
 
           {endpoint === '/public/spectra/{id}' && (
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div>
-                <label className="block text-[10px] text-gray-650 dark:text-gray-400 mb-1">Measurement ID (Path)</label>
+                <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Measurement ID (Path)</label>
                 <input
                   type="text"
-                  className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2.5 py-1.5 text-gray-850 dark:text-[#d0d0d0] rounded"
+                  className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2.5 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-mono"
                   value={measurementId}
                   onChange={(e) => setMeasurementId(e.target.value)}
                   placeholder="e.g. FI-20230825-145453-00-1"
@@ -1423,16 +1421,17 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
                   id="downsample_detail"
                   checked={downsample}
                   onChange={(e) => setDownsample(e.target.checked)}
+                  className="rounded border-neutral-300 dark:border-neutral-800 text-neutral-900 focus:ring-neutral-400 h-4 w-4"
                 />
-                <label htmlFor="downsample_detail" className="text-[11px] text-[#555] dark:text-[#aaa] cursor-pointer select-none">Enable LTTB Downsampling</label>
+                <label htmlFor="downsample_detail" className="text-[12px] text-neutral-800 dark:text-neutral-300 cursor-pointer select-none">Enable LTTB Downsampling</label>
               </div>
               {downsample && (
-                <div className="grid grid-cols-2 gap-2 border-l-2 border-black dark:border-l-white pl-3">
+                <div className="grid grid-cols-2 gap-3 border-l-2 border-neutral-300 dark:border-l-neutral-700 pl-3">
                   <div>
-                    <label className="block text-[10px] text-gray-650 mb-1">Zoom (0-5)</label>
+                    <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Zoom (0-5)</label>
                     <input
                       type="number"
-                      className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2 py-1 text-gray-850 dark:text-[#d0d0d0] rounded"
+                      className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2.5 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-sans"
                       value={zoomLevel}
                       min={0}
                       max={5}
@@ -1440,10 +1439,10 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] text-gray-650 mb-1">Keep Peaks</label>
+                    <label className="block text-[10px] text-neutral-800 dark:text-neutral-300 mb-1.5 font-semibold">Keep Peaks</label>
                     <input
                       type="text"
-                      className="w-full text-[11px] bg-canvas border border-gray-250 dark:border-[#333] px-2 py-1 text-gray-850 dark:text-[#d0d0d0] rounded"
+                      className="w-full text-[12px] bg-canvas dark:bg-[#18181d] border border-neutral-300 dark:border-neutral-800 px-3.5 py-2.5 text-neutral-900 dark:text-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-700 transition-all font-sans"
                       value={targetWavelengths}
                       placeholder="393.37"
                       onChange={(e) => setTargetWavelengths(e.target.value)}
@@ -1457,9 +1456,9 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
       </div>
 
       {/* Live cURL preview box */}
-      <div className="mb-4">
-        <label className="block text-[9px] font-bold uppercase tracking-wider text-gray-500 dark:text-[#555] mb-1">Live cURL Command preview</label>
-        <pre className="bg-[#1e1e1e] border border-[#2d2d2d] px-3 py-2.5 rounded font-mono text-[10.5px] text-[#22c55e] overflow-x-auto whitespace-pre-wrap break-all leading-[1.5]">
+      <div className="mb-5">
+        <label className="block text-[9.5px] font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-300 mb-2">Live cURL Command preview</label>
+        <pre className="bg-neutral-50 dark:bg-[#0f0f12] border border-neutral-200 dark:border-neutral-800 px-4 py-3 rounded-lg font-mono text-[11px] text-neutral-800 dark:text-neutral-300 overflow-x-auto whitespace-pre-wrap break-all leading-[1.6]">
           {liveCurlCommand}
         </pre>
       </div>
@@ -1467,7 +1466,7 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
       <button
         onClick={handleSend}
         disabled={loading}
-        className="w-full py-2.5 text-[11px] font-bold text-white dark:text-black bg-black dark:bg-white text-white dark:text-black hover:bg-gray-850 dark:hover:bg-gray-100 rounded cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 uppercase tracking-wider transition-colors"
+        className="w-full py-3 text-[10px] font-bold tracking-widest text-white dark:text-neutral-950 bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 rounded-lg uppercase transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 shadow-sm border-0 flex items-center justify-center gap-2"
       >
         {loading ? (
           <>
@@ -1482,30 +1481,30 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
 
       {/* API Console Screen */}
       {(response || error) && (
-        <div className="mt-4 border-t border-gray-200 dark:border-[#222] pt-3">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-gray-400">Response body</span>
+        <div className="mt-5 border-t border-neutral-200 dark:border-neutral-800 pt-4">
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-[9.5px] font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-300">Response body</span>
             <div className="flex gap-2">
               <button 
                 onClick={copyResponseToClipboard}
-                className="text-[9px] font-bold border border-gray-250 dark:border-[#333] px-2 py-0.5 rounded cursor-pointer text-gray-500 hover:text-gray-700 dark:hover:text-[#eee] bg-transparent"
+                className="text-[9.5px] px-2.5 py-1 border border-neutral-300 dark:border-neutral-800 text-neutral-800 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:border-neutral-400 dark:hover:border-neutral-600 bg-transparent uppercase tracking-wider rounded cursor-pointer transition-all duration-150 font-bold"
               >
                 {copyStatus === 'copied' ? 'Copied' : 'Copy'}
               </button>
               {response && (
-                <span className="text-[9.5px] font-mono font-bold text-green-600 bg-green-50 dark:bg-green-950/40 dark:text-green-400 px-1.5 py-0.5 rounded">
+                <span className="text-[9.5px] font-mono font-bold text-neutral-800 dark:text-neutral-200 bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 px-2 py-0.5 rounded uppercase tracking-wide">
                   HTTP 200 OK
                 </span>
               )}
               {error && (
-                <span className="text-[9.5px] font-mono font-bold text-red-600 bg-red-50 dark:bg-red-950/40 dark:text-red-400 px-1.5 py-0.5 rounded">
+                <span className="text-[9.5px] font-mono font-bold text-red-600 bg-red-50 dark:bg-red-950/40 dark:text-red-400 border border-red-200 dark:border-red-900 px-2 py-0.5 rounded uppercase tracking-wide">
                   HTTP ERROR
                 </span>
               )}
             </div>
           </div>
-          <div className="max-h-[250px] overflow-auto bg-[#1b1b1b] text-[#d4d4d4] font-mono text-[10.5px] p-3.5 rounded border border-black leading-[1.6] whitespace-pre scrollbar-thin">
-            {error && <span className="text-red-400">{error}</span>}
+          <div className="max-h-[250px] overflow-auto bg-neutral-50 dark:bg-[#0f0f12] text-neutral-800 dark:text-neutral-300 font-mono text-[11px] p-4 rounded-lg border border-neutral-200 dark:border-neutral-800 leading-[1.6] whitespace-pre scrollbar-thin">
+            {error && <span className="text-red-600 dark:text-red-400 font-semibold">{error}</span>}
             {response && JSON.stringify(response, null, 2)}
           </div>
         </div>

@@ -29,6 +29,7 @@ import {
   type SpectralDataPoint,
   type MeasurementInfo,
   type HealthResponse,
+  type DenoiseMode,
 } from '../services/apiService';
 import {
   ELEMENT_PEAKS,
@@ -80,6 +81,7 @@ export default function SpectralAnalyzerPage() {
   const [element, setElement] = useState('');
   const [focusedId, setFocusedId] = useState<string | null>(null);
   const [showConsole, setShowConsole] = useState(false);
+  const [denoiseMode, setDenoiseMode] = useState<DenoiseMode>('none');
 
   /* ── NIST reference ── */
   const [nistLines, setNistLines] = useState<any[]>([]);
@@ -153,7 +155,13 @@ export default function SpectralAnalyzerPage() {
     setError(null);
 
     // Fetch raw spectral data for active measurements in the full wavelength range
-    apiService.fetchMultipleSpectra(ids, DEFAULT_LAMBDA_MIN, DEFAULT_LAMBDA_MAX)
+    apiService.fetchMultipleSpectra(
+      ids,
+      DEFAULT_LAMBDA_MIN,
+      DEFAULT_LAMBDA_MAX,
+      denoiseMode === 'als',
+      denoiseMode === 'savgol'
+    )
       .then((dataMap) => {
         if (!isMounted) return;
         setMeasurementData(dataMap);
@@ -167,7 +175,7 @@ export default function SpectralAnalyzerPage() {
       });
 
     return () => { isMounted = false; };
-  }, [measurements, activeMeasurementIds]);
+  }, [measurements, activeMeasurementIds, denoiseMode]);
 
   /* ================================================================ */
   /*  EFFECT: Fetch NIST lines for the full range on element change   */
@@ -251,6 +259,8 @@ export default function SpectralAnalyzerPage() {
           showConsole={showConsole}
           setShowConsole={setShowConsole}
           health={health}
+          denoiseMode={denoiseMode}
+          onDenoiseModeChange={setDenoiseMode}
         />
 
         {/* ── Dev Console ── */}
@@ -296,6 +306,7 @@ export default function SpectralAnalyzerPage() {
             selectedElement={element}
             lttbEnabled={lttbEnabled}
             viewMode={viewMode}
+            denoiseMode={denoiseMode}
           />
         </div>
 
@@ -332,6 +343,7 @@ export default function SpectralAnalyzerPage() {
                   targetWavelengths={targetWavelengths}
                   lttbEnabled={lttbEnabled}
                   viewMode={viewMode}
+                  denoiseMode={denoiseMode}
                 />
               ))}
             </div>
