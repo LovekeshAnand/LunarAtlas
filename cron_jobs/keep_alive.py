@@ -3,11 +3,16 @@ import time
 import requests
 import psycopg2
 import redis
+from dotenv import load_dotenv
+
+# Load local .env file if present
+load_dotenv()
 
 # Fetch environment variables
 DATABASE_URL = os.getenv("DATABASE_URL")
 REDIS_URL = os.getenv("REDIS_URL")
 HEALTH_CHECK_URL = os.getenv("HEALTH_CHECK_URL")
+
 
 def ping_database():
     if not DATABASE_URL:
