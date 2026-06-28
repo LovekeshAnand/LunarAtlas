@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-06-28T21:44:37.502439",
+  "overall_status": "in_progress",
+  "raw_dir": "D:\\ch3_libs\\lib-v2\\data\\calibrated",
+  "processed_dir": "../datasets/processed",
+  "stages": {
+    "stage_7": {
+      "name": "Database Ingestion",
+      "status": "success",
+      "timestamp": "2026-06-28T21:44:37.502439",
+      "metrics": {
+        "status": "success",
+        "newly_ingested_measurements": 779,
+        "newly_ingested_spectral_points": 1631226
+      }
+    }
+  }
+}

@@ -5,6 +5,8 @@
 [![CI](https://github.com/LovekeshAnand/LunarAtlas/actions/workflows/ci.yml/badge.svg)](https://github.com/LovekeshAnand/LunarAtlas/actions)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20771541.svg)](https://doi.org/10.5281/zenodo.20771541)
 [![Elsevier SoftwareX](https://img.shields.io/badge/Paper-SoftwareX-orange)](docs/paper/paper.md)
+[![Live](https://img.shields.io/badge/Live-lunaratlas.in-brightgreen)](https://lunaratlas.in)
+[![API](https://img.shields.io/badge/API-api.lunaratlas.in-blue)](https://api.lunaratlas.in)
 
 ---
 
@@ -22,9 +24,10 @@ analysis-ready spectral records. LunarAtlas provides that tool.
 **Key results:**
 - `max(0, I_plasma - I_background)` clamping reduces unphysical negative
   channel fraction from 49.6% to 0%
-- NIST Peak-Union Lock raises elemental line retention from 6.25% to 100%
-  at 10x data reduction
+- LTTB+Peaks raises NIST-matched elemental line retention from 50.0% to 100%
+  at 10× data reduction (6 confirmed NIST matches, ±0.5 nm tolerance)
 - Full pipeline from raw PDS4 to PostgreSQL-queryable spectra in one command
+- Live at **[lunaratlas.in](https://lunaratlas.in)** · API at **[api.lunaratlas.in](https://api.lunaratlas.in)**
 
 ---
 
@@ -48,11 +51,8 @@ cd core/server && uvicorn app.main:app --reload --port 8000
 cd core/client && npm install && npm run dev
 ```
 
-Or use Docker:
-```bash
-docker build -t lunaratlas .
-docker run -p 8000:8000 lunaratlas
-```
+> **Live deployment**: The system is publicly available at [lunaratlas.in](https://lunaratlas.in).
+> The versioned REST API is served at [api.lunaratlas.in](https://api.lunaratlas.in).
 
 ---
 

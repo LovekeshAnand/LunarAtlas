@@ -208,34 +208,31 @@ The peak retention rate measures the percentage of originally detected spectral 
 
 \section{Illustrative examples}
 
-A typical workflow involves first installing dependencies, starting the storage backends, and executing the multi-stage ingestion pipeline via a shell script. Once processed, the servers can be started and queried programmatically. The following CLI commands initialise the environment, run the pipeline, and boot up both the API server and the frontend visualizer:
+A typical workflow involves cloning the repository, installing dependencies, and executing the multi-stage ingestion pipeline. The live deployment is accessible at \url{https://lunaratlas.in} and the versioned REST API is served at \url{https://api.lunaratlas.in}. The following CLI commands illustrate local environment setup, pipeline execution, and server startup:
 
 \begin{lstlisting}[language=bash, caption=Environment setup, pipeline execution, and server boot commands]
 # Install server and client dependencies
 pip install -r core/server/requirements.txt
 cd core/client && npm install && cd ../..
 
-# Start PostgreSQL and Redis containers
-docker-compose up -d db redis
-
-# Execute the 8-stage data processing pipeline
-./Pipeline/run_pipeline.sh
+# Execute the 7-stage data processing and ingestion pipeline
+cd Pipeline && ./run_pipeline.sh
 
 # Start the FastAPI backend API server
-cd core/server && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+cd core/server && uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 # Start the React client developer server (in a separate shell)
 cd core/client && npm run dev
 \end{lstlisting}
 
-Once the services are active, the REST API can be queried programmatically. The backend server exposes several endpoints: (i) \texttt{/api/v1/spectrum} which retrieves clean spectral curves with adaptive LTTB+Peaks downsampling and optional denoising filters (ALS, Savitzky-Golay); (ii) public index queries such as \texttt{/api/v1/public/observations} and \texttt{/api/v1/public/measurements} which expose PDS4 metadata and physical parameters (laser energy, pulses) filtered by date or identifier; and (iii) status monitors such as \texttt{/api/v1/health}. 
+Once the services are active, the REST API can be queried programmatically. The backend server exposes several endpoints: (i) \texttt{/api/v1/spectrum} which retrieves clean spectral curves with adaptive LTTB+Peaks downsampling and optional denoising filters (ALS, Savitzky-Golay); (ii) public index queries such as \texttt{/api/v1/public/observations} and \texttt{/api/v1/public/measurements} which expose PDS4 metadata and physical parameters (laser energy, pulses) filtered by date or identifier; and (iii) status monitors such as \texttt{/api/v1/health}.
 
-The following script queries the \texttt{/spectrum} endpoint to retrieve a peak-locked downsampled spectrum for a processed measurement:
+The following script queries the public API to retrieve a peak-locked downsampled spectrum for a processed measurement:
 
 \begin{lstlisting}[language=Python, caption=Python client request for downsampled spectra]
 import requests
 
-url = "http://localhost:8000/api/v1/spectrum"
+url = "https://api.lunaratlas.in/api/v1/spectrum"
 params = {
     "measurement_id": "1",  # clean Measurement ID
     "lambda_min": 240.0,
@@ -275,9 +272,9 @@ The LunarAtlas cleaning stage applies two preprocessing operations: (i) subtract
 
 The cleaning pipeline was evaluated on a 20~nm validation window (560--580~nm), a spectral region free of major expected lunar regolith emission lines and representative of the instrumental continuum baseline. In this window, the raw L1 spectrum for Measurement ID~3 had a mean intensity of $\approx1{,}387$~a.u. and a standard deviation of $\approx54$~a.u. In contrast, the cleaned spectrum had a mean intensity of $\approx444$~a.u. and a standard deviation of $\approx71$~a.u. This yields a baseline suppression factor of:
 \begin{equation}
-    \text{Baseline suppression} = \bar{I}_{raw} / \bar{I}_{clean} \approx 3.1
+    \text{Baseline suppression} = \bar{I}_{\mathrm{raw}} / \bar{I}_{\mathrm{clean}} \approx 3.12 \tag{5}
 \end{equation}
-The $3.1\times$ suppression demonstrates the removal of the background continuum (Figure~\ref{fig:pre_post_overlay}). The standard deviation increase by a factor of $\approx1.3$ is consistent with noise propagation from paired subtraction \cite{bevington2003data}, closely matching the theoretical $\sqrt{2} \approx 1.4$ noise propagation factor resulting from the subtraction of two independent signals. Prior to clamping, approximately 0.5\% of all spectral channels for Measurement ID~3 contained negative intensity values due to statistical fluctuations. Since detector response intensity values (a.u.) are physically non-negative quantities, all negative values were clamped to zero. Table~\ref{table:ablation} summarizes the pipeline metrics at each stage of the cleaning process.
+The $3.12\times$ suppression demonstrates the removal of the background continuum (Figure~\ref{fig:pre_post_overlay}). The standard deviation increase by a factor of $\approx1.31$ is consistent with noise propagation from paired subtraction \cite{bevington2003data}, closely matching the theoretical $\sqrt{2} \approx 1.41$ noise propagation factor resulting from the subtraction of two independent signals. Prior to clamping, approximately 0.5\% of all spectral channels for Measurement ID~3 contained negative intensity values due to statistical fluctuations. Since detector response intensity values (a.u.) are physically non-negative quantities, all negative values were clamped to zero. Table~\ref{table:ablation} summarises the pipeline metrics at each stage of the cleaning process.
 
 \begin{figure}[!htbp]
     \centering
@@ -304,6 +301,7 @@ Zero-Clamping & Negative Channels & 0.0\% \\
 \label{table:ablation}
 \end{table}
 
+
 \subsection{Inter-Measurement Variability}
 
 LunarAtlas preserves individual Measurement IDs rather than averaging multiple plasma shots into a single spectrum. Table~\ref{table:variability} demonstrates substantial shot-to-shot intensity variability within the same observation sequence. For example, Measurement ID~3 exhibited a mean intensity of 416.9~a.u. with only 0.5\% clamped channels, whereas Measurement ID~2 exhibited a mean intensity of 9.4~a.u. with 77.4\% clamped channels, indicating a low-signal or potentially failed plasma event. If these measurements were averaged together, such low-signal acquisitions would be partially obscured. Preserving measurement-level granularity therefore enables analysis of shot-to-shot variability, identification of anomalous plasma events, and quality assessment of individual acquisitions.
@@ -329,9 +327,11 @@ LunarAtlas preserves individual Measurement IDs rather than averaging multiple p
 
 \subsection{Downsampling and Peak Preservation}
 
-Evaluation of the downsampling algorithms was performed on valid plasma measurements (IDs 3 and 4) which exhibit clear emission features; Measurements ID~3 and ID~4 were selected because they contain sufficient spectral peaks for quantitative evaluation, whereas low-signal acquisitions (e.g., ID~2) do not permit meaningful peak-preservation analysis. Weak or failed plasma acquisitions (IDs 1 and 2, characterised by $>22$\% clamped channels) were excluded for this reason. Peak detection was performed using \texttt{scipy.signal.find\_peaks} with a prominence threshold of $3\sigma_{\text{noise}}$ (where $\sigma_{\text{noise}}$ is the standard deviation in the 560--580~nm continuum window) and a minimum inter-peak distance of 5 channels. This yielded 76 local maxima in Measurement ID~3 and 91 in Measurement ID~4, with prominence thresholds of $3\sigma = 212.28$~a.u. and $140.65$~a.u. respectively.
+Evaluation of the downsampling algorithms was performed on valid plasma measurements (IDs 3 and 4) which exhibit clear emission features. Measurements ID~3 and ID~4 were selected because they contain sufficient spectral peaks for quantitative evaluation, whereas low-signal acquisitions (e.g., ID~2) do not permit meaningful peak-preservation analysis. Weak or failed plasma acquisitions (IDs 1 and 2, characterised by $>22$\% clamped channels) were excluded for this reason.
 
-The LTTB+Peaks downsampling algorithm was compared against other decimation algorithms at 10\% data density (Table~\ref{table:downsampling}). The Retention (\%) column reports the fraction of 76 detected local maxima in Measurement ID~3 retained by each algorithm; RMSE is computed relative to the full-resolution 2,094-point spectrum.
+Peak detection was performed using \texttt{scipy.signal.find\_peaks} with a prominence threshold of $3\sigma_{\text{noise}}$ (where $\sigma_{\text{noise}}$ is the population standard deviation, $\mathit{ddof}{=}0$, in the 560--580~nm continuum window) and a minimum inter-peak distance of 5 channels. This yielded 76 local maxima in Measurement ID~3 and 91 in Measurement ID~4, with prominence thresholds of $3\sigma = 212.28$~a.u. and $140.65$~a.u. respectively.
+
+The LTTB+Peaks downsampling algorithm was compared against other decimation algorithms at 10\% data density (Table~\ref{table:downsampling}). The Retention (\%) column reports the fraction of 76 detected local maxima in Measurement ID~3 retained by each algorithm; RMSE is computed relative to the full-resolution 2,094-point spectrum via linear interpolation of the downsampled points back to full resolution.
 
 \begin{table}[!htbp]
 \centering
@@ -342,19 +342,19 @@ The LTTB+Peaks downsampling algorithm was compared against other decimation algo
 \textbf{Algorithm} & \textbf{Ret.} & \textbf{RMSE} & \textbf{Latency} \\
  & \textbf{(\%)} & \textbf{(a.u.)} & \textbf{(ms)} \\
 \midrule
-Uniform & 34.2 & 79.47 & $0.03{\pm}0.00$ \\
-Max-binning & 94.7 & 120.05 & $0.52{\pm}0.05$ \\
-Std. LTTB & 64.5 & 90.10 & $3.18{\pm}0.39$ \\
-\textbf{LTTB+Peaks} & \textbf{100.0} & \textbf{92.25} & $\mathbf{3.26{\pm}0.25}$ \\
+Uniform      & 13.2  & 79.47  & $0.03{\pm}0.00$ \\
+Max-binning  & 96.1  & 121.24 & $0.52{\pm}0.05$ \\
+Std.\ LTTB   & 52.6  & 90.10  & $3.18{\pm}0.39$ \\
+\textbf{LTTB+Peaks} & \textbf{100.0} & \textbf{92.24} & $\mathbf{3.26{\pm}0.25}$ \\
 \bottomrule
 \end{tabular}
-\caption{Downsampling comparison at 10\% density (209 of 2,094 points), Measurement ID~3. Ret.: fraction of 76 detected peaks preserved. RMSE: against full-resolution spectrum (a.u.). Latency: mean$\pm$std over 1,000 runs, Intel Core i7-11850H.}
+\caption{Downsampling comparison at 10\% density (209 of 2,094~points), Measurement ID~3. Ret.: fraction of 76 detected peaks preserved. RMSE: against full-resolution spectrum via linear interpolation (a.u.). Latency: mean$\pm$std over 1,000~runs, Intel Core i7-11850H.}
 \label{table:downsampling}
 \end{table}
 
-RMSE quantifies global spectral shape fidelity---how well the downsampled envelope approximates the full-resolution spectrum. Peak retention quantifies feature-level fidelity---whether diagnostically important emission features survive decimation. Both metrics are complementary: an algorithm may achieve low RMSE while discarding narrow peaks, or preserve all peaks while distorting the spectral envelope. While standard LTTB achieves a low RMSE (90.10~a.u.), it only retains 64.5\% of local maxima. The addition of the Peak-Union step in LTTB+Peaks achieves 100\% retention of detected peaks with negligible RMSE penalty (92.25~a.u.).
+RMSE quantifies global spectral shape fidelity---how well the downsampled envelope approximates the full-resolution spectrum. Peak retention quantifies feature-level fidelity---whether diagnostically important emission features survive decimation. Both metrics are complementary: an algorithm may achieve low RMSE while discarding narrow peaks, or preserve all peaks while distorting the spectral envelope. Uniform decimation achieves the lowest latency but retains only 13.2\% of detected peaks, as spectral emission lines are not uniformly distributed across the wavelength axis. Max-binning achieves high peak retention (96.1\%) by selecting the maximum value within each bin, but incurs a higher RMSE (121.24~a.u.) because bin maxima selection distorts the spectral envelope between peaks. While standard LTTB achieves a lower RMSE (90.10~a.u.), it only retains 52.6\% of local maxima. The addition of the Peak-Union step in LTTB+Peaks achieves 100\% retention of detected peaks with negligible RMSE penalty (92.24~a.u.).
 
-To validate the peak preservation both from an engineering perspective (all detected peaks) and a spectroscopy-oriented perspective (NIST reference lines), we report a dual retention metric in Table~\ref{table:dual_retention}. A matching tolerance of $\pm0.5$~nm was adopted to accommodate the spectral resolution of the Level-1 dataset and minor wavelength calibration uncertainties. Out of 76 detected local maxima in Measurement ID~3, 5 peaks matched NIST reference wavelengths within this tolerance. The standard LTTB algorithm missed key NIST emission lines (achieving only 40.0\% retention), whereas LTTB+Peaks preserved all 100.0\% of both detected local maxima and NIST-matched atomic lines.
+To validate peak preservation from both an engineering perspective (all detected peaks) and a spectroscopy-oriented perspective (NIST reference lines), we report a dual retention metric in Table~\ref{table:dual_retention}. A matching tolerance of $\pm0.5$~nm was adopted to accommodate the spectral resolution of the Level-1 dataset and minor wavelength calibration uncertainties. Out of 76 detected local maxima in Measurement ID~3, 6 peaks matched NIST reference wavelengths within this tolerance: Fe~I (274.86~nm), Ca~II (393.33~nm), Ca~II (396.94~nm), Mg~I (517.25~nm), Na~I (589.15~nm), and O~I (777.67~nm). The standard LTTB algorithm missed 3 of these 6 NIST-matched lines (achieving 50.0\% NIST retention), whereas LTTB+Peaks preserved all 6 NIST-matched lines (100.0\% retention) by explicitly appending detected peak indices to the downsampled set.
 
 \begin{table}[!htbp]
 \centering
@@ -364,15 +364,15 @@ To validate the peak preservation both from an engineering perspective (all dete
 \toprule
 \textbf{Metric} & \textbf{Std.~LTTB} & \textbf{LTTB+Peaks} \\
 \midrule
-Local maxima retention & 64.5\% & \textbf{100.0\%} \\
-NIST-matched retention & 40.0\% & \textbf{100.0\%} \\
+Local maxima retention & 52.6\% & \textbf{100.0\%} \\
+NIST-matched retention & 50.0\% & \textbf{100.0\%} \\
 \bottomrule
 \end{tabular}
-\caption{Engineering vs.\ spectroscopy-oriented peak retention at 10\% density (Measurement ID~3).}
+\caption{Engineering vs.\ spectroscopy-oriented peak retention at 10\% density (Measurement ID~3). NIST-matched retention computed over 6 peaks matching NIST reference wavelengths within $\pm0.5$~nm tolerance.}
 \label{table:dual_retention}
 \end{table}
 
-To demonstrate that this retention holds across different target compression levels, Table~\ref{table:density_sweep} displays peak retention as a function of downsampling density (from 5\% to 50\% points). LTTB+Peaks consistently achieves 100.0\% retention across all tested densities, whereas standard LTTB falls to 47.4\% at 5\% density.
+To demonstrate that this retention holds across different target compression levels, Table~\ref{table:density_sweep} displays peak retention as a function of downsampling density (from 5\% to 50\% points). LTTB+Peaks consistently achieves 100.0\% retention across all tested densities. Standard LTTB retention degrades to 39.5\% at 5\% density. Because the downsampling algorithm explicitly appends the original peak indices, the retained peaks exhibit zero measured position and amplitude error under all decimation ratios.
 
 \begin{table*}[!t]
 \centering
@@ -382,16 +382,15 @@ To demonstrate that this retention holds across different target compression lev
 \toprule
 \textbf{Algorithm} & \textbf{5\% (104 pts)} & \textbf{10\% (209 pts)} & \textbf{15\% (314 pts)} & \textbf{20\% (418 pts)} & \textbf{50\% (1047 pts)} \\
 \midrule
-Uniform decimation  & 21.1\% & 34.2\% & 43.4\% & 52.6\%  & 100.0\% \\
-Max-binning         & 82.9\% & 94.7\% & 100.0\%& 100.0\% & 100.0\% \\
-Standard LTTB       & 47.4\% & 64.5\% & 76.3\% & 85.5\%  & 100.0\% \\
+Uniform            & 6.6\%   & 13.2\%  & 10.5\%  & 17.1\%  & 65.8\%  \\
+Max-binning        & 84.2\%  & 96.1\%  & 98.7\%  & 100.0\% & 100.0\% \\
+Standard LTTB      & 39.5\%  & 52.6\%  & 57.9\%  & 68.4\%  & 94.7\%  \\
 \textbf{LTTB + Peaks} & \textbf{100.0\%} & \textbf{100.0\%} & \textbf{100.0\%} & \textbf{100.0\%} & \textbf{100.0\%} \\
 \bottomrule
 \end{tabular}
 \caption{Peak retention (\%) as a function of downsampling density for Measurement ID~3.}
 \label{table:density_sweep}
 \end{table*}
-Because the downsampling algorithm explicitly appends the original peak indices, the retained peaks exhibit zero measured position and amplitude error under all decimation ratios.
 
 \begin{figure}[!htbp]
     \centering
@@ -402,35 +401,35 @@ Because the downsampling algorithm explicitly appends the original peak indices,
 
 \subsection{NIST-Assisted Spectral Annotation}
 
-LunarAtlas integrates reference wavelengths from the NIST Atomic Spectra Database (ASD) \cite{nist_asd} to support interactive spectral exploration and candidate wavelength matching. Following cleaning and peak detection, local maxima are compared against NIST reference wavelengths using a matching tolerance of $\pm0.5$~nm, adopted to accommodate the spectral resolution of the Level-1 dataset and minor wavelength calibration uncertainties. Matched features are displayed as candidate annotations within the visualisation interface, enabling rapid inspection of potential elemental signatures. The matching procedure is intended to assist exploratory analysis and should not be interpreted as definitive elemental identification; confirmation of elemental composition requires additional spectroscopic validation beyond wavelength coincidence alone.
+LunarAtlas integrates reference wavelengths from the NIST Atomic Spectra Database (ASD) \cite{nist_asd} to support interactive spectral exploration and candidate wavelength matching. Detected local maxima are compared against NIST reference wavelengths using a $\pm0.5$~nm tolerance, adopted to accommodate the spectral resolution of the Level-1 dataset and minor wavelength calibration uncertainties.
 
-Table~\ref{table:elements} presents representative candidate matches observed in the processed dataset. For each reference line, the nearest detected local maximum is reported together with the wavelength offset from the corresponding NIST reference value.
+\textit{Matching criterion.} A peak at $\lambda_{\mathrm{obs}}$ is a confirmed candidate match if and only if: (i) it was identified as a local maximum under the $3\sigma$ prominence threshold ($\sigma = 70.76$~a.u., threshold $= 212.28$~a.u.), and (ii) $|\lambda_{\mathrm{obs}} - \lambda_{\mathrm{NIST}}| \leq 0.5$~nm. Channels with intensity above $3\sigma$ but sub-threshold prominence --- residing within broad elevated continuum regions rather than constituting resolved emission features --- do not satisfy condition~(i) and are excluded from programmatic matching. They are rendered as reference overlays in the interface but are explicitly distinguished from confirmed peak matches.
+
+Applying both conditions to the 76 detected local maxima in Measurement ID~3, seven peaks satisfy the matching criterion (Table~\ref{table:elements}). Six additional NIST lines --- Mg~I (285.21~nm), Si~I (288.16~nm), Al~I (309.27~nm), Fe~I (404.58~nm), Ca~I (422.67~nm), and Mg~I (518.36~nm) --- have intensities of 387--572~a.u. but sub-threshold prominence and are therefore visual overlays only. The H~I Balmer-$\alpha$ line (NIST: 656.28~nm) corresponds to a detected peak at 657.09~nm (prominence 221.0~a.u.) but its offset of 0.81~nm exceeds the $\pm0.5$~nm criterion; it is retained as a flagged near-match with the offset explicitly displayed.
 
 \begin{table}[!htbp]
 \centering
 \footnotesize
-\setlength{\tabcolsep}{5pt}
-\begin{tabular}{@{}cccc@{}}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}p{1.0cm}ccccr@{}}
 \toprule
-\textbf{Species} & \textbf{$\lambda_{\mathrm{NIST}}$} & \textbf{$\lambda_{\mathrm{obs}}$} & \textbf{$\Delta\lambda$} \\
- & \textbf{(nm)} & \textbf{(nm)} & \textbf{(nm)} \\
+\textbf{Species} & \textbf{$\lambda_{\mathrm{NIST}}$} & \textbf{$\lambda_{\mathrm{obs}}$} & \textbf{Int.} & \textbf{Prom.} & \textbf{$\Delta\lambda$} \\
+ & (nm) & (nm) & (a.u.) & (a.u.) & (nm) \\
 \midrule
-Mg~I  & 285.21 & 285.65 & 0.44 \\
-Si~I  & 288.16 & 288.62 & 0.46 \\
-Al~I  & 309.27 & 309.35 & 0.08 \\
-Ca~II & 393.37 & 393.33 & 0.04 \\
-Ca~II & 396.85 & 396.94 & 0.09 \\
-Fe~I  & 404.58 & 404.86 & 0.28 \\
-Ca~I  & 422.67 & 422.44 & 0.23 \\
-Mg~I  & 518.36 & 517.94 & 0.42 \\
-Na~I  & 588.99 & 589.15 & 0.16 \\
-H~I   & 656.28 & 656.44 & 0.16 \\
-O~I   & 777.19 & 777.67 & 0.48 \\
+Fe~I  & 274.95 & 274.86 & 525 & 242 & 0.09 \\
+Ca~II & 393.37 & 393.33 & 491 & 247 & 0.04 \\
+Ca~II & 396.85 & 396.94 & 495 & 217 & 0.09 \\
+Fe~I  & 495.76 & 496.01 & 583 & 244 & 0.25 \\
+Mg~I  & 517.27 & 517.25 & 640 & 401 & 0.02 \\
+Na~I  & 588.99 & 589.15 & 561 & 254 & 0.16 \\
+O~I   & 777.19 & 777.67 & 568 & 222 & 0.48 \\
 \bottomrule
 \end{tabular}
-\caption{Representative candidate wavelength matches (NIST ASD vs.\ detected local maxima). $\Delta\lambda = |\lambda_{\mathrm{obs}} - \lambda_{\mathrm{NIST}}|$. Matches support exploratory analysis only and do not constitute definitive elemental identifications.}
+\caption{Confirmed candidate wavelength matches (NIST ASD vs.\ detected local maxima, Measurement ID~3). Only peaks satisfying both the $3\sigma$ prominence condition (prominence $\geq 212.28$~a.u.) and the $\pm0.5$~nm tolerance are included. Int.: peak intensity; Prom.: peak prominence. Matches support exploratory analysis only and do not constitute definitive elemental identifications.}
 \label{table:elements}
 \end{table}
+
+\textit{Interpretation.} Confirmation of elemental composition requires corroborating evidence beyond wavelength coincidence, including line ratio analysis, cross-validation with additional transitions of the same species, plasma temperature constraints, and independent spectroscopic validation.
 
 \subsection{API Response Performance}
 
@@ -464,11 +463,11 @@ Overview Payload Size & 10--400~kB \\
 
 \section{Conclusions}
 
-LunarAtlas provides an open-source, reproducible data processing and database infrastructure for Chandrayaan-3 LE-LIBS Level-1 observations. The pipeline implements a deterministic processing pipeline that resolves the challenges of tabular PDS4 parsing, interleaved acquisition pairing, and physically motivated background cleaning---validated through quantitative evaluation of cleaning, peak preservation, and API performance. The peak-locked LTTB downsampling algorithm achieved 100\% peak retention across all evaluated spectra and density levels (5--50\%) during visualisation while maintaining sub-500~ms response times on commodity hardware. By establishing an auditable, versioned reference archive for Chandrayaan-3 LIBS data, LunarAtlas supports quantitative lunar science and offers a template architecture applicable to future planetary LIBS mission archives.
+LunarAtlas provides an open-source, reproducible data processing and database infrastructure for Chandrayaan-3 LE-LIBS Level-1 observations. The pipeline implements a deterministic processing chain that resolves the challenges of tabular PDS4 parsing, interleaved acquisition pairing, and physically motivated background cleaning---validated through quantitative evaluation of cleaning, peak preservation, and API performance. The peak-locked LTTB+Peaks downsampling algorithm achieved 100\% peak retention across all evaluated spectra and density levels (5--50\%) during visualisation while maintaining sub-500~ms response times on commodity hardware. By establishing an auditable, versioned reference archive for Chandrayaan-3 LIBS data, LunarAtlas supports quantitative lunar science and offers a template architecture applicable to future planetary LIBS mission archives. The system is publicly accessible at \url{https://lunaratlas.in}, with the REST API at \url{https://api.lunaratlas.in}.
 
-\paragraph{Limitations.} While the LunarAtlas pipeline successfully processes all available Level-1 observation products, the benchmarks and evaluations reported in Section 4 were performed on a single representative reference product (\texttt{ch3\_lib\_002\_20230825T104221\_00\_l1}) containing 4 cleaned spectral measurements. Statistical claims about inter-acquisition variability are therefore preliminary and should be extended as additional mission data become available. The statistical evaluations reported in Section 4 should therefore be interpreted as software validation rather than a comprehensive analysis of lunar LIBS measurements. The system has been validated on a single-node configuration and has not been benchmarked under concurrent multi-user load. No Level-2 calibration (e.g., elemental abundance quantification) is implemented; LunarAtlas provides analysis-ready L1 records as input to such workflows.
+\paragraph{Limitations.} Benchmarks and evaluations in Section~4 were performed on a single representative reference product containing four cleaned spectral measurements; statistical claims about inter-acquisition variability should therefore be interpreted as software validation rather than a comprehensive analysis of lunar LIBS measurements. No Level-2 calibration is implemented --- LunarAtlas provides analysis-ready L1 records as input to such workflows. The system has not been benchmarked under concurrent multi-user load.
 
-\paragraph{Future work.} Planned extensions include: (i) ingestion of additional Chandrayaan-3 LE-LIBS observation files as they are released through PRADAN; (ii) integration with Level-2 calibration workflows including automatic elemental abundance estimation; (iii) multi-user concurrent query support via horizontal scaling; and (iv) a containerised one-command deployment via \texttt{docker-compose}.
+\paragraph{Future work.} The most scientifically significant open direction is Level-2 calibration: translating cleaned L1 intensity records into quantitative elemental abundance estimates requires plasma temperature modelling, matrix effect correction, and validation against certified geological reference standards. On the infrastructure side, horizontal scaling for concurrent query support remains an open engineering task as community adoption grows. More broadly, LunarAtlas is intended as a template architecture for future planetary LIBS archives; its ingestion and cleaning abstractions are designed to generalise to forthcoming missions where in-situ LIBS will remain a primary geochemical tool.
 
 \section*{Author Contributions}
 \textbf{Lovekesh Anand:} Conceptualisation, Methodology, Software, Validation, Formal Analysis, Data Curation, Writing -- Original Draft, Visualisation.
@@ -484,7 +483,7 @@ This research received no specific grant from any funding agency in the public, 
 The authors thank the Indian Space Research Organisation (ISRO) for making the Chandrayaan-3 LE-LIBS Level-1 data public through the PRADAN data portal. Wavelength reference data were accessed from the NIST Atomic Spectra Database.
 
 \section*{Data Availability}
-The Chandrayaan-3 LE-LIBS Level-1 data used in this study are publicly available from the ISRO Planetary Data Archive (PRADAN) at \url{https://pradan.issdc.gov.in}. The LunarAtlas software, processed spectral records, and documentation are available at \url{https://github.com/LovekeshAnand/LunarAtlas} under the MIT License.
+The Chandrayaan-3 LE-LIBS Level-1 data used in this study are publicly available from the ISRO Planetary Data Archive (PRADAN) at \url{https://pradan.issdc.gov.in}. The LunarAtlas software, processed spectral records, and documentation are available at \url{https://github.com/LovekeshAnand/LunarAtlas} under the MIT License. The live system is accessible at \url{https://lunaratlas.in} and the versioned REST API at \url{https://api.lunaratlas.in}.
 
 \bibliographystyle{elsarticle-num}
 \bibliography{paper}

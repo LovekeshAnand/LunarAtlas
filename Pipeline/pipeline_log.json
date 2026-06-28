@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-27T13:26:29.141272",
+  "timestamp": "2026-06-28T21:23:27.306992",
   "overall_status": "success",
   "raw_dir": "D:\\\\ch3_libs\\\\lib-v2\\\\data\\\\calibrated",
   "processed_dir": "../datasets/processed",
@@ -7,7 +7,7 @@
     "stage_5": {
       "name": "MD5 Digital Signatures",
       "status": "success",
-      "timestamp": "2026-06-27T13:26:56.049955",
+      "timestamp": "2026-06-28T21:23:48.233657",
       "metrics": {
         "total_files_signed": 1806
       }
@@ -15,34 +15,19 @@
     "stage_6": {
       "name": "Creation of Segregated Data Folders",
       "status": "success",
-      "timestamp": "2026-06-27T13:26:59.683775",
+      "timestamp": "2026-06-28T21:23:48.337889",
       "metrics": {
-        "status": "success",
-        "raw_source_files_copied": 3164
+        "status": "skipped"
       }
     },
     "stage_7": {
       "name": "Database Ingestion",
       "status": "success",
-      "timestamp": "2026-06-27T13:30:02.008716",
+      "timestamp": "2026-06-28T21:23:48.834832",
       "metrics": {
-        "status": "success",
-        "newly_ingested_measurements": 779,
-        "newly_ingested_spectral_points": 1631226
-      }
-    },
-    "stage_8": {
-      "name": "Quantitative Data & Checksum Verification",
-      "status": "success",
-      "timestamp": "2026-06-27T13:30:02.758562",
-      "metrics": {
-        "checksum_passes": 301,
-        "checksum_failures": 0,
-        "db_observations": 301,
-        "db_measurements": 779,
-        "db_spectral_points": 1631226
+        "status": "skipped"
       }
     }
   },
-  "finished_at": "2026-06-27T13:30:02.873457"
+  "finished_at": "2026-06-28T21:23:48.971794"
 }

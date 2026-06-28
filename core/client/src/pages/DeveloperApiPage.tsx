@@ -34,7 +34,7 @@ export default function DeveloperApiPage() {
         { name: 'limit', type: 'Integer', req: false, def: '10', desc: 'Pagination size limit (1 - 100)' },
         { name: 'offset', type: 'Integer', req: false, def: '0', desc: 'Pagination index offset' }
       ],
-      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "http://localhost:8000/api/v1/public/missions?limit=5"',
+      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "https://api.lunaratlas.in/api/v1/public/missions?limit=5"',
       sampleResponse: {
         meta: {
           agency: "ISRO",
@@ -71,7 +71,7 @@ export default function DeveloperApiPage() {
       params: [
         { name: 'code', type: 'String (Path)', req: true, desc: 'Target mission code, e.g., CH3 (case-insensitive)' }
       ],
-      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "http://localhost:8000/api/v1/public/missions/CH3"',
+      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "https://api.lunaratlas.in/api/v1/public/missions/CH3"',
       sampleResponse: {
         meta: {
           agency: "ISRO",
@@ -105,7 +105,7 @@ export default function DeveloperApiPage() {
       params: [
         { name: 'mission_code', type: 'String', req: false, desc: 'Filter by mission short code, e.g., CH3' }
       ],
-      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "http://localhost:8000/api/v1/public/instruments?mission_code=CH3"',
+      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "https://api.lunaratlas.in/api/v1/public/instruments?mission_code=CH3"',
       sampleResponse: {
         meta: {
           agency: "ISRO",
@@ -144,7 +144,7 @@ export default function DeveloperApiPage() {
         { name: 'limit', type: 'Integer', req: 'No', def: '50', desc: 'Pagination page limit size (1 - 100)' },
         { name: 'offset', type: 'Integer', req: 'No', def: '0', desc: 'Pagination offset index' }
       ],
-      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "http://localhost:8000/api/v1/public/observations?date=2023-08-25&limit=2"',
+      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "https://api.lunaratlas.in/api/v1/public/observations?date=2023-08-25&limit=2"',
       sampleResponse: {
         meta: {
           agency: "ISRO",
@@ -195,7 +195,7 @@ export default function DeveloperApiPage() {
         { name: 'limit', type: 'Integer', req: 'No', def: '50', desc: 'Pagination limit size' },
         { name: 'offset', type: 'Integer', req: 'No', def: '0', desc: 'Pagination offset index' }
       ],
-      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "http://localhost:8000/api/v1/public/measurements?date=2023-08-25&mission=CH3&limit=5"',
+      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "https://api.lunaratlas.in/api/v1/public/measurements?date=2023-08-25&mission=CH3&limit=5"',
       sampleResponse: {
         meta: {
           agency: "ISRO",
@@ -246,7 +246,7 @@ export default function DeveloperApiPage() {
         { name: 'limit', type: 'Integer', req: 'No', def: '10', desc: 'Limit the number of spectral profiles returned (max 50)' },
         { name: 'offset', type: 'Integer', req: 'No', def: '0', desc: 'Pagination offset index' }
       ],
-      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "http://localhost:8000/api/v1/public/spectra?observation_id=LIB-20230825-145453-00&downsample=true&zoom_level=1"',
+      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "https://api.lunaratlas.in/api/v1/public/spectra?observation_id=LIB-20230825-145453-00&downsample=true&zoom_level=1"',
       sampleResponse: {
         meta: {
           agency: "ISRO",
@@ -289,7 +289,7 @@ export default function DeveloperApiPage() {
         { name: 'zoom_level', type: 'Integer', req: false, def: '0', desc: 'LTTB zoom level (0-5)' },
         { name: 'target_wavelengths', type: 'String (CSV list)', req: false, desc: 'Wavelength channels to preserve' }
       ],
-      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "http://localhost:8000/api/v1/public/spectra/FI-20230825-145453-00-1?downsample=true"',
+      curlExample: 'curl -H "X-API-Key: YOUR_API_KEY" "https://api.lunaratlas.in/api/v1/public/spectra/FI-20230825-145453-00-1?downsample=true"',
       sampleResponse: {
         meta: {
           agency: "ISRO",
@@ -319,16 +319,16 @@ export default function DeveloperApiPage() {
   const snippets = {
     curl: `# Fetch list of space missions
 curl -H "X-API-Key: ${customKey}" \\
-     "http://localhost:8000/api/v1/public/missions?limit=5"
+     "https://api.lunaratlas.in/api/v1/public/missions?limit=5"
 
 # Fetch downsampled bulk spectrum with peak preservation
 curl -H "X-API-Key: ${customKey}" \\
-     "http://localhost:8000/api/v1/public/spectra?observation_id=LIB-20230825-145453-00&downsample=true&zoom_level=1"`,
+     "https://api.lunaratlas.in/api/v1/public/spectra?observation_id=LIB-20230825-145453-00&downsample=true&zoom_level=1"`,
 
     python: `import requests
 
 # Base configuration
-base_url = "http://localhost:8000/api/v1/public"
+base_url = "https://api.lunaratlas.in/api/v1/public"
 headers = {"X-API-Key": "${customKey}"}
 
 # 1. Fetch space missions
@@ -360,7 +360,7 @@ print(f"Spectral products returned: {len(spec_data['results'])}")`,
 
     node: `const axios = require('axios');
 
-const apiBase = 'http://localhost:8000/api/v1/public';
+const apiBase = 'https://api.lunaratlas.in/api/v1/public';
 const headers = { 'X-API-Key': '${customKey}' };
 
 async function fetchLunarData() {
@@ -397,7 +397,7 @@ import (
 
 func main() {
 	client := &http.Client{}
-	req, _ := http.NewRequest("GET", "http://localhost:8000/api/v1/public/missions?limit=2", nil)
+	req, _ := http.NewRequest("GET", "https://api.lunaratlas.in/api/v1/public/missions?limit=2", nil)
 	req.Header.Set("X-API-Key", "${customKey}")
 
 	resp, err := client.Do(req)
@@ -417,7 +417,7 @@ func main() {
     r: `library(httr)
 library(jsonlite)
 
-base_url <- "http://localhost:8000/api/v1/public"
+base_url <- "https://api.lunaratlas.in/api/v1/public"
 api_key <- "${customKey}"
 
 # Fetch list of science observations
@@ -575,7 +575,7 @@ print(data$results)
       }
     ],
     "variable": [
-      {"key": "BASE_URL", "value": "http://localhost:8000/api/v1", "type": "string"},
+      {"key": "BASE_URL", "value": "https://api.lunaratlas.in/api/v1", "type": "string"},
       {"key": "API_KEY", "value": "YOUR_API_KEY", "type": "string"}
     ]
   };
@@ -1024,14 +1024,14 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
 
   // Generate live cURL preview reflecting state parameters
   const liveCurlCommand = useMemo(() => {
-    let url = `http://localhost:8000/api/v1${endpoint}`;
+    let url = `https://api.lunaratlas.in/api/v1${endpoint}`;
     const queryParts = [];
     
     if (endpoint === '/public/missions') {
       if (limit !== 5) queryParts.push(`limit=${limit}`);
       if (offset !== 0) queryParts.push(`offset=${offset}`);
     } else if (endpoint === '/public/missions/{code}') {
-      url = `http://localhost:8000/api/v1/public/missions/${mission}`;
+      url = `https://api.lunaratlas.in/api/v1/public/missions/${mission}`;
     } else if (endpoint === '/public/instruments') {
       if (mission) queryParts.push(`mission_code=${mission}`);
     } else if (endpoint === '/public/observations') {
@@ -1058,7 +1058,7 @@ function InteractiveApiConsole({ apiKey }: { apiKey: string }) {
       if (limit !== 5) queryParts.push(`limit=${limit}`);
       if (offset !== 0) queryParts.push(`offset=${offset}`);
     } else if (endpoint === '/public/spectra/{id}') {
-      url = `http://localhost:8000/api/v1/public/spectra/${measurementId}`;
+      url = `https://api.lunaratlas.in/api/v1/public/spectra/${measurementId}`;
       if (downsample) queryParts.push(`downsample=true`);
       if (downsample && zoomLevel !== 0) queryParts.push(`zoom_level=${zoomLevel}`);
       if (targetWavelengths) queryParts.push(`target_wavelengths=${targetWavelengths}`);

@@ -155,12 +155,12 @@ export default function DashboardPage() {
     const keyVal = 'YOUR_API_KEY_HERE';
     switch (activeLang) {
       case 'curl':
-        return `curl -X GET "http://localhost:8000/api/v1/spectral-data/search?wavelength_min=400&wavelength_max=450" \\
+        return `curl -X GET "https://api.lunaratlas.in/api/v1/spectral-data/search?wavelength_min=400&wavelength_max=450" \\
   -H "Authorization: Bearer ${keyVal}"`;
       case 'python':
         return `import requests
 
-url = "http://localhost:8000/api/v1/spectral-data/search"
+url = "https://api.lunaratlas.in/api/v1/spectral-data/search"
 headers = {
     "Authorization": "Bearer ${keyVal}"
 }
@@ -172,7 +172,7 @@ params = {
 response = requests.get(url, headers=headers, params=params)
 print(response.json())`;
       case 'js':
-        return `fetch("http://localhost:8000/api/v1/spectral-data/search?wavelength_min=400&wavelength_max=450", {
+        return `fetch("https://api.lunaratlas.in/api/v1/spectral-data/search?wavelength_min=400&wavelength_max=450", {
   headers: {
     "Authorization": "Bearer ${keyVal}"
   }

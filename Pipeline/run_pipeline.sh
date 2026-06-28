@@ -48,25 +48,32 @@ if [[ "$INGEST_INPUT" =~ ^[Yy]$ ]]; then
     INGEST="yes"
     INGEST_FLAG="y"
 
-    # Collect database credentials directly (no .env dependency)
-    echo ""
-    echo "[INPUT REQUIRED] Enter PostgreSQL connection details:"
-    read -p "  DB Host [default: localhost]: " DB_HOST
-    DB_HOST=${DB_HOST:-"localhost"}
-    
-    read -p "  DB Port [default: 5432]: " DB_PORT
-    DB_PORT=${DB_PORT:-"5432"}
-    
-    read -p "  DB Name [default: LunarAtlas]: " DB_NAME
-    DB_NAME=${DB_NAME:-"LunarAtlas"}
-    
-    read -p "  DB User [default: postgres]: " DB_USER
-    DB_USER=${DB_USER:-"postgres"}
-    
-    read -sp "  DB Password: " DB_PASS
-    echo ""
-    
-    DB_URL="postgresql://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}"
+    # Attempt to load from .env first to avoid manual credentials prompt
+    if [ -f "../core/server/.env" ] && grep -q "^DATABASE_URL=" ../core/server/.env; then
+        echo "[INFO] Loading DATABASE_URL from ../core/server/.env..."
+        DB_URL=$(grep "^DATABASE_URL=" ../core/server/.env | cut -d'=' -f2-)
+        DB_URL=$(echo "$DB_URL" | tr -d '\r')
+    else
+        # Collect database credentials directly (no .env dependency)
+        echo ""
+        echo "[INPUT REQUIRED] Enter PostgreSQL connection details:"
+        read -p "  DB Host [default: localhost]: " DB_HOST
+        DB_HOST=${DB_HOST:-"localhost"}
+        
+        read -p "  DB Port [default: 5432]: " DB_PORT
+        DB_PORT=${DB_PORT:-"5432"}
+        
+        read -p "  DB Name [default: LunarAtlas]: " DB_NAME
+        DB_NAME=${DB_NAME:-"LunarAtlas"}
+        
+        read -p "  DB User [default: postgres]: " DB_USER
+        DB_USER=${DB_USER:-"postgres"}
+        
+        read -sp "  DB Password: " DB_PASS
+        echo ""
+        
+        DB_URL="postgresql://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}"
+    fi
 else
     INGEST="no"
     INGEST_FLAG="n"
