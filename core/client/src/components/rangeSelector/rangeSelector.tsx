@@ -485,7 +485,7 @@ export default function RangeSelectorPanel({
             {/* Row 2: Overlay measurements pills */}
             <div>
               <FieldLabel text="Overlay Measurements" />
-              <div className="flex items-center gap-1 overflow-x-auto pr-1 p-1 h-7 border border-solid border-slate-200 rounded bg-slate-50/50 scrollbar-none">
+              <div className="flex flex-wrap items-center gap-1.5 p-1 min-h-[28px] h-auto border border-solid border-slate-200 rounded bg-slate-50/50">
                 {measurements.length === 0 ? (
                   <div className="text-[9px] font-sans text-slate-400 italic w-full text-center">No measurements</div>
                 ) : (

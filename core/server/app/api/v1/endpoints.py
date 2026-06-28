@@ -95,7 +95,7 @@ async def list_observations():
             i.file_info_id as observation_id, 
             i.xml_label_name as target_name, 
             o.start_time as creation_datetime,
-            i.record_count
+            (SELECT COUNT(*) FROM measurement_clean mc WHERE mc.file_info_id = i.file_info_id) as record_count
         FROM observation_file_info i
         JOIN observation o ON i.observation_id = o.observation_id
         JOIN observation_session s ON o.session_id = s.session_id
