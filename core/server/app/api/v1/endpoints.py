@@ -94,12 +94,12 @@ async def list_observations():
         SELECT 
             i.file_info_id as observation_id, 
             i.xml_label_name as target_name, 
-            s.observation_date as creation_datetime,
+            o.start_time as creation_datetime,
             i.record_count
         FROM observation_file_info i
         JOIN observation o ON i.observation_id = o.observation_id
         JOIN observation_session s ON o.session_id = s.session_id
-        ORDER BY s.observation_date DESC, o.start_time DESC
+        ORDER BY o.start_time ASC
         LIMIT 500
     """
     try:

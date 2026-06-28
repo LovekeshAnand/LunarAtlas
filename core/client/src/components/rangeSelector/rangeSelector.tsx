@@ -215,10 +215,13 @@ function DateObservationDropdown({
 
   const getLocalTimeString = (dateTimeStr: string) => {
     if (!dateTimeStr) return 'Unknown Time';
-    return new Date(dateTimeStr).toLocaleTimeString(undefined, {
+    // Use UTC to avoid timezone shift that shows 12:00 AM for date-only values
+    const d = new Date(dateTimeStr);
+    return d.toLocaleTimeString(undefined, {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
+      hour12: false,
     });
   };
 
@@ -261,13 +264,15 @@ function DateObservationDropdown({
   const selectedLabel = useMemo(() => {
     if (!selectedObs) return '— Select Observation —';
     const dateStr = getLocalDateString(selectedObs.creation_datetime);
-    const timeStr = selectedObs.creation_datetime 
+    const timeStr = selectedObs.creation_datetime
       ? new Date(selectedObs.creation_datetime).toLocaleTimeString(undefined, {
           hour: '2-digit',
           minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
         })
       : 'Unknown Time';
-    return `${dateStr} @ ${timeStr} (${selectedObs.record_count} curves)`;
+    return `${dateStr} @ ${timeStr} · ${selectedObs.record_count} measurements`;
   }, [selectedObs]);
 
   return (
@@ -331,7 +336,13 @@ function DateObservationDropdown({
                         </span>
                       </div>
                       <div className="flex flex-col gap-0.5 max-h-[200px] overflow-y-auto pr-0.5">
-                        {files.map((obs) => {
+                        {[...files]
+                          .sort((a, b) => {
+                            const tA = a.creation_datetime ? new Date(a.creation_datetime).getTime() : 0;
+                            const tB = b.creation_datetime ? new Date(b.creation_datetime).getTime() : 0;
+                            return tA - tB; // ascending within each date group
+                          })
+                          .map((obs) => {
                           const isSelected = selectedObservationId === obs.observation_id;
                           return (
                             <button
@@ -348,7 +359,8 @@ function DateObservationDropdown({
                                   : 'text-slate-600 hover:bg-slate-100 hover:text-black'
                               }`}
                             >
-                              {getLocalTimeString(obs.creation_datetime)} ({obs.record_count} curves)
+                              <span className="opacity-60 text-[9px] mr-1.5">[{obs.record_count} meas.]</span>
+                              <span className="font-bold">{getLocalTimeString(obs.creation_datetime)}</span>
                             </button>
                           );
                         })}

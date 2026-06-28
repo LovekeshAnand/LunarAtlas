@@ -11,7 +11,7 @@ export default function HomePage() {
   const [copied, setCopied] = useState(false);
 
   const handleCopyCurl = () => {
-    navigator.clipboard.writeText('curl https://api.lunaratlas.in/v1/spectra/spot_002');
+    navigator.clipboard.writeText('curl https://api.lunaratlas.in/api/v1/public/observations');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -97,7 +97,7 @@ export default function HomePage() {
             <div className="flex items-center gap-4 bg-neutral-50/60 dark:bg-[#111111]/60 backdrop-blur-md border border-neutral-200 dark:border-neutral-800/80 rounded-xl pl-6 pr-3 py-3 font-mono text-[13px] text-neutral-700 dark:text-[#b0b0b0] max-w-[640px] w-full justify-between shadow-[0_4px_12px_rgba(0,0,0,0.02)] hover:border-neutral-300 dark:hover:border-neutral-700 transition-all duration-300 group/pill">
               <div className="flex items-center gap-2.5 overflow-x-auto scrollbar-none whitespace-nowrap">
                 <span className="text-neutral-500 select-none font-bold animate-pulse">$</span>
-                <span className="text-neutral-850 dark:text-[#dcdcdc] font-medium">curl https://api.lunaratlas.in/v1/spectra/spot_002</span>
+                <span className="text-neutral-850 dark:text-[#dcdcdc] font-medium">curl https://api.lunaratlas.in/api/v1/public/observations</span>
               </div>
               <button
                 onClick={handleCopyCurl}
