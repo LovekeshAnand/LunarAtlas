@@ -358,22 +358,35 @@ export default function HomePage() {
               <div className="text-[13px] font-bold text-ink dark:text-[#f0f0f0] leading-[1.4]">
                 From PDS4 Archives to Analysis-Ready Spectra
               </div>
-              <div className="mt-5 text-[11px] text-neutral-700 dark:text-neutral-500 leading-[1.6]">
-                Anand, L. &amp; Saeed, D.<br />
-                Independent Researchers, India<br />
-                June 2026
+              <div className="mt-5 text-[11.5px] text-neutral-700 dark:text-neutral-500 leading-[1.6]">
+                <div className="font-semibold text-neutral-900 dark:text-neutral-350">
+                  <a href="https://orcid.org/0009-0009-4947-4040" target="_blank" rel="noopener noreferrer" className="hover:underline text-ink dark:text-white font-bold">Lovekesh Anand</a>
+                  <span className="text-[10px] text-neutral-450 dark:text-neutral-500 block font-normal">
+                    orcid: <span className="font-mono text-[#888]">0009-0009-4947-4040</span> | <a href="mailto:lovekeshanand6@gmail.com" className="hover:underline text-[#555] dark:text-[#888]">lovekeshanand6@gmail.com</a>
+                  </span>
+                </div>
+                <div className="mt-3.5 font-semibold text-neutral-900 dark:text-neutral-350">
+                  <a href="https://orcid.org/0009-0003-4871-0546" target="_blank" rel="noopener noreferrer" className="hover:underline text-ink dark:text-white font-bold">Dua Saeed</a>
+                  <span className="text-[10px] text-neutral-450 dark:text-neutral-500 block font-normal">
+                    orcid: <span className="font-mono text-[#888]">0009-0003-4871-0546</span> | <a href="mailto:23f1000825@ds.study.iitm.ac.in" className="hover:underline text-[#555] dark:text-[#888]">23f1000825@ds.study.iitm.ac.in</a>
+                  </span>
+                </div>
+                <div className="mt-4 text-[10px] uppercase tracking-wider text-[#555] dark:text-[#666] font-medium leading-relaxed">
+                  Mahavir Swami Institute of Technology<br />
+                  June 2026
+                </div>
               </div>
             </div>
 
             <div className="border-l-2 border-[#eee] dark:border-[#222] md:pl-10 pl-4">
               <p className="text-[13px] text-neutral-800 dark:text-[#aaa] leading-[1.75] mb-4 tracking-[0.2px]">
-                We present <strong className="text-ink dark:text-[#f0f0f0]">LunarAtlas</strong>, a reproducible data processing infrastructure that transforms publicly available Chandrayaan-3 laser-induced breakdown spectroscopy (LIBS) level 1 (L1) products into clean, machine accessible, analysis ready spectral records suitable for quantitative lunar science. While ISRO's Chandrayaan-3 LIBS data is publicly available through PDS4-compliant archive, a reproducible infrastructure for transforming these products into analysis ready records suitable for downstream scientific workflows has not been publicly documented. Starting from calibrated L1 tables, LunarAtlas implements a transparent and robust Python pipeline that: (i) Parses XML metadata; (ii) Reshapes wide-format Chandrayaan-3 L1 data in which <strong className="text-ink dark:text-[#f0f0f0]">2,094 wavelength channels spanning from minimum value of 164.35 nm to maximum value of 878.26 nm</strong> appear as column headers (in accordance with PDS4 label, wavelength), into normalised per-wavelength long-form records; (iii) Identifies and correctly pairs plasma and background measurements using mission flag columns (Laser fire status, Force reset status); and (iv) Performs physically motivated background subtraction (<code className="font-mono bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded text-[11px] text-ink dark:text-[#eee]">Iclean(λ) = max(0, Iplasma(λ) − Ibackground(λ))</code>), with non-physical values clamped to zero. Each processed file receives an MD5 checksum and an algorithm record to ensure reproducibility and traceability.
+                <strong className="text-ink dark:text-[#f0f0f0]">LunarAtlas</strong> is an open-source, reproducible data processing infrastructure that transforms publicly available Chandrayaan-3 laser-induced breakdown spectroscopy (LIBS) Level-1 (L1) products from the ISRO Planetary Data Archive into normalised, analysis-ready spectral records suitable for quantitative lunar science. The Chandrayaan-3 LE-LIBS L1 archive distributes calibrated spectra in wide-format tables where 2,094 wavelength channels (instrument range: 220–800 nm; stored channel range: 164.35–878.26 nm) appear as individual columns, with plasma and background acquisitions interleaved. To our knowledge, no publicly documented, reproducible pipeline exists to ingest and clean these products automatically.
               </p>
               <p className="text-[13px] text-neutral-800 dark:text-[#aaa] leading-[1.75] mb-4 tracking-[0.2px]">
-                The processing workflow generates cleaned spectral measurements, each comprising 2,094 wavelength-channel records. Background subtraction substantially reduces continuum and instrumental baseline contributions while preserving diagnostically important emission features, producing analysis-ready spectra suitable for downstream scientific workflows. Analysis of the cleaned spectra reveals substantial shot-to-shot variability between measurements, highlighting the importance of preserving individual Measurement IDs during analysis rather than relying solely on bulk-averaged spectra.
+                LunarAtlas implements a six-stage deterministic Python pipeline that: (i) parses PDS4 XML metadata; (ii) verifies file provenance via MD5 checksums; (iii) reshapes wide-format records into a normalised long-form relational layout <code className="font-mono bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded text-[11px] text-ink dark:text-[#eee]">(Measurement_ID, Wavelength_nm) → Intensity (a.u.)</code>; (iv) identifies plasma and background shots from mission status flags; (v) applies paired background subtraction with clamping; and (vi) assigns file-unique Measurement IDs.
               </p>
               <p className="text-[13px] text-neutral-800 dark:text-[#aaa] leading-[1.75] m-0 tracking-[0.2px]">
-                Beyond data cleaning, LunarAtlas provides a PDS4-aware database, a web accessible spectral analysis platform, adaptive LTTB-based downsampling with explicit peak-union preservation that retains 100% of detected spectral elemental peaks across all tested spectra, and a versioned API capable of latency less than 500 ms response time for data rendering on commodity consumer hardware. By establishing a reproducible and auditable “Single source of scientific truth” for Chandrayaan-3 LIBS data, LunarAtlas provides a scalable foundation for future planetary LIBS missions and data-intensive lunar science workflows.
+                For interactive visualisation, LunarAtlas employs an LTTB+Peaks adaptive downsampling algorithm that retains 100% of detected spectral peaks. A versioned REST API delivers spectral data with API response latency below 500 ms on a single-node workstation.
               </p>
             </div>
           </div>

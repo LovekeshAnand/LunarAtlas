@@ -41,11 +41,17 @@ export default function Footer() {
           <a href="https://pds.nasa.gov/datastandards/about/" target="_blank" rel="noopener noreferrer" className="text-[11.5px] text-[#444] dark:text-[#999] hover:text-ink dark:hover:text-white no-underline transition-colors w-fit">PDS4 Standards</a>
         </div>
 
-        {/* Column 3: Contact */}
-        <div className="flex flex-col gap-2.5">
-          <span className="text-[10px] font-bold text-ink dark:text-[#f0f0f0] uppercase tracking-wider">Contact</span>
-          <a href="mailto:lovekeshanand6@gmail.com" className="text-[11.5px] text-[#444] dark:text-[#999] hover:text-ink dark:hover:text-white no-underline transition-colors w-fit">lovekeshanand6@gmail.com</a>
-          <a href="mailto:duasaeed641@gmail.com" className="text-[11.5px] text-[#444] dark:text-[#999] hover:text-ink dark:hover:text-white no-underline transition-colors w-fit">duasaeed641@gmail.com</a>
+        {/* Column 3: Contact & Authors */}
+        <div className="flex flex-col gap-2">
+          <span className="text-[10px] font-bold text-ink dark:text-[#f0f0f0] uppercase tracking-wider">Authors &amp; Contact</span>
+          <div className="text-[11.5px] leading-tight text-[#444] dark:text-[#999]">
+            <a href="https://orcid.org/0009-0009-4947-4040" target="_blank" rel="noopener noreferrer" className="hover:underline font-semibold text-ink dark:text-[#d0d0d0]">Lovekesh Anand</a>
+            <a href="mailto:lovekeshanand6@gmail.com" className="block text-[10.5px] text-[#888] dark:text-[#666] hover:underline mt-0.5">lovekeshanand6@gmail.com</a>
+          </div>
+          <div className="text-[11.5px] leading-tight text-[#444] dark:text-[#999] mt-1">
+            <a href="https://orcid.org/0009-0003-4871-0546" target="_blank" rel="noopener noreferrer" className="hover:underline font-semibold text-ink dark:text-[#d0d0d0]">Dua Saeed</a>
+            <a href="mailto:23f1000825@ds.study.iitm.ac.in" className="block text-[10.5px] text-[#888] dark:text-[#666] hover:underline mt-0.5">23f1000825@ds.study.iitm.ac.in</a>
+          </div>
         </div>
 
       </div>

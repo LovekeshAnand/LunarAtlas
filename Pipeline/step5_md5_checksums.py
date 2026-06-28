@@ -27,8 +27,7 @@ def generate_md5_signatures(processed_dir):
     
     base_dir = Path(processed_dir)
     if not base_dir.exists():
-        print(f"[ERROR] Processed data directory not found: {base_dir}")
-        return
+        raise FileNotFoundError(f"Processed data directory not found: {base_dir}")
         
     print(f"[INFO] Scanning directory: {base_dir}")
     
@@ -66,8 +65,16 @@ def generate_md5_signatures(processed_dir):
     print(f"Total files signed            : {total_signed}")
     print(f"[SUCCESS] Digital signatures saved to: {manifest_path.relative_to(base_dir.parent)}")
     print("====================================================\n")
+    return {"total_files_signed": total_signed}
 
 if __name__ == "__main__":
     import sys
+    import pipeline_logger
     processed = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_PROCESSED_DIR
-    generate_md5_signatures(processed)
+    try:
+        metrics = generate_md5_signatures(processed)
+        pipeline_logger.log_stage_success("stage_5", "MD5 Digital Signatures", metrics)
+        sys.exit(0)
+    except Exception as e:
+        pipeline_logger.log_stage_failure("stage_5", "MD5 Digital Signatures", str(e))
+        sys.exit(1)

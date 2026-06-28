@@ -76,7 +76,9 @@ class L1DataProcessor:
             'file_size': 0,
             'records': 0,
             'column_descriptions': {},
-            'instrument_description': 'ChaSTE-LIBS compact active spectrometer'
+            'instrument_description': 'ChaSTE-LIBS compact active spectrometer',
+            'information_model_version': '1.20.0.0',
+            'processing_level': 'calibrated'
         }
 
         try:
@@ -85,6 +87,12 @@ class L1DataProcessor:
 
             elem = root.find('.//pds:Identification_Area/pds:version_id', ns)
             if elem is not None: metadata['version_id'] = elem.text
+
+            elem = root.find('.//pds:information_model_version', ns)
+            if elem is not None: metadata['information_model_version'] = elem.text
+
+            elem = root.find('.//pds:processing_level', ns)
+            if elem is not None: metadata['processing_level'] = elem.text
 
             elem = root.find('.//pds:title', ns)
             if elem is not None: metadata['title'] = elem.text
@@ -216,8 +224,13 @@ class L1DataProcessor:
                 params = {
                     'Measurement_ID':       pair_id + 1,
                     'Time':                 row['Time'],
+                    'Measurement_Count':    row['Measurement Count'],
                     'Operation_Mode':       row['Operation Mode'],
                     'Measurement_Type':     'Plasma',
+                    'Force_Reset_Status':   row['Force Reset Status'],
+                    'Laser_Fire_Status':    row['Laser Fire Status'],
+                    'Is_Valid_Plasma':      row['Is_Valid_Plasma'],
+                    'Is_Background':        row['Is_Background'],
                     'Delay_Time_us':        row['Delay Time'],
                     'Integration_Time_us':  row['Integration Time'],
                     'Number_of_Pulses':     row['Number of Pulses'],
@@ -319,8 +332,7 @@ class L1DataProcessor:
         print("====================================================")
 
         if not self.raw_dir.exists():
-            print(f"[ERROR] Raw base path not found: {self.raw_dir}")
-            return
+            raise FileNotFoundError(f"Raw base path not found: {self.raw_dir}")
 
         # Get YYYYMMDD folders
         date_folders = sorted([
@@ -389,7 +401,14 @@ class L1DataProcessor:
 
 if __name__ == "__main__":
     import sys
+    import pipeline_logger
     raw       = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_RAW_DIR
     processed = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_PROCESSED_DIR
-    processor = L1DataProcessor(raw, processed)
-    processor.run()
+    try:
+        processor = L1DataProcessor(raw, processed)
+        processor.run()
+        pipeline_logger.log_stage_success("stage_2", "L1 Data Processing", processor.stats)
+        sys.exit(0)
+    except Exception as e:
+        pipeline_logger.log_stage_failure("stage_2", "L1 Data Processing", str(e))
+        sys.exit(1)

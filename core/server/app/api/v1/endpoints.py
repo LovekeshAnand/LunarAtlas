@@ -260,9 +260,9 @@ async def get_spectrum(
         SELECT 
             c.wavelength_nm, 
             c.intensity,
-            cal.response_count AS raw_plasma
+            COALESCE(cal.response_count, c.intensity) AS raw_plasma
         FROM spectral_data_clean c
-        JOIN spectral_data_calibrated cal 
+        LEFT JOIN spectral_data_raw cal 
           ON c.measurement_id = cal.measurement_id 
           AND c.wavelength_nm = cal.wavelength_nm
         WHERE 

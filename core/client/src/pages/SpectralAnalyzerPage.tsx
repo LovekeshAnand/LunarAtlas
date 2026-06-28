@@ -77,7 +77,7 @@ export default function SpectralAnalyzerPage() {
 
   /* ── UI controls ── */
   const [viewMode, setViewMode] = useState<'L1' | 'L2' | 'overlay'>('L2');
-  const [proportion, setProportion] = useState(0.1);
+  const proportion = 0.1;
   const [element, setElement] = useState('');
   const [focusedId, setFocusedId] = useState<string | null>(null);
   const [showConsole, setShowConsole] = useState(false);
@@ -240,8 +240,6 @@ export default function SpectralAnalyzerPage() {
         <RangeSelectorPanel
           mode={viewMode}
           onModeChange={setViewMode}
-          proportion={proportion}
-          onProportionChange={setProportion}
           minWavelength={lambdaMin}
           maxWavelength={lambdaMax}
           onMinWavelengthChange={setLambdaMin}

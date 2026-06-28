@@ -4,33 +4,22 @@ message: "If you use LunarAtlas in your research, please cite it using the metad
 title: "LunarAtlas: From PDS4 Archives to Analysis-Ready Spectra - A Reproducible Infrastructure for Chandrayaan-3 LIBS Level-1 Data"
 
 abstract: >
-  We present LunarAtlas, a reproducible data processing infrastructure that transforms publicly
-  available Chandrayaan-3 laser-induced breakdown spectroscopy (LIBS) level 1 (L1) products into
-  clean, machine accessible, analysis ready spectral records suitable for quantitative lunar science.
-  While ISRO's Chandrayaan-3 LIBS data is publicly available through PDS4-compliant archive, a
-  reproducible infrastructure for transforming these products into analysis ready records suitable for
-  downstream scientific workflows has not been publicly documented. Starting from calibrated L1 tables,
-  LunarAtlas implements a transparent and robust Python pipeline that: (i) Parses XML metadata; (ii)
-  Reshapes wide-format Chandrayaan-3 L1 data in which 2,094 wavelength channels spanning from minimum
-  value of 164.35 nm to maximum value of 878.26 nm appear as column headers (in accordance with PDS4
-  label, wavelength), into normalised per-wavelength long-form records; (iii) Identifies and correctly
-  pairs plasma and background measurements using mission flag columns (Laser fire status, Force reset
-  status); and (iv) Performs physically motivated background subtraction (Iclean(λ) = max(0, Iplasma(λ)
-  − Ibackground(λ))), with non-physical values clamped to zero. Each processed file receives an MD5
-  checksum and an algorithm record to ensure reproducibility and traceability. The processing workflow
-  generates 4 cleaned spectral measurements, each comprising 2,094 wavelength-channel records (8,376
-  spectral values in total). Background subtraction substantially reduces continuum and instrumental
-  baseline contributions while preserving diagnostically important emission features, producing
-  analysis-ready spectra suitable for downstream scientific workflows. Analysis of the cleaned spectra
-  reveals substantial shot-to-shot variability between measurements, highlighting the importance of
-  preserving individual Measurement IDs during analysis rather than relying solely on bulk-averaged
-  spectra. Beyond data cleaning, LunarAtlas provides a PDS4-aware database, a web accessible spectral
-  analysis platform, adaptive LTTB-based downsampling with explicit peak-union preservation that
-  retains 100% of detected spectral elemental peaks across all tested spectra, and a versioned API
-  capable of latency less than 500 ms response time for data rendering on commodity consumer hardware.
-  By establishing a reproducible and auditable "Single source of scientific truth" for Chandrayaan-3
-  LIBS data, LunarAtlas provides a scalable foundation for future planetary LIBS missions and
-  data-intensive lunar science workflows.
+  LunarAtlas is an open-source, reproducible data processing infrastructure that transforms publicly
+  available Chandrayaan-3 laser-induced breakdown spectroscopy (LIBS) Level-1 (L1) products from the
+  ISRO Planetary Data Archive into normalised, analysis-ready spectral records suitable for quantitative
+  lunar science. The Chandrayaan-3 LE-LIBS L1 archive distributes calibrated spectra in wide-format
+  tables where 2,094 wavelength channels (instrument range: 220--800 nm; stored channel range:
+  164.35--878.26 nm) appear as individual columns, with plasma and background acquisitions interleaved.
+  To our knowledge, no publicly documented, reproducible pipeline exists to ingest and clean these
+  products automatically. LunarAtlas implements a six-stage deterministic Python pipeline that: (i)
+  parses PDS4 XML metadata; (ii) verifies file provenance via MD5 checksums; (iii) reshapes wide-format
+  records into a normalised long-form relational layout (Measurement_ID, Wavelength_nm) -> Intensity (a.u.);
+  (iv) identifies plasma and background shots from mission status flags; (v) applies paired background
+  subtraction with clamping; and (vi) assigns file-unique Measurement IDs. For interactive visualisation,
+  LunarAtlas employs an LTTB+Peaks adaptive downsampling algorithm that retains 100% of detected
+  spectral peaks. A versioned REST API delivers spectral data with API response latency below 500 ms
+  on a single-node workstation. Software and documentation are available at:
+  https://github.com/LovekeshAnand/LunarAtlas.
 
 authors:
   - family-names: "Anand"
@@ -41,7 +30,8 @@ authors:
   - family-names: "Saeed"
     given-names: "Dua"
     affiliation: "Mahavir Swami Institute of Technology"
-    email: "duasaeed641@gmail.com"
+    orcid: "https://orcid.org/0009-0003-4871-0546"
+    email: "23f1000825@ds.study.iitm.ac.in"
 
 type: software
 version: "1.0.0"

@@ -1,14 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 
-import dbSchemaDiagram from '../assets/db_schema_diagram.png';
-
 // Publication figures
 import fig1Architecture from '../assets/fig1_architecture.png';
 import fig2ReshapeSchematic from '../assets/fig2_reshape_schematic.png';
 import fig3PrePostOverlay from '../assets/fig3_pre_post_overlay.png';
-import fig4SpectralVariability from '../assets/fig4_spectral_variability.png';
 import fig5PeakRetention from '../assets/fig5_peak_retention.png';
-import fig6AcquisitionSequence from '../assets/fig6_acquisition_sequence.png';
 import fig7NistOverlay from '../assets/fig7_nist_overlay.png';
 import fig8AdaptiveZoom from '../assets/fig8_adaptive_zoom.png';
 
@@ -170,8 +166,9 @@ function Sidebar({ activeId }: { activeId: string }) {
           Source
         </div>
         <div className="text-[10px] text-ink-muted dark:text-[#444] leading-[1.5]">
-          Anand, L. &amp; Saeed, D.<br />
-          <em>LunarAtlas</em>, April 2026
+          <a href="https://orcid.org/0009-0009-4947-4040" target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-ink font-semibold">Anand, L.</a> &amp;{' '}
+          <a href="https://orcid.org/0009-0003-4871-0546" target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-ink font-semibold">Saeed, D.</a><br />
+          <em>LunarAtlas</em>, June 2026
         </div>
       </div>
     </aside>
@@ -408,12 +405,6 @@ export default function DocsPage() {
               Pragyan's LIBS data acquisition follows a strict operational sequence designed to calibrate the detector against ambient thermal and electronic noise in the harsh lunar vacuum. Each observation sequence comprises alternating plasma shots (laser zaps) and dark-field calibrations (laser off).
             </p>
 
-            <div className={FIGURE}>
-              <img src={fig6AcquisitionSequence} alt="ISRO LIBS acquisition sequence timeline" className="w-full block" />
-              <div className={FIG_CAP}>
-                <strong>Figure 2. In-situ data acquisition sequence.</strong> The timeline diagram shows the alternating interleaving pattern of high-power laser discharges (Plasma Shots) and background dark-field calibrations (Background darks) recorded sequentially.
-              </div>
-            </div>
 
             <p>
               During active rover operations:
@@ -747,7 +738,7 @@ python Pipeline/step2_process_l1_data.py "path/to/extracted/LIBS/data/calibrated
             <div className={FIGURE}>
               <img src={fig2ReshapeSchematic} alt="Wide to long reshape schema" className="w-full block" />
               <div className={FIG_CAP}>
-                <strong>Figure 3. Wide-to-long schema reshaping.</strong> This schematic shows how wide-format rows containing 2,049 wavelength columns are normalized and melted into a relational database layout (long format) key-linked by measurement IDs.
+                <strong>Figure 2. Wide-to-long schema reshaping.</strong> This schematic shows how wide-format rows containing 2,049 wavelength columns are normalized and melted into a relational database layout (long format) key-linked by measurement IDs.
               </div>
             </div>
 
@@ -817,7 +808,7 @@ python Pipeline/step2_process_l1_data.py "path/to/extracted/LIBS/data/calibrated
             <div className={FIGURE}>
               <img src={fig3PrePostOverlay} alt="Raw vs Cleaned LIBS spectrum comparison" className="w-full block" />
               <div className={FIG_CAP}>
-                <strong>Figure 4. Pre and post background subtraction overlay.</strong> Full-range Chandrayaan-3 LIBS spectrum showing Raw L1 counts (grey dashed) and cleaned intensity (solid blue/purple) for a single plasma measurement spanning 164.35–878.26 nm. Background subtraction successfully removes the underlying thermal/electronic baseline while preserving narrow emission features.
+                <strong>Figure 3. Pre and post background subtraction overlay.</strong> Full-range Chandrayaan-3 LIBS spectrum showing Raw L1 counts (grey dashed) and cleaned intensity (solid blue/purple) for a single plasma measurement spanning 164.35–878.26 nm. Background subtraction successfully removes the underlying thermal/electronic baseline while preserving narrow emission features.
               </div>
             </div>
 
@@ -834,12 +825,6 @@ python Pipeline/step2_process_l1_data.py "path/to/extracted/LIBS/data/calibrated
               unambiguous grouping key.
             </p>
 
-            <div className={FIGURE}>
-              <img src={fig4SpectralVariability} alt="Spectral variability across multiple shots" className="w-full block" />
-              <div className={FIG_CAP}>
-                <strong>Figure 5. Shot-to-shot spectral variability.</strong> Overlay of five consecutive cleaned spectra taken on the same spot target. The figure highlights significant intensity and profile fluctuations between individual laser discharges, emphasizing why averaging hiding this variability must be avoided and why individual Measurement IDs are essential.
-              </div>
-            </div>
 
             <table className={TABLE}>
               <thead>
@@ -909,14 +894,6 @@ python Pipeline/step2_process_l1_data.py "path/to/extracted/LIBS/data/calibrated
               spectral samples:
             </p>
 
-            {/* Schema diagram image */}
-            <div className={FIGURE}>
-              <img src={dbSchemaDiagram} alt="LunarAtlas PostgreSQL schema hierarchy" className="w-full block" />
-              <div className={FIG_CAP}>
-                <strong>Figure 6.</strong> LunarAtlas PostgreSQL schema hierarchy. Each level preserves
-                provenance from PDS4 logical identifiers down to individual wavelength–intensity pairs.
-              </div>
-            </div>
 
             <div className={SUB_H}>Core Tables</div>
             <table className={TABLE}>
@@ -1020,7 +997,7 @@ CREATE UNIQUE INDEX idx_file_version_md5
             <div className={FIGURE}>
               <img src={fig5PeakRetention} alt="Peak retention downsampling comparison" className="w-full block" />
               <div className={FIG_CAP}>
-                <strong>Figure 7. Downsampling algorithm comparison.</strong> Visual comparison of Uniform Decimation, Max-Binning, Standard LTTB, and LTTB + NIST Peak Lock at 10% density. Standard LTTB and decimation drop crucial narrow emission peaks, whereas the Peak Lock guarantees 100% peak retention.
+                <strong>Figure 4. Standard LTTB peak preservation comparison.</strong> Comparison of peak preservation by standard LTTB on a representative cleaned spectrum. Standard LTTB drops crucial narrow emission peaks (Missed Peaks), highlighting the necessity of a peak-preserving algorithm.
               </div>
             </div>
 
@@ -1053,7 +1030,7 @@ CREATE UNIQUE INDEX idx_file_version_md5
             <div className={FIGURE}>
               <img src={fig8AdaptiveZoom} alt="Adaptive zoom levels details" className="w-full block" />
               <div className={FIG_CAP}>
-                <strong>Figure 8. Adaptive zoom and downsampling levels.</strong> Detailed transitions showing how spectral resolution adjusts dynamically from full-range view down to highly focused zoom windows, keeping peak detail intact.
+                <strong>Figure 6. Adaptive zoom levels with LTTB+Peaks.</strong> Multi-panel comparison of the downsampled spectrum at zoom levels k = 1, 2, 3, and 4, demonstrating 100% peak retention.
               </div>
             </div>
 
@@ -1166,7 +1143,7 @@ CREATE UNIQUE INDEX idx_file_version_md5
             <div className={FIGURE}>
               <img src={fig7NistOverlay} alt="NIST database spectral line overlay" className="w-full block" />
               <div className={FIG_CAP}>
-                <strong>Figure 9. Cleaned spectrum with NIST overlays.</strong> Cleaned spectrum of a Chandrayaan-3 target overlaying NIST emission reference wavelengths for key element species (Ca II, Mg II, Si I). Prominent peaks show precise matches within the 0.5 nm threshold.
+                <strong>Figure 5. Cleaned spectrum with NIST overlays.</strong> Cleaned spectrum of a Chandrayaan-3 target overlaying NIST emission reference wavelengths for key element species (Ca II, Mg II, Si I). Prominent peaks show precise matches within the 0.5 nm threshold.
               </div>
             </div>
 

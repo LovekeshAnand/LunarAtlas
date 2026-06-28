@@ -684,12 +684,36 @@ export default function MultiSpectralGraph({
       </div>
 
       {/* X-axis */}
-      <div className="flex items-center justify-between px-12 py-2 bg-gray-50/60 border-t border-solid border-gray-100">
-        {xTicks.map((t) => (
-          <span key={t} className="text-[11px] font-sans font-medium text-gray-500">{t.toFixed(1)}</span>
-        ))}
-        <span className="text-[11px] font-sans text-gray-400">nm</span>
+      <div className="flex border-t border-solid border-gray-100 bg-gray-50/40 select-none py-2 items-center">
+        {/* Left spacer matching Y-axis column width */}
+        <div className="w-20 shrink-0 border-r border-solid border-gray-100/50 flex justify-center items-center h-full">
+          <span className="text-[9px] font-sans font-black text-gray-400 tracking-widest uppercase">
+            Wavelength
+          </span>
+        </div>
+        {/* Ticks container */}
+        <div className="flex-1 relative h-6">
+          {xTicks.map((tick, i) => {
+            const pct = (i * 100) / 6;
+            return (
+              <span
+                key={i}
+                className={`absolute text-[9px] font-mono text-gray-400 leading-none top-1 ${
+                  i === 0 ? 'left-2' : i === 6 ? 'right-8' : 'transform -translate-x-1/2'
+                }`}
+                style={i !== 0 && i !== 6 ? { left: `${pct}%` } : {}}
+              >
+                {tick.toFixed(1)}
+              </span>
+            );
+          })}
+          <span className="absolute right-2 top-0.5 text-[9px] font-sans font-bold text-gray-400 uppercase">
+            nm
+          </span>
+        </div>
       </div>
+
+
 
       {/* Footer */}
       <div className="px-6 py-2 flex items-center justify-between border-t border-solid border-gray-100 bg-white text-[11px] font-sans text-gray-500">

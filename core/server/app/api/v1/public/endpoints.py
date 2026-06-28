@@ -518,7 +518,7 @@ async def list_spectra(
                 c.intensity,
                 cal.response_count AS raw_intensity
             FROM spectral_data_clean c
-            LEFT JOIN spectral_data_calibrated cal 
+            LEFT JOIN spectral_data_raw cal 
               ON c.measurement_id = cal.measurement_id 
               AND c.wavelength_nm = cal.wavelength_nm
             WHERE 
@@ -646,7 +646,7 @@ async def get_spectrum_detail(
             c.intensity,
             cal.response_count AS raw_intensity
         FROM spectral_data_clean c
-        LEFT JOIN spectral_data_calibrated cal 
+        LEFT JOIN spectral_data_raw cal 
           ON c.measurement_id = cal.measurement_id 
           AND c.wavelength_nm = cal.wavelength_nm
         WHERE 

@@ -525,14 +525,34 @@ export default function SpectralGraph({
         </div>
       </div>
 
-      {/* ── X-axis tick labels ── */}
-      <div className="border-t border-solid border-gray-200 flex items-center py-2 px-12 justify-between bg-gray-50">
-        {xTicks.map((tick) => (
-          <span key={tick} className="text-[12px] font-sans font-medium text-gray-600">
-            {formatTick(tick)}
+      {/* ── X-axis ticks and labels ── */}
+      <div className="flex border-t border-solid border-gray-200 bg-gray-50/50 select-none h-8 items-center">
+        {/* Left spacer matching Y-axis column width */}
+        <div className="w-10 shrink-0 border-r border-solid border-gray-200 flex justify-center items-center h-full">
+          <span className="text-[10px] font-sans font-black text-gray-405">
+            λ
           </span>
-        ))}
-        <span className="text-[12px] font-sans font-medium text-gray-500 ml-2">nm</span>
+        </div>
+        {/* Ticks container */}
+        <div className="flex-1 relative h-full">
+          {xTicks.map((tick, i) => {
+            const pct = (i * 100) / 5;
+            return (
+              <span
+                key={i}
+                className={`absolute text-[9px] font-mono text-gray-400 leading-none top-2.5 ${
+                  i === 0 ? 'left-2' : i === 5 ? 'right-8' : 'transform -translate-x-1/2'
+                }`}
+                style={i !== 0 && i !== 5 ? { left: `${pct}%` } : {}}
+              >
+                {tick.toFixed(1)}
+              </span>
+            );
+          })}
+          <span className="absolute right-2 top-2.5 text-[9px] font-sans font-bold text-gray-450 uppercase">
+            nm
+          </span>
+        </div>
       </div>
 
       {/* ── Footer status bar ── */}

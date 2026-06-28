@@ -1,6 +1,0 @@
-Measurement_ID,Detected_Wavelength_nm,Peak_Intensity_counts,NIST_Element,NIST_Wavelength_nm,Wavelength_Offset_nm,Verification_Status
-1,171.6,172.0,Unknown,,,UNREGISTERED
-1,173.51,176.0,Unknown,,,UNREGISTERED
-1,281.56,324.0,Unknown,,,UNREGISTERED
-1,497.76,175.0,Unknown,,,UNREGISTERED
-1,518.29,177.0,Mg I,518.36,0.07,VERIFIED

@@ -130,5 +130,25 @@ def study_folder_structure(raw_dir_path):
 
 if __name__ == "__main__":
     import sys
+    import pipeline_logger
     raw_dir = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_RAW_DIR
-    study_folder_structure(raw_dir)
+    try:
+        res = study_folder_structure(raw_dir)
+        if res is None:
+            pipeline_logger.log_stage_failure(
+                "stage_1", 
+                "Folder Structure Study", 
+                "Raw directory scan failed (directory might not exist)."
+            )
+            sys.exit(1)
+        pipeline_logger.log_stage_success("stage_1", "Folder Structure Study", {
+            "total_date_folders": res.get("total_date_folders", 0),
+            "total_observation_folders": res.get("summary_metrics", {}).get("total_observation_folders", 0),
+            "total_parent_csv_files": res.get("summary_metrics", {}).get("total_parent_csv_files", 0),
+            "total_parent_xml_files": res.get("summary_metrics", {}).get("total_parent_xml_files", 0),
+            "total_sub_files_detected": res.get("summary_metrics", {}).get("total_sub_files_detected", 0)
+        })
+        sys.exit(0)
+    except Exception as e:
+        pipeline_logger.log_stage_failure("stage_1", "Folder Structure Study", str(e))
+        sys.exit(1)

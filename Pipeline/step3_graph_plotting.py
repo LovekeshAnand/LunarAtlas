@@ -53,11 +53,13 @@ def generate_improved_plots(processed_dir):
     
     base_dir = Path(processed_dir)
     if not base_dir.exists():
-        print(f"[ERROR] Processed data directory not found: {base_dir}")
-        return
+        raise FileNotFoundError(f"Processed data directory not found: {base_dir}")
         
     cleaned_files = list(base_dir.glob("calibrated/*/*/*_cleaned.csv"))
     print(f"[INFO] Found {len(cleaned_files)} cleaned CSV files to plot.")
+    
+    generated = 0
+    skipped = 0
     
     for csv_path in cleaned_files:
         stem_name = csv_path.name.replace("_cleaned.csv", "")
@@ -66,6 +68,7 @@ def generate_improved_plots(processed_dir):
         
         if plot_out.exists():
             print(f"  [SKIP] Plot already exists for: {csv_path.name}")
+            skipped += 1
             continue
             
         print(f"\nPlotting spectra for file: {csv_path.name}")
@@ -126,13 +129,22 @@ def generate_improved_plots(processed_dir):
         plot_out = plots_folder / f"{stem_name}_nist_comparison.png"
         fig.savefig(plot_out, dpi=300, bbox_inches='tight')
         plt.close(fig)
+        generated += 1
         
         print(f"  [SUCCESS] Plot saved to: {plot_out.relative_to(base_dir)}")
         
     print("\n[SUCCESS] Stage 3: All spectral graphs successfully updated.")
     print("====================================================\n")
+    return {"plots_generated": generated, "plots_skipped": skipped}
 
 if __name__ == "__main__":
     import sys
+    import pipeline_logger
     processed = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_PROCESSED_DIR
-    generate_improved_plots(processed)
+    try:
+        metrics = generate_improved_plots(processed)
+        pipeline_logger.log_stage_success("stage_3", "High-Fidelity Graph Plotter", metrics)
+        sys.exit(0)
+    except Exception as e:
+        pipeline_logger.log_stage_failure("stage_3", "High-Fidelity Graph Plotter", str(e))
+        sys.exit(1)

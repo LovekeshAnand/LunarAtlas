@@ -12,7 +12,7 @@ requires-python = ">=3.10"
 
 authors = [
     {name = "Lovekesh Anand", email = "lovekeshanand6@gmail.com"},
-    {name = "Dua Saeed", email = "duasaeed641@gmail.com"},
+    {name = "Dua Saeed", email = "23f1000825@ds.study.iitm.ac.in"},
 ]
 
 keywords = [

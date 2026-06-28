@@ -371,7 +371,6 @@ function DateObservationDropdown({
 
 export default function RangeSelectorPanel({ 
   mode, onModeChange, 
-  proportion, onProportionChange,
   minWavelength, maxWavelength,
   onMinWavelengthChange, onMaxWavelengthChange,
   element, onElementChange,
@@ -384,8 +383,6 @@ export default function RangeSelectorPanel({
 }: { 
   mode: 'L1' | 'L2' | 'overlay', 
   onModeChange: (m: 'L1' | 'L2' | 'overlay') => void,
-  proportion: number, 
-  onProportionChange: (p: number) => void,
   minWavelength: number,
   maxWavelength: number,
   onMinWavelengthChange: (v: number) => void,
@@ -443,13 +440,7 @@ export default function RangeSelectorPanel({
     onMaxWavelengthChange(Math.round(newMax * 100) / 100);
   };
 
-  // Data density slider calculation
-  const densityPct = Math.max(0, Math.min(100, proportion * 100));
-  const densitySliderRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    densitySliderRef.current?.style.setProperty('--track-fill', `${densityPct}%`);
-  }, [densityPct]);
 
   return (
     <section className="border border-solid border-slate-200 bg-white rounded-lg shadow-sm relative z-30">
@@ -635,28 +626,7 @@ export default function RangeSelectorPanel({
               <DenoiseToggle value={denoiseMode} onChange={onDenoiseModeChange} />
             </div>
 
-            {/* Row 2: Data Density Slider */}
-            <div className={!lttbEnabled ? 'opacity-40 pointer-events-none' : ''}>
-              <div className="flex justify-between items-center mb-1 leading-none select-none">
-                <FieldLabel text="LTTB Data Density" />
-                <span className="font-mono text-[9px] text-slate-700 font-bold bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded leading-none shrink-0">
-                  {densityPct === 100 ? 'RAW' : `${densityPct.toFixed(0)}%`}
-                </span>
-              </div>
-              <div className="flex items-center h-7">
-                <input
-                  ref={densitySliderRef}
-                  type="range"
-                  min={0.001}
-                  max={1.0}
-                  step={0.001}
-                  value={proportion}
-                  onChange={(e) => onProportionChange(parseFloat(e.target.value))}
-                  className={SLIDER_CLS}
-                  disabled={!lttbEnabled}
-                />
-              </div>
-            </div>
+
 
             {/* Row 3: Diagnostics Badge Strip */}
             <div>

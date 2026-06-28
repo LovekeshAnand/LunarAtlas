@@ -62,11 +62,13 @@ def generate_nist_logs(processed_dir):
     
     base_dir = Path(processed_dir)
     if not base_dir.exists():
-        print(f"[ERROR] Processed data directory not found: {base_dir}")
-        return
+        raise FileNotFoundError(f"Processed data directory not found: {base_dir}")
         
     cleaned_files = list(base_dir.glob("calibrated/*/*/*_cleaned.csv"))
     print(f"[INFO] Scanning {len(cleaned_files)} files for peak-NIST alignment...")
+    
+    total_peaks_detected = 0
+    total_verified_peaks = 0
     
     for csv_path in cleaned_files:
         stem_name = csv_path.name.replace("_cleaned.csv", "")
@@ -119,6 +121,8 @@ def generate_nist_logs(processed_dir):
         # Log summary statistics
         verified_count = (log_df['Verification_Status'] == "VERIFIED").sum()
         total_peaks = len(log_df)
+        total_peaks_detected += total_peaks
+        total_verified_peaks += verified_count
         hit_elements = log_df[log_df['Verification_Status'] == "VERIFIED"]['NIST_Element'].unique()
         
         print(f"  [SUCCESS] Ingested verification: {log_output.name}")
@@ -127,8 +131,20 @@ def generate_nist_logs(processed_dir):
         
     print("\n[SUCCESS] Stage 4: NIST element verification tables saved successfully.")
     print("====================================================\n")
+    return {
+        "files_scanned": len(cleaned_files),
+        "total_peaks_detected": total_peaks_detected,
+        "total_verified_peaks": total_verified_peaks
+    }
 
 if __name__ == "__main__":
     import sys
+    import pipeline_logger
     processed = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_PROCESSED_DIR
-    generate_nist_logs(processed)
+    try:
+        metrics = generate_nist_logs(processed)
+        pipeline_logger.log_stage_success("stage_4", "NIST Element Verification Logs", metrics)
+        sys.exit(0)
+    except Exception as e:
+        pipeline_logger.log_stage_failure("stage_4", "NIST Element Verification Logs", str(e))
+        sys.exit(1)

@@ -20,6 +20,7 @@
 import { useState, useEffect, useRef } from 'react';
 import type { SpectralDataPoint } from '../services/apiService';
 import type { DownsampleConfig, DownsampleResult } from '../workers/downsampleWorker';
+import { lttb } from '../workers/downsampleWorker';
 
 /* ------------------------------------------------------------------ */
 /*  State interface                                                    */
@@ -110,7 +111,27 @@ export function useDownsampling(
       return;
     }
 
-    setState(prev => ({ ...prev, originalData: rawData, isProcessing: true, error: null }));
+    // Synchronous LTTB fallback computation
+    const baseChannels = Math.max(3, Math.floor(2094 * ratio));
+    let threshold = Math.min(baseChannels, rawData.length);
+    if (threshold >= rawData.length || ratio >= 0.99) {
+      threshold = rawData.length;
+    }
+
+    let fallbackData = rawData;
+    try {
+      fallbackData = lttb(rawData, threshold, targetWavelengths);
+    } catch (e) {
+      console.warn("Sync LTTB fallback failed:", e);
+    }
+
+    setState(prev => ({
+      ...prev,
+      data: fallbackData,
+      originalData: rawData,
+      isProcessing: true,
+      error: null
+    }));
     
     const config: DownsampleConfig = { data: rawData, ratio, targetWavelengths };
     workerRef.current?.postMessage(config);

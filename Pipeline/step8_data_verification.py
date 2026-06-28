@@ -9,11 +9,13 @@ for all files and cross-references them with the records stored in PostgreSQL.
 import hashlib
 import psycopg2
 from pathlib import Path
+from urllib.parse import urlparse
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 DEFAULT_PROCESSED_DIR = r"c:\Users\ZBook\Desktop\LunarAtlas\datasets\processed"
 
 def get_db_connection(db_url=None):
-    """Establishes connection to PostgreSQL using a provided or interactively entered database URL."""
+    """Establishes connection to PostgreSQL using a provided database URL. Creates the database if it doesn't exist."""
     if not db_url:
         print("\n[INPUT REQUIRED] Enter the PostgreSQL database URL.")
         print("  Format: postgresql://user:password@host:port/dbname")
@@ -22,8 +24,40 @@ def get_db_connection(db_url=None):
     if not db_url:
         raise ValueError("DATABASE_URL cannot be empty.")
 
-    print(f"[INFO] Connecting to database...")
-    return psycopg2.connect(db_url)
+    # Parse target database name
+    parsed = urlparse(db_url)
+    dbname = parsed.path.lstrip('/')
+    if not dbname:
+        dbname = "LunarAtlas"
+
+    # Try connecting directly
+    try:
+        print(f"[INFO] Connecting to database '{dbname}'...")
+        return psycopg2.connect(db_url)
+    except psycopg2.OperationalError as e:
+        err_msg = str(e)
+        if "does not exist" in err_msg:
+            print(f"[INFO] Database '{dbname}' does not exist. Attempting to create it...")
+            # Rebuild system connection URL for 'postgres' database
+            netloc = parsed.netloc
+            scheme = parsed.scheme or "postgresql"
+            sys_url = f"{scheme}://{netloc}/postgres"
+            try:
+                sys_conn = psycopg2.connect(sys_url)
+                sys_conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+                sys_cursor = sys_conn.cursor()
+                sys_cursor.execute(f'CREATE DATABASE "{dbname}"')
+                sys_cursor.close()
+                sys_conn.close()
+                print(f"[SUCCESS] Database '{dbname}' created successfully.")
+                # Connect again
+                print(f"[INFO] Connecting to newly created database '{dbname}'...")
+                return psycopg2.connect(db_url)
+            except Exception as create_err:
+                print(f"[ERROR] Failed to create database '{dbname}': {create_err}")
+                raise e
+        else:
+            raise e
 
 def get_md5_checksum(file_path):
     """Computes the MD5 checksum of a file."""
@@ -40,13 +74,11 @@ def verify_datasets(processed_dir, db_url=None):
     
     base_dir = Path(processed_dir)
     if not base_dir.exists():
-        print(f"[ERROR] Processed data directory not found: {base_dir}")
-        return False
+        raise FileNotFoundError(f"Processed data directory not found: {base_dir}")
         
     cleaned_files = list(base_dir.glob("calibrated/*/*/*_cleaned.csv"))
     if not cleaned_files:
-        print("[WARNING] No cleaned CSV files found to verify.")
-        return False
+        raise FileNotFoundError(f"No cleaned CSV files found to verify in: {base_dir}")
         
     try:
         conn = get_db_connection(db_url)
@@ -119,22 +151,35 @@ def verify_datasets(processed_dir, db_url=None):
             print(" [VALIDATED: 100% PASS]")
             print(" All files and database checksums are perfectly authentic.")
             print("====================================================")
-            return True
+            return {
+                "checksum_passes": passes,
+                "checksum_failures": failures,
+                "db_observations": db_obs_count,
+                "db_measurements": db_meas_count,
+                "db_spectral_points": db_spec_count
+            }
         else:
             print("\n====================================================")
             print(" [VALIDATION FAILED]")
             print(" Mismatches detected between local files and database records.")
             print("====================================================")
-            return False
+            raise ValueError(f"Validation failed: {failures} mismatches, {passes} passes.")
             
     except Exception as e:
         print(f"\n[ERROR] Quantitative verification failed: {e}")
         import traceback
         traceback.print_exc()
-        return False
+        raise e
 
 if __name__ == "__main__":
     import sys
+    import pipeline_logger
     processed = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_PROCESSED_DIR
     db_url = sys.argv[2] if len(sys.argv) > 2 else None
-    verify_datasets(processed, db_url=db_url)
+    try:
+        metrics = verify_datasets(processed, db_url=db_url)
+        pipeline_logger.log_stage_success("stage_8", "Quantitative Data & Checksum Verification", metrics)
+        sys.exit(0)
+    except Exception as e:
+        pipeline_logger.log_stage_failure("stage_8", "Quantitative Data & Checksum Verification", str(e))
+        sys.exit(1)
