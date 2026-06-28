@@ -8,11 +8,11 @@ FROM node:18-alpine AS client-builder
 WORKDIR /app/client
 
 # Copy package descriptors and lockfiles
-COPY Core/client/package*.json ./
+COPY core/client/package*.json ./
 RUN npm ci --silent
 
 # Copy client source code and build static assets
-COPY Core/client/ ./
+COPY core/client/ ./
 RUN npm run build
 
 # --- Stage 2: Build the Server (Python FastAPI Backend) ---
@@ -26,11 +26,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy backend requirements and install
-COPY Core/server/requirements.txt ./
+COPY core/server/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy server source code
-COPY Core/server/ ./
+COPY core/server/ ./
 
 # --- Stage 3: Assemble Production Container ---
 # For simplified standalone deployment, we run the FastAPI server 

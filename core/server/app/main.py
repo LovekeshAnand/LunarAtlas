@@ -92,38 +92,10 @@ async def startup_event():
     # Connect to database
     try:
         await db.connect()
-        # Initialize users table
-        await db.execute("""
-            CREATE TABLE IF NOT EXISTS app_users (
-                id SERIAL PRIMARY KEY,
-                email VARCHAR(255) UNIQUE NOT NULL,
-                username VARCHAR(255) UNIQUE,
-                role VARCHAR(255) DEFAULT 'researcher',
-                institution VARCHAR(255),
-                interest VARCHAR(255),
-                hashed_password VARCHAR(255) NOT NULL,
-                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-        # Run column migrations for existing tables
-        await db.execute("ALTER TABLE app_users ADD COLUMN IF NOT EXISTS username VARCHAR(255) UNIQUE")
-        await db.execute("ALTER TABLE app_users ADD COLUMN IF NOT EXISTS role VARCHAR(255) DEFAULT 'researcher'")
-        logger.info("[OK] Assured app_users table exists and columns are up to date")
-        
-        # Read and run migration schema for api keys and usage logs
-        migration_file = os.path.join(os.path.dirname(__file__), "..", "configs", "migration_api_keys.sql")
-        if os.path.exists(migration_file):
-            logger.info(f"Running database migrations from {migration_file}...")
-            with open(migration_file, "r") as f:
-                migration_sql = f.read()
-            await db.execute(migration_sql)
-            logger.info("[OK] Applied database migration schema")
-        else:
-            logger.warning(f"Migration file not found at {migration_file}")
-            
     except Exception as e:
-        logger.error(f"Failed to connect to database or init table: {e}")
-        # sys.exit(1) # We might want to keep it running for testing
+        logger.error(f"Failed to connect to database: {e}")
+
+
     
     # Connect to Redis
     try:

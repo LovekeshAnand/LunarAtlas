@@ -20,9 +20,12 @@ from app.core.downsampling import lttb_downsample
 from app.database.connection import db
 from app.cache.redis_cache import cache, cached
 
+from app.config import settings
+from app.utils.rate_limiter import RateLimiter
+
 logger = logging.getLogger(__name__)
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(RateLimiter(settings.RATE_LIMIT_REQUESTS_PER_MINUTE))])
 
 
 def _hash_key(key: str) -> str:

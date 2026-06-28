@@ -39,12 +39,16 @@ async def health_check():
     HealthResponse
         JSON with status, version, database, redis, and timestamp fields.
     """
+    import time
     from datetime import datetime
     
     # Check database
     db_healthy = False
+    db_latency = 0.0
     try:
+        start_time = time.perf_counter()
         await db.fetch_one("SELECT 1")
+        db_latency = (time.perf_counter() - start_time) * 1000.0
         db_healthy = True
     except Exception as e:
         logger.error(f"Database health check failed: {e}")
@@ -64,6 +68,7 @@ async def health_check():
         status=status,
         version=settings.APP_VERSION,
         database=db_healthy,
+        db_latency_ms=round(db_latency, 2),
         redis=redis_healthy,
         timestamp=datetime.now()
     )

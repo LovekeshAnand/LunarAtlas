@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from typing import List
+from typing import List, Optional
 
 class Settings(BaseSettings):
     # Application
@@ -11,6 +11,15 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     DB_POOL_SIZE: int = 20
     DB_MAX_OVERFLOW: int = 10
+    
+    # Supabase (Production deployment)
+    SUPABASE_URL: Optional[str] = None
+    SUPABASE_ANON_KEY: Optional[str] = None
+    SUPABASE_SERVICE_ROLE_KEY: Optional[str] = None
+    
+    # Rate Limiting
+    RATE_LIMIT_REQUESTS_PER_MINUTE: int = 60
+
     
     # Redis
     REDIS_URL: str

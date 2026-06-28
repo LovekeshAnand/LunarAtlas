@@ -6,7 +6,23 @@
 
 set -e # Exit immediately on error
 
+# Resolve Python executable
+if command -v python &> /dev/null; then
+    PYTHON="python"
+elif [ -f "../core/server/venv/Scripts/python.exe" ]; then
+    PYTHON="../core/server/venv/Scripts/python.exe"
+elif [ -f "../core/server/venv/Scripts/python" ]; then
+    PYTHON="../core/server/venv/Scripts/python"
+elif [ -f "../core/server/venv/bin/python" ]; then
+    PYTHON="../core/server/venv/bin/python"
+else
+    echo "[ERROR] Python executable not found in PATH or virtual environment."
+    exit 1
+fi
+
 echo "======================================================================"
+# Show which python is being used
+echo " Using Python: $PYTHON"
 echo " LUNARATLAS DATA PROCESSING PIPELINE ORCHESTRATOR"
 echo "======================================================================"
 echo "This script runs the 8-stage PDS4 LIBS data pipeline in sequence."
@@ -68,39 +84,39 @@ echo " Ingest into Database  : $INGEST"
 echo "----------------------------------------------------------------------"
 echo ""
 # Initialize JSON log
-python -c "import sys, pipeline_logger; pipeline_logger.init_log(sys.argv[1], sys.argv[2])" "$RAW_DIR" "$PROCESSED_DIR"
+$PYTHON -c "import sys, pipeline_logger; pipeline_logger.init_log(sys.argv[1], sys.argv[2])" "$RAW_DIR" "$PROCESSED_DIR"
 
 # Ensure log is copied on exit (success or failure)
 trap 'mkdir -p "$PROCESSED_DIR" 2>/dev/null || true; cp pipeline_log.json "$PROCESSED_DIR/" 2>/dev/null || true' EXIT
 
 # Stage 1: Folder Structure Study
-python step1_structure_study.py "$RAW_DIR"
+$PYTHON step1_structure_study.py "$RAW_DIR"
 
 # Stage 2: Process L1 Data
-python step2_process_l1_data.py "$RAW_DIR" "$PROCESSED_DIR"
+$PYTHON step2_process_l1_data.py "$RAW_DIR" "$PROCESSED_DIR"
 
 # Stage 3: Graph Plotting
-python step3_graph_plotting.py "$PROCESSED_DIR"
+$PYTHON step3_graph_plotting.py "$PROCESSED_DIR"
 
 # Stage 4: NIST Verification Logs
-python step4_nist_verification_logs.py "$PROCESSED_DIR"
+$PYTHON step4_nist_verification_logs.py "$PROCESSED_DIR"
 
 # Stage 5: MD5 Digital Signatures
-python step5_md5_checksums.py "$PROCESSED_DIR"
+$PYTHON step5_md5_checksums.py "$PROCESSED_DIR"
 
 # Stage 6: Creation of Segregated Data Folders
-python step6_segregate_data_folders.py "$INGEST_FLAG" "$RAW_DIR" "$PROCESSED_DIR" "$UPLOADS_DIR"
+$PYTHON step6_segregate_data_folders.py "$INGEST_FLAG" "$RAW_DIR" "$PROCESSED_DIR" "$UPLOADS_DIR"
 
 # Stage 7: Database Ingestion
 if [ "$INGEST" == "yes" ]; then
-    python step7_db_ingestion.py "y" "$DB_URL" "$PROCESSED_DIR"
+    $PYTHON step7_db_ingestion.py "y" "$DB_URL" "$PROCESSED_DIR"
 else
-    python step7_db_ingestion.py "n" "" "$PROCESSED_DIR"
+    $PYTHON step7_db_ingestion.py "n" "" "$PROCESSED_DIR"
 fi
 
 # Stage 8: Quantitative Data & Checksum Verification
 if [ "$INGEST" == "yes" ]; then
-    python step8_data_verification.py "$PROCESSED_DIR" "$DB_URL"
+    $PYTHON step8_data_verification.py "$PROCESSED_DIR" "$DB_URL"
 else
     echo "======================================================================"
     echo " [STAGE 8: SKIPPED]"
@@ -109,7 +125,7 @@ else
 fi
 
 # Finalize JSON log
-python -c "import pipeline_logger; pipeline_logger.finalize_log()"
+$PYTHON -c "import pipeline_logger; pipeline_logger.finalize_log()"
 
 echo ""
 echo "======================================================================"

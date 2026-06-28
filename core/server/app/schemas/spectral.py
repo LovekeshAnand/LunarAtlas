@@ -58,8 +58,10 @@ class HealthResponse(BaseModel):
     status: str
     version: str
     database: bool
+    db_latency_ms: float
     redis: bool
     timestamp: datetime
+
 
 class NistLine(BaseModel):
     """NIST Reference Spectral Line"""
