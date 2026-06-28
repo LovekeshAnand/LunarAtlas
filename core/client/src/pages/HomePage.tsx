@@ -8,13 +8,7 @@ export default function HomePage() {
   const [showModal, setShowModal] = useState(false);
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
-  const [copied, setCopied] = useState(false);
 
-  const handleCopyCurl = () => {
-    navigator.clipboard.writeText('curl https://api.lunaratlas.in/api/v1/public/observations');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   function handleCTA() {
     if (isLoggedIn) navigate('/analyzer');
@@ -25,14 +19,14 @@ export default function HomePage() {
     <div className="font-sans bg-canvas dark:bg-[#0d0d0d] transition-colors duration-200">
 
       {/* ── HERO SECTION WITH LEFT TYPOGRAPHY & LTTB VISUALIZER ── */}
-      <section id="home-hero" className="border-b border-[#eee] dark:border-[#1e1e1e] grid-mesh relative overflow-hidden">
+      <section id="home-hero" className="border-b border-[#eee] dark:border-[#1e1e1e] grid-mesh relative overflow-hidden min-h-[calc(100vh-61px)] flex items-center">
         
         {/* Ambient grayscale glows */}
         <div className="absolute top-1/4 left-1/3 w-[300px] h-[300px] bg-neutral-200 dark:bg-neutral-850 rounded-full blur-[120px] opacity-10 dark:opacity-5 pointer-events-none" />
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-neutral-300 dark:bg-neutral-900 rounded-full blur-[140px] opacity-10 dark:opacity-5 pointer-events-none" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[450px] bg-gradient-to-tr from-neutral-100/50 to-neutral-200/50 dark:from-[#111] dark:to-[#161616] rounded-full blur-[120px] opacity-40 dark:opacity-60 pointer-events-none" />
 
-        <div className="max-w-[1400px] mx-auto px-12 pt-[110px] pb-24 relative z-[1]">
+        <div className="max-w-[1400px] mx-auto px-12 py-16 relative z-[1] w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Left Column: Text content */}
@@ -90,41 +84,6 @@ export default function HomePage() {
               </div>
             </div>
 
-          </div>
-
-          {/* Centered API Copy Pill */}
-          <div className="flex justify-center mt-16">
-            <div className="flex items-center gap-4 bg-neutral-50/60 dark:bg-[#111111]/60 backdrop-blur-md border border-neutral-200 dark:border-neutral-800/80 rounded-xl pl-6 pr-3 py-3 font-mono text-[13px] text-neutral-700 dark:text-[#b0b0b0] max-w-[640px] w-full justify-between shadow-[0_4px_12px_rgba(0,0,0,0.02)] hover:border-neutral-300 dark:hover:border-neutral-700 transition-all duration-300 group/pill">
-              <div className="flex items-center gap-2.5 overflow-x-auto scrollbar-none whitespace-nowrap">
-                <span className="text-neutral-500 select-none font-bold animate-pulse">$</span>
-                <span className="text-neutral-850 dark:text-[#dcdcdc] font-medium">curl https://api.lunaratlas.in/api/v1/public/observations</span>
-              </div>
-              <button
-                onClick={handleCopyCurl}
-                className={`text-[10px] font-bold tracking-wider uppercase px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-200 shrink-0 flex items-center justify-center border-0 ${
-                  copied
-                    ? 'bg-neutral-800 dark:bg-neutral-200 text-white dark:text-black shadow-[0_0_12px_rgba(0,0,0,0.1)]'
-                    : 'bg-neutral-900 text-white dark:bg-[#222] dark:hover:bg-[#2d2d2d] hover:bg-neutral-800 shadow-sm'
-                }`}
-              >
-                {copied ? (
-                  <>
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                    Copied
-                  </>
-                ) : (
-                  <>
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mr-1 group-hover/pill:scale-105 transition-transform">
-                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
-                    Copy
-                  </>
-                )}
-              </button>
-            </div>
           </div>
         </div>
       </section>
@@ -445,7 +404,7 @@ export default function HomePage() {
                     Interactive Spectral Visualisation
                   </h4>
                   <p className="text-[12.5px] text-[#666] dark:text-[#888] leading-relaxed m-0">
-                    An adaptive LTTB+peaks downsampling strategy that preserves diagnostically important spectral features during interactive exploration [20].
+                    An adaptive LTTB+peaks downsampling strategy that preserves diagnostically important spectral features during interactive exploration.
                   </p>
                 </div>
               </div>
