@@ -58,14 +58,9 @@ const ABS_MIN = 164.35;
 /** Absolute maximum wavelength boundary (Chandrayaan-3 LIBS). */
 const ABS_MAX = 878.26;
 
-/**
- * Formats a numeric wavelength tick for axis display.
- * @param value - Wavelength in nm
- * @returns Formatted string with one decimal place
- */
-const formatTick = (value: number) => value.toFixed(1);
 
 /* ------------------------------------------------------------------ */
+
 /*  SpectralGraph component                                            */
 /* ------------------------------------------------------------------ */
 
