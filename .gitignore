@@ -20,7 +20,8 @@ build/
 datasets/
 data/
 to_remove/
-cron_jobs/.env
+cron_jobs/
+
 
 # Logs & Temp files
 *.log
