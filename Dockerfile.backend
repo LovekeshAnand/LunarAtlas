@@ -1,0 +1,32 @@
+﻿# ==============================================================================
+# LUNARATLAS BACKEND DOCKERFILE
+# Builds only the FastAPI Python backend service.
+# Requires: DATABASE_URL, REDIS_URL environment variables at runtime.
+# Usage:
+#   docker build -f Dockerfile.backend -t lunaratlas-backend .
+#   docker run -p 8000:8000 --env-file .env lunaratlas-backend
+# ==============================================================================
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# System dependencies (libpq for psycopg2)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install pinned Python dependencies
+COPY core/server/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy server source code
+COPY core/server/ ./
+
+ENV PORT=8000
+ENV HOST=0.0.0.0
+
+EXPOSE 8000
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
