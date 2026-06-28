@@ -92,7 +92,7 @@ async def list_observations():
     query = """
         SELECT 
             i.file_info_id as observation_id, 
-            i.xml_label_name as target_name, 
+            o.xml_label_name as target_name, 
             s.observation_date as creation_datetime,
             i.record_count
         FROM observation_file_info i
