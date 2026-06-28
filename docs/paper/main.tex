@@ -45,7 +45,7 @@
 
 \begin{frontmatter}
 
-\title{LunarAtlas: An Open-Source Infrastructure for Transforming Chandrayaan-3 LIBS Level-1 Archives into Analysis-Ready Spectra}
+\title{LunarAtlas: A Reproducible Data Processing and Interactive Visualization Infrastructure for Chandrayaan-3 LIBS Level-1 Archives}
 
 \author[1]{Lovekesh Anand\corref{cor1}}
 \ead{lovekeshanand6@gmail.com}
@@ -208,45 +208,52 @@ The peak retention rate measures the percentage of originally detected spectral 
 
 \section{Illustrative examples}
 
-A typical workflow involves first installing dependencies and running ingestion via the CLI, then querying the processed database via the REST API. The following CLI commands initialise the environment and ingest an L1 data product:
+A typical workflow involves first installing dependencies, starting the storage backends, and executing the multi-stage ingestion pipeline via a shell script. Once processed, the servers can be started and queried programmatically. The following CLI commands initialise the environment, run the pipeline, and boot up both the API server and the frontend visualizer:
 
-\begin{lstlisting}[language=bash, caption=CLI setup and ingestion commands]
-# Install Python dependencies
-pip install -r requirements.txt
+\begin{lstlisting}[language=bash, caption=Environment setup, pipeline execution, and server boot commands]
+# Install server and client dependencies
+pip install -r core/server/requirements.txt
+cd core/client && npm install && cd ../..
 
-# Start PostgreSQL and Redis
+# Start PostgreSQL and Redis containers
 docker-compose up -d db redis
 
-# Run batch ingestion on a PRADAN L1 directory
-python step2_process_l1_data.py \
-  --input_dir /data/ch3_libs_l1/ \
-  --db_url postgresql://user:pass@localhost/lunaratlas
-# Expected: 4 measurements ingested, 8376 records written
+# Execute the 8-stage data processing pipeline
+./Pipeline/run_pipeline.sh
+
+# Start the FastAPI backend API server
+cd core/server && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+# Start the React client developer server (in a separate shell)
+cd core/client && npm run dev
 \end{lstlisting}
 
-Once ingestion is complete, client applications can fetch peak-locked downsampled data from the REST API:
+Once the services are active, the REST API can be queried programmatically. The backend server exposes several endpoints: (i) \texttt{/api/v1/spectrum} which retrieves clean spectral curves with adaptive LTTB+Peaks downsampling and optional denoising filters (ALS, Savitzky-Golay); (ii) public index queries such as \texttt{/api/v1/public/observations} and \texttt{/api/v1/public/measurements} which expose PDS4 metadata and physical parameters (laser energy, pulses) filtered by date or identifier; and (iii) status monitors such as \texttt{/api/v1/health}. 
+
+The following script queries the \texttt{/spectrum} endpoint to retrieve a peak-locked downsampled spectrum for a processed measurement:
 
 \begin{lstlisting}[language=Python, caption=Python client request for downsampled spectra]
 import requests
 
-url = "http://localhost:8000/api/v1/spectral"
+url = "http://localhost:8000/api/v1/spectrum"
 params = {
-    # synthetic example ID -- replace with PRADAN LID
-    "observation_id": "ch3_lib_002_20230825T10",
-    "min_wavelength": 200.0,
-    "max_wavelength": 800.0,
+    "measurement_id": "1",  # clean Measurement ID
+    "lambda_min": 240.0,
+    "lambda_max": 450.0,
     "zoom_level": 2,
-    "include_nist": True
+    "als": True,
+    "savgol": True
 }
-headers = {"X-API-Key": "your_api_key"}
 
-response = requests.get(url, params=params, headers=headers)
+response = requests.get(url, params=params)
 data = response.json()
 
-# Process spectrum
-for pt in data["spectrum"][:5]:
-    print(f"Wavelength: {pt['wavelength_nm']} nm")
-    print(f"Intensity: {pt['intensity_counts']} a.u.")
+# Process spectrum points (DownsampledBucket or SpectralDataPoint objects)
+for pt in data["data"][:5]:
+    if "wavelength_nm" in pt:
+        print(f"Wavelength: {pt['wavelength_nm']} nm, Cleaned: {pt['intensity']} a.u.")
+    else:
+        print(f"Bucket: {pt['lambda_min']} to {pt['lambda_max']} nm")
 \end{lstlisting}
 
 Figure~\ref{fig:ui_console} illustrates the interactive visualisation console supported by the LTTB+Peaks algorithm. The interface shows the spectral view with NIST reference line overlays for Measurement ID~3, the highest-signal acquisition (mean 417~a.u.). The visualization dynamically updates using LTTB+Peaks downsampling, transitioning to raw un-decimated mode when the viewport is zoomed in and the channel count falls below the target threshold.
@@ -341,7 +348,7 @@ Std. LTTB & 64.5 & 90.10 & $3.18{\pm}0.39$ \\
 \textbf{LTTB+Peaks} & \textbf{100.0} & \textbf{92.25} & $\mathbf{3.26{\pm}0.25}$ \\
 \bottomrule
 \end{tabular}
-\caption{Downsampling comparison at 10\% density (209 of 2,094 points), Measurement ID~3. Ret.: fraction of 76 detected peaks preserved. RMSE: against full-resolution spectrum (a.u.). Latency: mean$\pm$std over 1,000 runs, Intel Core i7-12700.}
+\caption{Downsampling comparison at 10\% density (209 of 2,094 points), Measurement ID~3. Ret.: fraction of 76 detected peaks preserved. RMSE: against full-resolution spectrum (a.u.). Latency: mean$\pm$std over 1,000 runs, Intel Core i7-11850H.}
 \label{table:downsampling}
 \end{table}
 
@@ -386,8 +393,6 @@ Standard LTTB       & 47.4\% & 64.5\% & 76.3\% & 85.5\%  & 100.0\% \\
 \end{table*}
 Because the downsampling algorithm explicitly appends the original peak indices, the retained peaks exhibit zero measured position and amplitude error under all decimation ratios.
 
-Latency was measured as the mean wall-clock execution time over 1,000 repetitions of each algorithm applied to a single 2,094-point spectrum on an Intel Core i7-12700 workstation (32~GB RAM, NVMe SSD) using Python~3.11 \texttt{time.perf\_counter}. Values exclude I/O and represent pure algorithmic cost. Uniform decimation and max-binning are computationally trivial (under 0.6~ms) but yield insufficient peak retention or excessive RMSE. Standard LTTB and LTTB+Peaks execute in approximately 3.2--3.3~ms, demonstrating that the Peak-Union step adds negligible overhead (less than 0.1~ms) and easily fits within a sub-500~ms round-trip web API budget.
-
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=\columnwidth]{publication_figures/fig4_peak_comparison}
@@ -429,7 +434,7 @@ O~I   & 777.19 & 777.67 & 0.48 \\
 
 \subsection{API Response Performance}
 
-All benchmarks were conducted on a single-node workstation (Intel Core i7-12700, 32~GB RAM, NVMe SSD) running Ubuntu 22.04, Python 3.11, and PostgreSQL~16.3 with default \texttt{shared\_buffers} under no-load, single-connection conditions. 
+All benchmarks were conducted on a single-node workstation (Intel Core i7-11850H, 16~GB RAM, NVMe SSD) running Ubuntu 22.04, Python 3.11, and PostgreSQL~16.3 with default \texttt{shared\_buffers} under no-load, single-connection conditions. 
 
 We evaluate the visual fidelity of the LTTB+Peaks adaptive downsampling algorithm across multiple target densities. Figure~\ref{fig:adaptive_zoom} illustrates the downsampled spectra obtained at four distinct zoom levels ($k=1, 2, 3,$ and $4$), corresponding to approximately 50\%, 25\%, 12.5\%, and 6.25\% of the original 2,094 wavelength channels. As shown in the figure, the downsampled curve (blue) faithfully approximates the global spectral envelope (low RMSE) while preserving all diagnostic atomic emission features (100\% peak retention) even under aggressive decimation (e.g., $k=4$, returning only 131 points). All scripts used to generate Tables 3--9 and Figure~\ref{fig:adaptive_zoom} are included under the \texttt{figures/} and \texttt{publication\_tables/} directories of the repository.
 
@@ -446,7 +451,7 @@ DB Query Speedup (index vs.\ seq.\ scan) & $\approx 85{\times}$ \\
 Overview Payload Size & 10--400~kB \\
 \bottomrule
 \end{tabular}
-\caption{System performance metrics (Intel Core i7-12700, 32~GB RAM, NVMe SSD, Ubuntu 22.04, Python~3.11, PostgreSQL~16.3, single-connection, no-load).}
+\caption{System performance metrics (Intel Core i7-11850H, 16~GB RAM, NVMe SSD, Ubuntu 22.04, Python~3.11, PostgreSQL~16.3, single-connection, no-load).}
 \label{table:performance}
 \end{table}
 

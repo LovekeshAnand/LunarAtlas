@@ -53,7 +53,7 @@ export default function HomePage() {
 
               {/* Tagline */}
               <div className="text-[clamp(18px,2.8vw,24px)] font-light text-neutral-800 dark:text-neutral-200 tracking-[-0.5px] mb-6 max-w-[650px] leading-[1.3] font-sans">
-                From PDS4 Archives to <span className="font-semibold text-neutral-900 dark:text-white underline decoration-neutral-800 dark:decoration-neutral-200 decoration-3 underline-offset-4">Analysis-Ready Spectra</span>
+                A Reproducible Data Ingestion &amp; <span className="font-semibold text-neutral-900 dark:text-white underline decoration-neutral-800 dark:decoration-neutral-200 decoration-3 underline-offset-4">Interactive Visualization</span> Infrastructure
               </div>
 
               {/* Description */}
@@ -356,7 +356,7 @@ export default function HomePage() {
                 Abstract
               </div>
               <div className="text-[13px] font-bold text-ink dark:text-[#f0f0f0] leading-[1.4]">
-                From PDS4 Archives to Analysis-Ready Spectra
+                A Reproducible Data Processing and Interactive Visualization Infrastructure
               </div>
               <div className="mt-5 text-[11.5px] text-neutral-700 dark:text-neutral-500 leading-[1.6]">
                 <div className="font-semibold text-neutral-900 dark:text-neutral-350">

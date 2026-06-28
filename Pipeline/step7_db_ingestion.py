@@ -263,6 +263,58 @@ def ensure_schema_tables_exist(cursor):
         )
     """)
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_spectral_data_clean_measurement ON spectral_data_clean(measurement_id)")
+
+    # 12. nist_lines
+    cursor.execute("""
+        CREATE TABLE nist_lines (
+            id SERIAL PRIMARY KEY,
+            element VARCHAR(10) NOT NULL,
+            ionization_stage VARCHAR(10),
+            wavelength_nm DOUBLE PRECISION NOT NULL,
+            relative_intensity INTEGER
+        )
+    """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_nist_lines_wavelength ON nist_lines(wavelength_nm)")
+    
+    # Seed nist_lines reference data
+    nist_data = [
+        ("Fe", "I", 248.327, 1000),
+        ("Fe", "I", 274.918, 800),
+        ("Fe", "I", 373.486, 900),
+        ("Fe", "I", 404.581, 700),
+        ("Fe", "II", 238.204, 850),
+        ("Fe", "II", 259.940, 750),
+        ("Mg", "I", 285.213, 1000),
+        ("Mg", "I", 383.829, 600),
+        ("Mg", "I", 517.268, 800),
+        ("Mg", "I", 518.360, 900),
+        ("Mg", "II", 279.553, 1000),
+        ("Mg", "II", 280.270, 950),
+        ("Si", "I", 251.611, 1000),
+        ("Si", "I", 288.158, 900),
+        ("Si", "I", 390.552, 500),
+        ("Al", "I", 308.215, 900),
+        ("Al", "I", 309.271, 1000),
+        ("Al", "I", 394.401, 850),
+        ("Al", "I", 396.152, 950),
+        ("Ca", "I", 422.673, 1000),
+        ("Ca", "I", 443.568, 400),
+        ("Ca", "II", 393.366, 1000),
+        ("Ca", "II", 396.847, 900),
+        ("Ti", "I", 334.904, 800),
+        ("Ti", "I", 336.121, 700),
+        ("Ti", "II", 334.941, 900),
+        ("Na", "I", 588.995, 1000),
+        ("Na", "I", 589.592, 900),
+        ("H", "I", 656.273, 1000),
+        ("H", "I", 486.133, 500),
+        ("O", "I", 777.194, 900),
+        ("O", "I", 777.417, 800),
+        ("O", "I", 777.539, 700)
+    ]
+    query = "INSERT INTO nist_lines (element, ionization_stage, wavelength_nm, relative_intensity) VALUES (%s, %s, %s, %s)"
+    execute_batch(cursor, query, nist_data)
+    print("[SUCCESS] NIST reference lines table created and seeded with 33 lines.")
     print("[SUCCESS] All database schema tables and indexes verified/created.")
 
 def get_md5_checksum(file_path):

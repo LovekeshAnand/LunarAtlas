@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use LunarAtlas in your research, please cite it using the metadata below."
 
-title: "LunarAtlas: From PDS4 Archives to Analysis-Ready Spectra - A Reproducible Infrastructure for Chandrayaan-3 LIBS Level-1 Data"
+title: "LunarAtlas: A Reproducible Data Processing and Interactive Visualization Infrastructure for Chandrayaan-3 LIBS Level-1 Archives"
 
 abstract: >
   LunarAtlas is an open-source, reproducible data processing infrastructure that transforms publicly

@@ -6,7 +6,7 @@ This document records the quantitative benchmarks comparing raw rendering perfor
 
 ## 1. Benchmarking Environment
 
-* **CPU:** Intel Core i7-12700H / AMD Ryzen 7 5800H
+* **CPU:** Intel Core i7-11850H
 * **Memory:** 16GB RAM
 * **Database:** PostgreSQL 15 (Docker containerized)
 * **Frontend Runtime:** Chrome V8 (v120) with active Web Workers
