@@ -160,8 +160,9 @@ app.include_router(
 
 from fastapi import Response, status
 
-# Health endpoint at the root for ping monitors
+# Health endpoint at the root and API v1 prefix for ping monitors
 @app.get("/health")
+@app.get("/api/v1/health")
 async def health_check_root(response: Response):
     """
     Root-level health check endpoint for Uptime/Ping monitoring.
