@@ -1,9 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/health",
+      "destination": "https://api.lunaratlas.in/health"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
 }
+
 
