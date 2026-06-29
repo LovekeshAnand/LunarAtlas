@@ -15,7 +15,7 @@ export default function HealthPage() {
         const backend = await res.json();
         
         setData(JSON.stringify({
-          status: res.ok ? 'healthy' : 'degraded',
+          status: res.ok ? 'ok' : 'degraded',
           frontend: 'ok',
           backend,
           backendStatus: res.status,
