@@ -158,6 +158,49 @@ app.include_router(
     tags=["public-developer-api"]
 )
 
+from fastapi import Response, status
+
+# Health endpoint at the root for ping monitors
+@app.get("/health")
+async def health_check_root(response: Response):
+    """
+    Root-level health check endpoint for Uptime/Ping monitoring.
+    Returns HTTP 200 if database is reachable, HTTP 503 if database is degraded.
+    """
+    import time
+    
+    db_healthy = False
+    db_latency = 0.0
+    try:
+        start_time = time.perf_counter()
+        await db.fetch_one("SELECT 1")
+        db_latency = (time.perf_counter() - start_time) * 1000.0
+        db_healthy = True
+    except Exception as e:
+        logger.error(f"Database health check failed: {e}")
+    
+    redis_healthy = False
+    try:
+        if cache.redis:
+            await cache.redis.ping()
+            redis_healthy = True
+    except Exception as e:
+        logger.warning(f"Redis health check failed: {e}")
+        
+    healthy = db_healthy
+    
+    if not healthy:
+        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+        
+    return {
+        "status": "healthy" if healthy else "degraded",
+        "version": settings.APP_VERSION,
+        "database": db_healthy,
+        "db_latency_ms": round(db_latency, 2),
+        "redis": redis_healthy,
+        "timestamp": time.time()
+    }
+
 # Root endpoint
 @app.get("/")
 async def root():
@@ -165,5 +208,6 @@ async def root():
         "name": settings.APP_NAME,
         "version": settings.APP_VERSION,
         "docs": "/docs",
-        "health": f"{settings.API_V1_PREFIX}/health"
+        "health": "/health"
     }
+

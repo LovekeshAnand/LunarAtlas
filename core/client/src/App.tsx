@@ -6,6 +6,7 @@ import Footer from './components/footer/Footer';
 import HomePage from './pages/HomePage';
 import DocsPage from './pages/DocsPage';
 import SpectralAnalyzerPage from './pages/SpectralAnalyzerPage';
+import HealthPage from './pages/HealthPage';
 
 import DashboardPage from './pages/DashboardPage';
 import DeveloperApiPage from './pages/DeveloperApiPage';
@@ -51,6 +52,9 @@ function AppRoutes() {
           {/* User Dashboard & API Key Portal */}
           <Route path="/dashboard" element={<RequireAuth><DashboardPage /></RequireAuth>} />
           
+          {/* System Status Dashboard (Ping Monitor-able) */}
+          <Route path="/health" element={<HealthPage />} />
+
           {/* Catch-all redirect to Landing */}
           <Route path="*"      element={<Navigate to="/" replace />} />
         </Routes>
