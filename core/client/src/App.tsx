@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import Header from './components/header/Header';
@@ -6,7 +6,6 @@ import Footer from './components/footer/Footer';
 import HomePage from './pages/HomePage';
 import DocsPage from './pages/DocsPage';
 import SpectralAnalyzerPage from './pages/SpectralAnalyzerPage';
-import HealthPage from './pages/HealthPage';
 
 import DashboardPage from './pages/DashboardPage';
 import DeveloperApiPage from './pages/DeveloperApiPage';
@@ -30,17 +29,6 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
  * Implements a single-page application (SPA) layout with persistent Header and Footer.
  */
 function AppRoutes() {
-  const location = useLocation();
-  const isHealthPage = location.pathname === '/health';
-
-  if (isHealthPage) {
-    return (
-      <Routes>
-        <Route path="/health" element={<HealthPage />} />
-      </Routes>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-canvas dark:bg-[#0d0d0d] font-sans flex flex-col transition-colors duration-200">
       <Header />
