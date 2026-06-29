@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 
 export default function HealthPage() {
-  const [data, setData] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<string>('Loading...');
 
   useEffect(() => {
     const fetchHealth = async () => {
@@ -15,20 +14,13 @@ export default function HealthPage() {
 
         const res = await fetch(url);
         const json = await res.json();
-        setData(json);
+        setData(JSON.stringify(json, null, 2));
       } catch (err: any) {
-        setError(err.message || 'Failed to fetch health');
+        setData(JSON.stringify({ status: 'degraded', error: err.message || 'Failed to fetch health' }, null, 2));
       }
     };
     fetchHealth();
   }, []);
 
-  if (error) return <div style={{ padding: '20px', fontFamily: 'monospace' }}>Error: {error}</div>;
-  if (!data) return <div style={{ padding: '20px', fontFamily: 'monospace' }}>Loading...</div>;
-
-  return (
-    <pre style={{ padding: '20px', fontFamily: 'monospace', whiteSpace: 'pre-wrap' }}>
-      {JSON.stringify(data, null, 2)}
-    </pre>
-  );
+  return <pre>{data}</pre>;
 }
