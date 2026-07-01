@@ -19,6 +19,7 @@ COLOURS = ['#0f172a', '#ea580c', '#16a34a', '#7c3aed', '#db2777', '#2563eb', '#0
 
 # Expanded NIST reference lines for moon mineral exploration
 NIST_LINES = {
+    'Fe I (274.95 nm)': (274.95, 'Fe I'),
     'Mg II (279.55 nm)': (279.55, 'Mg II'),
     'Mg II (280.27 nm)': (280.27, 'Mg II'),
     'Mg I (285.21 nm)':  (285.21, 'Mg I'),
@@ -36,7 +37,8 @@ NIST_LINES = {
     'Fe I (404.58 nm)':  (404.58, 'Fe I'),
     'Ca I (422.67 nm)':  (422.67, 'Ca I'),
     'Fe I (438.36 nm)':  (438.36, 'Fe I'),
-    'Mg I (518.36 nm)':  (518.36, 'Mg I'),
+    'Fe I (495.76 nm)':  (495.76, 'Fe I'),
+    'Mg I (517.27 nm)':  (517.27, 'Mg I'),
     'Na I (588.99 nm)':  (588.99, 'Na I'),
     'Na I (589.59 nm)':  (589.59, 'Na I'),
     'H I (656.28 nm)':   (656.28, 'H-alpha'),

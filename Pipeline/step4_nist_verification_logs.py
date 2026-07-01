@@ -18,6 +18,7 @@ MIN_PEAK_HEIGHT = 150.0  # counts
 
 # NIST atomic reference database
 NIST_DB = [
+    {"element": "Fe I", "wavelength": 274.95},
     {"element": "Mg II", "wavelength": 279.55},
     {"element": "Mg II", "wavelength": 280.27},
     {"element": "Mg I",  "wavelength": 285.21},
@@ -35,7 +36,8 @@ NIST_DB = [
     {"element": "Fe I",  "wavelength": 404.58},
     {"element": "Ca I",  "wavelength": 422.67},
     {"element": "Fe I",  "wavelength": 438.36},
-    {"element": "Mg I",  "wavelength": 518.36},
+    {"element": "Fe I", "wavelength": 495.76},
+    {"element": "Mg I",  "wavelength": 517.27},
     {"element": "Na I",  "wavelength": 588.99},
     {"element": "Na I",  "wavelength": 589.59},
     {"element": "H I",   "wavelength": 656.28},

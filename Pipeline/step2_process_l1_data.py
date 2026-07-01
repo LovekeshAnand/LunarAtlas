@@ -215,7 +215,7 @@ class L1DataProcessor:
 
                 # Edge case 11: background higher than plasma (>90% channels zeroed)
                 zero_fraction = np.sum(cleaned_spectrum == 0) / len(cleaned_spectrum)
-                if zero_fraction > 0.9:
+                if zero_fraction > 0.5:
                     print(f"  [WARNING] {zero_fraction*100:.0f}% channels zero-clipped at row {idx + 1} in {fname} "
                           f"(background may exceed plasma signal)")
                     self.stats['high_zero_clip_warnings'] += 1
