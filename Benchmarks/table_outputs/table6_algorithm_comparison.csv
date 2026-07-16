@@ -1,0 +1,13 @@
+Measurement_ID,zoom_level,achieved_density_pct,algorithm,rmse,local_ret_pct,nist_ret_pct,n_output_points
+1,4,7.72,Uniform decimation,64.2061,7.14,0.0,130
+1,4,7.72,Max-binning,113.3353,92.86,100.0,130
+1,4,7.72,Standard LTTB,76.6688,59.52,50.0,130
+1,4,7.72,LTTB+Peaks,80.7891,100.0,100.0,147
+3,4,7.72,Uniform decimation,79.8053,6.78,0.0,130
+3,4,7.72,Max-binning,125.5161,94.92,100.0,130
+3,4,7.72,Standard LTTB,93.64,45.76,62.5,130
+3,4,7.72,LTTB+Peaks,98.1981,100.0,100.0,162
+4,4,7.72,Uniform decimation,58.722,4.11,0.0,130
+4,4,7.72,Max-binning,111.1694,86.3,80.0,130
+4,4,7.72,Standard LTTB,71.1232,49.32,20.0,130
+4,4,7.72,LTTB+Peaks,80.3987,100.0,100.0,167

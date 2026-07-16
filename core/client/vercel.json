@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/health",
-      "destination": "https://api.lunaratlas.in/health"
+      "destination": "https://apis.lunaratlas.in/health"
     },
     {
       "source": "/(.*)",

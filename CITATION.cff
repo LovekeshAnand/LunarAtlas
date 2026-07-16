@@ -24,14 +24,14 @@ abstract: >
 authors:
   - family-names: "Anand"
     given-names: "Lovekesh"
-    affiliation: "Mahavir Swami Institute of Technology"
+    affiliation: "Department of Computer Science and Engineering, Maharshi Dayanand University, Rohtak, Haryana, India"
     orcid: "https://orcid.org/0009-0009-4947-4040"
     email: "lovekeshanand6@gmail.com"
   - family-names: "Saeed"
     given-names: "Dua"
-    affiliation: "Mahavir Swami Institute of Technology"
+    affiliation: "Department of Computer Science and Engineering, Maharshi Dayanand University, Rohtak, Haryana, India"
     orcid: "https://orcid.org/0009-0003-4871-0546"
-    email: "23f1000825@ds.study.iitm.ac.in"
+    email: "duasaeed641@gmail.com"
 
 type: software
 version: "1.0.0"
@@ -41,9 +41,6 @@ license: MIT
 repository-code: "https://github.com/LovekeshAnand/LunarAtlas"
 url: "https://github.com/LovekeshAnand/LunarAtlas"
 
-# ── Replace the placeholder DOI below with your actual Zenodo DOI ──
-# To get a DOI: go to zenodo.org → log in with GitHub → enable the LunarAtlas repo
-# → create a GitHub release v1.0.0 → Zenodo will auto-assign a DOI.
 doi: "10.5281/zenodo.20771541"
 
 keywords:

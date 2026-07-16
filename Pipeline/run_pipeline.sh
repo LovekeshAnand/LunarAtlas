@@ -48,8 +48,17 @@ if [[ "$INGEST_INPUT" =~ ^[Yy]$ ]]; then
     INGEST="yes"
     INGEST_FLAG="y"
 
-    # Attempt to load from .env first to avoid manual credentials prompt
+    # Check if .env exists and has DATABASE_URL
+    USE_ENV="n"
     if [ -f "../core/server/.env" ] && grep -q "^DATABASE_URL=" ../core/server/.env; then
+        read -p "Use database connection URL from server/.env? (y/n) [default: y]: " ENV_INPUT
+        ENV_INPUT=${ENV_INPUT:-y}
+        if [[ "$ENV_INPUT" =~ ^[Yy]$ ]]; then
+            USE_ENV="y"
+        fi
+    fi
+
+    if [ "$USE_ENV" == "y" ]; then
         echo "[INFO] Loading DATABASE_URL from ../core/server/.env..."
         DB_URL=$(grep "^DATABASE_URL=" ../core/server/.env | cut -d'=' -f2-)
         DB_URL=$(echo "$DB_URL" | tr -d '\r')

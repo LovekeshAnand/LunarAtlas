@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-DEFAULT_PROCESSED_DIR = r"c:\Users\ZBook\Desktop\LunarAtlas\datasets\processed"
+DEFAULT_PROCESSED_DIR = str(Path(__file__).resolve().parent.parent / "datasets" / "processed")
 
 # Premium color palette for measurements
 COLOURS = ['#0f172a', '#ea580c', '#16a34a', '#7c3aed', '#db2777', '#2563eb', '#0891b2', '#ca8a04']

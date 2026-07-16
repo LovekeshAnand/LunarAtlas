@@ -1,0 +1,38 @@
+{
+  "FI-20230825-104221-00-1": {
+    "measurement_id": "FI-20230825-104221-00-1",
+    "n_success": 1000,
+    "n_failures": 0,
+    "mean_ms": 34.18,
+    "std_ms": 27.85,
+    "median_ms": 23.32,
+    "p95_ms": 99.42,
+    "p99_ms": 128.27,
+    "z_percent": 9.54,
+    "sentence": "End-to-end API latency for Measurement ID FI-20230825-104221-00-1 under single-connection, no-load conditions was 34.18 +/- 27.85 ms (1000 runs), of which the LTTB+Peaks downsampling step (Table 5) contributed 3.26 +/- 0.25 ms (9.5% of total), confirming it is not the latency bottleneck; the dominant components are database query execution and network serialisation."
+  },
+  "FI-20230825-104221-00-3": {
+    "measurement_id": "FI-20230825-104221-00-3",
+    "n_success": 1000,
+    "n_failures": 0,
+    "mean_ms": 35.65,
+    "std_ms": 29.06,
+    "median_ms": 24.6,
+    "p95_ms": 104.54,
+    "p99_ms": 133.8,
+    "z_percent": 9.14,
+    "sentence": "End-to-end API latency for Measurement ID FI-20230825-104221-00-3 under single-connection, no-load conditions was 35.65 +/- 29.06 ms (1000 runs), of which the LTTB+Peaks downsampling step (Table 5) contributed 3.26 +/- 0.25 ms (9.1% of total), confirming it is not the latency bottleneck; the dominant components are database query execution and network serialisation."
+  },
+  "FI-20230825-104221-00-4": {
+    "measurement_id": "FI-20230825-104221-00-4",
+    "n_success": 1000,
+    "n_failures": 0,
+    "mean_ms": 36.68,
+    "std_ms": 30.3,
+    "median_ms": 24.97,
+    "p95_ms": 107.94,
+    "p99_ms": 144.79,
+    "z_percent": 8.89,
+    "sentence": "End-to-end API latency for Measurement ID FI-20230825-104221-00-4 under single-connection, no-load conditions was 36.68 +/- 30.30 ms (1000 runs), of which the LTTB+Peaks downsampling step (Table 5) contributed 3.26 +/- 0.25 ms (8.9% of total), confirming it is not the latency bottleneck; the dominant components are database query execution and network serialisation."
+  }
+}

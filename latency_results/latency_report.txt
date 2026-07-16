@@ -1,0 +1,110 @@
+==============================================================================
+LUNARATLAS LATENCY BENCHMARK — AUTO-GENERATED REPORT
+==============================================================================
+Generated: 2026-07-02T17:15:42.525159+00:00
+Host: Lovekesh-Anand
+OS: Windows-10-10.0.26200-SP0
+Python: 3.11.9
+Git commit: 61b488d
+
+REVIEWER-SAFETY NOTE: this run may measure up to three DISTINCT environments (local+local DB, local+remote DB, production+remote DB). Keep their labels distinct everywhere in the paper (Abstract, Section 4.5, Table 9). Do not reuse the word 'WAN' or 'co-located' for two different configurations, and do not copy a number from one environment's paragraph into another environment's table row.
+STATISTICS NOTE (v3): no trimmed/'clean' mean is computed anywhere in this report. All latency figures below are the RAW distribution (mean, std, median, P95, P99). Quote these directly — do not derive or report any outlier-excluded alternative.
+
+Environments configured: ['local_colocated', 'local_remote_db', 'production_remote_db']
+Environments actually measured this run: ['local_colocated', 'local_remote_db', 'production_remote_db']
+
+------------------------------------------------------------------------------
+[local_colocated] Local server + local/co-located PostgreSQL (true co-located)
+------------------------------------------------------------------------------
+  Baseline latency (raw, full distribution): 22.34 +/- 17.05 ms (median 17.13, P95 73.03, P99 88.59) over 1000/1000 successful runs (0 failures).
+  [diagnostic only, NOT excluded from the numbers above] 105/1000 runs fall outside the Tukey IQR fence — expected for right-skewed latency data.
+
+  Downsampling Scale Sweep (raw distribution):
+    - Full (k=0): 23.86 +/- 17.65 ms (median 18.51 ms, P95 75.34 ms, P99 85.93 ms) [10 pts IQR-flagged, diagnostic only]
+    - k=1 (50%): 30.06 +/- 11.05 ms (median 27.75 ms, P95 33.29 ms, P99 84.48 ms) [4 pts IQR-flagged, diagnostic only]
+    - k=2 (25%): 18.2 +/- 8.53 ms (median 16.73 ms, P95 20.88 ms, P99 66.74 ms) [5 pts IQR-flagged, diagnostic only]
+    - k=3 (12.5%): 16.1 +/- 11.22 ms (median 13.76 ms, P95 26.1 ms, P99 77.74 ms) [6 pts IQR-flagged, diagnostic only]
+    - k=4 (6.25%): 9.76 +/- 5.91 ms (median 8.54 ms, P95 13.04 ms, P99 13.7 ms) [1 pts IQR-flagged, diagnostic only]
+
+------------------------------------------------------------------------------
+[local_remote_db] Local server + remote Supabase PostgreSQL (isolates DB-WAN cost)
+------------------------------------------------------------------------------
+  Baseline latency (raw, full distribution): 300.53 +/- 97.14 ms (median 296.27, P95 471.72, P99 673.52) over 1000/1000 successful runs (0 failures).
+  [diagnostic only, NOT excluded from the numbers above] 81/1000 runs fall outside the Tukey IQR fence — expected for right-skewed latency data.
+
+  Downsampling Scale Sweep (raw distribution):
+    - Full (k=0): 249.12 +/- 72.03 ms (median 239.57 ms, P95 377.71 ms, P99 491.67 ms) [5 pts IQR-flagged, diagnostic only]
+    - k=1 (50%): 269.56 +/- 42.65 ms (median 252.79 ms, P95 329.11 ms, P99 492.9 ms) [20 pts IQR-flagged, diagnostic only]
+    - k=2 (25%): 290.25 +/- 81.9 ms (median 262.43 ms, P95 359.45 ms, P99 676.72 ms) [4 pts IQR-flagged, diagnostic only]
+    - k=3 (12.5%): 239.79 +/- 47.89 ms (median 236.09 ms, P95 275.81 ms, P99 367.73 ms) [15 pts IQR-flagged, diagnostic only]
+    - k=4 (6.25%): 320.28 +/- 128.1 ms (median 305.13 ms, P95 538.87 ms, P99 765.82 ms) [5 pts IQR-flagged, diagnostic only]
+
+------------------------------------------------------------------------------
+[production_remote_db] Production server + remote Supabase PostgreSQL (full production stack)
+------------------------------------------------------------------------------
+  Baseline latency (raw, full distribution): 1111.07 +/- 188.25 ms (median 1056.37, P95 1461.86, P99 1650.45) over 1000/1000 successful runs (0 failures).
+  [diagnostic only, NOT excluded from the numbers above] 37/1000 runs fall outside the Tukey IQR fence — expected for right-skewed latency data.
+
+  Downsampling Scale Sweep (raw distribution):
+    - Full (k=0): 1116.99 +/- 201.34 ms (median 1099.64 ms, P95 1530.65 ms, P99 1611.53 ms) [2 pts IQR-flagged, diagnostic only]
+    - k=1 (50%): 1056.45 +/- 112.18 ms (median 1046.81 ms, P95 1172.16 ms, P99 1414.78 ms) [2 pts IQR-flagged, diagnostic only]
+    - k=2 (25%): 856.87 +/- 83.32 ms (median 811.42 ms, P95 996.42 ms, P99 1058.85 ms) [3 pts IQR-flagged, diagnostic only]
+    - k=3 (12.5%): 811.01 +/- 58.59 ms (median 795.46 ms, P95 828.26 ms, P99 1028.35 ms) [8 pts IQR-flagged, diagnostic only]
+    - k=4 (6.25%): 793.63 +/- 12.82 ms (median 789.53 ms, P95 806.26 ms, P99 839.37 ms) [5 pts IQR-flagged, diagnostic only]
+
+------------------------------------------------------------------------------
+Downsampling contribution (measured against 'local_colocated')
+------------------------------------------------------------------------------
+  Zoom Level k=1 (50.0%):
+    - End-to-End Paired Delta: -11.4771 +/- 21.7598 ms over 500 paired requests. 95% CI: [-13.3844, -9.5698] ms | p-value: 0.0000e+00 (STATISTICALLY SIGNIFICANT)
+    - Server-Side Downsample Compute Time (raw): 21.56 +/- 6.19 ms (median 20.62 ms, P95 28.4 ms, max 77.58 ms) over 500 requests.
+  Zoom Level k=2 (25.0%):
+    - End-to-End Paired Delta: 1.8618 +/- 18.7405 ms over 500 paired requests. 95% CI: [0.2191, 3.5044] ms | p-value: 2.6323e-02 (STATISTICALLY SIGNIFICANT)
+    - Server-Side Downsample Compute Time (raw): 10.6 +/- 2.45 ms (median 10.07 ms, P95 15.04 ms, max 24.22 ms) over 500 requests.
+  Zoom Level k=3 (12.5%):
+    - End-to-End Paired Delta: 7.4192 +/- 18.868 ms over 500 paired requests. 95% CI: [5.7654, 9.0731] ms | p-value: 0.0000e+00 (STATISTICALLY SIGNIFICANT)
+    - Server-Side Downsample Compute Time (raw): 4.85 +/- 1.51 ms (median 4.51 ms, P95 8.02 ms, max 11.88 ms) over 500 requests.
+  Zoom Level k=4 (6.25%):
+    - End-to-End Paired Delta: 11.355 +/- 17.0814 ms over 500 paired requests. 95% CI: [9.8578, 12.8523] ms | p-value: 0.0000e+00 (STATISTICALLY SIGNIFICANT)
+    - Server-Side Downsample Compute Time (raw): 2.64 +/- 1.16 ms (median 2.51 ms, P95 4.59 ms, max 9.52 ms) over 500 requests.
+
+------------------------------------------------------------------------------
+DB Query Speedup (index vs. seq. scan, single query, planner-forced)
+------------------------------------------------------------------------------
+  Indexed (mean of 5 runs): 1.736 ms | Seq scan (mean of 5 runs): 230.346 ms | Speedup: 132.7x
+
+==============================================================================
+PAPER-READY TEXT (copy only what was actually measured)
+==============================================================================
+
+[local_colocated — Local server + local/co-located PostgreSQL (true co-located)]
+  Under single-connection, no-load conditions (Local server + local/co-located PostgreSQL (true co-located)), mean end-to-end API latency was 22.34 ± 17.05 ms (median 17.13 ms; P95 73.03 ms; P99 88.59 ms; n=1000).
+  ^ This is the raw, full distribution. Do not also quote a trimmed/'clean' mean — none is computed in v3.
+
+[local_remote_db — Local server + remote Supabase PostgreSQL (isolates DB-WAN cost)]
+  Under single-connection, no-load conditions (Local server + remote Supabase PostgreSQL (isolates DB-WAN cost)), mean end-to-end API latency was 300.53 ± 97.14 ms (median 296.27 ms; P95 471.72 ms; P99 673.52 ms; n=1000).
+  ^ This is the raw, full distribution. Do not also quote a trimmed/'clean' mean — none is computed in v3.
+
+[production_remote_db — Production server + remote Supabase PostgreSQL (full production stack)]
+  Under single-connection, no-load conditions (Production server + remote Supabase PostgreSQL (full production stack)), mean end-to-end API latency was 1111.07 ± 188.25 ms (median 1056.37 ms; P95 1461.86 ms; P99 1650.45 ms; n=1000).
+  ^ This is the raw, full distribution. Do not also quote a trimmed/'clean' mean — none is computed in v3.
+
+[Table 9 — LaTeX rows, only include rows that were measured]
+\begin{tabular}{@{}p{6.0cm}c@{}}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Mean API Latency (Local server + local/co-located PostgreSQL (true co-located)) & 22.34 $\pm$ 17.05~ms \\
+Mean API Latency (Local server + remote Supabase PostgreSQL (isolates DB-WAN cost)) & 300.53 $\pm$ 97.14~ms \\
+Mean API Latency (Production server + remote Supabase PostgreSQL (full production stack)) & 1111.07 $\pm$ 188.25~ms \\
+Downsampling Contribution (paired, k=1) & -11.4771 $\pm$ 21.7598~ms \\
+Downsampling Contribution (paired, k=2) & 1.8618 $\pm$ 18.7405~ms \\
+Downsampling Contribution (paired, k=3) & 7.4192 $\pm$ 18.868~ms \\
+Downsampling Contribution (paired, k=4) & 11.355 $\pm$ 17.0814~ms \\
+DB Query Speedup (index vs.\ seq.\ scan) & $\approx 132.7\times$ \\
+\bottomrule
+\end{tabular}
+
+==============================================================================
+REVIEWER CHECKLIST: every number quoted above traces to a CSV in this folder and the fingerprint block at the top of this report. If a number appears in the paper that is NOT in this report, remove it or re-run the benchmark that produces it. Cross-check that Abstract, Section 4.5, and Table 9 all use the SAME number for the SAME environment label. No trimmed/'clean' mean should appear anywhere in the paper — quote the raw mean/std/median/P95/P99 only.
+==============================================================================

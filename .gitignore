@@ -29,3 +29,5 @@ logs/
 .DS_Store
 Thumbs.db
 
+# Paper / Documentation (kept local, not published to repo)
+docs/

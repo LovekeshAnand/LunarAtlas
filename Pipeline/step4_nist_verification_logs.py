@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 
-DEFAULT_PROCESSED_DIR = r"c:\Users\ZBook\Desktop\LunarAtlas\datasets\processed"
+DEFAULT_PROCESSED_DIR = str(Path(__file__).resolve().parent.parent / "datasets" / "processed")
 
 # Peak detection threshold (prominence/minimum height)
 MIN_PEAK_HEIGHT = 150.0  # counts

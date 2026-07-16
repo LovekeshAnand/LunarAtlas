@@ -10,7 +10,7 @@ import sys
 import hashlib
 from pathlib import Path
 
-DEFAULT_PROCESSED_DIR = r"c:\Users\ZBook\Desktop\LunarAtlas\datasets\processed"
+DEFAULT_PROCESSED_DIR = str(Path(__file__).resolve().parent.parent / "datasets" / "processed")
 
 def get_md5_checksum(file_path):
     """Computes the MD5 checksum of a file."""

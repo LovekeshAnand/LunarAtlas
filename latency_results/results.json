@@ -1,0 +1,358 @@
+{
+  "fingerprint": {
+    "timestamp_utc": "2026-07-02T17:15:42.525159+00:00",
+    "hostname": "Lovekesh-Anand",
+    "os": "Windows-10-10.0.26200-SP0",
+    "python_version": "3.11.9",
+    "git_commit": "61b488d"
+  },
+  "environments": {
+    "local_colocated": {
+      "label": "Local server + local/co-located PostgreSQL (true co-located)",
+      "baseline": {
+        "n": 1000,
+        "mean_ms": 22.34,
+        "std_ms": 17.05,
+        "median_ms": 17.13,
+        "p95_ms": 73.03,
+        "p99_ms": 88.59,
+        "min_ms": 11.68,
+        "max_ms": 137.88,
+        "n_iqr_flagged_diagnostic_only": 105,
+        "n_failures": 0,
+        "n_requested": 1000
+      },
+      "sweep": {
+        "Full (k=0)": {
+          "n": 100,
+          "mean_ms": 23.86,
+          "std_ms": 17.65,
+          "median_ms": 18.51,
+          "p95_ms": 75.34,
+          "p99_ms": 85.93,
+          "min_ms": 12.94,
+          "max_ms": 97.71,
+          "n_iqr_flagged_diagnostic_only": 10
+        },
+        "k=1 (50%)": {
+          "n": 100,
+          "mean_ms": 30.06,
+          "std_ms": 11.05,
+          "median_ms": 27.75,
+          "p95_ms": 33.29,
+          "p99_ms": 84.48,
+          "min_ms": 23.77,
+          "max_ms": 84.51,
+          "n_iqr_flagged_diagnostic_only": 4
+        },
+        "k=2 (25%)": {
+          "n": 100,
+          "mean_ms": 18.2,
+          "std_ms": 8.53,
+          "median_ms": 16.73,
+          "p95_ms": 20.88,
+          "p99_ms": 66.74,
+          "min_ms": 14.16,
+          "max_ms": 84.73,
+          "n_iqr_flagged_diagnostic_only": 5
+        },
+        "k=3 (12.5%)": {
+          "n": 100,
+          "mean_ms": 16.1,
+          "std_ms": 11.22,
+          "median_ms": 13.76,
+          "p95_ms": 26.1,
+          "p99_ms": 77.74,
+          "min_ms": 9.32,
+          "max_ms": 97.66,
+          "n_iqr_flagged_diagnostic_only": 6
+        },
+        "k=4 (6.25%)": {
+          "n": 100,
+          "mean_ms": 9.76,
+          "std_ms": 5.91,
+          "median_ms": 8.54,
+          "p95_ms": 13.04,
+          "p99_ms": 13.7,
+          "min_ms": 6.55,
+          "max_ms": 65.55,
+          "n_iqr_flagged_diagnostic_only": 1
+        }
+      }
+    },
+    "local_remote_db": {
+      "label": "Local server + remote Supabase PostgreSQL (isolates DB-WAN cost)",
+      "baseline": {
+        "n": 1000,
+        "mean_ms": 300.53,
+        "std_ms": 97.14,
+        "median_ms": 296.27,
+        "p95_ms": 471.72,
+        "p99_ms": 673.52,
+        "min_ms": 164.71,
+        "max_ms": 967.32,
+        "n_iqr_flagged_diagnostic_only": 81,
+        "n_failures": 0,
+        "n_requested": 1000
+      },
+      "sweep": {
+        "Full (k=0)": {
+          "n": 100,
+          "mean_ms": 249.12,
+          "std_ms": 72.03,
+          "median_ms": 239.57,
+          "p95_ms": 377.71,
+          "p99_ms": 491.67,
+          "min_ms": 166.02,
+          "max_ms": 555.99,
+          "n_iqr_flagged_diagnostic_only": 5
+        },
+        "k=1 (50%)": {
+          "n": 100,
+          "mean_ms": 269.56,
+          "std_ms": 42.65,
+          "median_ms": 252.79,
+          "p95_ms": 329.11,
+          "p99_ms": 492.9,
+          "min_ms": 243.62,
+          "max_ms": 511.68,
+          "n_iqr_flagged_diagnostic_only": 20
+        },
+        "k=2 (25%)": {
+          "n": 100,
+          "mean_ms": 290.25,
+          "std_ms": 81.9,
+          "median_ms": 262.43,
+          "p95_ms": 359.45,
+          "p99_ms": 676.72,
+          "min_ms": 234.52,
+          "max_ms": 785.28,
+          "n_iqr_flagged_diagnostic_only": 4
+        },
+        "k=3 (12.5%)": {
+          "n": 100,
+          "mean_ms": 239.79,
+          "std_ms": 47.89,
+          "median_ms": 236.09,
+          "p95_ms": 275.81,
+          "p99_ms": 367.73,
+          "min_ms": 165.24,
+          "max_ms": 599.32,
+          "n_iqr_flagged_diagnostic_only": 15
+        },
+        "k=4 (6.25%)": {
+          "n": 100,
+          "mean_ms": 320.28,
+          "std_ms": 128.1,
+          "median_ms": 305.13,
+          "p95_ms": 538.87,
+          "p99_ms": 765.82,
+          "min_ms": 162.26,
+          "max_ms": 1018.58,
+          "n_iqr_flagged_diagnostic_only": 5
+        }
+      }
+    },
+    "production_remote_db": {
+      "label": "Production server + remote Supabase PostgreSQL (full production stack)",
+      "baseline": {
+        "n": 1000,
+        "mean_ms": 1111.07,
+        "std_ms": 188.25,
+        "median_ms": 1056.37,
+        "p95_ms": 1461.86,
+        "p99_ms": 1650.45,
+        "min_ms": 797.51,
+        "max_ms": 2666.16,
+        "n_iqr_flagged_diagnostic_only": 37,
+        "n_failures": 0,
+        "n_requested": 1000
+      },
+      "sweep": {
+        "Full (k=0)": {
+          "n": 50,
+          "mean_ms": 1116.99,
+          "std_ms": 201.34,
+          "median_ms": 1099.64,
+          "p95_ms": 1530.65,
+          "p99_ms": 1611.53,
+          "min_ms": 801.76,
+          "max_ms": 1620.71,
+          "n_iqr_flagged_diagnostic_only": 2
+        },
+        "k=1 (50%)": {
+          "n": 50,
+          "mean_ms": 1056.45,
+          "std_ms": 112.18,
+          "median_ms": 1046.81,
+          "p95_ms": 1172.16,
+          "p99_ms": 1414.78,
+          "min_ms": 870.18,
+          "max_ms": 1482.71,
+          "n_iqr_flagged_diagnostic_only": 2
+        },
+        "k=2 (25%)": {
+          "n": 50,
+          "mean_ms": 856.87,
+          "std_ms": 83.32,
+          "median_ms": 811.42,
+          "p95_ms": 996.42,
+          "p99_ms": 1058.85,
+          "min_ms": 795.89,
+          "max_ms": 1244.39,
+          "n_iqr_flagged_diagnostic_only": 3
+        },
+        "k=3 (12.5%)": {
+          "n": 50,
+          "mean_ms": 811.01,
+          "std_ms": 58.59,
+          "median_ms": 795.46,
+          "p95_ms": 828.26,
+          "p99_ms": 1028.35,
+          "min_ms": 787.93,
+          "max_ms": 1138.25,
+          "n_iqr_flagged_diagnostic_only": 8
+        },
+        "k=4 (6.25%)": {
+          "n": 50,
+          "mean_ms": 793.63,
+          "std_ms": 12.82,
+          "median_ms": 789.53,
+          "p95_ms": 806.26,
+          "p99_ms": 839.37,
+          "min_ms": 784.31,
+          "max_ms": 847.14,
+          "n_iqr_flagged_diagnostic_only": 5
+        }
+      }
+    }
+  },
+  "downsampling_contribution": {
+    "1": {
+      "end_to_end": {
+        "n": 500,
+        "mean_ms": -11.4771,
+        "std_ms": 21.7598,
+        "se_ms": 0.9731,
+        "ci_95": [
+          -13.3844,
+          -9.5698
+        ],
+        "t_stat": -11.794,
+        "p_value": 0.0,
+        "statistically_significant": true
+      },
+      "server_side": {
+        "n": 500,
+        "mean_ms": 21.56,
+        "std_ms": 6.19,
+        "median_ms": 20.62,
+        "p95_ms": 28.4,
+        "p99_ms": 37.2,
+        "min_ms": 13.95,
+        "max_ms": 77.58,
+        "n_iqr_flagged_diagnostic_only": 15
+      }
+    },
+    "2": {
+      "end_to_end": {
+        "n": 500,
+        "mean_ms": 1.8618,
+        "std_ms": 18.7405,
+        "se_ms": 0.8381,
+        "ci_95": [
+          0.2191,
+          3.5044
+        ],
+        "t_stat": 2.2214,
+        "p_value": 0.02632300104770846,
+        "statistically_significant": true
+      },
+      "server_side": {
+        "n": 500,
+        "mean_ms": 10.6,
+        "std_ms": 2.45,
+        "median_ms": 10.07,
+        "p95_ms": 15.04,
+        "p99_ms": 17.09,
+        "min_ms": 6.5,
+        "max_ms": 24.22,
+        "n_iqr_flagged_diagnostic_only": 7
+      }
+    },
+    "3": {
+      "end_to_end": {
+        "n": 500,
+        "mean_ms": 7.4192,
+        "std_ms": 18.868,
+        "se_ms": 0.8438,
+        "ci_95": [
+          5.7654,
+          9.0731
+        ],
+        "t_stat": 8.7927,
+        "p_value": 0.0,
+        "statistically_significant": true
+      },
+      "server_side": {
+        "n": 500,
+        "mean_ms": 4.85,
+        "std_ms": 1.51,
+        "median_ms": 4.51,
+        "p95_ms": 8.02,
+        "p99_ms": 9.74,
+        "min_ms": 2.53,
+        "max_ms": 11.88,
+        "n_iqr_flagged_diagnostic_only": 28
+      }
+    },
+    "4": {
+      "end_to_end": {
+        "n": 500,
+        "mean_ms": 11.355,
+        "std_ms": 17.0814,
+        "se_ms": 0.7639,
+        "ci_95": [
+          9.8578,
+          12.8523
+        ],
+        "t_stat": 14.8645,
+        "p_value": 0.0,
+        "statistically_significant": true
+      },
+      "server_side": {
+        "n": 500,
+        "mean_ms": 2.64,
+        "std_ms": 1.16,
+        "median_ms": 2.51,
+        "p95_ms": 4.59,
+        "p99_ms": 6.87,
+        "min_ms": 0.99,
+        "max_ms": 9.52,
+        "n_iqr_flagged_diagnostic_only": 36
+      }
+    }
+  },
+  "downsampling_contribution_env": "local_colocated",
+  "db_speedup": {
+    "measured": true,
+    "n_repeats": 5,
+    "indexed_ms_mean": 1.736,
+    "seqscan_ms_mean": 230.346,
+    "indexed_runs_ms": [
+      1.607,
+      1.527,
+      2.269,
+      1.601,
+      1.675
+    ],
+    "seqscan_runs_ms": [
+      543.927,
+      174.637,
+      142.843,
+      142.425,
+      147.898
+    ],
+    "speedup_x": 132.7
+  }
+}

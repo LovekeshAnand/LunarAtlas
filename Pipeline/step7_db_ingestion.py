@@ -17,7 +17,7 @@ from datetime import datetime
 from urllib.parse import urlparse
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
-DEFAULT_PROCESSED_DIR = r"c:\Users\ZBook\Desktop\LunarAtlas\datasets\processed"
+DEFAULT_PROCESSED_DIR = str(Path(__file__).resolve().parent.parent / "datasets" / "processed")
 
 def get_db_connection(db_url=None):
     """Establishes connection to PostgreSQL using a provided database URL. Creates the database if it doesn't exist."""
@@ -227,6 +227,7 @@ def ensure_schema_tables_exist(cursor):
             response_count    INTEGER           NOT NULL
         )
     """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_spectral_data_raw_measurement ON spectral_data_raw(measurement_id)")
     
     # 10. measurement_clean
     cursor.execute("""

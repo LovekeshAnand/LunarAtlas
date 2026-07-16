@@ -12,112 +12,12 @@ Supports 3-column data: [wavelength_nm, intensity, raw_plasma].
 import math
 import numpy as np
 from typing import Dict, List
-from dataclasses import dataclass
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-@dataclass
-class DownsampleConfig:
-    """Configuration for LTTB downsampling.
 
-    BASE_BUCKETS is calibrated for Chandrayaan-3 LIBS data density
-    (~2094 wavelength channels per measurement). With BASE_BUCKETS=200
-    and the standard 600nm range, three zoom levels provide meaningful
-    reduction before the algorithm saturates to raw mode:
-
-        z=0 → 200 buckets → ~10× reduction
-        z=1 → 400 buckets → ~5× reduction
-        z=2 → 800 buckets → ~2.6× reduction
-        z=3 → 1600 buckets → raw (data-density saturation)
-    """
-    BASE_BUCKETS: int = 200
-    B_MIN: float = 0.01
-
-
-def calculate_bucket_size(
-    delta_lambda: float,
-    zoom_level: int,
-    config: DownsampleConfig = DownsampleConfig()
-) -> float:
-    """
-    Calculate bucket size based on zoom level.
-
-    From LunarAtlas paper — Equation 4:
-        b_size(z) = Δλ / (BASE_BUCKETS × 2^z)
-
-    Equation 5: enforce minimum bucket size
-        b_final(z) = max(b_size(z), b_min)
-
-    Parameters
-    ----------
-    delta_lambda : float
-        Wavelength range in nm.
-    zoom_level : int
-        Current zoom level (0 = most zoomed out).
-    config : DownsampleConfig
-        Algorithm parameters.
-
-    Returns
-    -------
-    float
-        Final bucket width in nm.
-    """
-    b_size = delta_lambda / (config.BASE_BUCKETS * (2 ** zoom_level))
-    return max(b_size, config.B_MIN)
-
-
-def calculate_zoom_max(
-    delta_lambda: float,
-    config: DownsampleConfig = DownsampleConfig(),
-    n_points: int = 0
-) -> int:
-    """
-    Calculate the maximum useful zoom level using dual saturation criteria.
-
-    Two independent limits constrain how far the user can zoom before
-    downsampling becomes pointless:
-
-    1. **Instrument resolution limit:**
-       z_instrument = ⌊log₂(Δλ / (BASE_BUCKETS × b_min))⌋
-       Beyond this, bucket size clamps to the instrument resolution.
-
-    2. **Data-density limit:**
-       z_data = ⌊log₂(n_points / BASE_BUCKETS)⌋
-       Beyond this, there are fewer data points than buckets, so
-       downsampling would *upsample* — which is nonsensical.
-
-    The effective maximum is: z_max = min(z_instrument, z_data)
-
-    Parameters
-    ----------
-    delta_lambda : float
-        Viewport wavelength range in nm.
-    config : DownsampleConfig
-        Algorithm configuration parameters.
-    n_points : int
-        Number of actual data points in the current range.
-        If 0, the density limit is ignored.
-
-    Returns
-    -------
-    int
-        Maximum meaningful zoom level (≥ 0).
-    """
-    if delta_lambda <= 0:
-        return 0
-
-    z_instrument = math.log2(
-        delta_lambda / (config.BASE_BUCKETS * config.B_MIN)
-    )
-
-    if n_points > 0 and n_points > config.BASE_BUCKETS:
-        z_data = math.log2(n_points / config.BASE_BUCKETS)
-    else:
-        z_data = z_instrument
-
-    return max(0, int(min(z_instrument, z_data)))
 
 
 # ---------------------------------------------------------------------------

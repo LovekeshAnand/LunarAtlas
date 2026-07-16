@@ -361,13 +361,16 @@ async def get_spectrum(
                     }
                 },
                 "cached": False,
-                "query_time_ms": db_time
+                "query_time_ms": db_time,
+                "server_processing_ms": (time.time() - start_time) * 1000,
+                "downsample_time_ms": 0.0
             }
             if use_cache:
                 await cache.set(cache_key, result, ttl=settings.CACHE_TTL)
             return result
         
         # Apply downsampling (index-based for LIBS data)
+        downsample_start = time.time()
         downsample_result = lttb_downsample(
             data=data,
             zoom_level=zoom_level,
@@ -376,6 +379,7 @@ async def get_spectrum(
             target_wavelengths=parsed_target_wavelengths if parsed_target_wavelengths else None,
             proportion=proportion
         )
+        downsample_time = (time.time() - downsample_start) * 1000
         
         # LTTB returns flat dicts for both raw and downsampled modes
         formatted_data = downsample_result['data']
@@ -400,7 +404,9 @@ async def get_spectrum(
                 }
             },
             "cached": False,
-            "query_time_ms": db_time
+            "query_time_ms": db_time,
+            "server_processing_ms": (time.time() - start_time) * 1000,
+            "downsample_time_ms": downsample_time
         }
         
         # Cache result

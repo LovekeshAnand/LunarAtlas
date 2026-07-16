@@ -38,6 +38,8 @@ class SpectralResponse(BaseModel):
     metadata: dict
     cached: bool = Field(False, description="Was this response served from cache?")
     query_time_ms: float = Field(..., description="Database query time in milliseconds")
+    server_processing_ms: Optional[float] = Field(None, description="Total server-side processing time in milliseconds")
+    downsample_time_ms: Optional[float] = Field(None, description="Downsampling execution time in milliseconds")
 
 class MeasurementInfo(BaseModel):
     """Measurement metadata mapped to measurement_clean table"""

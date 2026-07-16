@@ -4,7 +4,7 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![CI](https://github.com/LovekeshAnand/LunarAtlas/actions/workflows/ci.yml/badge.svg)](https://github.com/LovekeshAnand/LunarAtlas/actions)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20771541.svg)](https://doi.org/10.5281/zenodo.20771541)
-[![Elsevier SoftwareX](https://img.shields.io/badge/Paper-SoftwareX-orange)](docs/paper/paper.md)
+[![Elsevier SoftwareX](https://img.shields.io/badge/Paper-SoftwareX-orange)](docs/paper/paper.tex)
 [![Live](https://img.shields.io/badge/Live-lunaratlas.in-brightgreen)](https://lunaratlas.in)
 [![API](https://img.shields.io/badge/API-api.lunaratlas.in-blue)](https://api.lunaratlas.in)
 
@@ -23,9 +23,9 @@ analysis-ready spectral records. LunarAtlas provides that tool.
 
 **Key results:**
 - `max(0, I_plasma - I_background)` clamping reduces unphysical negative
-  channel fraction from 49.6% to 0%
-- LTTB+Peaks raises NIST-matched elemental line retention from 50.0% to 100%
-  at 10× data reduction (6 confirmed NIST matches, ±0.5 nm tolerance)
+  channel fraction from ~0.5% to 0% (Measurement ID 3, 560–580 nm validation window)
+- LTTB+Peaks achieves 100% local-maxima and NIST-matched peak retention at all
+  zoom levels k=1–5 (3.9–62.2% density), vs. 35.6–51.5% for standard LTTB at k=4
 - Full pipeline from raw PDS4 to PostgreSQL-queryable spectra in one command
 - Live at **[lunaratlas.in](https://lunaratlas.in)** · API at **[api.lunaratlas.in](https://api.lunaratlas.in)**
 
@@ -86,12 +86,24 @@ LunarAtlas/
 │   ├── test_lttb_algorithm.py     # LTTB unit tests (pytest)
 │   └── test_pipeline_processing.py  # Pipeline math unit tests (pytest)
 │
-├── docs/paper/
-│   ├── paper.md                   # SoftwareX submission manuscript
-│   └── paper.bib                  # Bibliography
+├── publication_figures/           # Paper figures (PDF + PNG)
+│   ├── generate_publication_figures.py  # Regenerates Fig 1 & Fig 2
+│   ├── fig1_architecture.{pdf,png}      # System architecture diagram
+│   └── fig2_adaptive_zoom.{pdf,png}     # LTTB+Peaks adaptive zoom plot
+│
+├── publication_tables/            # Scripts to reproduce paper tables
+│   ├── table3_cleaning.py             # Table 3: Cleaning metrics
+│   ├── table4_variability.py          # Table 4: Inter-measurement variability
+│   ├── downsampling_comparison.py     # Table 5: Downsampling comparison
+│   ├── table9_nist_matches.py         # NIST candidate matches
+│   └── table10_api_performance.py     # API latency percentiles
 │
 ├── Benchmarks/                    # Performance benchmarking
 │   └── run_benchmarks.py
+│
+├── docs/paper/
+│   ├── paper.tex                  # SoftwareX submission manuscript (LaTeX)
+│   └── paper.bib                  # Bibliography
 │
 ├── CITATION.cff                   # Machine-readable citation metadata
 ├── DATA_AVAILABILITY.md           # Data availability statement
@@ -201,11 +213,11 @@ Expected output:
 tests/test_pipeline_processing.py::TestBackgroundSubtraction::test_positive_channels_preserved PASSED
 tests/test_pipeline_processing.py::TestBackgroundSubtraction::test_negative_channels_clamped_to_zero PASSED
 tests/test_pipeline_processing.py::TestAblationConfigs::test_p2_no_clamp_has_negatives PASSED
+tests/test_pipeline_processing.py::TestPairCounting::test_equal_counts_all_paired PASSED
+tests/test_lttb_algorithm.py::TestLTTBCore::test_output_size_matches_threshold PASSED
+tests/test_lttb_algorithm.py::TestLTTBCore::test_preserves_first_and_last_point PASSED
 tests/test_lttb_algorithm.py::TestNISTPeakLock::test_all_target_wavelengths_present PASSED
-core/server/tests/test_denoising.py::test_als_baseline_correction PASSED
-core/server/tests/test_denoising.py::test_savitzky_golay_smooth PASSED
-core/server/tests/test_denoising.py::test_savitzky_golay_validation PASSED
-core/server/tests/test_denoising.py::test_apply_denoising_pipeline PASSED
+tests/test_lttb_algorithm.py::TestProportionMode::test_proportion_overrides_zoom PASSED
 ```
 
 ---

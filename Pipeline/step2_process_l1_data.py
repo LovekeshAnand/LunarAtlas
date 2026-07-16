@@ -31,7 +31,7 @@ from pathlib import Path
 from datetime import datetime
 
 DEFAULT_RAW_DIR = r"D:\ch3_libs\lib-v2\data\calibrated"
-DEFAULT_PROCESSED_DIR = r"c:\Users\ZBook\Desktop\LunarAtlas\datasets\processed"
+DEFAULT_PROCESSED_DIR = str(Path(__file__).resolve().parent.parent / "datasets" / "processed")
 
 EXPECTED_TRAILING_COLS = [
     'Delay Time', 'Integration Time', 'Number of Pulses',

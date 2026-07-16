@@ -10,9 +10,10 @@ import sys
 import shutil
 from pathlib import Path
 
+_REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_RAW_DIR = r"D:\ch3_libs\lib-v2\data\calibrated"
-DEFAULT_PROCESSED_DIR = r"c:\Users\ZBook\Desktop\LunarAtlas\datasets\processed"
-DEFAULT_UPLOADS_DIR = r"c:\Users\ZBook\Desktop\LunarAtlas\datasets\uploads"
+DEFAULT_PROCESSED_DIR = str(_REPO_ROOT / "datasets" / "processed")
+DEFAULT_UPLOADS_DIR = str(_REPO_ROOT / "datasets" / "uploads")
 
 def segregate_datasets(raw_base, processed_base, uploads_base, db_ingest_choice=True):
     print("====================================================")

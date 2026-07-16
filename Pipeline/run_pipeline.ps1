@@ -6,7 +6,7 @@
 Clear-Host
 
 Write-Host "======================================================================" -ForegroundColor Cyan
-Write-Host " 🌙 LUNARATLAS DATA PROCESSING PIPELINE ORCHESTRATOR" -ForegroundColor Cyan
+Write-Host "LUNARATLAS DATA PROCESSING PIPELINE ORCHESTRATOR" -ForegroundColor Cyan
 Write-Host "======================================================================" -ForegroundColor Cyan
 Write-Host "This script runs the 8-stage PDS4 LIBS data pipeline in sequence."
 Write-Host "----------------------------------------------------------------------"
