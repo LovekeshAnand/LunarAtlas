@@ -2,7 +2,7 @@
 LUNARATLAS LATENCY BENCHMARK — AUTO-GENERATED REPORT
 ==============================================================================
 Generated: 2026-07-02T17:15:42.525159+00:00
-Host: Lovekesh-Anand
+Host: Server
 OS: Windows-10-10.0.26200-SP0
 Python: 3.11.9
 Git commit: 61b488d

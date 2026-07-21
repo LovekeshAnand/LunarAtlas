@@ -319,12 +319,6 @@ export default function HomePage() {
               </div>
               <div className="mt-5 text-[11.5px] text-neutral-700 dark:text-neutral-500 leading-[1.6]">
                 <div className="font-semibold text-neutral-900 dark:text-neutral-350">
-                  <a href="https://orcid.org/0009-0009-4947-4040" target="_blank" rel="noopener noreferrer" className="hover:underline text-ink dark:text-white font-bold">Lovekesh Anand</a>
-                  <span className="text-[10px] text-neutral-450 dark:text-neutral-500 block font-normal">
-                    orcid: <span className="font-mono text-[#888]">0009-0009-4947-4040</span> | <a href="mailto:lovekeshanand6@gmail.com" className="hover:underline text-[#555] dark:text-[#888]">lovekeshanand6@gmail.com</a>
-                  </span>
-                </div>
-                <div className="mt-3.5 font-semibold text-neutral-900 dark:text-neutral-350">
                   <a href="https://orcid.org/0009-0003-4871-0546" target="_blank" rel="noopener noreferrer" className="hover:underline text-ink dark:text-white font-bold">Dua Saeed</a>
                   <span className="text-[10px] text-neutral-450 dark:text-neutral-500 block font-normal">
                     orcid: <span className="font-mono text-[#888]">0009-0003-4871-0546</span> | <a href="mailto:23f1000825@ds.study.iitm.ac.in" className="hover:underline text-[#555] dark:text-[#888]">23f1000825@ds.study.iitm.ac.in</a>

@@ -43,7 +43,6 @@ def setup_db():
         # Seed/update administrator accounts
         admins_to_seed = [
             ("admin@lunaratlas.in", "admin"),
-            ("lovekeshanand@admin.lunaratlas.in", "LOVEkesh89@#$"),
             ("duasaeed@admin.lunaratlas.in", "DUAsaeed09@#$")
         ]
         

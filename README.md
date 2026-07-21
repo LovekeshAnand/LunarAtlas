@@ -2,11 +2,11 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
-[![CI](https://github.com/LovekeshAnand/LunarAtlas/actions/workflows/ci.yml/badge.svg)](https://github.com/LovekeshAnand/LunarAtlas/actions)
+[![CI](https://github.com/Dua-Saeed641/LunarAtlas/actions/workflows/ci.yml/badge.svg)](https://github.com/Dua-Saeed641/LunarAtlas/actions)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20771541.svg)](https://doi.org/10.5281/zenodo.20771541)
 [![Elsevier SoftwareX](https://img.shields.io/badge/Paper-SoftwareX-orange)](docs/paper/paper.tex)
 [![Live](https://img.shields.io/badge/Live-lunaratlas.in-brightgreen)](https://lunaratlas.in)
-[![API](https://img.shields.io/badge/API-api.lunaratlas.in-blue)](https://api.lunaratlas.in)
+[![API](https://img.shields.io/badge/API-apis.lunaratlas.in-blue)](https://apis.lunaratlas.in)
 
 ---
 
@@ -27,7 +27,7 @@ analysis-ready spectral records. LunarAtlas provides that tool.
 - LTTB+Peaks achieves 100% local-maxima and NIST-matched peak retention at all
   zoom levels k=1–5 (3.9–62.2% density), vs. 35.6–51.5% for standard LTTB at k=4
 - Full pipeline from raw PDS4 to PostgreSQL-queryable spectra in one command
-- Live at **[lunaratlas.in](https://lunaratlas.in)** · API at **[api.lunaratlas.in](https://api.lunaratlas.in)**
+- Live at **[lunaratlas.in](https://lunaratlas.in)** · API at **[apis.lunaratlas.in](https://apis.lunaratlas.in)**
 
 ---
 
@@ -35,7 +35,7 @@ analysis-ready spectral records. LunarAtlas provides that tool.
 
 ```bash
 # 1. Clone and install dependencies
-git clone https://github.com/LovekeshAnand/LunarAtlas.git
+git clone https://github.com/Dua-Saeed641/LunarAtlas.git
 cd LunarAtlas
 pip install -r requirements.txt
 
@@ -52,7 +52,7 @@ cd core/client && npm install && npm run dev
 ```
 
 > **Live deployment**: The system is publicly available at [lunaratlas.in](https://lunaratlas.in).
-> The versioned REST API is served at [api.lunaratlas.in](https://api.lunaratlas.in).
+> The versioned REST API is served at [apis.lunaratlas.in](https://apis.lunaratlas.in).
 
 ---
 
@@ -248,12 +248,12 @@ If you use LunarAtlas in your research, please cite:
 
 ```bibtex
 @software{lunaratlas2026,
-  author    = {Anand, Lovekesh and Saeed, Dua},
+  author    = {Saeed, Dua},
   title     = {{LunarAtlas: A Reproducible Data Processing and Interactive Visualization Infrastructure for Chandrayaan-3 LIBS Level-1 Archives}},
   year      = {2026},
   publisher = {Zenodo},
   doi       = {10.5281/zenodo.20771541},
-  url       = {https://github.com/LovekeshAnand/LunarAtlas}
+  url       = {https://github.com/Dua-Saeed641/LunarAtlas}
 }
 ```
 

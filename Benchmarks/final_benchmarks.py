@@ -119,8 +119,8 @@ ENVIRONMENTS = {
     },
     "production_remote_db": {
         "label": "Production server + remote Supabase PostgreSQL (full production stack)",
-        "base_url": "https://api.lunaratlas.in/api/v1/spectrum",
-        "health_url": "https://api.lunaratlas.in/api/v1/health",
+        "base_url": "https://apis.lunaratlas.in/api/v1/spectrum",
+        "health_url": "https://apis.lunaratlas.in/api/v1/health",
     },
 }
 
@@ -146,7 +146,7 @@ ZOOM_LEVELS = [
 # Leave DB_DSN as None to have the report explicitly say "NOT MEASURED"
 # instead of printing an unexplained number, as the current draft does
 # for its ~85x claim.
-DB_DSN = "postgresql://postgres:lovekesh@localhost:5432/LunarAtlas"
+DB_DSN = "postgresql://postgres:postgres@localhost:5432/LunarAtlas"
 DB_QUERY = """
 SELECT 
     c.wavelength_nm, 
