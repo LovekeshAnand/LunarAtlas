@@ -70,7 +70,7 @@ Homepage = "https://github.com/LovekeshAnand/LunarAtlas"
 Repository = "https://github.com/LovekeshAnand/LunarAtlas"
 Documentation = "https://github.com/LovekeshAnand/LunarAtlas/tree/main/docs"
 "Bug Tracker" = "https://github.com/LovekeshAnand/LunarAtlas/issues"
-Paper = "https://doi.org/10.5281/zenodo.20771541"
+Paper = "https://doi.org/10.5281/zenodo.20771542"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
