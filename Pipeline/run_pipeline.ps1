@@ -115,11 +115,11 @@ try {
     Run-Step "step6_segregate_data_folders.py" -argsList @($ingestFlag, $rawDir, $processedDir, $uploadsDir)
 
     # Stage 7: Database Ingestion
-    Run-Step "step7_db_ingestion.py" -argsList @($ingestFlag, $dbUrl, $processedDir)
+    Run-Step "optional_db_ingestion.py" -argsList @($ingestFlag, $dbUrl, $processedDir)
 
     # Stage 8: Quantitative Data & Checksum Verification
     if ($ingest -eq "yes") {
-        Run-Step "step8_data_verification.py" -argsList @($processedDir, $dbUrl)
+        Run-Step "optional_data_verification.py" -argsList @($processedDir, $dbUrl)
     } else {
         Write-Host "======================================================================" -ForegroundColor Yellow
         Write-Host " [STAGE 8: SKIPPED]" -ForegroundColor Yellow

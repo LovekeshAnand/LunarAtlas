@@ -6,7 +6,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20771541.svg)](https://doi.org/10.5281/zenodo.20771541)
 [![Elsevier SoftwareX](https://img.shields.io/badge/Paper-SoftwareX-orange)](docs/paper/paper.tex)
 [![Live](https://img.shields.io/badge/Live-lunaratlas.in-brightgreen)](https://lunaratlas.in)
-[![API](https://img.shields.io/badge/API-api.lunaratlas.in-blue)](https://api.lunaratlas.in)
+[![API](https://img.shields.io/badge/API-apis.lunaratlas.in-blue)](https://apis.lunaratlas.in)
 
 ---
 
@@ -27,7 +27,7 @@ analysis-ready spectral records. LunarAtlas provides that tool.
 - LTTB+Peaks achieves 100% local-maxima and NIST-matched peak retention at all
   zoom levels k=1–5 (3.9–62.2% density), vs. 35.6–51.5% for standard LTTB at k=4
 - Full pipeline from raw PDS4 to PostgreSQL-queryable spectra in one command
-- Live at **[lunaratlas.in](https://lunaratlas.in)** · API at **[api.lunaratlas.in](https://api.lunaratlas.in)**
+- Live at **[lunaratlas.in](https://lunaratlas.in)** · API at **[apis.lunaratlas.in](https://apis.lunaratlas.in)**
 
 ---
 
@@ -52,7 +52,7 @@ cd core/client && npm install && npm run dev
 ```
 
 > **Live deployment**: The system is publicly available at [lunaratlas.in](https://lunaratlas.in).
-> The versioned REST API is served at [api.lunaratlas.in](https://api.lunaratlas.in).
+> The versioned REST API is served at [apis.lunaratlas.in](https://apis.lunaratlas.in).
 
 ---
 
@@ -70,8 +70,8 @@ LunarAtlas/
 │   ├── step4_nist_verification_logs.py  # Peak detection + NIST cross-ref
 │   ├── step5_md5_checksums.py     # Digital signature manifest
 │   ├── step6_segregate_data_folders.py  # ISRO hierarchy replication
-│   ├── step7_db_ingestion.py      # Batch PostgreSQL ingestion
-│   ├── step8_data_verification.py # End-to-end MD5 audit
+│   ├── optional_db_ingestion.py   # Batch PostgreSQL ingestion
+│   ├── optional_data_verification.py # End-to-end MD5 audit
 │   └── study_summary.json         # PDS4 inventory (auto-generated)
 │
 ├── core/
@@ -139,8 +139,8 @@ The scripts will guide you through running all 8 processing stages:
 4. **NIST peak detection & Verification logs** (`step4_nist_verification_logs.py`)
 5. **MD5 digital checksum signatures** (`step5_md5_checksums.py`)
 6. **Replicated Folder Segregation** (`step6_segregate_data_folders.py`)
-7. **PostgreSQL Database Ingestion** (`step7_db_ingestion.py`)
-8. **End-to-End Validation & Audit** (`step8_data_verification.py`)
+7. **PostgreSQL Database Ingestion** (`optional_db_ingestion.py`)
+8. **End-to-End Validation & Audit** (`optional_data_verification.py`)
 
 ---
 

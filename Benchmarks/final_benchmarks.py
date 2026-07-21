@@ -119,8 +119,8 @@ ENVIRONMENTS = {
     },
     "production_remote_db": {
         "label": "Production server + remote Supabase PostgreSQL (full production stack)",
-        "base_url": "https://api.lunaratlas.in/api/v1/spectrum",
-        "health_url": "https://api.lunaratlas.in/api/v1/health",
+        "base_url": "https://apis.lunaratlas.in/api/v1/spectrum",
+        "health_url": "https://apis.lunaratlas.in/api/v1/health",
     },
 }
 

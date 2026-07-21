@@ -12,10 +12,10 @@ abstract: >
   164.35--878.26 nm) appear as individual columns, with plasma and background acquisitions interleaved.
   To our knowledge, no publicly documented, reproducible pipeline exists to ingest and clean these
   products automatically. LunarAtlas implements a six-stage deterministic Python pipeline that: (i)
-  parses PDS4 XML metadata; (ii) verifies file provenance via MD5 checksums; (iii) reshapes wide-format
-  records into a normalised long-form relational layout (Measurement_ID, Wavelength_nm) -> Intensity (a.u.);
-  (iv) identifies plasma and background shots from mission status flags; (v) applies paired background
-  subtraction with clamping; and (vi) assigns file-unique Measurement IDs. For interactive visualisation,
+  parses PDS4 XML metadata; (ii) reshapes wide-format records into a normalised long-form
+  relational layout (Measurement_ID, Wavelength_nm) -> Intensity (a.u.); (iii) identifies plasma and
+  background shots from mission status flags; (iv) applies paired background subtraction with clamping;
+  (v) assigns file-unique Measurement IDs; and (vi) verifies file provenance via MD5 checksums. For interactive visualisation,
   LunarAtlas employs an LTTB+Peaks adaptive downsampling algorithm that retains 100% of detected
   spectral peaks. A versioned REST API delivers spectral data with API response latency below 500 ms
   on a single-node workstation. Software and documentation are available at:

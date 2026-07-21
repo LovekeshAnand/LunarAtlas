@@ -724,7 +724,7 @@ def ingest_cleaned_datasets(processed_dir, db_url=None):
 
 if __name__ == "__main__":
     import sys
-    # Command line: step7_db_ingestion.py [ingest_flag] [db_url] [processed_dir]
+    # Command line: optional_db_ingestion.py [ingest_flag] [db_url] [processed_dir]
     ingest = True
     db_url = None
     processed_dir = DEFAULT_PROCESSED_DIR

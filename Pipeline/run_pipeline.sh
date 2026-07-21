@@ -125,14 +125,14 @@ $PYTHON step6_segregate_data_folders.py "$INGEST_FLAG" "$RAW_DIR" "$PROCESSED_DI
 
 # Stage 7: Database Ingestion
 if [ "$INGEST" == "yes" ]; then
-    $PYTHON step7_db_ingestion.py "y" "$DB_URL" "$PROCESSED_DIR"
+    $PYTHON optional_db_ingestion.py "y" "$DB_URL" "$PROCESSED_DIR"
 else
-    $PYTHON step7_db_ingestion.py "n" "" "$PROCESSED_DIR"
+    $PYTHON optional_db_ingestion.py "n" "" "$PROCESSED_DIR"
 fi
 
 # Stage 8: Quantitative Data & Checksum Verification
 if [ "$INGEST" == "yes" ]; then
-    $PYTHON step8_data_verification.py "$PROCESSED_DIR" "$DB_URL"
+    $PYTHON optional_data_verification.py "$PROCESSED_DIR" "$DB_URL"
 else
     echo "======================================================================"
     echo " [STAGE 8: SKIPPED]"

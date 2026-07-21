@@ -92,7 +92,7 @@ const PIPELINE_STAGES = [
   {
     n: '07',
     title: 'Database Bulk Loading (Ingestion)',
-    script: 'Pipeline/step7_db_ingestion.py',
+    script: 'Pipeline/optional_db_ingestion.py',
     desc: 'Bulk loads observations, measurements, file versions, and all cleaned spectral channels into PostgreSQL tables using page-size batching for optimized ingestion.',
     inputs: 'Structured processed directories',
     outputs: 'Relational PostgreSQL database tables'
@@ -100,7 +100,7 @@ const PIPELINE_STAGES = [
   {
     n: '08',
     title: 'Post-Ingestion Audit (Auditing)',
-    script: 'Pipeline/step8_data_verification.py',
+    script: 'Pipeline/optional_data_verification.py',
     desc: 'Performs an end-to-end database integrity scan, verifying that file row counts, relational measurement links, and database checksums match the checksum manifest.',
     inputs: 'Database tables + checksums.md5 manifest',
     outputs: 'PASS/FAIL system audit report'

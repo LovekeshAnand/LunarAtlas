@@ -50,8 +50,8 @@ pipeline-dry:
 	python -m py_compile Pipeline/step4_nist_verification_logs.py && echo "[OK] step4"
 	python -m py_compile Pipeline/step5_md5_checksums.py   && echo "[OK] step5"
 	python -m py_compile Pipeline/step6_segregate_data_folders.py && echo "[OK] step6"
-	python -m py_compile Pipeline/step7_db_ingestion.py    && echo "[OK] step7"
-	python -m py_compile Pipeline/step8_data_verification.py && echo "[OK] step8"
+	python -m py_compile Pipeline/optional_db_ingestion.py    && echo "[OK] step7"
+	python -m py_compile Pipeline/optional_data_verification.py && echo "[OK] step8"
 	@echo "All pipeline scripts pass syntax check."
 
 # ─── Clean ─────────────────────────────────────────────────────────────────

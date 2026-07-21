@@ -32,9 +32,9 @@ This is the first public, citable release of LunarAtlas, archived at
   processed files
 - `step6_segregate_data_folders.py` — Replication of ISRO PDS4 folder hierarchy
   in the processed output directory
-- `step7_db_ingestion.py` — Batch PostgreSQL ingestion using `execute_batch`
+- `optional_db_ingestion.py` — Batch PostgreSQL ingestion using `execute_batch`
   with `page_size=5000` for high-throughput spectral data loading
-- `step8_data_verification.py` — End-to-end audit: MD5 recalculation against
+- `optional_data_verification.py` — End-to-end audit: MD5 recalculation against
   database-stored checksums
 - `run_pipeline.ps1` / `run_pipeline.sh` — One-command pipeline orchestrators
 
