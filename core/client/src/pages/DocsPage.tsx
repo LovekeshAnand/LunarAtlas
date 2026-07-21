@@ -166,6 +166,7 @@ function Sidebar({ activeId }: { activeId: string }) {
           Source
         </div>
         <div className="text-[10px] text-ink-muted dark:text-[#444] leading-[1.5]">
+          <a href="https://orcid.org/0009-0009-4947-4040" target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-ink font-semibold">Anand, L.</a> &amp;{' '}
           <a href="https://orcid.org/0009-0003-4871-0546" target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-ink font-semibold">Saeed, D.</a><br />
           <em>LunarAtlas</em>, June 2026
         </div>

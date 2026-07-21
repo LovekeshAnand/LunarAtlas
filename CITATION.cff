@@ -18,10 +18,15 @@ abstract: >
   subtraction with clamping; and (vi) assigns file-unique Measurement IDs. For interactive visualisation,
   LunarAtlas employs an LTTB+Peaks adaptive downsampling algorithm that retains 100% of detected
   spectral peaks. A versioned REST API delivers spectral data with API response latency below 500 ms
-  on a single-node workstation.  Software and documentation are available at:
-  https://github.com/Dua-Saeed641/LunarAtlas.
+  on a single-node workstation. Software and documentation are available at:
+  https://github.com/LovekeshAnand/LunarAtlas.
 
 authors:
+  - family-names: "Anand"
+    given-names: "Lovekesh"
+    affiliation: "Department of Computer Science and Engineering, Maharshi Dayanand University, Rohtak, Haryana, India"
+    orcid: "https://orcid.org/0009-0009-4947-4040"
+    email: "lovekeshanand6@gmail.com"
   - family-names: "Saeed"
     given-names: "Dua"
     affiliation: "Department of Computer Science and Engineering, Maharshi Dayanand University, Rohtak, Haryana, India"
@@ -33,8 +38,8 @@ version: "1.0.0"
 date-released: "2026-06-20"
 license: MIT
 
-repository-code: "https://github.com/Dua-Saeed641/LunarAtlas"
-url: "https://github.com/Dua-Saeed641/LunarAtlas"
+repository-code: "https://github.com/LovekeshAnand/LunarAtlas"
+url: "https://github.com/LovekeshAnand/LunarAtlas"
 
 doi: "10.5281/zenodo.20771541"
 

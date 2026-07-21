@@ -3,7 +3,7 @@ Concurrent API Load Testing and Latency Benchmark Suite
 Author: LunarAtlas Research Team
 
 This script performs concurrent multi-connection load testing against the live 
-production REST API of LunarAtlas (https://apis.lunaratlas.in) to measure response 
+production REST API of LunarAtlas (https://api.lunaratlas.in) to measure response 
 latency, database processing overhead, and connection stability under concurrent load.
 
 Endpoints targeted:
@@ -18,7 +18,7 @@ import urllib.request
 import json
 import threading
 
-URL = "https://apis.lunaratlas.in/api/v1/public/spectra/FI-20230825-104221-00-3?api_key=API_KEY"
+URL = "https://api.lunaratlas.in/api/v1/public/spectra/FI-20230825-104221-00-3?api_key=API_KEY"
 
 def fetch_spectrum():
     """

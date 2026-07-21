@@ -104,7 +104,7 @@ export default function Header() {
 
             {/* GitHub Link */}
             <a
-              href="https://github.com/Dua-Saeed641/LunarAtlas"
+              href="https://github.com/LovekeshAnand/LunarAtlas"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#888] hover:text-ink transition-colors duration-150 flex items-center"

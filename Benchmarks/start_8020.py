@@ -1,7 +1,7 @@
 import os, subprocess, sys
 
 env = os.environ.copy()
-env["DATABASE_URL"] = "postgresql://postgres:postgres@localhost:5432/LunarAtlas"
+env["DATABASE_URL"] = "postgresql://postgres:lovekesh@localhost:5432/LunarAtlas"
 
 with open("server_8020.log", "w") as log:
     proc = subprocess.Popen(

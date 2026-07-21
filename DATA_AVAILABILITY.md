@@ -5,7 +5,7 @@
 The complete LunarAtlas pipeline, API server, and visualization client are
 openly available under the MIT License:
 
-- **Source Code:** https://github.com/Dua-Saeed641/LunarAtlas
+- **Source Code:** https://github.com/LovekeshAnand/LunarAtlas
 - **Archived Release (DOI):** https://doi.org/10.5281/zenodo.20771541
 
 To reproduce all results reported in the paper, clone the repository and
