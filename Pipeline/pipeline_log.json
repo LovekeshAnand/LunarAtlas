@@ -7,9 +7,9 @@
     "stage_5": {
       "name": "MD5 Digital Signatures",
       "status": "success",
-      "timestamp": "2026-07-02T12:05:53.958327",
+      "timestamp": "2026-10-20T20:03:20.693671",
       "metrics": {
-        "total_files_signed": 1806
+        "total_files_signed": 1380
       }
     },
     "stage_6": {
@@ -41,6 +41,56 @@
         "db_observations": 301,
         "db_measurements": 779,
         "db_spectral_points": 1631226
+      }
+    },
+    "stage_1": {
+      "name": "Folder Structure Study",
+      "status": "success",
+      "timestamp": "2026-10-20T20:00:07.938823",
+      "metrics": {
+        "total_date_folders": 9,
+        "total_observation_folders": 301,
+        "total_parent_csv_files": 301,
+        "total_parent_xml_files": 301,
+        "total_sub_files_detected": 2562
+      }
+    },
+    "stage_2": {
+      "name": "L1 Data Processing",
+      "status": "success",
+      "timestamp": "2026-10-20T20:00:39.125678",
+      "metrics": {
+        "folders_processed": 301,
+        "files_cleaned": 230,
+        "points_generated": 1283622,
+        "errors": 0,
+        "empty_files_skipped": 0,
+        "bg_only_files": 33,
+        "plasma_only_files": 38,
+        "missing_xml_skipped": 0,
+        "ambiguous_rows": 0,
+        "nan_status_rows": 0,
+        "plasma_no_background": 132,
+        "high_zero_clip_warnings": 258
+      }
+    },
+    "stage_3": {
+      "name": "High-Fidelity Graph Plotter",
+      "status": "success",
+      "timestamp": "2026-10-20T20:03:01.510388",
+      "metrics": {
+        "plots_generated": 230,
+        "plots_skipped": 0
+      }
+    },
+    "stage_4": {
+      "name": "NIST Element Verification Logs",
+      "status": "success",
+      "timestamp": "2026-10-20T20:03:11.874533",
+      "metrics": {
+        "files_scanned": 230,
+        "total_peaks_detected": 126584,
+        "total_verified_peaks": 4891
       }
     }
   },

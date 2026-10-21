@@ -31,3 +31,9 @@ Thumbs.db
 
 # Paper / Documentation (kept local, not published to repo)
 docs/
+
+# Revision v2: regenerated processed copies and throwaway DB clusters stay local; logs are evidence
+revision_v2/processed_run*/
+revision_v2/_pg*/
+revision_v2/_bench_processed/
+!revision_v2/outputs/**/*.log

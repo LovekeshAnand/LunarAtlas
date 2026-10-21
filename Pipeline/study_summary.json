@@ -1,5 +1,5 @@
 {
-  "raw_base_directory": "D:\\ch3_libs\\lib-v2\\data\\calibrated",
+  "raw_base_directory": "..\\datasets\\uploads",
   "total_date_folders": 9,
   "date_folders_list": [
     "20230825",

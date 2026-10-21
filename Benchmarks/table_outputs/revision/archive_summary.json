@@ -1,0 +1,96 @@
+{
+  "products": 301,
+  "mission_days": 9,
+  "products_with_cleaned_output": 230,
+  "background_only_products": 33,
+  "products_without_any_background": 38,
+  "pipeline_errors": 0,
+  "plasma_acquisitions": 745,
+  "excluded_no_preceding_background": 132,
+  "distinct_wavelength_axes_in_raw": 1,
+  "wavelength_axis": {
+    "channels": 2094,
+    "min_nm": 164.35,
+    "max_nm": 878.26
+  },
+  "background_subtracted_shots": 613,
+  "zero_clip_fraction_of_subtracted": {
+    "median": 0.3916,
+    "p25": 0.0955,
+    "p75": 0.766,
+    "above_threshold": 258
+  },
+  "quality_valid_shots": 355,
+  "integration_time_us": {
+    "1000": 261,
+    "2000": 178,
+    "4000": 91,
+    "3000": 34,
+    "5000": 18,
+    "6000": 15,
+    "104": 12,
+    "504": 4
+  },
+  "number_of_pulses": {
+    "1": 393,
+    "20": 178,
+    "3": 42
+  },
+  "operation_mode": {
+    "ASLF": 597,
+    "SLF": 16
+  },
+  "median_clip_by_pulses": {
+    "1": 0.4546,
+    "3": 0.2077,
+    "20": 0.3816
+  },
+  "median_clip_by_integration_us": {
+    "104": 0.5456,
+    "504": 0.5427,
+    "1000": 0.3095,
+    "2000": 0.3816,
+    "3000": 0.4413,
+    "4000": 0.7307,
+    "5000": 0.4773,
+    "6000": 0.6858
+  },
+  "archive_nist_test": {
+    "valid_spectra": 355,
+    "observed_matches_total": 953,
+    "chance_matches_mean": 868.5,
+    "chance_matches_p95": 975.0
+  },
+  "blended_pairs": [
+    {
+      "line_a": "Mg II 279.55",
+      "line_b": "Mg II 280.27",
+      "separation_nm": 0.72,
+      "separation_channels": 2.1
+    },
+    {
+      "line_a": "Al I 308.22",
+      "line_b": "Al I 309.27",
+      "separation_nm": 1.05,
+      "separation_channels": 3.1
+    },
+    {
+      "line_a": "Ca II 393.37",
+      "line_b": "Al I 394.40",
+      "separation_nm": 1.03,
+      "separation_channels": 3.0
+    },
+    {
+      "line_a": "Al I 396.15",
+      "line_b": "Ca II 396.85",
+      "separation_nm": 0.7,
+      "separation_channels": 2.1
+    },
+    {
+      "line_a": "Na I 588.99",
+      "line_b": "Na I 589.59",
+      "separation_nm": 0.6,
+      "separation_channels": 1.8
+    }
+  ]
+}

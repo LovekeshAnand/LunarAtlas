@@ -1,0 +1,44 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.2, pytest-9.0.3, pluggy-1.6.0 -- C:\Python314\python.exe
+cachedir: .pytest_cache
+rootdir: D:\personal_projects\lunaratlas
+configfile: pytest.ini (WARNING: ignoring pytest config in pyproject.toml!)
+plugins: anyio-4.13.0
+collecting ... collected 34 items
+
+tests/test_ingestion_db.py::test_ingestion_links_quality_and_is_idempotent SKIPPED [  2%]
+tests/test_lttb_algorithm.py::TestLTTBCore::test_output_size_matches_threshold <- ..\..\LunarAtlas\tests\test_lttb_algorithm.py PASSED [  5%]
+tests/test_lttb_algorithm.py::TestLTTBCore::test_preserves_first_and_last_point <- ..\..\LunarAtlas\tests\test_lttb_algorithm.py PASSED [  8%]
+tests/test_lttb_algorithm.py::TestLTTBCore::test_wavelengths_monotonically_increasing <- ..\..\LunarAtlas\tests\test_lttb_algorithm.py PASSED [ 11%]
+tests/test_lttb_algorithm.py::TestLTTBCore::test_no_negative_intensities <- ..\..\LunarAtlas\tests\test_lttb_algorithm.py PASSED [ 14%]
+tests/test_lttb_algorithm.py::TestLTTBCore::test_raw_mode_at_zoom_zero <- ..\..\LunarAtlas\tests\test_lttb_algorithm.py PASSED [ 17%]
+tests/test_lttb_algorithm.py::TestLTTBCore::test_empty_data_returns_empty <- ..\..\LunarAtlas\tests\test_lttb_algorithm.py PASSED [ 20%]
+tests/test_lttb_algorithm.py::TestLTTBCore::test_reduction_factor_gt_one_when_downsampled <- ..\..\LunarAtlas\tests\test_lttb_algorithm.py PASSED [ 23%]
+tests/test_lttb_algorithm.py::TestNISTPeakLock::test_all_target_wavelengths_present <- ..\..\LunarAtlas\tests\test_lttb_algorithm.py PASSED [ 26%]
+tests/test_lttb_algorithm.py::TestNISTPeakLock::test_no_targets_does_not_crash <- ..\..\LunarAtlas\tests\test_lttb_algorithm.py PASSED [ 29%]
+tests/test_lttb_algorithm.py::TestNISTPeakLock::test_peak_lock_increases_output_size <- ..\..\LunarAtlas\tests\test_lttb_algorithm.py PASSED [ 32%]
+tests/test_lttb_algorithm.py::TestNISTPeakLock::test_out_of_range_targets_ignored <- ..\..\LunarAtlas\tests\test_lttb_algorithm.py PASSED [ 35%]
+tests/test_lttb_algorithm.py::TestProportionMode::test_proportion_overrides_zoom <- ..\..\LunarAtlas\tests\test_lttb_algorithm.py PASSED [ 38%]
+tests/test_lttb_algorithm.py::TestProportionMode::test_proportion_one_gives_raw <- ..\..\LunarAtlas\tests\test_lttb_algorithm.py PASSED [ 41%]
+tests/test_pipeline_processing.py::TestBackgroundSubtraction::test_positive_channels_preserved <- ..\..\LunarAtlas\tests\test_pipeline_processing.py PASSED [ 44%]
+tests/test_pipeline_processing.py::TestBackgroundSubtraction::test_negative_channels_clamped_to_zero <- ..\..\LunarAtlas\tests\test_pipeline_processing.py PASSED [ 47%]
+tests/test_pipeline_processing.py::TestBackgroundSubtraction::test_physical_validity_100_percent <- ..\..\LunarAtlas\tests\test_pipeline_processing.py PASSED [ 50%]
+tests/test_pipeline_processing.py::TestBackgroundSubtraction::test_flat_pair_gives_all_zeros <- ..\..\LunarAtlas\tests\test_pipeline_processing.py PASSED [ 52%]
+tests/test_pipeline_processing.py::TestBackgroundSubtraction::test_output_dtype_float <- ..\..\LunarAtlas\tests\test_pipeline_processing.py PASSED [ 55%]
+tests/test_pipeline_processing.py::TestAblationConfigs::test_p2_no_clamp_has_negatives <- ..\..\LunarAtlas\tests\test_pipeline_processing.py PASSED [ 58%]
+tests/test_pipeline_processing.py::TestAblationConfigs::test_p2_negative_fraction <- ..\..\LunarAtlas\tests\test_pipeline_processing.py PASSED [ 61%]
+tests/test_pipeline_processing.py::TestAblationConfigs::test_p3_raw_preserves_all_plasma <- ..\..\LunarAtlas\tests\test_pipeline_processing.py PASSED [ 64%]
+tests/test_pipeline_processing.py::TestAblationConfigs::test_p3_has_no_negatives <- ..\..\LunarAtlas\tests\test_pipeline_processing.py PASSED [ 67%]
+tests/test_pipeline_processing.py::TestAblationConfigs::test_p1_noise_vs_p3_noise <- ..\..\LunarAtlas\tests\test_pipeline_processing.py PASSED [ 70%]
+tests/test_pipeline_processing.py::TestPairCounting::test_equal_counts_all_paired <- ..\..\LunarAtlas\tests\test_pipeline_processing.py PASSED [ 73%]
+tests/test_pipeline_processing.py::TestPairCounting::test_fewer_backgrounds_limits_pairs <- ..\..\LunarAtlas\tests\test_pipeline_processing.py PASSED [ 76%]
+tests/test_pipeline_processing.py::TestPairCounting::test_fewer_plasmas_limits_pairs <- ..\..\LunarAtlas\tests\test_pipeline_processing.py PASSED [ 79%]
+tests/test_pipeline_processing.py::TestPairCounting::test_zero_backgrounds_handled <- ..\..\LunarAtlas\tests\test_pipeline_processing.py PASSED [ 82%]
+tests/test_pipeline_processing.py::TestPairCounting::test_zero_plasmas_handled <- ..\..\LunarAtlas\tests\test_pipeline_processing.py PASSED [ 85%]
+tests/test_step2_pairing.py::test_unpaired_plasma_excluded_and_ids_keep_plasma_index PASSED [ 88%]
+tests/test_step2_pairing.py::test_file_without_any_background_writes_no_output PASSED [ 91%]
+tests/test_step2_pairing.py::test_clip_fraction_counts_negative_residuals_before_clamping PASSED [ 94%]
+tests/test_step2_pairing.py::test_background_row_records_last_preceding_background PASSED [ 97%]
+tests/test_step2_pairing.py::test_ambiguous_flags_are_skipped_and_do_not_consume_plasma_index PASSED [100%]
+
+======================== 33 passed, 1 skipped in 0.76s ========================

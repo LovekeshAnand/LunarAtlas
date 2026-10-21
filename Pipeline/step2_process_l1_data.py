@@ -8,7 +8,7 @@ and outputs processed results replicating the identical ISRO/PDS4 date and obser
 Edge cases handled:
   - Consecutive plasma shots (each subtracted from last seen background)
   - Consecutive backgrounds (last one wins)
-  - Plasma before any background (output as-is, flagged)
+  - Plasma before any background (excluded, logged; Measurement_ID numbering keeps its slot)
   - Trailing background with no plasma after it (logged, skipped)
   - File with only backgrounds, no plasma
   - File with only plasma, no background
@@ -18,7 +18,7 @@ Edge cases handled:
   - NaN in spectral intensity values
   - Wrong number of trailing metadata columns
   - Missing XML file for a session CSV
-  - Background intensity higher than plasma (>90% zero-clipped channels)
+  - Background intensity higher than plasma (>50% channels with negative residual: warning only)
 """
 
 import os
@@ -32,6 +32,9 @@ from datetime import datetime
 
 DEFAULT_RAW_DIR = r"D:\ch3_libs\lib-v2\data\calibrated"
 DEFAULT_PROCESSED_DIR = str(Path(__file__).resolve().parent.parent / "datasets" / "processed")
+
+# Quality warning: fraction of channels with a negative pre-clamp residual (flag only, nothing is dropped)
+CLIP_WARNING_FRACTION = 0.5
 
 EXPECTED_TRAILING_COLS = [
     'Delay Time', 'Integration Time', 'Number of Pulses',
@@ -163,9 +166,14 @@ class L1DataProcessor:
 
         # ── Row-by-row processing ─────────────────────────────────────
         last_bg_spectrum = None
+        last_bg_row = None
         cleaned_records = []
         measurement_params = []
         trailing_bg_count = 0   # backgrounds seen after the last plasma
+        # Plasma sequence index; Measurement_ID must equal it so cleaned rows stay linked to
+        # measurement_raw ({file_info_id}-{plasma_count}) even when unpaired shots are excluded
+        plasma_index = 0
+        excluded_no_bg = 0
 
         for idx, row in df.iterrows():
             frs = row['Force Reset Status']
@@ -190,11 +198,21 @@ class L1DataProcessor:
                     print(f"  [WARNING] NaN intensities in background at row {idx + 1} in {fname} — bg not updated")
                 else:
                     last_bg_spectrum = spectrum   # last-bg-wins (edge case 1)
+                    last_bg_row = idx + 1         # 1-based data row, kept for pairing provenance
                     trailing_bg_count += 1
 
             # ── Plasma row ────────────────────────────────────────────
             elif is_plasma:
                 trailing_bg_count = 0   # reset trailing bg counter
+                plasma_index += 1
+
+                # Edge case 2 & 6: plasma with no preceding background — excluded (raw row is kept in measurement_raw only if the product has other, paired shots)
+                if last_bg_spectrum is None:
+                    print(f"  [WARNING] Plasma at row {idx + 1} has no preceding background in {fname} — excluded")
+                    self.stats['plasma_no_background'] += 1
+                    excluded_no_bg += 1
+                    continue
+
                 plasma_spectrum = row[wavelength_cols].values.astype(float)
 
                 # Edge case 10: NaN intensities in plasma
@@ -203,34 +221,27 @@ class L1DataProcessor:
                     print(f"  [WARNING] NaN intensities in plasma at row {idx + 1} in {fname} — intensities set to 0")
                     plasma_spectrum = np.nan_to_num(plasma_spectrum, nan=0.0)
 
-                # Edge case 2 & 6: plasma with no preceding background
-                if last_bg_spectrum is None:
-                    print(f"  [WARNING] Plasma at row {idx + 1} has no preceding background in {fname} — using raw spectrum")
-                    cleaned_spectrum = plasma_spectrum
-                    is_bg_subtracted = False
-                    self.stats['plasma_no_background'] += 1
-                else:
-                    cleaned_spectrum = np.maximum(plasma_spectrum - last_bg_spectrum, 0)
-                    is_bg_subtracted = True
+                residual = plasma_spectrum - last_bg_spectrum
+                cleaned_spectrum = np.maximum(residual, 0)
+                is_bg_subtracted = True
 
-                # Edge case 11: background higher than plasma (>90% channels zeroed)
-                zero_fraction = np.sum(cleaned_spectrum == 0) / len(cleaned_spectrum)
-                if zero_fraction > 0.5:
-                    print(f"  [WARNING] {zero_fraction*100:.0f}% channels zero-clipped at row {idx + 1} in {fname} "
+                # Edge case 11: background exceeds plasma on most channels.
+                # Clip fraction = channels with a negative residual *before* clamping, over all
+                # stored channels (exact zeros, P == B, are not clipping and are not counted)
+                clip_fraction = np.sum(residual < 0) / len(residual)
+                if clip_fraction > CLIP_WARNING_FRACTION:
+                    print(f"  [WARNING] {clip_fraction*100:.0f}% channels clipped at row {idx + 1} in {fname} "
                           f"(background may exceed plasma signal)")
                     self.stats['high_zero_clip_warnings'] += 1
 
-                pair_id = len(measurement_params)
                 params = {
-                    'Measurement_ID':       pair_id + 1,
+                    'Measurement_ID':       plasma_index,
                     'Time':                 row['Time'],
                     'Measurement_Count':    row['Measurement Count'],
                     'Operation_Mode':       row['Operation Mode'],
                     'Measurement_Type':     'Plasma',
                     'Force_Reset_Status':   row['Force Reset Status'],
                     'Laser_Fire_Status':    row['Laser Fire Status'],
-                    'Is_Valid_Plasma':      row['Is_Valid_Plasma'],
-                    'Is_Background':        row['Is_Background'],
                     'Delay_Time_us':        row['Delay Time'],
                     'Integration_Time_us':  row['Integration Time'],
                     'Number_of_Pulses':     row['Number of Pulses'],
@@ -240,8 +251,9 @@ class L1DataProcessor:
                     'PRR_Hz':               row['PRR'],
                     'On_Off_Status':        row['On Off Status'],
                     'Background_Subtracted': is_bg_subtracted,
+                    'Background_Row':        last_bg_row,
                     'Has_NaN_Intensities':   nan_in_plasma,
-                    'Zero_Clip_Fraction':    round(float(zero_fraction), 4),
+                    'Clip_Fraction':         round(float(clip_fraction), 4),
                 }
                 measurement_params.append(params)
 
@@ -278,21 +290,17 @@ class L1DataProcessor:
         if trailing_bg_count > 0:
             print(f"  [WARNING] {trailing_bg_count} trailing background row(s) at end of {fname} with no plasma after them")
 
-        # Edge case 5: only backgrounds, no plasma at all
-        if len(cleaned_records) == 0 and last_bg_spectrum is not None:
-            print(f"  [WARNING] No plasma shots found in {fname} — only background rows present, skipping output")
-            self.stats['bg_only_files'] += 1
+        if len(cleaned_records) == 0:
+            # Edge case 6: every plasma shot lacked a preceding background
+            if excluded_no_bg > 0:
+                print(f"  [WARNING] No plasma shot in {fname} has a preceding background — "
+                      f"all {excluded_no_bg} excluded, skipping output")
+                self.stats['plasma_only_files'] += 1
+            # Edge case 5: only backgrounds, no plasma at all
+            elif last_bg_spectrum is not None:
+                print(f"  [WARNING] No plasma shots found in {fname} — only background rows present, skipping output")
+                self.stats['bg_only_files'] += 1
             return
-
-        # Edge case 6: only plasma, no background at all (all shots unsubstracted)
-        has_any_bg = last_bg_spectrum is not None or any(
-            not p['Background_Subtracted'] for p in measurement_params
-        )
-        all_unsubstracted = all(not p['Background_Subtracted'] for p in measurement_params)
-        if all_unsubstracted and len(measurement_params) > 0:
-            print(f"  [WARNING] No background found in entire file {fname} — "
-                  f"all {len(measurement_params)} plasma shots output as raw (uncleaned)")
-            self.stats['plasma_only_files'] += 1
 
         # ── Save outputs ──────────────────────────────────────────────
         cleaned_df = pd.DataFrame(cleaned_records)
@@ -320,7 +328,7 @@ class L1DataProcessor:
 
         self.stats['files_cleaned']    += 1
         self.stats['points_generated'] += len(cleaned_df)
-        print(f"  [SUCCESS] Processed: {fname} → {len(measurement_params)} plasma shots cleaned "
+        print(f"  [SUCCESS] Processed: {fname} -> {len(measurement_params)} plasma shots cleaned "
               f"({len(cleaned_df):,} spectral points)")
 
     # ------------------------------------------------------------------

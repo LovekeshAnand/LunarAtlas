@@ -1,0 +1,13 @@
+2026-10-21 23:20:30.310 IST [3152] LOG:  starting PostgreSQL 18.1 on x86_64-windows, compiled by msvc-19.44.35221, 64-bit
+2026-10-21 23:20:30.314 IST [3152] LOG:  listening on IPv6 address "::1", port 55434
+2026-10-21 23:20:30.314 IST [3152] LOG:  listening on IPv4 address "127.0.0.1", port 55434
+2026-10-21 23:20:30.363 IST [16984] LOG:  database system was shut down at 2026-10-21 23:20:28 IST
+2026-10-21 23:20:30.368 IST [3152] LOG:  database system is ready to accept connections
+2026-10-21 23:20:31.575 IST [15648] FATAL:  database "lunaratlas_test" does not exist
+2026-10-21 23:20:32.411 IST [3152] LOG:  received fast shutdown request
+2026-10-21 23:20:32.412 IST [3152] LOG:  aborting any active transactions
+2026-10-21 23:20:32.417 IST [3152] LOG:  background worker "logical replication launcher" (PID 22532) exited with exit code 1
+2026-10-21 23:20:32.417 IST [19768] LOG:  shutting down
+2026-10-21 23:20:32.417 IST [19768] LOG:  checkpoint starting: shutdown immediate
+2026-10-21 23:20:32.605 IST [19768] LOG:  checkpoint complete: wrote 1066 buffers (6.5%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.075 s, sync=0.109 s, total=0.188 s; sync files=352, longest=0.002 s, average=0.001 s; distance=4961 kB, estimate=4961 kB; lsn=0/1CC98A0, redo lsn=0/1CC98A0
+2026-10-21 23:20:33.063 IST [3152] LOG:  database system is shut down

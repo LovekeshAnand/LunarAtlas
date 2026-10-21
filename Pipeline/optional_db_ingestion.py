@@ -18,6 +18,8 @@ from urllib.parse import urlparse
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 DEFAULT_PROCESSED_DIR = str(Path(__file__).resolve().parent.parent / "datasets" / "processed")
+# Raw L1 copy written by stage 6 (the original D:\ch3_libs mount is not required)
+DEFAULT_RAW_DIR = str(Path(__file__).resolve().parent.parent / "datasets" / "uploads")
 
 def get_db_connection(db_url=None):
     """Establishes connection to PostgreSQL using a provided database URL. Creates the database if it doesn't exist."""
@@ -65,24 +67,16 @@ def get_db_connection(db_url=None):
             raise e
 
 def ensure_schema_tables_exist(cursor):
-    """Creates all required database tables and indexes if they do not exist."""
-    print("[INFO] Dropping old tables and recreating target schemas...")
-    
-    # Drop all tables to ensure clean, conforming schema structures
-    tables_to_drop = [
-        "api_usage_log", "api_keys", "app_users", "nist_lines",
-        "spectral_data_clean", "measurement_clean", "spectral_data_raw", "measurement_raw",
-        "observation_file_info", "observation", "observation_session", "dataset_version",
-        "instrument_spec_libs", "instrument", "mission"
-    ]
-    for table in tables_to_drop:
-        cursor.execute(f"DROP TABLE IF EXISTS {table} CASCADE")
+    """Creates all required database tables and indexes if they do not exist.
 
+    Never drops anything: an earlier version dropped every table (including app_users and
+    api_keys) on each run. Re-ingestion is idempotent through the per-record existence checks.
+    """
     print("[INFO] Verifying database schema tables and indexes...")
     
     # 1. mission
     cursor.execute("""
-        CREATE TABLE mission ( 
+        CREATE TABLE IF NOT EXISTS mission ( 
             mission_id      VARCHAR(20) PRIMARY KEY NOT NULL, 
             mission_code    VARCHAR(20) UNIQUE NOT NULL, 
             mission_name    VARCHAR(100) NOT NULL, 
@@ -95,7 +89,7 @@ def ensure_schema_tables_exist(cursor):
     
     # 2. instrument
     cursor.execute("""
-        CREATE TABLE instrument ( 
+        CREATE TABLE IF NOT EXISTS instrument ( 
             instrument_id    VARCHAR(50) PRIMARY KEY NOT NULL,
             mission_id       VARCHAR(20) NOT NULL, 
             instrument_code  VARCHAR(50) NOT NULL,
@@ -108,7 +102,7 @@ def ensure_schema_tables_exist(cursor):
     
     # 3. instrument_spec_libs
     cursor.execute("""
-        CREATE TABLE instrument_spec_libs ( 
+        CREATE TABLE IF NOT EXISTS instrument_spec_libs ( 
             spec_id                  VARCHAR(50) PRIMARY KEY NOT NULL, 
             instrument_id            VARCHAR(50) NOT NULL UNIQUE, 
             wavelength_min_nm        DOUBLE PRECISION, 
@@ -123,7 +117,7 @@ def ensure_schema_tables_exist(cursor):
     
     # 4. dataset_version
     cursor.execute("""
-        CREATE TABLE dataset_version ( 
+        CREATE TABLE IF NOT EXISTS dataset_version ( 
             dataset_version_id  VARCHAR(50) PRIMARY KEY NOT NULL, 
             spec_id             VARCHAR(50),
             version_label       VARCHAR(50) NOT NULL UNIQUE, 
@@ -140,7 +134,7 @@ def ensure_schema_tables_exist(cursor):
     
     # 5. observation_session
     cursor.execute("""
-        CREATE TABLE observation_session ( 
+        CREATE TABLE IF NOT EXISTS observation_session ( 
             session_id           VARCHAR(50) PRIMARY KEY NOT NULL, 
             dataset_version_id   VARCHAR(50) NOT NULL,
             observation_date     DATE NOT NULL, 
@@ -155,7 +149,7 @@ def ensure_schema_tables_exist(cursor):
     
     # 6. observation
     cursor.execute("""
-        CREATE TABLE observation ( 
+        CREATE TABLE IF NOT EXISTS observation ( 
             observation_id             VARCHAR(50) PRIMARY KEY NOT NULL, 
             session_id                 VARCHAR(50) NOT NULL, 
             logical_identifier         TEXT UNIQUE, 
@@ -175,7 +169,7 @@ def ensure_schema_tables_exist(cursor):
     
     # 7. observation_file_info
     cursor.execute("""
-        CREATE TABLE observation_file_info (
+        CREATE TABLE IF NOT EXISTS observation_file_info (
             file_info_id          VARCHAR(50)   PRIMARY KEY,
             observation_id        VARCHAR(50)   UNIQUE NOT NULL,
             base_file_name        VARCHAR(255),
@@ -197,7 +191,7 @@ def ensure_schema_tables_exist(cursor):
     
     # 8. measurement_raw
     cursor.execute("""
-        CREATE TABLE measurement_raw (
+        CREATE TABLE IF NOT EXISTS measurement_raw (
             measurement_id       VARCHAR(50)       PRIMARY KEY NOT NULL,
             file_info_id         VARCHAR(50)       NOT NULL REFERENCES observation_file_info(file_info_id),
             measurement_index    INT               NOT NULL,
@@ -220,7 +214,7 @@ def ensure_schema_tables_exist(cursor):
     
     # 9. spectral_data_raw
     cursor.execute("""
-        CREATE TABLE spectral_data_raw (
+        CREATE TABLE IF NOT EXISTS spectral_data_raw (
             spectral_data_id  BIGSERIAL         PRIMARY KEY,
             measurement_id    VARCHAR(50)       NOT NULL REFERENCES measurement_raw(measurement_id),
             wavelength_nm     DOUBLE PRECISION  NOT NULL,
@@ -231,7 +225,7 @@ def ensure_schema_tables_exist(cursor):
     
     # 10. measurement_clean
     cursor.execute("""
-        CREATE TABLE measurement_clean (
+        CREATE TABLE IF NOT EXISTS measurement_clean (
             measurement_id       VARCHAR(50)       PRIMARY KEY NOT NULL,
             file_info_id         VARCHAR(50)       NOT NULL REFERENCES observation_file_info(file_info_id),
             measurement_index    INT               NOT NULL,
@@ -253,10 +247,17 @@ def ensure_schema_tables_exist(cursor):
             on_off_status        SMALLINT
         )
     """)
-    
+    # Pairing/quality provenance from step2 (added in revision v2; ALTER keeps older databases usable)
+    cursor.execute("""
+        ALTER TABLE measurement_clean
+            ADD COLUMN IF NOT EXISTS background_subtracted BOOLEAN,
+            ADD COLUMN IF NOT EXISTS background_row        INT,
+            ADD COLUMN IF NOT EXISTS clip_fraction         DOUBLE PRECISION
+    """)
+
     # 11. spectral_data_clean
     cursor.execute("""
-        CREATE TABLE spectral_data_clean (
+        CREATE TABLE IF NOT EXISTS spectral_data_clean (
             spectral_data_id  BIGSERIAL         PRIMARY KEY,
             measurement_id    VARCHAR(50)       NOT NULL REFERENCES measurement_clean(measurement_id),
             wavelength_nm     DOUBLE PRECISION  NOT NULL,
@@ -267,7 +268,7 @@ def ensure_schema_tables_exist(cursor):
 
     # 12. nist_lines
     cursor.execute("""
-        CREATE TABLE nist_lines (
+        CREATE TABLE IF NOT EXISTS nist_lines (
             id SERIAL PRIMARY KEY,
             element VARCHAR(10) NOT NULL,
             ionization_stage VARCHAR(10),
@@ -313,9 +314,11 @@ def ensure_schema_tables_exist(cursor):
         ("O", "I", 777.417, 800),
         ("O", "I", 777.539, 700)
     ]
-    query = "INSERT INTO nist_lines (element, ionization_stage, wavelength_nm, relative_intensity) VALUES (%s, %s, %s, %s)"
-    execute_batch(cursor, query, nist_data)
-    print("[SUCCESS] NIST reference lines table created and seeded with 33 lines.")
+    cursor.execute("SELECT COUNT(*) FROM nist_lines")
+    if cursor.fetchone()[0] == 0:
+        query = "INSERT INTO nist_lines (element, ionization_stage, wavelength_nm, relative_intensity) VALUES (%s, %s, %s, %s)"
+        execute_batch(cursor, query, nist_data)
+        print("[SUCCESS] NIST reference lines table created and seeded with 33 lines.")
     print("[SUCCESS] All database schema tables and indexes verified/created.")
 
 def get_md5_checksum(file_path):
@@ -390,7 +393,7 @@ def ingest_core_records(cursor):
             '2024-05-16 12:12:34+05:30'
         ))
 
-def ingest_cleaned_datasets(processed_dir, db_url=None):
+def ingest_cleaned_datasets(processed_dir, db_url=None, raw_dir=DEFAULT_RAW_DIR):
     print("====================================================")
     print(" STAGE 7: POSTGRESQL DATABASE INGESTION")
     print("====================================================")
@@ -476,7 +479,7 @@ def ingest_cleaned_datasets(processed_dir, db_url=None):
             file_size_clean = csv_path.stat().st_size
             
             # Check raw file size and checksum if we can find it
-            raw_csv_path = Path(r"D:\ch3_libs\lib-v2\data\calibrated") / date_folder / obs_code / f"{obs_code}.csv"
+            raw_csv_path = Path(raw_dir) / date_folder / obs_code / f"{obs_code}.csv"
             raw_xml_path = raw_csv_path.with_suffix(".xml")
             
             md5_calib = get_md5_checksum(raw_csv_path) if raw_csv_path.exists() else None
@@ -516,13 +519,12 @@ def ingest_cleaned_datasets(processed_dir, db_url=None):
                     m_count = row_r['Measurement Count']
                     m_count_int = int(m_count) if not pd.isna(m_count) else None
                     
-                    # Pre-read trailing params to identify plasma vs background shots
-                    trailing_vals = row_r.iloc[-8:].values
-                    laser_energy = float(trailing_vals[4]) if not pd.isna(trailing_vals[4]) else 0.0
-                    lfs = row_r.get('Laser Fire Status')
-                    lfs_val = int(lfs) if not pd.isna(lfs) else 0
-                    
-                    is_plasma = (lfs_val == 1) or (laser_energy > 0.0)
+                    # Same flag rule as step2 (F=0, L=1), so {file_info_id}-{n} names the same shot in
+                    # measurement_raw and measurement_clean. The former "L=1 or Laser Energy > 0" rule
+                    # counted 35 archive background rows (Laser Energy 1-4) as plasma and shifted the IDs.
+                    frs_v, lfs_v = row_r.get('Force Reset Status'), row_r.get('Laser Fire Status')
+                    is_plasma = (not pd.isna(frs_v) and not pd.isna(lfs_v)
+                                 and int(frs_v) == 0 and int(lfs_v) == 1)
                     
                     if is_plasma:
                         plasma_count += 1
@@ -654,10 +656,13 @@ def ingest_cleaned_datasets(processed_dir, db_url=None):
                     current = get_val('Laser_Pump_Current_A')
                     prr = get_val('PRR_Hz')
                     on_off = get_val('On_Off_Status')
-                    
+                    bg_sub = get_val('Background_Subtracted')
+                    bg_row = get_val('Background_Row')
+                    clip = get_val('Clip_Fraction')
+
                     cursor.execute("""
-                        INSERT INTO measurement_clean (measurement_id, file_info_id, measurement_index, time_utc, measurement_count, operation_mode, measurement_type, force_reset_status, laser_fire_status, is_valid_plasma, is_background, delay_time_us, integration_time_us, number_of_pulses, x_factor, laser_energy_v, laser_pump_current_a, prr_hz, on_off_status)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        INSERT INTO measurement_clean (measurement_id, file_info_id, measurement_index, time_utc, measurement_count, operation_mode, measurement_type, force_reset_status, laser_fire_status, is_valid_plasma, is_background, delay_time_us, integration_time_us, number_of_pulses, x_factor, laser_energy_v, laser_pump_current_a, prr_hz, on_off_status, background_subtracted, background_row, clip_fraction)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """, (
                         meas_id, file_info_id, int(mid), 
                         time_utc, 
@@ -672,8 +677,11 @@ def ingest_cleaned_datasets(processed_dir, db_url=None):
                         None if pd.isna(x_factor) else int(x_factor), 
                         None if pd.isna(energy) else int(energy), 
                         None if pd.isna(current) else int(current), 
-                        None if pd.isna(prr) else int(prr), 
-                        None if pd.isna(on_off) else int(on_off)
+                        None if pd.isna(prr) else int(prr),
+                        None if pd.isna(on_off) else int(on_off),
+                        None if bg_sub is None else bool(bg_sub),
+                        None if bg_row is None else int(bg_row),
+                        None if clip is None else float(clip)
                     ))
                     
                     total_measurements += 1
@@ -699,7 +707,12 @@ def ingest_cleaned_datasets(processed_dir, db_url=None):
                     
             conn.commit()
             print(f"    - Processed: {obs_code} -> Measurements (New: {new_measurements_count}, Exist: {existing_measurements_count}) | Total Ingested Points: {total_spectral_rows:,}")
-            
+
+        # Planner statistics: without them the /spectrum clean-raw join runs as a nested loop
+        # (~420 ms per spectrum measured on a fresh database vs ~1 ms after ANALYZE)
+        cursor.execute("ANALYZE")
+        conn.commit()
+
         cursor.close()
         conn.close()
         
@@ -724,10 +737,11 @@ def ingest_cleaned_datasets(processed_dir, db_url=None):
 
 if __name__ == "__main__":
     import sys
-    # Command line: optional_db_ingestion.py [ingest_flag] [db_url] [processed_dir]
+    # Command line: optional_db_ingestion.py [ingest_flag] [db_url] [processed_dir] [raw_dir]
     ingest = True
     db_url = None
     processed_dir = DEFAULT_PROCESSED_DIR
+    raw_dir = sys.argv[4] if len(sys.argv) > 4 else DEFAULT_RAW_DIR
     if len(sys.argv) > 1:
         ingest = sys.argv[1].lower() in ['y', 'yes', 'true', '1']
     if len(sys.argv) > 2:
@@ -738,7 +752,7 @@ if __name__ == "__main__":
     import pipeline_logger
     try:
         if ingest:
-            metrics = ingest_cleaned_datasets(processed_dir, db_url=db_url)
+            metrics = ingest_cleaned_datasets(processed_dir, db_url=db_url, raw_dir=raw_dir)
             pipeline_logger.log_stage_success("stage_7", "Database Ingestion", metrics)
         else:
             print("[INFO] DB Ingestion bypassed based on command parameters.")

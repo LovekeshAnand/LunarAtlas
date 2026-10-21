@@ -1,0 +1,4 @@
+
+tests/test_ingestion_db.py::test_ingestion_links_quality_and_is_idempotent PASSED [100%]
+
+============================== 1 passed in 1.15s ==============================

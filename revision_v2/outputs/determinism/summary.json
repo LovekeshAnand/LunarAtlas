@@ -1,0 +1,58 @@
+{
+  "stats_run1": {
+    "folders_processed": 301,
+    "files_cleaned": 230,
+    "points_generated": 1283622,
+    "errors": 0,
+    "empty_files_skipped": 0,
+    "bg_only_files": 33,
+    "plasma_only_files": 38,
+    "missing_xml_skipped": 0,
+    "ambiguous_rows": 0,
+    "nan_status_rows": 0,
+    "plasma_no_background": 132,
+    "high_zero_clip_warnings": 256
+  },
+  "stats_run2": {
+    "folders_processed": 301,
+    "files_cleaned": 230,
+    "points_generated": 1283622,
+    "errors": 0,
+    "empty_files_skipped": 0,
+    "bg_only_files": 33,
+    "plasma_only_files": 38,
+    "missing_xml_skipped": 0,
+    "ambiguous_rows": 0,
+    "nan_status_rows": 0,
+    "plasma_no_background": 132,
+    "high_zero_clip_warnings": 256
+  },
+  "stats_equal": true,
+  "files_run1": 920,
+  "files_run2": 920,
+  "identical_by_kind": {
+    "cleaned.csv": "230/230",
+    "instrument_params.csv": "230/230",
+    "l1.xml": "230/230",
+    "metadata.json": "0/230"
+  },
+  "non_identical_files": [
+    "calibrated/20230825/ch3_lib_002_20230825T104221_00_l1/ch3_lib_002_20230825T104221_00_l1_metadata.json",
+    "calibrated/20230825/ch3_lib_002_20230825T145453_00_l1/ch3_lib_002_20230825T145453_00_l1_metadata.json",
+    "calibrated/20230826/ch3_lib_003_20230826T142853_00_l1/ch3_lib_003_20230826T142853_00_l1_metadata.json",
+    "calibrated/20230826/ch3_lib_003_20230826T142853_02_l1/ch3_lib_003_20230826T142853_02_l1_metadata.json",
+    "calibrated/20230826/ch3_lib_004_20230826T191223_00_l1/ch3_lib_004_20230826T191223_00_l1_metadata.json",
+    "calibrated/20230826/ch3_lib_004_20230826T233217_00_l1/ch3_lib_004_20230826T233217_00_l1_metadata.json",
+    "calibrated/20230826/ch3_lib_004_20230826T233217_01_l1/ch3_lib_004_20230826T233217_01_l1_metadata.json",
+    "calibrated/20230827/ch3_lib_007_20230827T181223_00_l1/ch3_lib_007_20230827T181223_00_l1_metadata.json",
+    "calibrated/20230827/ch3_lib_007_20230827T181223_01_l1/ch3_lib_007_20230827T181223_01_l1_metadata.json",
+    "calibrated/20230827/ch3_lib_007_20230827T181223_02_l1/ch3_lib_007_20230827T181223_02_l1_metadata.json"
+  ],
+  "non_identical_count": 230,
+  "cleaned_vs_datasets_processed": {
+    "files_compared": 230,
+    "max_abs_intensity_diff": 0.0,
+    "not_compared": []
+  },
+  "note": "metadata.json embeds processing_timestamp, so it differs between runs by design"
+}

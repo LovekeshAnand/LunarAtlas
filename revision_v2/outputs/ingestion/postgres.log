@@ -1,0 +1,33 @@
+2026-10-21 23:09:31.042 IST [25484] LOG:  starting PostgreSQL 18.1 on x86_64-windows, compiled by msvc-19.44.35221, 64-bit
+2026-10-21 23:09:31.047 IST [25484] LOG:  listening on IPv6 address "::1", port 55432
+2026-10-21 23:09:31.047 IST [25484] LOG:  listening on IPv4 address "127.0.0.1", port 55432
+2026-10-21 23:09:31.094 IST [28944] LOG:  database system was shut down at 2026-10-21 23:09:28 IST
+2026-10-21 23:09:31.099 IST [25484] LOG:  database system is ready to accept connections
+2026-10-21 23:14:31.092 IST [9196] LOG:  checkpoint starting: time
+2026-10-21 23:14:35.781 IST [9196] LOG:  checkpoint complete: wrote 43 buffers (0.3%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=4.666 s, sync=0.013 s, total=4.690 s; sync files=11, longest=0.009 s, average=0.002 s; distance=333 kB, estimate=333 kB; lsn=0/1844888, redo lsn=0/1844830
+2026-10-21 23:15:52.371 IST [14072] FATAL:  database "lunaratlas_isolated" does not exist
+2026-10-21 23:16:01.271 IST [25484] LOG:  received fast shutdown request
+2026-10-21 23:16:01.272 IST [25484] LOG:  aborting any active transactions
+2026-10-21 23:16:01.278 IST [25484] LOG:  background worker "logical replication launcher" (PID 19684) exited with exit code 1
+2026-10-21 23:16:01.278 IST [9196] LOG:  shutting down
+2026-10-21 23:16:01.279 IST [9196] LOG:  checkpoint starting: shutdown immediate
+2026-10-21 23:16:01.288 IST [9196] LOG:  checkpoint complete: wrote 0 buffers (0.0%), wrote 0 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.010 s; sync files=0, longest=0.000 s, average=0.000 s; distance=0 kB, estimate=300 kB; lsn=0/1844938, redo lsn=0/1844938
+2026-10-21 23:16:01.304 IST [25484] LOG:  database system is shut down
+2026-10-21 23:16:11.270 IST [14792] LOG:  starting PostgreSQL 18.1 on x86_64-windows, compiled by msvc-19.44.35221, 64-bit
+2026-10-21 23:16:11.274 IST [14792] LOG:  listening on IPv6 address "::1", port 55432
+2026-10-21 23:16:11.274 IST [14792] LOG:  listening on IPv4 address "127.0.0.1", port 55432
+2026-10-21 23:16:11.320 IST [12060] LOG:  database system was shut down at 2026-10-21 23:16:09 IST
+2026-10-21 23:16:11.325 IST [14792] LOG:  database system is ready to accept connections
+2026-10-21 23:16:11.470 IST [27588] FATAL:  database "lunaratlas_isolated" does not exist
+2026-10-21 23:17:59.233 IST [29968] LOG:  checkpoint starting: wal
+2026-10-21 23:19:01.100 IST [29968] LOG:  checkpoint complete: wrote 7878 buffers (48.1%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 33 recycled; write=61.684 s, sync=0.126 s, total=61.868 s; sync files=369, longest=0.041 s, average=0.001 s; distance=532900 kB, estimate=532900 kB; lsn=0/3FC93C18, redo lsn=0/2205A580
+2026-10-21 23:19:11.290 IST [29968] LOG:  checkpoint starting: wal
+2026-10-21 23:19:58.133 IST [14792] LOG:  received fast shutdown request
+2026-10-21 23:19:58.134 IST [14792] LOG:  aborting any active transactions
+2026-10-21 23:19:58.134 IST [5584] FATAL:  terminating connection due to administrator command
+2026-10-21 23:19:58.139 IST [14792] LOG:  background worker "logical replication launcher" (PID 8572) exited with exit code 1
+2026-10-21 23:19:58.232 IST [29968] LOG:  checkpoint complete: wrote 3951 buffers (24.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 33 recycled; write=46.859 s, sync=0.016 s, total=46.942 s; sync files=48, longest=0.001 s, average=0.001 s; distance=541261 kB, estimate=541261 kB; lsn=0/4A6638A0, redo lsn=0/430EDA18
+2026-10-21 23:19:58.232 IST [29968] LOG:  shutting down
+2026-10-21 23:19:58.233 IST [29968] LOG:  checkpoint starting: shutdown immediate
+2026-10-21 23:19:58.293 IST [29968] LOG:  checkpoint complete: wrote 61 buffers (0.4%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 7 recycled; write=0.013 s, sync=0.014 s, total=0.061 s; sync files=33, longest=0.001 s, average=0.001 s; distance=120279 kB, estimate=499163 kB; lsn=0/4A663918, redo lsn=0/4A663918
+2026-10-21 23:19:58.342 IST [14792] LOG:  database system is shut down

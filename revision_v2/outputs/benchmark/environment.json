@@ -1,0 +1,42 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "cpu": "Intel64 Family 6 Model 141 Stepping 1, GenuineIntel",
+  "logical_cpus": 16,
+  "host": "Lovekesh-Anand",
+  "client_python": "3.14.2",
+  "server_python": "Python 3.11.9",
+  "postgres": "postgres (PostgreSQL) 18.1",
+  "redis": "not running (all requests are cache misses)",
+  "uvicorn_workers": 1,
+  "db_pool_max": 20,
+  "measurement_id": "FI-20230825-104221-00-3",
+  "sessions": 3,
+  "concurrency": [
+    1,
+    4,
+    16,
+    32
+  ],
+  "requests_per_cell": 400,
+  "warmup_discarded": 20,
+  "timeout_s": 10,
+  "workloads": {
+    "full_raw_2094": {
+      "lambda_min": 0,
+      "lambda_max": 1000,
+      "force_raw": "true"
+    },
+    "calibrated_raw_1684": {
+      "lambda_min": 220,
+      "lambda_max": 800,
+      "force_raw": "true"
+    },
+    "calibrated_lttb_k4": {
+      "lambda_min": 220,
+      "lambda_max": 800,
+      "zoom_level": 4
+    }
+  },
+  "started": "2026-10-21T23:24:59",
+  "finished": "2026-10-21T23:29:16"
+}

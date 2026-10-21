@@ -135,8 +135,8 @@ def generate_nist_logs(processed_dir):
     print("====================================================\n")
     return {
         "files_scanned": len(cleaned_files),
-        "total_peaks_detected": total_peaks_detected,
-        "total_verified_peaks": total_verified_peaks
+        "total_peaks_detected": int(total_peaks_detected),
+        "total_verified_peaks": int(total_verified_peaks)   # numpy int64 is not JSON-serialisable
     }
 
 if __name__ == "__main__":
