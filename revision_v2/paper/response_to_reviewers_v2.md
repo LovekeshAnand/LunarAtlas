@@ -34,12 +34,24 @@ revised manuscript. Where a result is not significant or a limitation remains, w
 
 ## Reviewer 6
 
-**R6.1 — WAN tests, concurrency.** We have not re-measured over the WAN or against the public service:
-that requires load on a shared public deployment, which we have not done. The earlier WAN figures are
-kept, marked as single-session values from the original campaign. New in this revision is a local
-loopback sweep at concurrency 1–32, repeated in three fresh server sessions, with the cache disabled,
-reporting percentiles, throughput and errors (§4.5, Table 8). We state that it does not address WAN
-variability. Warm-cache conditions were not measured.
+**R6.1 — WAN tests, concurrency.** We re-measured the public deployment over the WAN in three
+sessions, 15 minutes apart, on 23 October 2026 (§4.5, Table 9).
+- **Matrix:** two workloads, cache bypassed and cache warm, concurrency 1, 4 and 8, and 100 measured
+  requests per setting after 10 warm-up requests. That is 3,600 requests in total: 0 errors, 0 timeouts.
+- **Session-to-session variation:** session medians agree to within 352 ms for full spectra and 105 ms
+  for downsampled responses.
+- **Full spectra (2,094 points):** median 1,050 ms at concurrency 1 and 1,850 ms at 8 with the cache
+  bypassed; 402 ms and 1,147 ms with a warm cache.
+- **Downsampled responses (130 points):** median 788 ms with the cache bypassed and 265–273 ms with a
+  warm cache, at every concurrency level.
+- **Server vs network time:** with the cache bypassed, the server reports about 530 ms of processing,
+  so the rest is network and transfer.
+- **Limits:** we capped concurrency at 8 to limit load on the shared deployment, so its saturation
+  point is not determined, and all requests came from one client location.
+
+The local loopback sweep at concurrency 1–32 (Table 8) characterises the software itself. The earlier
+July 2026 values are kept as single-session figures. The local-server-with-remote-database
+configuration was not repeated.
 
 **R6.2 — False positives from wavelength-only matching.** We agree that wavelength coincidence is not
 identification, and the manuscript now calls these "candidate coincidences" throughout (§2.2.2, §4.4).
@@ -129,4 +141,5 @@ acquisition, the paired background (with row numbers and timestamps) and the cle
   yet exposed.
 - **No new archived release:** no new archived code release has been made yet; the code-metadata table
   says so.
-- **Measurements not repeated:** WAN, production and warm-cache latency.
+- **Measurements not repeated:** the local-server-with-remote-database configuration, WAN tests from
+  other client locations, and concurrency above 8 on the public deployment.

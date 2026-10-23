@@ -154,8 +154,11 @@ detected channels labelled with either axis.
 
 ## 5. Blocked tasks
 
-- Production/WAN latency re-measurement and multi-session WAN tests — need approval (public service).
-- Warm-cache benchmarks — Redis not installed and Docker daemon not running on this host.
+- ~~Production/WAN latency re-measurement and multi-session WAN tests~~ — **done 2026-10-23 with your
+  approval** (§9).
+- ~~Warm-cache benchmarks~~ — done against the public deployment, which runs Redis (§9). Still not
+  possible locally (no Redis).
+- Local server + remote (Supabase) database configuration — not repeated (no credentials used).
 - Earlier WAN/co-located latency numbers (July 2026) are reported unchanged; they were not re-run.
 
 ## 6. Production migration — rehearsed, not applied
@@ -228,3 +231,32 @@ PostgreSQL 18.1, latexmk 4.83, package versions). Logs: `outputs/clean_checkout/
   `outputs/clean_checkout/rerun_outputs/`. The originals are left as the historical record.
 - Not rerun: step 6 (local benchmark, ~15 min, timings differ by nature) and step 9 (migration
   rehearsal; run separately on the same commit's code, `outputs/migration_rehearsal/`).
+
+## 9. WAN benchmark against the public deployment (approved by the owner, 2026-10-23)
+
+`run_wan_benchmark.py` → `outputs/benchmark_wan/` (`summary.csv`, `raw_latencies.csv`, `environment.json`),
+console log `outputs/benchmark_wan_console.log`.
+
+- **Target:** `https://apis.lunaratlas.in/api/v1/spectrum`, ID `FI-20230825-104221-00-3` (legacy
+  deployment; this ID is identical to the revision output).
+- **Sessions:** 3, 15 min apart, 22:32–23:28 IST, from this workstation.
+- **Per session:** 2 workloads × {bypassed, warm} cache × concurrency {1, 4, 8} × 100 measured requests
+  (10 warm-up discarded).
+- **Totals:** 3,600 measured requests, 0 errors, 0 timeouts (30 s). The abort rule (> 10 % errors or
+  p50 > 15 s) never triggered.
+- **Load cap:** concurrency was limited to 8, so the deployment's saturation point is not determined.
+
+Medians over sessions, in ms. Spread of session medians: ≤ 352 ms for full spectra, ≤ 105 ms for LTTB k=4.
+
+| Workload | Cache | c=1 P50 / P95 | c=4 P50 / P95 | c=8 P50 / P95 | Req/s at c=8 |
+|---|---|---|---|---|---|
+| 2,094 points | bypassed | 1,050 / 1,406 | 1,174 / 1,654 | 1,850 / 2,561 | 4.2 |
+| 2,094 points | warm | 402 / 958 | 575 / 1,126 | 1,147 / 1,666 | 6.8 |
+| LTTB k=4, 130 points | bypassed | 788 / 907 | 656 / 1,090 | 785 / 1,229 | 9.2 |
+| LTTB k=4, 130 points | warm | 265 / 323 | 273 / 305 | 268 / 322 | 26.6 |
+
+- **Server time:** `server_processing_ms` (bypassed, c=1) is about 530 ms for both workloads, so roughly
+  260–520 ms is network and transfer.
+- **Cache hits:** that field repeats the value stored with the cached response, so it is not reported
+  for warm-cache requests.
+- **`/health`:** it runs a DB `SELECT 1` and is therefore not a pure network round-trip; median 612–638 ms.

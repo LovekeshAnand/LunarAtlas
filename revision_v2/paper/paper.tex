@@ -378,7 +378,7 @@ Only ID~3 shows more coincidences than shifted lists produce; IDs~1 and 4 and bo
 
 \subsection{API response performance}
 
-\textit{Earlier single-connection campaign (not repeated).} Measured in July 2026 on an Intel Core i7-11850H/16~GB/Windows~11 host, 1,000 requests per configuration after 20 discarded, caching bypassed, Measurement ID~3 via \texttt{/api/v1/spectrum}: local server with co-located PostgreSQL, median 17.13~ms (P95 73.06, P99 88.60); local server with a remote (Supabase, WAN) database, median 296.27~ms (P95 471.91, P99 673.62); production deployment, median 1,056.37~ms (P95 1,462.01, P99 1,650.62; percentiles recomputed from the archived raw latencies in \texttt{latency\_results/}). Each WAN configuration was measured in one session, so session-to-session and time-of-day variation are not characterised; production and WAN tests were not repeated in this revision.
+\textit{Earlier single-connection campaign (not repeated).} Measured in July 2026 on an Intel Core i7-11850H/16~GB/Windows~11 host, 1,000 requests per configuration after 20 discarded, caching bypassed, Measurement ID~3 via \texttt{/api/v1/spectrum}: local server with co-located PostgreSQL, median 17.13~ms (P95 73.06, P99 88.60); local server with a remote (Supabase, WAN) database, median 296.27~ms (P95 471.91, P99 673.62); production deployment, median 1,056.37~ms (P95 1,462.01, P99 1,650.62; percentiles recomputed from the archived raw latencies in \texttt{latency\_results/}). Each WAN configuration was measured in one session, so session-to-session and time-of-day variation are not characterised. The production deployment was re-measured in three sessions in this revision (below); the configuration with a remote database was not repeated.
 
 \textit{Local concurrency sweep (this revision).} A throwaway PostgreSQL~18 cluster holding the worked-example product, one uvicorn worker (Python~3.11.9), client and server on the same host over loopback, Redis not running (every request is a cache miss; \texttt{use\_cache=false} also sent). Three sessions, each with a fresh server process; per session, workload and concurrency level, 20 warm-up requests were discarded and 400 measured (14,400 measured requests in total, 0 errors, 0 timeouts at a 10~s limit; \texttt{revision\_v2/run\_local\_benchmark.py}). Throughput saturates at one worker, so latency at higher concurrency is dominated by queueing (Table~\ref{table:performance}). The query uses the measurement index and runs in about 1~ms once planner statistics exist; on a freshly loaded database without statistics the same query ran as a nested-loop join in 422~ms, so ingestion now ends with \texttt{ANALYZE}. These loopback results characterise the software on one host; they do not represent WAN latency or multi-worker deployments.
 
@@ -403,13 +403,41 @@ LTTB $k{=}4$, 130 points, 8.6~kB & 1  & 8.6   & 18.0  & 34.7  & 96.4 \\
 \label{table:performance}
 \end{table}
 
+\textit{Public deployment over the WAN (this revision).} On 23 October 2026 (22:32--23:28 IST) the client host above sent requests over the internet to \texttt{https://apis.lunaratlas.in/api/v1/spectrum}. This deployment holds the legacy-ingested records, and ID~3 is identical to the revision output (Listing~\ref{lst:api}). There were three sessions, 15~min apart. For each session, workload, cache condition and concurrency level (1, 4, 8), 10 warm-up requests were discarded and 100 measured: 3,600 measured requests, 0 errors, 0 timeouts at a 30~s limit (\texttt{revision\_v2/run\_wan\_benchmark.py}). The cache conditions were \texttt{use\_cache=false} and a Redis cache filled by the warm-up requests. Session medians agreed to within 352~ms for full spectra and 105~ms for downsampled responses (Table~\ref{table:wan}). With the cache bypassed and one request at a time, the server reported about 530~ms of processing (\texttt{server\_processing\_ms}) for both workloads. The remaining 260--520~ms of the 790--1,050~ms median is network and transfer. For cache hits this field repeats the value stored with the cached response, so it is not reported. Concurrency was capped at 8 to limit load on the shared deployment, so its saturation point was not determined. The deployment's hardware and worker count are not characterised here, and all requests came from one client location.
+
+\begin{table}[!htbp]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}llrrrrr@{}}
+\toprule
+\textbf{Workload} & \textbf{Cache} & \textbf{Conc.} & \textbf{P50} & \textbf{P95} & \textbf{P99} & \textbf{Req/s} \\
+\midrule
+2,094 pts & bypassed & 1 & 1,049.6 & 1,406.3 & 1,581.9 & 1.0 \\
+             &          & 4 & 1,173.7 & 1,654.3 & 1,790.6 & 3.3 \\
+             &          & 8 & 1,850.1 & 2,561.2 & 2,753.5 & 4.2 \\
+             & warm     & 1 & 402.4   & 957.9   & 1,109.6 & 2.1 \\
+             &          & 4 & 575.3   & 1,125.7 & 1,349.9 & 6.2 \\
+             &          & 8 & 1,147.2 & 1,665.6 & 1,811.3 & 6.8 \\
+LTTB $k{=}4$, 130 pts & bypassed & 1 & 787.7 & 907.3   & 1,050.4 & 1.3 \\
+             &          & 4 & 656.4   & 1,090.0 & 1,322.1 & 5.4 \\
+             &          & 8 & 785.3   & 1,229.3 & 1,395.2 & 9.2 \\
+             & warm     & 1 & 264.7   & 323.3   & 560.8   & 3.5 \\
+             &          & 4 & 272.9   & 305.4   & 822.0   & 13.5 \\
+             &          & 8 & 267.9   & 321.7   & 407.6   & 26.6 \\
+\bottomrule
+\end{tabular}
+\caption{Public deployment over the WAN: latency (ms) and throughput, medians over three sessions (per-session values and raw latencies in \texttt{revision\_v2/outputs/benchmark\_wan/}).}
+\label{table:wan}
+\end{table}
+
 \section{Conclusions}
 
 LunarAtlas converts the Chandrayaan-3 LIBS L1 archive into relational, L1-derived records with recorded provenance. On the full 301-product archive copy every data file matched its label checksum, every product parsed, and the counts reconcile: 745 plasma acquisitions, 613 paired and stored as cleaned, 132 without a preceding background excluded from the cleaned tables. Processing is deterministic, re-ingestion is idempotent, and every stored cleaned value equals the documented subtraction recomputed from the stored raw values. The downsampler can preserve any caller-specified channels at a quantified RMSE cost. The software does not identify elements: wavelength coincidences with a short reference list exceed chance in one of three worked-example spectra and not archive-wide, and the archive itself carries two wavelength scales that differ by about 5--11~nm.
 
-\paragraph{Limitations} Detailed spectral metrics come from one product. The clip-fraction threshold is a convention. The wavelength scale of the L1 archive is ambiguous and is not corrected. The background-stability assumption cannot be checked below the 1~s timestamp resolution, and some pairs span up to 13~s. WAN latency was measured in single sessions; concurrency was tested only locally with the cache disabled. The demonstration deployment still holds records from the earlier processing version and has not been re-ingested; the stored quality fields are not yet returned by the API. No Level-2 (abundance) calibration is implemented.
+\paragraph{Limitations} Detailed spectral metrics come from one product. The clip-fraction threshold is a convention. The wavelength scale of the L1 archive is ambiguous and is not corrected. The background-stability assumption cannot be checked below the 1~s timestamp resolution, and some pairs span up to 13~s. WAN latency was measured from one client location in three sessions on one evening, at concurrency up to 8; the saturation point of the public deployment was not determined. The demonstration deployment still holds records from the earlier processing version and has not been re-ingested; the stored quality fields are not yet returned by the API. No Level-2 (abundance) calibration is implemented.
 
-\paragraph{Future work} Resolving the archive wavelength-scale question with the data providers; plasma-diagnostic, line-ratio and abundance analyses built on the provided L1-derived records; and multi-session WAN and warm-cache load testing.
+\paragraph{Future work} Resolving the archive wavelength-scale question with the data providers; plasma-diagnostic, line-ratio and abundance analyses built on the provided L1-derived records; and WAN measurements from several client locations and at higher concurrency on a non-shared deployment.
 
 \section*{Author Contributions}
 \textbf{Lovekesh Anand:} Conceptualisation, Investigation, Methodology, Software, Validation, Formal Analysis, Data Curation, Writing -- Original Draft, Visualisation.
