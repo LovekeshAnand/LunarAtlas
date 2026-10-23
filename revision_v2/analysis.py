@@ -40,6 +40,10 @@ S = dict(
     zoom_levels=[1, 2, 3, 4, 5], lttb_budget="floor(2094 * 2^-k) as in lttb_downsample",
     null_draws=10000, null_shift_min_nm=2.0, null_shift_max_nm=20.0, null_seed=20261021,
     null_design="one common shift s for the whole reference list; |s|~U(2,20) nm, sign +/-1 equiprobable",
+    archive_null_draws=1000, archive_null_seed=20261022, axis_null_draws=300,
+    archive_null_design="per draw, the same shift s is applied to the reference list for every spectrum; "
+                        "statistic = sum of per-spectrum matched-peak counts. Axis test uses the first "
+                        "axis_null_draws of the archive draws",
 )
 OUT = V2 / "outputs" / "analysis"
 RAW = ROOT / S["raw_dir"]
@@ -325,7 +329,7 @@ def section_d(shots, spectra):
     wr(pd.DataFrame(worked), "D_null_worked_example.csv")
 
     # Archive aggregate over paired shots: all, and clip_frac_full <= 0.5
-    sh_arch = shifts(1000, S["null_seed"] + 1)
+    sh_arch = shifts(S["archive_null_draws"], S["archive_null_seed"])
     pks = {key: wl[detect(wl, C)[0]] for key, (wl, C) in spectra.items()}
     sub_axis = None
     sf = V2 / "outputs" / "archive_audit" / "subfiles.csv"
@@ -354,11 +358,26 @@ def section_d(shots, spectra):
         axis = []
         for name, ax in [("parent_table_axis", parent_wl), ("subfile_axis", sub)]:
             o = sum(n_matched(ax[pk_idx[k]], ref) for k in keys)
-            null = np.array([sum(n_matched(ax[pk_idx[k]], ref + s) for k in keys) for s in sh_arch[:300]])
+            null = np.array([sum(n_matched(ax[pk_idx[k]], ref + s) for k in keys)
+                             for s in sh_arch[:S["axis_null_draws"]]])
+            null_dump[f"axis_{name}"] = null
             axis.append({"axis": name, "n_spectra": len(keys), "observed_matched_peaks": o,
                          "null_mean": null.mean(), "null_p95": np.percentile(null, 95), "p_drop": p_emp(null, o),
                          "null_draws": len(null)})
         wr(pd.DataFrame(axis), "D_wavelength_axis_sensitivity.csv")
+        np.savez_compressed(OUT / "D_null_distributions.npz", shifts_worked=sh, shifts_archive=sh_arch, **null_dump)
+
+    # One authoritative table for manuscript, report and response: exceedances k = #{null >= observed}
+    summary = []
+    for r in worked:
+        summary.append((f"ID {r['measurement_id']}", f"id{r['measurement_id']}_drop", r["observed_matched_peaks"]))
+    for a in agg:
+        summary.append((f"Archive, parent axis, {a['set']}", f"archive_{a['set']}", a["observed_matched_peaks"]))
+    for a in (axis if sf.exists() else []):
+        summary.append((f"Archive, {a['axis']} (axis sensitivity)", f"axis_{a['axis']}", a["observed_matched_peaks"]))
+    wr(pd.DataFrame([{"evaluation": e, "draws": len(null_dump[key]), "observed": o,
+                      "null_mean": null_dump[key].mean(), "exceedances": int((null_dump[key] >= o).sum()),
+                      "p_empirical": p_emp(null_dump[key], o)} for e, key, o in summary]), "D_null_summary.csv")
 
 
 def main():

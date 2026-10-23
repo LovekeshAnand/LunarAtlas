@@ -1,0 +1,177 @@
+{
+  "cluster": "throwaway, postgres (PostgreSQL) 18.1, port 55435",
+  "legacy_source": "git d1f4e42 ingestion on datasets/processed_backup_20261020",
+  "legacy_ingest": {
+    "seconds": 203.7,
+    "result": null
+  },
+  "app_tables_with_synthetic_rows": {
+    "seconds": 0.6,
+    "result": null
+  },
+  "snapshot_before": {
+    "seconds": 0.2,
+    "result": {
+      "counts": {
+        "alembic_version": 1,
+        "api_keys": 2,
+        "api_usage_log": 5,
+        "app_users": 2,
+        "dataset_version": 1,
+        "instrument": 1,
+        "instrument_spec_libs": 1,
+        "measurement_clean": 779,
+        "measurement_raw": 1281,
+        "mission": 1,
+        "nist_lines": 33,
+        "observation": 301,
+        "observation_file_info": 301,
+        "observation_session": 9,
+        "spectral_data_clean": 1631226,
+        "spectral_data_raw": 2682414
+      },
+      "app_digests": {
+        "alembic_version": "1bc9c63a4fc6c110d6832550cc633e64",
+        "api_keys": "08b1c5a220119ebaa46f8777655a1025",
+        "api_usage_log": "ca913dcfb195e05e8f31513dc9046b4c",
+        "app_users": "632fc3cb9a8b0595c89668d947a28ec4"
+      }
+    }
+  },
+  "legacy_clean_measurements": 779,
+  "backup_and_restore_check": {
+    "seconds": 17.5,
+    "result": {
+      "dump": "D:\\personal_projects\\LunarAtlas\\revision_v2\\outputs\\migration_rehearsal\\lunaratlas.dump",
+      "dump_bytes": 33632547,
+      "restore_matches_source": true
+    }
+  },
+  "build_candidate": {
+    "seconds": 207.6,
+    "result": {
+      "ingestion": {
+        "status": "success",
+        "newly_ingested_measurements": 613,
+        "newly_ingested_spectral_points": 1283622
+      },
+      "log_tail": "045_20230902T074049_02_l1)\n  [DB] Ingesting raw measurements for ch3_lib_045_20230902T074049_02_l1...\n    - Processed: ch3_lib_045_20230902T074049_02_l1 -> Measurements (New: 1, Exist: 0) | Total Ingested Points: 1,268,964\n  [DB] Ingesting observation: LIB-20230902-074049-03 (ch3_lib_045_20230902T074049_03_l1)\n  [DB] Ingesting raw measurements for ch3_lib_045_20230902T074049_03_l1...\n    - Processed: ch3_lib_045_20230902T074049_03_l1 -> Measurements (New: 1, Exist: 0) | Total Ingested Points: 1,271,058\n  [DB] Ingesting observation: LIB-20230902-074049-04 (ch3_lib_045_20230902T074049_04_l1)\n  [DB] Ingesting raw measurements for ch3_lib_045_20230902T074049_04_l1...\n    - Processed: ch3_lib_045_20230902T074049_04_l1 -> Measurements (New: 1, Exist: 0) | Total Ingested Points: 1,273,152\n  [DB] Ingesting observation: LIB-20230902-074049-05 (ch3_lib_045_20230902T074049_05_l1)\n  [DB] Ingesting raw measurements for ch3_lib_045_20230902T074049_05_l1...\n    - Processed: ch3_lib_045_20230902T074049_05_l1 -> Measurements (New: 1, Exist: 0) | Total Ingested Points: 1,275,246\n  [DB] Ingesting observation: LIB-20230902-074049-06 (ch3_lib_045_20230902T074049_06_l1)\n  [DB] Ingesting raw measurements for ch3_lib_045_20230902T074049_06_l1...\n    - Processed: ch3_lib_045_20230902T074049_06_l1 -> Measurements (New: 1, Exist: 0) | Total Ingested Points: 1,277,340\n  [DB] Ingesting observation: LIB-20230902-074049-07 (ch3_lib_045_20230902T074049_07_l1)\n  [DB] Ingesting raw measurements for ch3_lib_045_20230902T074049_07_l1...\n    - Processed: ch3_lib_045_20230902T074049_07_l1 -> Measurements (New: 3, Exist: 0) | Total Ingested Points: 1,283,622\n\n----------------------------------------------------\n DATABASE INGESTION STAGE 7 SUMMARY METRICS\n----------------------------------------------------\nNewly Ingested Measurements   : 613\nNewly Ingested Spectral Points: 1,283,622\n[SUCCESS] Processed spectra database entries fully updated/ingested.\n====================================================\n\n"
+    }
+  },
+  "verify_candidate": {
+    "seconds": 13.8,
+    "result": {
+      "counts": {
+        "mission": 1,
+        "instrument": 1,
+        "instrument_spec_libs": 1,
+        "dataset_version": 1,
+        "observation_session": 9,
+        "observation": 230,
+        "observation_file_info": 230,
+        "measurement_raw": 1125,
+        "spectral_data_raw": 2355750,
+        "measurement_clean": 613,
+        "spectral_data_clean": 1283622,
+        "nist_lines": 33
+      },
+      "duplicate_clean_points": 0,
+      "clean_not_background_subtracted": 0,
+      "quality_fields_null": 0,
+      "clean_without_raw_plasma_row": 0,
+      "clean_without_raw_background_row": 0,
+      "subtraction_recomputed": {
+        "max_abs_diff": 0.0,
+        "points": 1283622
+      },
+      "files_vs_db": {
+        "only_in_files": 0,
+        "only_in_db_stale": 0,
+        "point_count_mismatch": 0,
+        "max_abs_sum_diff": 0.0
+      },
+      "passed": true
+    }
+  },
+  "cutover": {
+    "seconds": 1.3,
+    "result": {
+      "app_tables_copied": [
+        "alembic_version",
+        "api_keys",
+        "api_usage_log",
+        "app_users"
+      ],
+      "app_digests_equal": true,
+      "legacy_kept_as": "lunaratlas_legacy"
+    }
+  },
+  "verify_after_cutover": {
+    "seconds": 13.9,
+    "result": {
+      "counts": {
+        "mission": 1,
+        "instrument": 1,
+        "instrument_spec_libs": 1,
+        "dataset_version": 1,
+        "observation_session": 9,
+        "observation": 230,
+        "observation_file_info": 230,
+        "measurement_raw": 1125,
+        "spectral_data_raw": 2355750,
+        "measurement_clean": 613,
+        "spectral_data_clean": 1283622,
+        "nist_lines": 33
+      },
+      "duplicate_clean_points": 0,
+      "clean_not_background_subtracted": 0,
+      "quality_fields_null": 0,
+      "clean_without_raw_plasma_row": 0,
+      "clean_without_raw_background_row": 0,
+      "subtraction_recomputed": {
+        "max_abs_diff": 0.0,
+        "points": 1283622
+      },
+      "files_vs_db": {
+        "only_in_files": 0,
+        "only_in_db_stale": 0,
+        "point_count_mismatch": 0,
+        "max_abs_sum_diff": 0.0
+      },
+      "passed": true
+    }
+  },
+  "app_tables_preserved": true,
+  "legacy_db_untouched": true,
+  "new_user_id_after_cutover (sequence carried over, expect 3)": 3,
+  "clean_measurements_after_cutover": 613,
+  "rollback": {
+    "seconds": 0.1,
+    "result": {
+      "restored": "lunaratlas",
+      "candidate_kept_as": "lunaratlas_v2"
+    }
+  },
+  "after_rollback_equals_pre_migration": true,
+  "cutover_again": {
+    "seconds": 0.9,
+    "result": {
+      "app_tables_copied": [
+        "alembic_version",
+        "api_keys",
+        "api_usage_log",
+        "app_users"
+      ],
+      "app_digests_equal": true,
+      "legacy_kept_as": "lunaratlas_legacy"
+    }
+  },
+  "verify_after_second_cutover_passed": true,
+  "app_tables_preserved_after_second_cutover": true,
+  "not_rehearsed": [
+    "Redis cache flush (no Redis server locally)",
+    "API restart against the renamed DB",
+    "managed-hosting privileges (CREATEDB / ALTER DATABASE RENAME)"
+  ],
+  "all_checks_passed": true
+}

@@ -22,7 +22,7 @@ export default function DenoiseToggle({
   }[] = [
     {
       key: 'none',
-      label: 'None (L2 Clean)',
+      label: 'None (L1-processed)',
       description: 'Standard paired background-subtracted spectrum.',
       tooltip: 'Show original baseline-retaining clean measurements.',
     },

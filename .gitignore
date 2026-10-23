@@ -37,3 +37,12 @@ revision_v2/processed_run*/
 revision_v2/_pg*/
 revision_v2/_bench_processed/
 !revision_v2/outputs/**/*.log
+# Revision v2 manuscript: sources and paper.pdf are tracked, LaTeX build files are not
+revision_v2/paper/*.aux
+revision_v2/paper/*.bbl
+revision_v2/paper/*.blg
+revision_v2/paper/*.fdb_latexmk
+revision_v2/paper/*.fls
+revision_v2/paper/*.out
+revision_v2/paper/*.spl
+revision_v2/_clean_checkout/

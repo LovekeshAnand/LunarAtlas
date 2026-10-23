@@ -41,5 +41,9 @@
   "null_shift_min_nm": 2.0,
   "null_shift_max_nm": 20.0,
   "null_seed": 20261021,
-  "null_design": "one common shift s for the whole reference list; |s|~U(2,20) nm, sign +/-1 equiprobable"
+  "null_design": "one common shift s for the whole reference list; |s|~U(2,20) nm, sign +/-1 equiprobable",
+  "archive_null_draws": 1000,
+  "archive_null_seed": 20261022,
+  "axis_null_draws": 300,
+  "archive_null_design": "per draw, the same shift s is applied to the reference list for every spectrum; statistic = sum of per-spectrum matched-peak counts. Axis test uses the first axis_null_draws of the archive draws"
 }

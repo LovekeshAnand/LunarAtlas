@@ -1,0 +1,8 @@
+evaluation,draws,observed,null_mean,exceedances,p_empirical
+ID 1,10000,2,1.2761,3419,0.34196580341965804
+ID 3,10000,8,2.405,0,9.999000099990002e-05
+ID 4,10000,5,2.311,617,0.06179382061793821
+"Archive, parent axis, all_paired",1000,1572,1437.073,95,0.0959040959040959
+"Archive, parent axis, clip_frac_full<=0.5",1000,959,863.89,79,0.07992007992007992
+"Archive, parent_table_axis (axis sensitivity)",300,1572,1439.97,30,0.10299003322259136
+"Archive, subfile_axis (axis sensitivity)",300,1386,1451.7933333333333,215,0.717607973421927
