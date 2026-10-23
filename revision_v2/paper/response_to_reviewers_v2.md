@@ -4,7 +4,9 @@ We thank both reviewers. In this revision we re-audited every reported number ag
 code, corrected the inconsistencies we found (some in our own previous revision), and re-generated
 all tables and figures from one input version and one settings file. Scripts, settings, logs and
 machine-readable outputs are in `revision_v2/` of the repository. Section numbers refer to the
-revised manuscript. Where a result is not significant or a limitation remains, we say so.
+revised manuscript; "Section S…" and "Table S…" refer to the new supplementary material
+(`supplementary.pdf`), which holds detail moved out of the main text to meet the SoftwareX length
+limit. No result was removed. Where a result is not significant or a limitation remains, we say so.
 
 ## Corrections we found ourselves
 
@@ -15,18 +17,19 @@ revised manuscript. Where a result is not significant or a limitation remains, w
 - **Downsampling comparison.** LTTB+Peaks received the detected peaks as preserved targets, so its 100 %
   peak retention holds by construction, and it used 147–167 points while the other methods used 130.
   We now report equal-budget and matched-size comparisons: at 130 points its RMSE exceeds plain LTTB
-  by 9.0–22.0 a.u. (11.7–31.0 %), not 4.9–13.0 % (§4.3, Table 6, Fig. 4). The algorithm description now
+  by 9.0–22.0 a.u. (11.7–31.0 %), not 4.9–13.0 % (§4.3, Table 4, Fig. 4). The algorithm description now
   matches the implementation (it preserves caller-specified channels and does not detect peaks; the
   budget is ⌊2094·2⁻ᵏ⌋), and we state that the web viewer downsamples in the browser. The variant
-  that fits LTTB+Peaks into 130 points is an evaluation construct, not production code, and §2.2.1
+  that fits LTTB+Peaks into 130 points is an evaluation construct, not production code; Section S3
   now defines it. The web viewer's own configuration was evaluated by running its TypeScript
   function: all 2,094 channels, a 209-point threshold and its built-in 32-line list. It keeps
   55.9–71.4 % of detected peaks (50.8–69.0 % for LTTB alone). For the same inputs, the TypeScript
-  and Python implementations returned identical channels in all 24 tested configurations (Table 6).
+  and Python implementations returned identical channels in all 24 tested configurations (Table 4). Figure 1 now separates
+  browser processing from API-client processing.
 - **Noise argument.** The comparison with √2 assumed equal input variances. With the measured variances,
   independence predicts 1.37; the observed 1.31 is reproduced by the sample covariance, which is an
   algebraic identity rather than evidence. We removed the claims of correlated CCD readout and of
-  independent support for correctness and report the statistics descriptively (§4.2, Table 4).
+  independent support for correctness and report the statistics descriptively (Section S2, Table S1).
 - **Ingestion code.** Re-ingestion dropped every table, including user and API-key tables; raw plasma
   rows were classified with a different rule from the cleaned rows (35 background rows with non-zero
   laser-energy readings were counted as plasma, shifting raw identifiers); and the pairing and
@@ -35,7 +38,7 @@ revised manuscript. Where a result is not significant or a limitation remains, w
 ## Reviewer 6
 
 **R6.1 — WAN tests, concurrency.** We re-measured the public deployment over the WAN in three
-sessions, 15 minutes apart, on 23 October 2026 (§4.5, Table 9).
+sessions, 15 minutes apart, on 23 October 2026 (§4.5, Table 6).
 - **Matrix:** two workloads, cache bypassed and cache warm, concurrency 1, 4 and 8, and 100 measured
   requests per setting after 10 warm-up requests. That is 3,600 requests in total: 0 errors, 0 timeouts.
 - **Session-to-session variation:** session medians agree to within 352 ms for full spectra and 105 ms
@@ -49,7 +52,7 @@ sessions, 15 minutes apart, on 23 October 2026 (§4.5, Table 9).
 - **Limits:** we capped concurrency at 8 to limit load on the shared deployment, so its saturation
   point is not determined, and all requests came from one client location.
 
-The local loopback sweep at concurrency 1–32 (Table 8) characterises the software itself. The earlier
+The local loopback sweep at concurrency 1–32 (§4.5, Section S5, Table S3) characterises the software itself. The earlier
 July 2026 values are kept as single-session figures. The local-server-with-remote-database
 configuration was not repeated.
 
@@ -60,13 +63,14 @@ identification, and the manuscript now calls these "candidate coincidences" thro
   draws at or above the observed count. The worked-example spectra use 10,000 draws (seed 20261021).
   The archive-wide tests use 1,000 draws (seed 20261022). In each archive draw the same shift is
   applied to every spectrum and the per-spectrum counts are summed. The wavelength-axis comparison
-  uses the first 300 archive draws. Table 7 lists N, k and p for every test.
-- **Results.** Only one of three worked-example spectra exceeds chance:
+  uses the first 300 archive draws. Table 5 lists N, k and p for every test.
+- **Results.** Only one of three worked-example spectra is statistically significantly enriched under
+  the specified null:
   - ID 3: 0 of 10,000 draws reached the observed count, p = 0.0001.
   - ID 1: k = 3,419, p = 0.34.
   - ID 4: k = 617, p = 0.062.
 
-  Archive-wide, coincidences do not exceed chance:
+  Archive-wide, coincidences are not statistically significantly enriched under the specified null:
   - all 613 spectra: k = 95 of 1,000, p = 0.096;
   - the 357 with clip fraction ≤ 0.5: k = 79 of 1,000, p = 0.080.
 - **Per-peak table.** It is now in the repository, with signed offsets, prominence and all references
@@ -76,7 +80,7 @@ identification, and the manuscript now calls these "candidate coincidences" thro
   rather than present ratios of tabulated transition probabilities as expected intensities.
 - **Wavelength-scale ambiguity.** The audit found that each acquisition's single-shot file carries the
   same counts on a wavelength axis offset by 5–11 nm from the parent table. With that axis the
-  archive-wide coincidence count is below the chance mean (k = 215 of 300 draws, p = 0.72). The
+  archive-wide coincidence count is below the null mean (k = 215 of 300 draws, p = 0.72). The
   parent axis gives p = 0.10 with the same 300 draws. We report this as an unresolved property of
   the archive (§4.1).
 
@@ -113,8 +117,9 @@ listed as future work and depends on resolving the wavelength scale.
 **R4.1 — Spectra with assigned lines marked.** Figure 5 was regenerated from the verified outputs. It
 marks detected peaks and coincidences. Labels list every reference within 1.1 nm and carry a "?" where
 more than one reference applies. The text states that such labels do not imply that every listed
-species is present. We also report the near-misses (0.79–0.83 nm) and the strongest unexplained
-feature at 282.3 nm.
+species is present. We also report the near-misses (0.79–0.83 nm, Section S4). The strongest
+feature, at 282.3 nm, has no line of our 24-line reference list within 1.1 nm; we did not search the
+full NIST database.
 
 **R4.2 — Spectral resolution.**
 - **Sampling vs. resolution:** the 0.34 nm figure is now described as label spacing (sampling), not

@@ -31,7 +31,7 @@ Node.js ≥ 22.6 (step 5, runs the client's TypeScript directly); PostgreSQL 18 
 | 7 Figures | `python revision_v2/figures.py` | `figures/` |
 | 8 Tests | `pytest tests -v` (+ `LUNARATLAS_TEST_DB_URL=<disposable db>` for the DB test) | `outputs/tests/` |
 | 9 Migration rehearsal (throwaway cluster, port 55435) | `cd revision_v2 && python rehearse_migration.py` | `outputs/migration_rehearsal/` |
-| 10 Paper | `cd revision_v2/paper && latexmk -pdf paper.tex` | `paper/paper.pdf` |
+| 10 Paper + supplement | `cd revision_v2/paper && latexmk -pdf paper.tex supplementary.tex` | `paper/paper.pdf`, `paper/supplementary.pdf` |
 | — API example (Listing 1, one request to the public demo) | `python revision_v2/api_example.py` | `outputs/api_example/` |
 
 Steps 3–5 and 7 read `processed_run1/` from step 2.

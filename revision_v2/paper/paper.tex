@@ -46,11 +46,11 @@
 \cortext[cor1]{Corresponding author}
 
 \begin{abstract}
-LunarAtlas is open-source software that turns the publicly archived Chandrayaan-3 laser-induced breakdown spectroscopy (LIBS) Level-1 (L1) products into relational, query-ready, L1-derived spectral records. The L1 tables store 2,094 wavelength channels as columns and interleave plasma and background acquisitions. LunarAtlas parses the PDS4 labels, verifies each data file against the checksum declared in its label, reshapes the tables, pairs every plasma acquisition with the most recent preceding background acquisition, subtracts and clamps, records pairing and clipping provenance, and serves the result through a REST API and a web viewer. On the full local copy of the calibrated archive (301 products, 1,281 acquisitions) all 1,582 data files matched their label checksums, all products parsed, 613 of 745 plasma acquisitions were paired and 132 without a preceding background were excluded; repeated processing produced byte-identical spectral outputs and repeated database ingestion added no rows. An LTTB-based downsampler optionally preserves caller-specified channels; preserving the detected peaks of a worked-example spectrum costs 9--22~a.u.\ of RMSE at an equal 130-point budget. Wavelength-coincidence annotation against a 24-line reference list is provided for exploration only; it is not elemental identification, and archive-wide coincidences did not exceed a random-shift null model ($p\approx0.10$).
+LunarAtlas is open-source software that turns the publicly archived Chandrayaan-3 laser-induced breakdown spectroscopy (LIBS) Level-1 (L1) products into relational, query-ready, L1-derived spectral records. The L1 tables store 2,094 wavelength channels as columns and interleave plasma and background acquisitions. LunarAtlas parses the PDS4 labels, verifies each data file against the checksum declared in its label, reshapes the tables, pairs every plasma acquisition with the most recent preceding background acquisition, subtracts and clamps, records pairing and clipping provenance, and serves the result through a REST API and a web viewer. On the full local copy of the calibrated archive (301 products, 1,281 acquisitions) all 1,582 data files matched their label checksums, all products parsed, 613 of 745 plasma acquisitions were paired and 132 without a preceding background were excluded; repeated processing produced byte-identical spectral outputs and repeated database ingestion added no rows. An LTTB-based downsampler optionally preserves caller-specified channels; preserving the detected peaks of a worked-example spectrum costs 9--22~a.u.\ of RMSE at an equal 130-point budget. Wavelength-coincidence annotation against a 24-line reference list is provided for exploration only; it is not elemental identification, and archive-wide coincidences were not statistically significantly enriched under the specified random-shift null ($p\approx0.10$).
 \end{abstract}
 
 \begin{keyword}
-LIBS \sep Chandrayaan-3 \sep planetary spectroscopy \sep PDS4 \sep database \sep downsampling \sep LTTB \sep REST API
+LIBS \sep Chandrayaan-3 \sep planetary spectroscopy \sep PDS4 \sep relational database \sep downsampling \sep REST API
 \end{keyword}
 \end{frontmatter}
 
@@ -88,7 +88,7 @@ C8 & Support email for questions & lovekeshanand6@gmail.com \newline duasaeed641
 
 Laser-Induced Breakdown Spectroscopy (LIBS) is an established technique for in-situ elemental analysis in planetary exploration, deployed on ChemCam \cite{maurice2012chemcam, wiens2012chemcam}, SuperCam \cite{maurice2021supercam, wiens2021supercam} and MarSCoDe \cite{xu2021marscode}. In 2023 the LIBS payload on the Chandrayaan-3 Pragyan rover acquired the first in-situ LIBS spectra from the lunar south polar region \cite{megala2024chandrayaan, sridhar2024libs, isro_chandrayaan3_libs}.
 
-The instrument uses a pulsed 1535~nm laser and a flat-field grating spectrometer with a linear CCD; its stated calibrated range is 220--800~nm \cite{sridhar2025libs}. The archived L1 parent tables carry 2,094 channels labelled 164.35--878.26~nm with a mean label spacing of $\approx$0.34~nm per channel. Channel spacing is a sampling interval, not a resolution: the instrument description gives an optical resolution below 1.1~nm FWHM \cite{sridhar2025libs}, which we treat as an upper bound rather than a measured, wavelength-independent constant. Lines closer than this bound may therefore be unresolved. Data are distributed by the ISRO PRADAN portal as PDS4 products \cite{isro_chandrayaan3_libs, pds4_standard}.
+The instrument uses a pulsed 1535~nm laser and a flat-field grating spectrometer with a linear CCD; its stated calibrated range is 220--800~nm \cite{sridhar2025libs}. The L1 parent tables carry 2,094 channels labelled 164.35--878.26~nm, spaced $\approx$0.34~nm. This spacing is a sampling interval, not a resolution; the stated optical resolution, below 1.1~nm FWHM \cite{sridhar2025libs}, is treated as an upper bound, so lines closer than this may be unresolved. Data are distributed by the ISRO PRADAN portal as PDS4 products \cite{isro_chandrayaan3_libs, pds4_standard}.
 
 The L1 products are preserved but not query-ready: (i) all 2,094 channels are columns, complicating relational storage and range queries; (ii) plasma and background acquisitions are interleaved and must be distinguished by status flags; (iii) analysis of plasma emission usually starts from background-subtracted spectra; and (iv) interactive viewing of many 2,094-channel spectra benefits from downsampling.
 
@@ -121,22 +121,22 @@ Elemental identification / abundance retrieval & No & Partial & No \\
 
 \subsection{Software Architecture}
 
-LunarAtlas has three tiers (Figure~\ref{fig:architecture}). The \textbf{data layer} is PostgreSQL \cite{postgresql}: mission, product and file metadata, raw acquisitions (\texttt{measurement\_raw}, \texttt{spectral\_data\_raw}) and background-subtracted plasma acquisitions (\texttt{measurement\_clean}, \texttt{spectral\_data\_clean}) in long form. The \textbf{logic layer} is a Python~3.11/FastAPI service \cite{fastapi} with optional ALS/Savitzky--Golay display filters, LTTB downsampling and an optional Redis cache \cite{redis}. The \textbf{presentation layer} is a React client \cite{react}. The web viewer requests full-resolution spectra and downsamples them in the browser with a TypeScript port of the same algorithm (Web Worker); the server-side Python implementation is used by API clients that request \texttt{zoom\_level} or \texttt{proportion}. Developer endpoints under \texttt{/api/v1/public} require an API key and are rate-limited; the viewer endpoint \texttt{/api/v1/spectrum} used in Listing~\ref{lst:api} and in the benchmarks is not authenticated.
+LunarAtlas has three tiers (Figure~\ref{fig:architecture}). PostgreSQL \cite{postgresql} stores product and file metadata, raw acquisitions and background-subtracted plasma acquisitions in long form, together with pairing and clipping fields. A Python~3.11/FastAPI service \cite{fastapi} serves them with an optional Redis cache \cite{redis}, optional display-only ALS/Savitzky--Golay filters, and server-side LTTB downsampling when a request sets \texttt{zoom\_level} or \texttt{proportion}. The two kinds of client process data differently: the React \cite{react} web viewer requests full-resolution spectra and downsamples them in the browser (TypeScript, Web Worker), whereas scripts and other API clients receive server-downsampled or full-resolution JSON. Developer endpoints under \texttt{/api/v1/public} require an API key; the viewer endpoint \texttt{/api/v1/spectrum} (Listing~\ref{lst:api}) is not authenticated.
 
 \begin{figure*}[t]
     \centering
-    \includegraphics[width=0.75\textwidth]{../../publication_figures/fig1_architecture}
-    \caption{System architecture: raw PDS4 L1 products are processed offline into PostgreSQL (data layer); FastAPI serves records with optional display-only smoothing, downsampling and caching (logic layer); the React client renders spectra and, in the interactive viewer, performs its own LTTB downsampling (presentation layer).}
+    \includegraphics[width=0.8\textwidth]{../figures/fig1_architecture}
+    \caption{System architecture. Server-side Python LTTB runs only when a request sets \texttt{zoom\_level} or \texttt{proportion}; the web viewer fetches full-resolution spectra and downsamples them in the browser (TypeScript), whereas API clients receive server-downsampled or full-resolution JSON.}
     \label{fig:architecture}
 \end{figure*}
 
 \subsection{Data processing pipeline}
 \label{subsec:pipeline}
 
-The pipeline runs as scripts for folder inventory, L1 processing, QA plotting, reference-line screening, MD5 manifest generation, raw-copy segregation, database ingestion and a final audit. L1 processing performs:
+The pipeline is a sequence of scripts (inventory, L1 processing, QA plots, checksum manifest, database ingestion, audit). L1 processing performs:
 
 \begin{enumerate}
-    \item \textbf{Label parsing and integrity check.} Logical identifier, times and file attributes are read from each PDS4 label \cite{pds4_standard}. The MD5 checksum, size and record count declared in the label are compared with the data file (Section~\ref{subsec:archive}). This establishes that the files are the ones the archive describes; it says nothing about the correctness of later processing.
+    \item \textbf{Label parsing and integrity check.} Logical identifier, times and file attributes are read from each PDS4 label \cite{pds4_standard}. The MD5 checksum, size and record count declared in the label are compared with the data file (Section~\ref{subsec:archive}). This establishes file integrity, not the correctness of later processing.
     \item \textbf{Wide-to-long reshaping} of the 2,094 channel columns into $(\text{measurement},\lambda)\rightarrow I$ after checking the eight trailing instrument-parameter columns.
     \item \textbf{Acquisition classification} from the Force-Reset ($F$) and Laser-Fire ($L$) flags: background $B$: $(F{=}1,L{=}0)$; plasma $P$: $(F{=}0,L{=}1)$; $(0,0)$, $(1,1)$ and missing flags are logged and skipped. The same rule is used for raw and cleaned records in the database, so a global identifier \texttt{\{file\_info\_id\}-\{n\}} names the same $n$-th plasma acquisition in both tables.
     \item \textbf{Pairing.} Each plasma acquisition is paired with the most recent preceding background acquisition in file order; consecutive plasma acquisitions reuse it. Plasma acquisitions with no preceding background are excluded from the cleaned tables (their raw rows are ingested only when the same product also has paired acquisitions). The row of the paired background is stored with every cleaned acquisition.
@@ -161,23 +161,21 @@ S_{\mathrm{final}} &= S_{\mathrm{LTTB}}(T) \cup \{i^{*}(t) : t \in \mathcal{T}\}
 i^{*}(t) &= \arg\min_i |\lambda_i - t|,\qquad |S_{\mathrm{final}}| \le T + |\mathcal{T}|.
 \end{aligned}
 \end{equation}
-The algorithm does not detect peaks itself. The web viewer uses a TypeScript implementation of the same rule (\texttt{core/client/src/workers/downsampleWorker.ts}) on the full stored range (164.35--878.26~nm, 2,094 channels) with ratio 0.1, i.e.\ $T=\min(\max(3,\lfloor 209.4\rfloor),n)=209$, and passes as $\mathcal{T}$ the 32 wavelengths of its built-in list (\texttt{core/client/src/utils/spectralUtils.ts}); the 33 lines of the database table \texttt{nist\_lines} are drawn as overlays and are not downsampling targets. In the evaluation of Section~\ref{subsec:ds} we pass the detected peaks of the spectrum (``LTTB+Peaks''), for which peak retention is 100\% by construction.
-
-\textit{Equal-budget evaluation variant (not part of the production code).} To compare LTTB+Peaks with the other methods at the same output size, \texttt{revision\_v2/analysis.py} reduces the LTTB budget from $t=T$ in steps of one until $|S_{\mathrm{LTTB}}(t)\cup P|\le T$, where $P$ is the set of detected-peak channels, and outputs that union. The union removes duplicates, so an LTTB channel that is also a peak counts once. The first and last channels belong to every $S_{\mathrm{LTTB}}(t)$ and are therefore always kept. Because each change of $t$ moves all bucket boundaries, the union does not shrink by exactly one per step, and the first admissible $t$ can give fewer than $T$ points (129--130 at $k=4$). The variant is not computed when $|P|\ge T$ (ID~4 at $k=5$: 73 peaks, $T=65$).
+The algorithm does not detect peaks. The web viewer runs a TypeScript implementation of the same rule on all 2,094 channels with $T=209$ (ratio 0.1) and its built-in 32-line target list; the 33 database \texttt{nist\_lines} are display overlays only. In Section~\ref{subsec:ds} the detected peaks are passed as targets (``LTTB+Peaks''), so their retention is 100\% by construction. An equal-budget variant that fits LTTB+Peaks into $T$ points is an evaluation construct, not production code; its construction is given in Supplementary Section~S3.
 
 \subsubsection{Candidate wavelength coincidences}
 \label{subsec:nist}
 
-Peaks are found with \texttt{scipy.signal.find\_peaks} in 220--800~nm with prominence $\ge 3\sigma$ ($\sigma$: population standard deviation of the cleaned spectrum over 560--580~nm) and $\ge5$ channels separation. A peak is a \emph{candidate coincidence} if at least one of 24 reference wavelengths (Fe, Mg, Si, Al, Ti, Ca, Na, H, O lines from the NIST ASD \cite{nist_asd}, listed in \texttt{Pipeline/step4\_nist\_verification\_logs.py}) lies within $|\lambda_{\mathrm{obs}}-\lambda_{\mathrm{ref}}|<0.5$~nm; each peak counts once regardless of how many references fall within the tolerance. A coincidence is not an identification: the list is short and incomplete (e.g.\ only one O~I 777~nm triplet component), several references lie within 1.1~nm of one another and may be unresolved, and the L1 wavelength scale itself is uncertain (Section~\ref{subsec:archive}). A separate screening utility uses a fixed height threshold and is not used for any number in this paper.
+Peaks are found with \texttt{scipy.signal.find\_peaks} in 220--800~nm with prominence $\ge 3\sigma$ ($\sigma$: population standard deviation of the cleaned spectrum over 560--580~nm) and $\ge5$ channels separation. A peak is a \emph{candidate coincidence} if at least one of 24 reference wavelengths (Fe, Mg, Si, Al, Ti, Ca, Na, H, O lines from the NIST ASD \cite{nist_asd}, listed in \texttt{Pipeline/step4\_nist\_verification\_logs.py}) lies within $|\lambda_{\mathrm{obs}}-\lambda_{\mathrm{ref}}|<0.5$~nm; each peak counts once regardless of how many references fall within the tolerance. A coincidence is not an identification: the list is short and incomplete (e.g.\ only one O~I 777~nm triplet component), several references lie within 1.1~nm of one another and may be unresolved, and the L1 wavelength scale itself is uncertain (Section~\ref{subsec:archive}).
 
 \subsection{Testing}
 \label{subsec:testing}
 
-The \texttt{pytest} suite runs the real stage-2 processor on synthetic L1 files (pairing, exclusion of unpaired plasma, identifier stability, pre-clamp clip fraction, background provenance, ambiguous flags), the server LTTB implementation (output size, endpoints, preserved targets), and formula-level checks of subtraction and clamping. An ingestion test (\texttt{tests/test\_ingestion\_db.py}) runs against a disposable PostgreSQL database and checks raw/clean identifier linkage, survival of the quality fields and idempotent re-ingestion. The GitHub Actions workflow runs the non-database tests for Python 3.10--3.12. The archive-level checks of Section~\ref{subsec:archive} are separate scripts in \texttt{revision\_v2/}.
+The \texttt{pytest} suite runs the real stage-2 processor on synthetic L1 files (pairing, exclusion of unpaired plasma, identifier stability, pre-clamp clip fraction, background provenance, ambiguous flags) and tests the server LTTB implementation; an ingestion test against a disposable PostgreSQL database checks identifier linkage, the quality fields and idempotent re-ingestion. Continuous integration runs the non-database tests for Python 3.10--3.12.
 
 \section{Illustrative examples}
 
-A demonstration deployment runs at \url{https://www.lunaratlas.in} with the API at \url{https://apis.lunaratlas.in}; the citable artifact is the archived code \cite{lunaratlas_zenodo}. Setup follows \texttt{pip install -r requirements.txt}, \texttt{npm install} and \texttt{./run\_pipeline.sh} as documented in the README. Listing~\ref{lst:api} requests a downsampled, smoothed spectrum from the public demonstration deployment. That deployment still holds legacy-ingested records (Section~\ref{subsec:archive}). On 23 October 2026 we checked that this identifier exists there and that its unsmoothed response equals the revision output: cleaned and raw plasma values matched on all 2,094 channels, since ID~3 is a paired acquisition in both versions. The listing is \texttt{revision\_v2/api\_example.py}; the environment variable \texttt{LUNARATLAS\_API} points it at a local or staging server.
+A demonstration deployment runs at \url{https://www.lunaratlas.in} with the API at \url{https://apis.lunaratlas.in}; the citable artifact is the archived code \cite{lunaratlas_zenodo}. Setup follows \texttt{pip install -r requirements.txt}, \texttt{npm install} and \texttt{./run\_pipeline.sh} as documented in the README. Listing~\ref{lst:api} requests a downsampled, smoothed spectrum from the public deployment, which still holds legacy-ingested records (Section~\ref{subsec:archive}). For this identifier, a paired acquisition in both versions, the unsmoothed response matched the revision output on all 2,094 channels when checked on 23 October 2026. The listing is \texttt{revision\_v2/api\_example.py}; \texttt{LUNARATLAS\_API} points it at another server.
 
 \begin{lstlisting}[language=Python, caption=Python client request for a downsampled spectrum (public demonstration deployment), label=lst:api]
 import requests
@@ -227,13 +225,13 @@ Cleaned points ($613\times2{,}094$) & 1,283,622 \\
 \label{table:audit}
 \end{table}
 
-\textit{Earlier counts.} A previous version reported 779 ingested measurements. That figure came from an earlier processing version that stored the 132 unpaired plasma acquisitions without subtraction and 34 background frames from the 33 background-only products as cleaned measurements ($613+132+34=779$). The current version stores only the 613 paired acquisitions as cleaned. Raw records are ingested for the 230 products that have cleaned output (1,125 acquisitions, including 14 unpaired plasma acquisitions); the 156 acquisitions of the 71 products without any paired plasma remain in the archived files only. The public deployment has not yet been re-ingested with the corrected version. A reversible migration (build the corrected database separately, copy the application tables, swap by renaming, roll back by renaming back) was rehearsed on a disposable copy reconstructed with the legacy code (\texttt{revision\_v2/rehearse\_migration.py}); it has not been applied to the deployment.
+\textit{Earlier counts.} The 779 measurements reported previously came from an earlier processing version that also stored the 132 unpaired plasma acquisitions without subtraction and 34 background frames as cleaned records ($613+132+34=779$). The public deployment still holds these legacy records; a reversible migration has been rehearsed on a disposable copy but not applied (Supplementary Section~S1).
 
-\textit{Pairing intervals.} Label timestamps have 1~s resolution. The paired background carries the same second as the plasma acquisition for 206 acquisitions, the previous second for 264, and 2--13~s earlier for 143 (consecutive plasma acquisitions reusing one background). The assumption of a stable background therefore spans up to 13~s for some pairs and cannot be checked more finely from the labels.
+\textit{Pairing intervals.} With 1~s timestamp resolution, the paired background carries the same second as the plasma acquisition for 206 acquisitions, the previous second for 264 and 2--13~s earlier for 143, so the stable-background assumption spans up to 13~s for some pairs.
 
 \textit{Archive wavelength scale.} Each acquisition is also archived as a single-shot table (Wavelength, Response count). Its counts are identical to the corresponding parent-table row in all 1,281 cases, but its wavelength column is a different axis (153.21--873.30~nm), offset from the parent-table axis by $-4.96$ to $-11.14$~nm ($-7.48$~nm at 589~nm). LunarAtlas uses the parent-table axis throughout. We cannot determine from the archive which axis is correct; this is consistent in magnitude with the L1 calibration offsets reported by Mourlin et al.\ \cite{mourlin2025chandrayaan} and directly limits wavelength-based annotation.
 
-\textit{Determinism and ingestion.} Running stage~2 twice on the same input produced byte-identical cleaned spectra, parameter files and label copies for all 230 products (per-run metadata files differ only by their processing timestamp). Ingestion into a disposable PostgreSQL~18 database (\texttt{revision\_v2/run\_isolated\_ingestion.py}) stored 613 cleaned acquisitions with 2,094 points each (1,283,622 points), matching the processed files measurement by measurement (point counts and intensity sums identical); a second ingestion of the same files added no rows to any table, and no (measurement, wavelength) pair occurs twice. For every cleaned point, $\max(0, I_P-I_B)$ recomputed in SQL from the stored raw plasma and the stored paired-background row differs from the stored value by 0.0, and the pairing and clip-fraction fields were present for all 613 records. Deterministic processing and idempotent ingestion are distinct properties and were tested separately.
+\textit{Determinism and ingestion.} Two stage-2 runs produced byte-identical spectral outputs for all 230 products. Ingestion into a disposable PostgreSQL~18 database stored 613 cleaned acquisitions (1,283,622 points) matching the files exactly, a second ingestion added no rows, and every stored cleaned value equals $\max(0,I_P-I_B)$ recomputed in SQL from the stored raw rows (maximum difference 0.0; Supplementary Section~S1).
 
 \subsection{Spectral processing: worked example}
 
@@ -246,45 +244,9 @@ Detailed spectral metrics use one product, \texttt{ch3\_lib\_002\_20230825T10422
     \label{fig:bg_subtraction}
 \end{figure*}
 
-Over 560--580~nm (58 channels) the raw plasma acquisition of ID~3 has mean 1,387.4~a.u.\ (std 54.0) and the paired background 943.3~a.u.\ (std 50.6); the cleaned spectrum has mean 444.1~a.u.\ (std 70.8), no negative residuals in this window, and a mean ratio raw/cleaned of 3.12 (Table~\ref{table:window}). Over all 2,094 channels 0.48\% of residuals were negative before clamping (0\% in 220--800~nm). The ratio of standard deviations, cleaned/raw, is 1.31. For two independent inputs with these unequal variances the expected ratio would be $\sqrt{s_P^2+s_B^2}/s_P = 1.37$ (not $\sqrt2$); the sample covariance of $I_P$ and $I_B$ across the window ($r=+0.085$) accounts exactly for the difference, as it must algebraically. Because the window standard deviation mixes detector noise with channel-to-channel spectral structure, and the window has only 58 channels, these statistics are descriptive; they neither demonstrate correlated CCD readout nor independently verify the subtraction.
+For ID~3 no residual is negative in 220--800~nm (0.48\% over all 2,094 channels); the clip fractions of IDs~1--4 are 22.5, 76.8, 0.5 and 28.1\%. Window statistics and the noise-propagation comparison, corrected for the unequal variances of $I_P$ and $I_B$, are descriptive and are given in Supplementary Section~S2 (Tables~S1--S2).
 
-\begin{table}[!htbp]
-\centering
-\footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}lrrrr@{}}
-\toprule
-\textbf{ID} & \textbf{$\bar I_P$} & \textbf{$\bar I_{\mathrm{clean}}$} & \textbf{$s_{\mathrm{clean}}/s_P$} & \textbf{Neg.\ (\%)} \\
-\midrule
-1 & 1,005.3 & 69.9  & 1.25 & 15.5 \\
-2 & 983.3   & 12.3  & 0.47 & 74.1 \\
-3 & 1,387.4 & 444.1 & 1.31 & 0.0 \\
-4 & 1,194.6 & 38.9  & 0.92 & 32.8 \\
-\bottomrule
-\end{tabular}
-\caption{560--580~nm window statistics (a.u.); Neg.: residuals $<0$ before clamping in the window. Clamping lowers $s_{\mathrm{clean}}$ where many residuals are negative.}
-\label{table:window}
-\end{table}
-
-\begin{table}[!htbp]
-\centering
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}cccccc@{}}
-\toprule
-\textbf{ID} & \textbf{Mean} & \textbf{Std} & \textbf{Max} & \textbf{Clip (\%)} & \textbf{Clip cal.\ (\%)} \\
-\midrule
-1 & 61.0  & 56.9 & 321 & 22.5 & 22.3 \\
-2 & 9.4   & 23.8 & 261 & 76.8 & 77.6 \\
-3 & 416.9 & 95.0 & 684 & 0.5  & 0.0 \\
-4 & 54.1  & 62.4 & 637 & 28.1 & 27.9 \\
-\bottomrule
-\end{tabular}
-\caption{Cleaned intensity (a.u., 2,094 channels) and clip fraction (negative residuals before clamping) over 2,094 channels and over the 1,684 calibrated-range channels.}
-\label{table:variability}
-\end{table}
-
-\textit{Clip fraction across the archive.} Of the 613 paired acquisitions, 256 (41.8\%) exceed a clip fraction of 0.5 over 2,094 channels (251 over the 1,684 calibrated-range channels); at 0.25 and 0.75 the counts are 372 (60.7\%) and 157 (25.6\%) (Figure~\ref{fig:clip}). The distribution is broad, with modes near 0 and 1, so the flagged count depends strongly on the threshold; 0.5 is a convention, not an optimised or physically validated cut-off. The clip fraction is strongly anti-correlated with the mean cleaned intensity (Spearman $\rho=-0.93$), which is expected because both are functions of the same residual, and only weakly with the number of detected peaks ($\rho=-0.28$) and a robust peak signal-to-noise ratio ($\rho=-0.15$). These relationships are descriptive and do not establish which spectra are scientifically usable. All 613 acquisitions, flagged or not, are stored. The clip fraction, the paired-background row and the subtraction flag are stored in \texttt{measurement\_clean} and in each product's \texttt{\_params.csv} file. No API endpoint returns them yet: the response schemas of \texttt{/api/v1/measurements}, \texttt{/api/v1/public/measurements}, \texttt{/api/v1/spectrum} and \texttt{/api/v1/public/spectra} do not include these fields. The worked-example evaluations below exclude ID~2 (clip fraction 0.77).
+\textit{Clip fraction across the archive.} Of the 613 paired acquisitions, 372 (60.7\%), 256 (41.8\%) and 157 (25.6\%) exceed clip fractions of 0.25, 0.5 and 0.75 (Figure~\ref{fig:clip}); the distribution has modes near 0 and 1, so 0.5 is a convention, not a validated cut-off. Correlations with other signal measures are descriptive (Supplementary Section~S2). All acquisitions are stored; the clip fraction, paired-background row and subtraction flag are in \texttt{measurement\_clean} and the \texttt{\_params.csv} files, but no API endpoint returns them yet (\texttt{/api/v1/measurements}, \texttt{/api/v1/public/measurements}, \texttt{/api/v1/spectrum} and \texttt{/api/v1/public/spectra} were checked). The evaluations below exclude ID~2 (clip fraction 0.77).
 
 \begin{figure*}[!t]
     \centering
@@ -324,7 +286,7 @@ LTTB + 32-line list ($T$+32) & 237--239 & 55.9--71.4 & 64.4--89.0 \\
 \label{table:downsampling}
 \end{table}
 
-Two caveats govern the interpretation. First, LTTB+Peaks keeps 100\% of detected peaks because the detected peaks are its input; this is a property of the construction, not an empirical finding. Its cost is the measurable quantity: when it is allowed $T$ points plus the peaks it outputs 147--167 points (8.7--9.9\%), and at an equal 130-point budget its RMSE exceeds that of LTTB by 9.0--22.0~a.u.\ (11.7--31.0\%). Second, reference wavelengths as targets preserve the reference channels, not the peaks. With the 24-line analysis list the server implementation keeps 47.5--61.9\% of detected peaks at $k=4$ (38.1--44.1\% at $k=5$). The web viewer as configured, evaluated by running its TypeScript function under Node.js (\texttt{revision\_v2/browser\_downsampling.py}), keeps 55.9--71.4\% at its default 209-point threshold with its 32-line list, against 50.8--69.0\% for LTTB alone. For the same inputs, the TypeScript and Python implementations returned identical channels in all 24 tested configurations (three spectra, two ranges, two thresholds, with and without the viewer list). Across $k=1$--5, LTTB alone keeps 85.7--97.3\% of peaks at $k=1$ and 35.6--38.1\% at $k=5$; LTTB+Peaks outputs 62.3--62.5\% to 5.4--6.7\% of the channels (Figure~\ref{fig:adaptive_zoom}). Uniform decimation has the lowest RMSE of the tested methods but discards most peaks, so no single method is best on both measures.
+LTTB+Peaks keeps 100\% of detected peaks because they are its input, so its cost is the measurable quantity: it outputs 147--167 points instead of 130, and at an equal 130-point budget its RMSE exceeds that of LTTB by 9.0--22.0~a.u.\ (11.7--31.0\%). Reference wavelengths as targets preserve reference channels, not peaks: the server with the 24-line list keeps 47.5--61.9\% of peaks, and the viewer in its own configuration (TypeScript, run under Node.js) keeps 55.9--71.4\%, against 50.8--69.0\% for LTTB alone. The TypeScript and Python implementations returned identical channels in all 24 tested configurations. Uniform decimation has the lowest RMSE but discards most peaks, so no method is best on both measures; results for $k=1$--5 and both ranges are in Supplementary Section~S3.
 
 \begin{figure*}[!t]
     \centering
@@ -335,7 +297,7 @@ Two caveats govern the interpretation. First, LTTB+Peaks keeps 100\% of detected
 
 \subsection{Candidate annotation and a random-shift null model}
 
-Table~\ref{table:elements} lists the coincidences for IDs~1, 3, 4; the per-peak table (observed and reference wavelength, signed offset $\lambda_{\mathrm{obs}}-\lambda_{\mathrm{ref}}$, prominence, all references within 0.5 and 1.1~nm) is in \texttt{D\_per\_line\_candidates.csv}. For ID~3 the eight coincidences are near Fe~I 274.95, 385.99, 495.76; Ca~II 393.37, 396.85; Mg~I 517.27; Na~I 588.99/589.59; and O~I 777.19~nm, with offsets from $-0.09$ to $+0.48$~nm (Figure~\ref{fig:nist_annotated}). Three of them have another reference within 1.1~nm (Ca~II 393.37/Al~I 394.40, Al~I 396.15/Ca~II 396.85, Na~I 588.99/589.59) and cannot be assigned to one transition; the label does not imply that every listed species is present. Four further references have a detected peak 0.79--0.83~nm away (Al~I 309.27, Si~I 390.55, Al~I 396.15, H~I 656.28), outside the tolerance. The most prominent feature of ID~3, at 282.3~nm, has no reference within 1.1~nm.
+Table~\ref{table:elements} summarises IDs~1, 3 and 4; the per-peak table with signed offsets, prominences and all references within 0.5 and 1.1~nm is \texttt{D\_per\_line\_candidates.csv}. For ID~3 the eight coincidences lie near Fe~I, Ca~II, Mg~I, Na~I and O~I lines with offsets of $-0.09$ to $+0.48$~nm (Figure~\ref{fig:nist_annotated}); three have a second reference within 1.1~nm and cannot be assigned to one transition, and the labels do not imply that every listed species is present. The most prominent feature, at 282.3~nm, has no line of the 24-line reference list within 1.1~nm; the full NIST database was not searched. Near-misses are listed in Supplementary Section~S4.
 
 \begin{figure*}[!t]
     \centering
@@ -344,7 +306,7 @@ Table~\ref{table:elements} lists the coincidences for IDs~1, 3, 4; the per-peak 
     \label{fig:nist_annotated}
 \end{figure*}
 
-\textit{Null model.} In each draw the whole 24-line list is shifted by one common offset $s$, $|s|\sim U(2,20)$~nm with random sign, so the spacings between reference lines are preserved, and the matching rule is re-applied to the unchanged peaks. For a single spectrum the statistic is its number of matched peaks (10,000 draws, seed 20261021). For an archive-wide test, each draw applies the same shift to every spectrum, and the statistic is the sum of the per-spectrum counts (1,000 draws, seed 20261022). The wavelength-axis comparison uses the first 300 of these archive draws for both axes. Shifted lines that leave 220--800~nm cannot match; a variant that wraps them back into the range gave identical results, because no shift moves a line out of range. With $k$ draws at or above the observed count among $N$, $p=(1+k)/(1+N)$. Table~\ref{table:elements} gives $N$, $k$ and $p$ for every test; the same values are in \texttt{D\_null\_summary.csv}.
+\textit{Null model.} Each draw shifts the whole 24-line list by one common offset, $|s|\sim U(2,20)$~nm with random sign, and re-applies the matching rule to the unchanged peaks; $p=(1+k)/(1+N)$ for $k$ of $N$ draws at or above the observed count. Single spectra use 10,000 draws. Archive-wide tests use 1,000 draws, each applying the same shift to every spectrum and summing the per-spectrum counts; the axis comparison uses the first 300 of them (Supplementary Section~S4).
 
 \begin{table}[!htbp]
 \centering
@@ -367,7 +329,7 @@ Clip $\le0.5$ (357) & 21,678 & 1,000 & 959 & 863.9 & 79 & 0.080 \\
 \label{table:elements}
 \end{table}
 
-Only ID~3 shows more coincidences than shifted lists produce; IDs~1 and 4 and both archive-wide aggregates do not reach $p<0.05$ (Figure~\ref{fig:null}). Labelling the same detected channels with the single-shot wavelength axis instead of the parent-table axis gives 1,386 archive coincidences against a null mean of 1,451.8 ($p=0.72$; parent axis with the same 300 draws: $p=0.10$). An aggregate excess, where present, says that the peak list and the reference list share more wavelengths than chance; it does not establish that any individual assignment is correct. No line-ratio analysis is performed: ratios between lines depend on plasma temperature, density, self-absorption and instrument response, and tabulated transition probabilities alone do not predict observed intensity ratios.
+Only ID~3 is statistically significantly enriched under the specified null ($p=0.0001$); IDs~1 and 4 and both archive-wide aggregates are not ($p\ge0.062$; Figure~\ref{fig:null}). With the single-shot wavelength axis the archive count falls below the null mean ($p=0.72$, against $p=0.10$ for the parent axis with the same draws). Enrichment, where present, concerns the peak and reference lists as a whole and does not validate any individual assignment. No line-ratio analysis is performed, because line ratios depend on plasma conditions, self-absorption and instrument response.
 
 \begin{figure*}[!t]
     \centering
@@ -378,32 +340,9 @@ Only ID~3 shows more coincidences than shifted lists produce; IDs~1 and 4 and bo
 
 \subsection{API response performance}
 
-\textit{Earlier single-connection campaign (not repeated).} Measured in July 2026 on an Intel Core i7-11850H/16~GB/Windows~11 host, 1,000 requests per configuration after 20 discarded, caching bypassed, Measurement ID~3 via \texttt{/api/v1/spectrum}: local server with co-located PostgreSQL, median 17.13~ms (P95 73.06, P99 88.60); local server with a remote (Supabase, WAN) database, median 296.27~ms (P95 471.91, P99 673.62); production deployment, median 1,056.37~ms (P95 1,462.01, P99 1,650.62; percentiles recomputed from the archived raw latencies in \texttt{latency\_results/}). Each WAN configuration was measured in one session, so session-to-session and time-of-day variation are not characterised. The production deployment was re-measured in three sessions in this revision (below); the configuration with a remote database was not repeated.
+\textit{Public deployment over the WAN.} On 23 October 2026 (22:32--23:28 IST) one client host sent 3,600 measured requests to \texttt{/api/v1/spectrum} of the public deployment in three sessions 15~min apart: two workloads, cache bypassed and warm, concurrency 1, 4 and 8, and 100 measured requests per setting after 10 warm-up requests. There were 0 errors and 0 timeouts (Table~\ref{table:wan}), and session medians agreed within 352~ms for full spectra and 105~ms for downsampled responses. With the cache bypassed the server reported about 530~ms of processing per request; the rest is network and transfer. Concurrency was capped at 8 to limit load on the shared deployment, so its saturation point was not determined.
 
-\textit{Local concurrency sweep (this revision).} A throwaway PostgreSQL~18 cluster holding the worked-example product, one uvicorn worker (Python~3.11.9), client and server on the same host over loopback, Redis not running (every request is a cache miss; \texttt{use\_cache=false} also sent). Three sessions, each with a fresh server process; per session, workload and concurrency level, 20 warm-up requests were discarded and 400 measured (14,400 measured requests in total, 0 errors, 0 timeouts at a 10~s limit; \texttt{revision\_v2/run\_local\_benchmark.py}). Throughput saturates at one worker, so latency at higher concurrency is dominated by queueing (Table~\ref{table:performance}). The query uses the measurement index and runs in about 1~ms once planner statistics exist; on a freshly loaded database without statistics the same query ran as a nested-loop join in 422~ms, so ingestion now ends with \texttt{ANALYZE}. These loopback results characterise the software on one host; they do not represent WAN latency or multi-worker deployments.
-
-\begin{table}[!htbp]
-\centering
-\footnotesize
-\setlength{\tabcolsep}{2.5pt}
-\begin{tabular}{@{}lrrrrr@{}}
-\toprule
-\textbf{Workload} & \textbf{Conc.} & \textbf{P50} & \textbf{P95} & \textbf{P99} & \textbf{Req/s} \\
-\midrule
-2,094 points, 131~kB & 1  & 19.9  & 51.4  & 64.9    & 41.7 \\
-                     & 4  & 88.3  & 129.2 & 136.4   & 45.2 \\
-                     & 32 & 717.7 & 977.5 & 1,181.3 & 43.7 \\
-1,684 points, 106~kB & 1  & 16.7  & 46.1  & 58.2    & 49.2 \\
-                     & 32 & 528.6 & 713.7 & 789.4   & 57.1 \\
-LTTB $k{=}4$, 130 points, 8.6~kB & 1  & 8.6   & 18.0  & 34.7  & 96.4 \\
-                                 & 32 & 230.9 & 310.2 & 346.2 & 135.9 \\
-\bottomrule
-\end{tabular}
-\caption{Local loopback sweep, cache disabled: latency (ms) and throughput, medians over three sessions (all levels 1/4/16/32 and per-session values in \texttt{revision\_v2/outputs/benchmark/summary.csv}).}
-\label{table:performance}
-\end{table}
-
-\textit{Public deployment over the WAN (this revision).} On 23 October 2026 (22:32--23:28 IST) the client host above sent requests over the internet to \texttt{https://apis.lunaratlas.in/api/v1/spectrum}. This deployment holds the legacy-ingested records, and ID~3 is identical to the revision output (Listing~\ref{lst:api}). There were three sessions, 15~min apart. For each session, workload, cache condition and concurrency level (1, 4, 8), 10 warm-up requests were discarded and 100 measured: 3,600 measured requests, 0 errors, 0 timeouts at a 30~s limit (\texttt{revision\_v2/run\_wan\_benchmark.py}). The cache conditions were \texttt{use\_cache=false} and a Redis cache filled by the warm-up requests. Session medians agreed to within 352~ms for full spectra and 105~ms for downsampled responses (Table~\ref{table:wan}). With the cache bypassed and one request at a time, the server reported about 530~ms of processing (\texttt{server\_processing\_ms}) for both workloads. The remaining 260--520~ms of the 790--1,050~ms median is network and transfer. For cache hits this field repeats the value stored with the cached response, so it is not reported. Concurrency was capped at 8 to limit load on the shared deployment, so its saturation point was not determined. The deployment's hardware and worker count are not characterised here, and all requests came from one client location.
+\textit{Local loopback.} On one host with one server worker and the cache disabled, full spectra took a median 19.9~ms at concurrency 1 and 717.7~ms at 32 (41.7--45.2 requests/s, limited by the single worker), and 130-point responses 8.6 and 230.9~ms (14,400 requests, 0 errors). On a freshly loaded database without planner statistics the spectrum query ran as a nested-loop join (422~ms instead of about 1~ms), so ingestion now ends with \texttt{ANALYZE}. Protocols, the local table and the earlier single-session July 2026 campaign are in Supplementary Section~S5.
 
 \begin{table}[!htbp]
 \centering
@@ -433,9 +372,9 @@ LTTB $k{=}4$, 130 pts & bypassed & 1 & 787.7 & 907.3   & 1,050.4 & 1.3 \\
 
 \section{Conclusions}
 
-LunarAtlas converts the Chandrayaan-3 LIBS L1 archive into relational, L1-derived records with recorded provenance. On the full 301-product archive copy every data file matched its label checksum, every product parsed, and the counts reconcile: 745 plasma acquisitions, 613 paired and stored as cleaned, 132 without a preceding background excluded from the cleaned tables. Processing is deterministic, re-ingestion is idempotent, and every stored cleaned value equals the documented subtraction recomputed from the stored raw values. The downsampler can preserve any caller-specified channels at a quantified RMSE cost. The software does not identify elements: wavelength coincidences with a short reference list exceed chance in one of three worked-example spectra and not archive-wide, and the archive itself carries two wavelength scales that differ by about 5--11~nm.
+LunarAtlas converts the Chandrayaan-3 LIBS L1 archive into relational, L1-derived records with recorded provenance. On the full 301-product archive copy every data file matched its label checksum, and 613 of 745 plasma acquisitions were paired and stored as cleaned. Processing is deterministic, re-ingestion is idempotent, and every stored cleaned value equals the subtraction recomputed from the stored raw values. The downsampler can preserve any caller-specified channels at a quantified RMSE cost. The software does not identify elements: wavelength coincidences with a short reference list are statistically significantly enriched under the specified null in one of three worked-example spectra and not archive-wide, and the archive itself carries two wavelength scales that differ by about 5--11~nm.
 
-\paragraph{Limitations} Detailed spectral metrics come from one product. The clip-fraction threshold is a convention. The wavelength scale of the L1 archive is ambiguous and is not corrected. The background-stability assumption cannot be checked below the 1~s timestamp resolution, and some pairs span up to 13~s. WAN latency was measured from one client location in three sessions on one evening, at concurrency up to 8; the saturation point of the public deployment was not determined. The demonstration deployment still holds records from the earlier processing version and has not been re-ingested; the stored quality fields are not yet returned by the API. No Level-2 (abundance) calibration is implemented.
+\paragraph{Limitations} Detailed spectral metrics come from one product. The clip-fraction threshold is a convention. The L1 wavelength scale is ambiguous and not corrected. Background stability cannot be checked below the 1~s timestamp resolution, and some pairs span 13~s. WAN latency was measured from one client location on one evening at concurrency up to 8, so the deployment's saturation point is unknown. The demonstration deployment still holds legacy records, and the stored quality fields are not yet returned by the API. No Level-2 (abundance) calibration is implemented. Details of all evaluations are in the supplementary material.
 
 \paragraph{Future work} Resolving the archive wavelength-scale question with the data providers; plasma-diagnostic, line-ratio and abundance analyses built on the provided L1-derived records; and WAN measurements from several client locations and at higher concurrency on a non-shared deployment.
 
@@ -459,10 +398,11 @@ The authors thank ISRO for making the Chandrayaan-3 LIBS Level-1 data public thr
     \item \textbf{Repository:} \url{https://github.com/LovekeshAnand/LunarAtlas} \quad \textbf{License:} MIT
     \item \textbf{Archived version:} \url{https://doi.org/10.5281/zenodo.20771542} (v1.0.1; does not yet contain the revision changes) \cite{lunaratlas_zenodo}
     \item \textbf{Reproduction of this paper's numbers:} \texttt{revision\_v2/} (audit, processing, ingestion, analysis, figures, benchmark scripts and their outputs)
+    \item \textbf{Supplementary material:} \texttt{revision\_v2/paper/supplementary.pdf} (Sections S1--S5, Tables S1--S3)
 \end{itemize}
 
 \section*{Data Availability}
-The Chandrayaan-3 LIBS Level-1 data are available from PRADAN at \url{https://pradan.issdc.gov.in}. The input-file manifest with label and computed checksums is \path{revision_v2/outputs/archive_audit/input_manifest.csv}.
+The Chandrayaan-3 LIBS Level-1 data are available from PRADAN at \url{https://pradan.issdc.gov.in}. This work used a local copy of collection \texttt{lib-v2} (labels created 2024-05-16); the date on which it was originally downloaded was not recorded. The input-file manifest with label and computed checksums is \path{revision_v2/outputs/archive_audit/input_manifest.csv}.
 
 \section*{Declaration of Generative AI and AI-assisted Technologies}
 During the preparation of this work, the authors used ChatGPT (OpenAI) and Claude (Anthropic) to improve readability and language. Claude was also used to draft revised manuscript text and the response to reviewers, to review code, and to write and run the audit, analysis, figure, benchmark and migration-rehearsal scripts in \texttt{revision\_v2/} and the corresponding pipeline and ingestion changes. The authors reviewed and edited the content as needed and take full responsibility for the content of the publication.

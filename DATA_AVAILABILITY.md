@@ -22,6 +22,8 @@ publicly available through ISRO's Planetary Data Archive (PRADAN):
 - **Dataset:** Chandrayaan-3 Rover LIBS (Laser Induced Breakdown Spectroscope) Calibrated Data, Version 2 (`lib-v2`)
 - **Level:** L1 (Calibrated)
 - **Data Format:** PDS4 (XML label + CSV table pairs)
+- **Copy used:** a local copy of `lib-v2` (PDS4 labels created 2024-05-16); the date on which it was
+  originally downloaded was not recorded. Per-file checksums: `revision_v2/outputs/archive_audit/input_manifest.csv`.
 - **Access URL:** https://pradan.issdc.gov.in/
 - **Access Conditions:** Free registration required. Data is publicly available
   to the global scientific community.

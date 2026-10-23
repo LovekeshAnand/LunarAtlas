@@ -28,7 +28,7 @@ STEPS = [
     ("5_browser_downsampling", [PY, "browser_downsampling.py"], "revision_v2"),
     ("7_figures", [PY, "revision_v2/figures.py"], "."),
     ("8_tests", [PY, "-m", "pytest", "tests", "-q"], "."),
-    ("10_paper", ["wsl", "-e", "bash", "-lc", "latexmk -pdf -interaction=nonstopmode -halt-on-error paper.tex"],
+    ("10_paper", ["wsl", "-e", "bash", "-lc", "latexmk -pdf -interaction=nonstopmode -halt-on-error paper.tex supplementary.tex"],
      "revision_v2/paper"),
 ]
 

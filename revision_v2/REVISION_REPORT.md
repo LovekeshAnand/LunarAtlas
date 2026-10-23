@@ -10,6 +10,10 @@ changed and re-checked; **Unresolved** = known, not fixed.
 
 ## 1. Change log (concern → finding → fix → evidence → manuscript location)
 
+*Numbering note:* rows 1–37 cite the manuscript before the length reduction (§10). Moves: old
+Table 4 → S1, 5 → S2, 6 → 4, 7 → 5, 8 → S3, 9 → 6; figures unchanged; equal-budget variant §2.2.1 → S3.
+
+
 | # | Concern | Finding | Fix | Evidence | Manuscript |
 |---|---|---|---|---|---|
 | 1 | 779/647 vs 745/613 | **Confirmed.** Old output (`processed_backup_20261020`) stored 613 paired + 132 unpaired plasma *unsubtracted* + 34 background frames from 33 background-only products = 779. 647 was never a valid count (779 − 132). Archive has 745 plasma, 613 paired. | Stage 2 already excluded unpaired shots (uncommitted change before this revision); verified, regression-tested | `outputs/archive_audit/summary.json`, `products.csv` | §4.1 "Earlier counts", Table 3 |
@@ -260,3 +264,17 @@ Medians over sessions, in ms. Spread of session medians: ≤ 352 ms for full spe
 - **Cache hits:** that field repeats the value stored with the cached response, so it is not reported
   for warm-cache requests.
 - **`/health`:** it runs a DB `SELECT 1` and is therefore not a pure network round-trip; median 612–638 ms.
+
+## 10. Submission-preparation pass (2026-10-24)
+
+| Request | Done | Evidence |
+|---|---|---|
+| 3,000-word main text, supplement | Detail moved to `paper/supplementary.tex` (Sections S1–S5, Tables S1–S3), mostly verbatim; main text keeps every headline result and limitation. texcount: text 2,605 + headings 46 + captions 340 = 2,991 (Motivation→Conclusions). Main 10 pages, supplement 4. | `paper/paper.pdf`, `paper/supplementary.pdf` |
+| ≤ 7 keywords, abstract < 250 words | 7 keywords ("LTTB" dropped, "database" → "relational database"); abstract 195 words | `paper.tex` |
+| "did not exceed chance" | Now "not statistically significantly enriched under the specified null" (abstract, §4.4, Conclusions, Section S4, response letter) | grep: no remaining "chance" in paper, supplement, response |
+| Architecture figure | Redrawn from `figures.py` (`fig1`): browser path (full-resolution JSON → TypeScript LTTB, T = 209, 32-line list) vs. API-client path (server-side Python LTTB on `zoom_level`/`proportion`, or `force_raw`) | `figures/fig1_architecture.*` |
+| PRADAN access date | `paper.bib` said "accessed 2024-08-23", contradicting "download date not recorded". No date invented: bib, Data Availability and `DATA_AVAILABILITY.md` now say the original download date was not recorded (labels created 2024-05-16). NIST "accessed 2024-08-01" entries were not checked or changed. | `paper.bib`, `paper.tex`, `DATA_AVAILABILITY.md` |
+| 282.3 nm feature | "no line of the 24-line reference list within 1.1 nm; the full NIST database was not searched" (main, S4, response) | `paper.tex` §4.4 |
+| Overlapping figure text | Fig. 2 panel titles vs. axes; Fig. 3 legends over data; Fig. 4 legend over bands/labels; Fig. 5 title vs. neighbouring y-label; Fig. 6 titles; all regenerated and inspected | `figures/` |
+| Release checklist, approvals | `RELEASE_PREP.md` (sections A–D) | — |
+| Numbers preserved | No analysis output changed (`git diff --stat revision_v2/outputs` empty for this pass); figures re-plotted from the same tables | — |
