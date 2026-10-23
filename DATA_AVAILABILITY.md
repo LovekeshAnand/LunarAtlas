@@ -19,7 +19,7 @@ The raw Chandrayaan-3 LIBS Level-1 calibrated data used in this study is
 publicly available through ISRO's Planetary Data Archive (PRADAN):
 
 - **Source:** Indian Space Research Organisation (ISRO)
-- **Dataset:** Chandrayaan-3 ChaSTE/LIBS Calibrated Data, Version 2 (`lib-v2`)
+- **Dataset:** Chandrayaan-3 Rover LIBS (Laser Induced Breakdown Spectroscope) Calibrated Data, Version 2 (`lib-v2`)
 - **Level:** L1 (Calibrated)
 - **Data Format:** PDS4 (XML label + CSV table pairs)
 - **Access URL:** https://pradan.issdc.gov.in/

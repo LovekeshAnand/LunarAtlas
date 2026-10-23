@@ -48,6 +48,7 @@ changed and re-checked; **Unresolved** = known, not fixed.
 | 34 | Product categories | "background-only / no paired plasma" overlapped by wording | Verified disjoint (230+33+38 = 301); third label "plasma, none with a preceding background" + footnote (34 without background, 4 with background only after the last plasma) | `products.csv`, `rows.csv` | Table 3 |
 | 35 | Live DB migration | Re-ingestion alone would not remove stale records and the old code dropped app tables | Reversible build–copy–rename migration rehearsed end to end incl. rollback (§6) | `outputs/migration_rehearsal/summary.json` | §4.1 |
 | 36 | Viewer "L2" label | Denoise option labelled "None (L2 Clean)" | "None (L1-processed)" | `DenoiseToggle.tsx` | — |
+| 38 | Dataset name | Bibliography, `CITATION.cff` and `DATA_AVAILABILITY.md` called the data "ChaSTE/LIBS"; the PDS4 labels name the host "Chandrayaan-3 Rover Module" and the instrument "Laser Induced Breakdown Spectroscope" | Renamed "Chandrayaan-3 Rover LIBS" | label XML | References |
 | 37 | Packaging | Manuscript, bib, figures outside Git | Sources in `revision_v2/paper/`, figures referenced from their generated location; clean-checkout test (§8) | `outputs/clean_checkout/` | — |
 
 ### Random-shift null model — authoritative values (`outputs/analysis/D_null_summary.csv`)
@@ -110,7 +111,8 @@ detected channels labelled with either axis.
   products are not in `measurement_raw`. Ingesting them needs observation rows for products without
   cleaned output (ingester restructuring).
 - **U3 Archive wavelength axis**: parent vs single-shot axes differ by 5–11 nm; which is correct
-  cannot be decided from the archive. Ask ISSDC/PRADAN.
+  cannot be decided from the archive. Draft inquiry ready, **not sent**:
+  `revision_v2/archive_inquiry_wavelength_axis.md`.
 - **U4 Unauthenticated `/api/v1/cache/clear`** and `/api/v1/spectrum`; hard-coded `rate_limit_remaining`
   values (999, 998, …) in public responses. **New:** `clear_pattern` scans `lunaratlas:{pattern}*` but
   keys are written as `lunaratlas_v2:<md5>`, so the endpoint deletes nothing. Not fixed: making it work
@@ -130,13 +132,18 @@ detected channels labelled with either axis.
 - **U8 CI**: coverage step ends with `|| true`; the DB test is not in CI.
 - **U9 Retrieval date** of the raw copy was not recorded (file mtimes are from the copy, labels say
   2024-05-16). The original mount `D:\ch3_libs` has been deleted.
-- **U10 Code version**: no new tag/Zenodo release; manuscript C1 says "pending". Commit hash to be
-  cited after you tag.
+- **U10 Code version**: no new tag/Zenodo release; manuscript C1 says "pending". Release prepared, not
+  created: `revision_v2/RELEASE_PREP.md` (proposed v1.1.0, notes, exact steps). `CITATION.cff` says
+  1.0.0 while the paper cites v1.0.1 — confirm. The `CITATION.cff` abstract repeated withdrawn claims
+  (100 % peak retention, < 500 ms) and is updated locally.
 - **U11 AI declaration** now states that Claude drafted revised text and the response letter, reviewed
   code, and wrote/ran the revision scripts and code changes. Please confirm it matches your use of both
   tools and that the "reviewed and edited" attestation is accurate.
-- **U12 Length**: the revised paper compiles to 11 pages (previously 7). The current SoftwareX guide for
-  authors was not checked — decide what moves to supplementary files.
+- **U12 Length**: the current SoftwareX guide, as quoted in search results (the guide page itself returned
+  HTTP 403), sets a 4,000-word maximum excluding title, authors, affiliations, references, metadata tables
+  and included items. `texcount` on the body (Motivation to Conclusions, text only) gives about 3,513 words;
+  with the 224-word abstract, about 3,737. It appears to fit, with no page limit stated. Confirm against the
+  guide before submission; no material was moved to supplements.
 - **U13 Manuscript in Git**: `.gitignore` keeps `docs/` local. The manuscript sources now live in the
   tracked `revision_v2/paper/` on this local branch (not pushed). If the paper should not be public in
   the repository, leave it out of the push and put it only in the release archive. `docs/api/README.md`

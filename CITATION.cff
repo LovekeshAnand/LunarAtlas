@@ -4,21 +4,15 @@ message: "If you use LunarAtlas in your research, please cite it using the metad
 title: "LunarAtlas: A Reproducible Data Processing and Interactive Visualization Infrastructure for Chandrayaan-3 LIBS Level-1 Archives"
 
 abstract: >
-  LunarAtlas is an open-source, reproducible data processing infrastructure that transforms publicly
-  available Chandrayaan-3 laser-induced breakdown spectroscopy (LIBS) Level-1 (L1) products from the
-  ISRO Planetary Data Archive into normalised, analysis-ready spectral records suitable for quantitative
-  lunar science. The Chandrayaan-3 LE-LIBS L1 archive distributes calibrated spectra in wide-format
-  tables where 2,094 wavelength channels (instrument range: 220--800 nm; stored channel range:
-  164.35--878.26 nm) appear as individual columns, with plasma and background acquisitions interleaved.
-  To our knowledge, no publicly documented, reproducible pipeline exists to ingest and clean these
-  products automatically. LunarAtlas implements a six-stage deterministic Python pipeline that: (i)
-  parses PDS4 XML metadata; (ii) reshapes wide-format records into a normalised long-form
-  relational layout (Measurement_ID, Wavelength_nm) -> Intensity (a.u.); (iii) identifies plasma and
-  background shots from mission status flags; (iv) applies paired background subtraction with clamping;
-  (v) assigns file-unique Measurement IDs; and (vi) verifies file provenance via MD5 checksums. For interactive visualisation,
-  LunarAtlas employs an LTTB+Peaks adaptive downsampling algorithm that retains 100% of detected
-  spectral peaks. A versioned REST API delivers spectral data with API response latency below 500 ms
-  on a single-node workstation. Software and documentation are available at:
+  LunarAtlas is open-source software that turns the publicly archived Chandrayaan-3 laser-induced
+  breakdown spectroscopy (LIBS) Level-1 (L1) products into relational, query-ready, L1-derived spectral
+  records. It parses the PDS4 labels, verifies each data file against the checksum declared in its label,
+  reshapes the 2,094-channel tables into long form, classifies plasma and background acquisitions from
+  status flags, pairs each plasma acquisition with the most recent preceding background, subtracts and
+  clamps, records pairing and clipping provenance, and serves the result through a REST API and a web
+  viewer with LTTB downsampling that can preserve caller-specified channels. Wavelength coincidences with
+  a short reference line list are provided for exploration only; the software does not identify elements
+  or retrieve abundances. Software and documentation are available at:
   https://github.com/LovekeshAnand/LunarAtlas.
 
 authors:
@@ -59,7 +53,7 @@ keywords:
 
 references:
   - type: dataset
-    title: "Chandrayaan-3 ChaSTE LIBS Calibrated Level-1 Data (lib-v2)"
+    title: "Chandrayaan-3 Rover LIBS Calibrated Level-1 Data (lib-v2)"
     authors:
       - name: "Indian Space Research Organisation (ISRO)"
     url: "https://pradan.issdc.gov.in/"
