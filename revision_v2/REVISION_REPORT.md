@@ -201,3 +201,23 @@ public endpoint on 2026-10-23 (`outputs/api_example/api_example_public.log`): ex
 scheme (`file_info_id = FI-{date}-{time}-{sub}`). Unsmoothed, the live response equals the revision output
 on all 2,094 channels (cleaned and `raw_plasma`), because ID 3 is paired in both versions. Five read-only
 GETs to the public service in total (example, two identity checks, `/health`, `/context`); no load test.
+
+## 8. Clean-checkout reproduction test
+
+`clean_checkout_test.py` cloned commit `1eeba41` locally into `revision_v2/_clean_checkout/` (git-ignored;
+nothing pushed), linked only the three external dataset folders, and reran steps 1–5, 7, 8 and 10 of the
+README there. Environment: `outputs/clean_checkout/environment.txt` (Python 3.14.2, Node 24.13.0,
+PostgreSQL 18.1, latexmk 4.83, package versions). Logs: `outputs/clean_checkout/*.log`, `report.json`.
+
+- All eight steps exited 0 (audit 32 s, processing ×2 84 s, isolated ingestion 231 s, analysis 41 s,
+  viewer downsampling 2 s, figures 6 s, tests 1.5 s, paper 10 s).
+- All analysis CSV/JSON outputs, audit tables, determinism and benchmark tables: byte-identical to the commit.
+- Files that differed, and why: figure PDFs (only `/CreationDate`; PNGs byte-identical); `paper.pdf`
+  (text identical, build metadata only); `archive_audit/summary.json` (only `generated_utc`);
+  run logs (timestamps); `ingestion/summary.json` (run times, and `pytest_db_returncode` 1 → 0).
+- The committed `ingestion/pytest_db.log` / `summary.json` were from the first DB-test attempt, which
+  failed on a wrong expected value in the new test (fixed; the pass was in `pytest_db_rerun.log`). In the
+  clean checkout the DB test passes inside the full run; those rerun files are kept in
+  `outputs/clean_checkout/rerun_outputs/`. The originals are left as the historical record.
+- Not rerun: step 6 (local benchmark, ~15 min, timings differ by nature) and step 9 (migration
+  rehearsal; run separately on the same commit's code, `outputs/migration_rehearsal/`).

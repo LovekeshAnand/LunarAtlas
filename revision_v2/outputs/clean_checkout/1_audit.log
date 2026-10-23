@@ -1,0 +1,111 @@
+{
+  "generated_utc": "2026-10-23T11:36:40+00:00",
+  "raw_root": "datasets\\uploads",
+  "archive": "PRADAN ch3 LIBS calibrated (lib-v2), local copy; original mount D:/ch3_libs no longer present",
+  "raw_copy_mtime_range": [
+    "2026-02-10T22:11:02",
+    "2026-02-13T23:32:20"
+  ],
+  "label_creation_date_time": [
+    "2024-05-16T12:12:34",
+    "2024-05-16T12:12:35",
+    "2024-05-16T12:12:36",
+    "2024-05-16T12:12:37",
+    "2024-05-16T12:12:38",
+    "2024-05-16T12:12:39",
+    "2024-05-16T12:12:40",
+    "2024-05-16T12:12:41",
+    "2024-05-16T12:12:42",
+    "2024-05-16T12:12:43",
+    "2024-05-16T12:12:44",
+    "2024-05-16T12:12:45"
+  ],
+  "date_folders": 9,
+  "unexpected_dirs": [],
+  "products_discovered": 301,
+  "products_parsed": 301,
+  "products_failed": 0,
+  "csv_files": 1582,
+  "parent_csv": 301,
+  "subfile_csv": 1281,
+  "xml_missing": 0,
+  "md5_vs_label_checked": 1582,
+  "md5_vs_label_pass": 1491,
+  "size_vs_label_pass": 1582,
+  "parent_records_vs_label_pass": 301,
+  "channels_expected": 2094,
+  "products_with_2094_channels": 301,
+  "products_axis_identical": 301,
+  "products_trailing_ok": 301,
+  "rows_total": 1281,
+  "rows_background": 536,
+  "rows_plasma": 745,
+  "rows_ambiguous": 0,
+  "rows_nan_status": 0,
+  "rows_with_nan_intensity": 0,
+  "plasma_paired": 613,
+  "plasma_unpaired": 132,
+  "paired_bg_immediately_preceding": 416,
+  "pair_gap_s_counts": {
+    "0.0": 206,
+    "1.0": 264,
+    "2.0": 53,
+    "3.0": 27,
+    "4.0": 10,
+    "5.0": 10,
+    "6.0": 9,
+    "7.0": 8,
+    "8.0": 8,
+    "9.0": 8,
+    "10.0": 5,
+    "11.0": 3,
+    "12.0": 1,
+    "13.0": 1
+  },
+  "rows_plasma_by_ingest_rule": 780,
+  "ingest_rule_vs_flag_rule_disagreements": 35,
+  "products_bg_only": 33,
+  "products_all_plasma_unpaired": 38,
+  "products_with_paired_output_expected": 230,
+  "duplicate_logical_identifiers": 0,
+  "duplicate_global_measurement_ids": 0,
+  "products_with_duplicate_timestamps": 162,
+  "subfiles_whose_counts_match_parent_row_named_by_suffix": 1281,
+  "subfile_name_a_vs_row_class": {
+    "0/background": 536,
+    "1/plasma": 745
+  },
+  "subfile_wavelength_axes_distinct": 1,
+  "subfile_minus_parent_wavelength_nm": {
+    "dw_min": [
+      -11.14,
+      -11.14
+    ],
+    "dw_max": [
+      -4.96,
+      -4.96
+    ],
+    "dw_at_220": [
+      -8.894,
+      -8.894
+    ],
+    "dw_at_589": [
+      -7.48,
+      -7.48
+    ],
+    "dw_at_800": [
+      -8.05,
+      -8.05
+    ]
+  },
+  "current_cleaned_files": 230,
+  "current_measurements": 613,
+  "current_points": 1283622,
+  "current_meas_not_bg_subtracted": 0,
+  "current_meas_vs_replay_paired_mismatch_products": 0,
+  "backup_20261020_cleaned_files": 301,
+  "backup_20261020_measurements": 779,
+  "backup_20261020_points": 1631226,
+  "backup_20261020_meas_not_bg_subtracted": 132,
+  "backup_20261020_meas_vs_replay_paired_mismatch_products": 77
+}

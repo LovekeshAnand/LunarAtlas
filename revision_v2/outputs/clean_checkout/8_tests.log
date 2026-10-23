@@ -1,0 +1,13 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.2, pytest-9.0.3, pluggy-1.6.0
+rootdir: D:\personal_projects\LunarAtlas\revision_v2\_clean_checkout
+configfile: pytest.ini (WARNING: ignoring pytest config in pyproject.toml!)
+plugins: anyio-4.13.0
+collected 34 items
+
+tests\test_ingestion_db.py s                                             [  2%]
+tests\test_lttb_algorithm.py .............                               [ 41%]
+tests\test_pipeline_processing.py ...............                        [ 85%]
+tests\test_step2_pairing.py .....                                        [100%]
+
+======================== 33 passed, 1 skipped in 0.82s ========================

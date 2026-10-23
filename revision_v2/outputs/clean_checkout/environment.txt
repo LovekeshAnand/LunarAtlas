@@ -1,0 +1,15 @@
+commit 1eeba41147127f956a628104838965d0f4ea2f22
+python 3.14.2 (C:\Python314\python.exe)
+platform Windows-11-10.0.26200-SP0
+node v24.13.0
+postgres postgres (PostgreSQL) 18.1
+latexmk Latexmk, John Collins, 31 Jan. 2024. Version 4.83
+fastapi==0.135.3
+matplotlib==3.10.8
+numpy==2.4.1
+pandas==3.0.0
+psycopg2-binary==2.9.11
+pytest==9.0.3
+requests==2.32.5
+scipy==1.17.1
+SQLAlchemy==2.0.49
