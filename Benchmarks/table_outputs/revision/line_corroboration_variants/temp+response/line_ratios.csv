@@ -1,0 +1,4 @@
+measurement_id,species,pair,obs_ratio_peak,obs_I_a,obs_I_b,sigma,a_over_sigma,b_over_sigma,a_detected,b_detected,lte_thin_ratio_8k_12k
+1,Ca II,393.37/396.85,0.73,0.2799379501385047,0.382452908587256,0.0,6.2,8.5,False,False,2.04-2.06
+3,Ca II,393.37/396.85,0.86,1.8354224376731323,2.137236842105254,0.1,32.4,37.7,False,True,2.04-2.06
+4,Ca II,393.37/396.85,0.92,0.1172681440443213,0.128,0.0,3.3,3.6,False,False,2.04-2.06

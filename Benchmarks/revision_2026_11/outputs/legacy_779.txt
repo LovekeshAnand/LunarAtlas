@@ -1,0 +1,3 @@
+﻿legacy records: 779
+records by product kind: {'with paired plasma': 627, 'plasma, none paired': 118, 'background only': 34}
+records by Background_Subtracted: {'subtracted': 613, 'NOT subtracted': 132}

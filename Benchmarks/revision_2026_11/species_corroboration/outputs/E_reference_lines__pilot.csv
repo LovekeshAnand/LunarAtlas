@@ -1,0 +1,25 @@
+species,obs_nm,unc_nm,intensity,aki,acc,group_id,flag_no_uncertainty_quoted,flag_no_accuracy_quoted,flag_intensity_qualified,source_file
+Al I,308.22,,,,,Al I#0,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Al I,309.27,,,,,Al I#0,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Al I,394.4,,,,,Al I#1,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Al I,396.15,,,,,Al I#2,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Ca I,422.67,,,,,Ca I#0,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Ca II,393.37,,,,,Ca II#0,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Ca II,396.85,,,,,Ca II#1,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Fe I,274.95,,,,,Fe I#0,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Fe I,373.49,,,,,Fe I#1,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Fe I,385.99,,,,,Fe I#2,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Fe I,404.58,,,,,Fe I#3,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Fe I,438.36,,,,,Fe I#4,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Fe I,495.76,,,,,Fe I#5,True,True,True,step4_nist_verification_logs.py::NIST_DB
+H I,656.28,,,,,H I#0,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Mg I,285.21,,,,,Mg I#0,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Mg I,517.27,,,,,Mg I#1,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Mg II,279.55,,,,,Mg II#0,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Mg II,280.27,,,,,Mg II#0,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Na I,588.99,,,,,Na I#0,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Na I,589.59,,,,,Na I#0,True,True,True,step4_nist_verification_logs.py::NIST_DB
+O I,777.19,,,,,O I#0,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Si I,288.16,,,,,Si I#0,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Si I,390.55,,,,,Si I#1,True,True,True,step4_nist_verification_logs.py::NIST_DB
+Ti II,334.94,,,,,Ti II#0,True,True,True,step4_nist_verification_logs.py::NIST_DB

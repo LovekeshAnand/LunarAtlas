@@ -1,0 +1,82 @@
+spectra 613  peaks 33825
+[check] parent: matched peaks 1572  (Table 7: 1572 / 1384)
+[check] single: matched peaks 1386  (Table 7: 1572 / 1384)
+
+== 1. tolerance sensitivity, 24 reference lines, parent axis ==
+±0.5 nm: axis covered  3.9%  mean per-line hit rate 11.2%  lines hit in >90% of spectra  0/24  obs/null 1648/1504  p=0.094
+±1.1 nm: axis covered  7.8%  mean per-line hit rate 24.4%  lines hit in >90% of spectra  0/24  obs/null 3587/3254  p=0.053
+±  2 nm: axis covered 13.0%  mean per-line hit rate 39.4%  lines hit in >90% of spectra  0/24  obs/null 5795/5162  p=0.038
+±  3 nm: axis covered 17.9%  mean per-line hit rate 50.1%  lines hit in >90% of spectra  0/24  obs/null 7376/6635  p=0.068
+±  5 nm: axis covered 26.4%  mean per-line hit rate 62.2%  lines hit in >90% of spectra  0/24  obs/null 9145/8557  p=0.126
+
+== 2. per-line, ±0.5 nm, parent axis ==
+   sp     wl  obs  null_mean   iqr
+ Fe I 274.95   70       68.0 0.740
+Mg II 279.55   48       65.6 0.370
+Mg II 280.27   86       63.8 0.370
+ Mg I 285.21   63       71.0 0.370
+ Si I 288.16   64       69.1 0.750
+ Al I 308.22   63       73.9 0.370
+ Al I 309.27   96       72.3 0.740
+Ti II 334.94   38       66.2 0.370
+ Fe I 373.49   70       60.5 0.730
+ Fe I 385.99   58       66.7 0.730
+ Si I 390.55   67       67.6 0.360
+Ca II 393.37   76       67.2 0.720
+ Al I 394.40   86       66.3 0.730
+ Al I 396.15  125       64.7 0.720
+Ca II 396.85  111       64.2 0.720
+ Fe I 404.58   56       67.6 0.720
+ Ca I 422.67   58       61.0 0.720
+ Fe I 438.36   40       58.8 0.350
+ Fe I 495.76   48       49.9 0.700
+ Mg I 517.27   55       47.1 0.350
+ Na I 588.99   45       49.2 0.340
+ Na I 589.59   61       48.9 0.670
+  H I 656.28   52       56.3 0.413
+  O I 777.19  112       58.3 0.620
+lines at/below null mean: 13/24; IQR > 0.499: 14
+note: mean channel step 0.344 nm -> offsets are quantised; uniform-in-±0.5 IQR = 0.5
+
+== 3. species-level shift test + Holm ==
+-- pilot: step4 list, parent axis: 11 tests, min raw p 0.0005, significant after Holm 1
+species  lines  obs  null_mean        p   p_holm
+    O I      1  112       58.3 0.000500 0.005497
+  Ca II      2  187      131.5 0.035982 0.359820
+   Al I      4  370      277.2 0.067466 0.607196
+   Na I      2  106       98.1 0.268366 1.000000
+  Mg II      2  134      129.4 0.382809 1.000000
+-- pilot: step4 list, single axis: 11 tests, min raw p 0.2094, significant after Holm 0
+species  lines  obs  null_mean        p  p_holm
+   Si I      2  155      137.9 0.209395     1.0
+    H I      1   61       56.7 0.339830     1.0
+    O I      1   56       50.8 0.437781     1.0
+   Al I      4  273      281.7 0.441779     1.0
+   Ca I      1   63       61.0 0.484258     1.0
+-- expanded: 19 NIST lists, eps>=0.1*max @10kK, parent axis: 19 tests, min raw p 0.0005, significant after Holm 1
+species  lines  obs  null_mean        p   p_holm
+    O I      3  364      174.7 0.000500 0.009495
+  Ca II      2  187      131.6 0.037481 0.674663
+   Si I      9  613      477.1 0.042479 0.722139
+   Ti I     66 4244     3981.0 0.052974 0.847576
+   Na I      2  124       98.1 0.087456 1.000000
+-- expanded: 19 NIST lists, eps>=0.1*max @10kK, single axis: 19 tests, min raw p 0.0175, significant after Holm 0
+species  lines  obs  null_mean        p   p_holm
+    K I      2  186      121.4 0.017491 0.332334
+   Cr I     12  811      741.5 0.113443 1.000000
+   Fe I     31 2109     1968.7 0.136432 1.000000
+    O I      3  205      151.5 0.136932 1.000000
+  Cr II     16 1311     1152.5 0.195902 1.000000
+
+== 4. 'contested': another species within 1.1 nm ==
+24 ref lines vs step4 list: 17%
+24 ref lines vs full 19-species catalogue (27656 lines): 100%
+24 ref lines vs strong-line catalogue (244 lines): 54%
+
+== 5. same-upper-level pairs (19 lists, 220-800 nm, A known) ==
+pairs sharing species+Ek+J_k: 35430; of which separated by >= 1.1 nm: 33696
+
+== 6. the 132 excluded plasma rows: nearest background in ANY product ==
+excluded plasma rows: 132; with a later background in the SAME file: 15
+nearest PRECEDING background in another product: <=13 s 132, <=60 s 132, median 3 s, max 13 s
+nearest background either side in another product: <=13 s 132, median 2 s, max 13 s

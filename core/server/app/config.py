@@ -4,7 +4,7 @@ from typing import List, Optional
 class Settings(BaseSettings):
     # Application
     APP_NAME: str = "LunarAtlas API"
-    APP_VERSION: str = "1.0.0"
+    APP_VERSION: str = "1.1.0"
     DEBUG: bool = False
     
     # Database
@@ -34,6 +34,8 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "lunar-atlas-super-secret-key-change-in-prod"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440 # 24 hours
+    # Required in the X-Admin-Token header of POST /cache/clear; unset disables the endpoint
+    CACHE_CLEAR_TOKEN: Optional[str] = None
     
     # Performance
     MAX_WORKERS: int = 4

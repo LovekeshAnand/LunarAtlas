@@ -1,7 +1,7 @@
 /**
  * @fileoverview Mock Data Service for LunarAtlas.
  * Provides simulated spectral data processing for Chandrayaan-3 LIBS (Laser-Induced Breakdown Spectroscopy).
- * This service simulates the transformation of Level-1 PDS4 raw data into Cleaned (L2) spectra.
+ * This service simulates the transformation of Level-1 PDS4 raw data into cleaned (L1-derived) spectra.
  */
 
 /**

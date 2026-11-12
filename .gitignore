@@ -46,3 +46,11 @@ revision_v2/paper/*.fls
 revision_v2/paper/*.out
 revision_v2/paper/*.spl
 revision_v2/_clean_checkout/
+
+# Revision 2026-11: manuscript, reviewer reports and submission package stay local (like docs/)
+manuscript/
+# local backups and run logs
+Pipeline.zip
+revision_v2.zip
+pipeline_log.json
+Benchmarks/table_outputs/revision/line_corroboration.zip

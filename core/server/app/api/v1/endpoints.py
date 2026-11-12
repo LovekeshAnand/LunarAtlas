@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Header
+import secrets
 from typing import List, Optional
 import numpy as np
 import time
@@ -130,7 +131,10 @@ async def list_measurements(
             is_background,
             integration_time_us, 
             number_of_pulses, 
-            laser_energy_v
+            laser_energy_v,
+            background_subtracted,
+            background_row,
+            clip_fraction
         FROM measurement_clean
     """
     if observation_id:
@@ -425,11 +429,14 @@ async def get_spectrum(
 
 @router.post("/cache/clear")
 async def clear_cache(
-    pattern: str = Query("*", description="Cache key pattern to clear")
+    pattern: str = Query("*", description="Cache key pattern to clear"),
+    x_admin_token: Optional[str] = Header(None)
 ):
     """
-    Clear Redis cache.
+    Clear Redis cache. Requires the X-Admin-Token header to match CACHE_CLEAR_TOKEN.
     """
+    if not settings.CACHE_CLEAR_TOKEN or not x_admin_token or             not secrets.compare_digest(x_admin_token, settings.CACHE_CLEAR_TOKEN):
+        raise HTTPException(status_code=403, detail="Forbidden")
     try:
         await cache.clear_pattern(pattern)
         return {

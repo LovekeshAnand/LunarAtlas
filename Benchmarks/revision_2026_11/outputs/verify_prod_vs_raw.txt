@@ -1,0 +1,7 @@
+﻿server: PostgreSQL 17.6 on aarch64-unknown-linux
+public {'observation': 230, 'measurement_raw': 1125, 'measurement_clean': 613, 'spectral_data_clean': 1283622}
+legacy_20261028 {'observation': 301, 'measurement_raw': 1281, 'measurement_clean': 779, 'spectral_data_clean': 1631226}
+public: background_subtracted / clip_fraction>0.5: (613, 256)
+products checked: 230; raw file not found: 0
+products whose stored measurement set differs from raw pairing: 0 []
+measurements compared: 613; points compared: 1283622; mismatching points: 0; max |diff|: 0.0

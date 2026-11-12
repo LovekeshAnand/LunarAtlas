@@ -1,0 +1,43 @@
+reference lines: 27 in list, 24 within 220-800 nm
+cleaned spectra: 613
+ID 1: 3sigma=177.51 peaks=42 matched(<0.5)=2 matched(<=0.5)=2 null mean=1.28 k=3419 p=0.3420
+ID 3: 3sigma=212.28 peaks=59 matched(<0.5)=8 matched(<=0.5)=8 null mean=2.40 k=0 p=0.0001
+ID 4: 3sigma=140.65 peaks=73 matched(<0.5)=5 matched(<=0.5)=5 null mean=2.31 k=617 p=0.0618
+
+ID 3 candidate coincidences:
+  274.86 nm  Fe I 274.95  offset -0.09  prom/sigma 3.42  within 1.1 nm: Fe I 274.95
+  386.47 nm  Fe I 385.99  offset +0.48  prom/sigma 3.36  within 1.1 nm: Fe I 385.99
+  393.33 nm  Ca II 393.37  offset -0.04  prom/sigma 3.49  within 1.1 nm: Ca II 393.37; Al I 394.4
+  396.94 nm  Ca II 396.85  offset +0.09  prom/sigma 3.07  within 1.1 nm: Al I 396.15; Ca II 396.85
+  496.01 nm  Fe I 495.76  offset +0.25  prom/sigma 3.45  within 1.1 nm: Fe I 495.76
+  517.25 nm  Mg I 517.27  offset -0.02  prom/sigma 5.67  within 1.1 nm: Mg I 517.27
+  589.15 nm  Na I 588.99  offset +0.16  prom/sigma 3.59  within 1.1 nm: Na I 588.99; Na I 589.59
+  777.67 nm  O I 777.19  offset +0.48  prom/sigma 3.14  within 1.1 nm: O I 777.19
+
+Near-misses (0.5 <= |offset| < 1.1 nm), IDs 1/3/4:
+  ID 1: 389.72 nm  Si I 390.55  offset -0.83
+  ID 3: 310.09 nm  Al I 309.27  offset +0.82
+  ID 3: 389.72 nm  Si I 390.55  offset -0.83
+  ID 3: 657.09 nm  H I 656.28  offset +0.81
+  ID 4: 278.58 nm  Mg II 279.55  offset -0.97
+  ID 4: 310.09 nm  Al I 309.27  offset +0.82
+  ID 4: 496.36 nm  Fe I 495.76  offset +0.60
+
+ID 3: reference lines without a candidate peak but with a local maximum > 3 sigma within 0.5 nm: 11 [285.21, 288.16, 308.22, 309.27, 334.94, 373.49, 394.4, 404.58, 422.67, 438.36, 656.28]
+Archive, all paired: spectra=613 peaks=33834 observed=1572 null mean=1437.7 k=94 p=0.0949
+Archive, clip <= 0.5: spectra=357 peaks=21686 observed=959 null mean=864.5 k=84 p=0.0849
+
+single-shot files: 1281, distinct wavelength axes: 1
+single-shot axis 153.21-873.30 nm; offset vs parent axis -11.14 to -4.96 nm; at 589 nm: -7.48 nm
+single-shot counts identical to parent row: 1281/1281
+Archive, parent axis (axis comparison): observed=1572 null mean=1440.5 k=30 p=0.1030
+Archive, single-shot axis: observed=1384 null mean=1452.5 k=222 p=0.7409
+
+                            evaluation  spectra  peaks  draws  observed  null_mean    k      p
+                                  ID 1        1     42  10000         2       1.28 3419 0.3420
+                                  ID 3        1     59  10000         8       2.40    0 0.0001
+                                  ID 4        1     73  10000         5       2.31  617 0.0618
+                   Archive, all paired      613  33834   1000      1572    1437.70   94 0.0949
+                  Archive, clip <= 0.5      357  21686   1000       959     864.50   84 0.0849
+Archive, parent axis (axis comparison)      613  33834    300      1572    1440.50   30 0.1030
+             Archive, single-shot axis      613  33834    300      1384    1452.50  222 0.7409

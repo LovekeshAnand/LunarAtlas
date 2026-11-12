@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![CI](https://github.com/LovekeshAnand/LunarAtlas/actions/workflows/ci.yml/badge.svg)](https://github.com/LovekeshAnand/LunarAtlas/actions)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20771542.svg)](https://doi.org/10.5281/zenodo.20771542)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20771541.svg)](https://doi.org/10.5281/zenodo.20771541)
 [![Elsevier SoftwareX](https://img.shields.io/badge/Paper-SoftwareX-orange)](docs/paper/paper.tex)
 [![Live](https://img.shields.io/badge/Live-lunaratlas.in-brightgreen)](https://lunaratlas.in)
 [![API](https://img.shields.io/badge/API-apis.lunaratlas.in-blue)](https://apis.lunaratlas.in)
@@ -236,7 +236,7 @@ Benchmarks the performance of the downsampling algorithm, reporting execution la
 ## Data Availability
 
 Raw data: [ISRO PRADAN Portal](https://pradan.issdc.gov.in/) (free registration)
-Processed data + code: [Zenodo DOI: 10.5281/zenodo.20771542](https://doi.org/10.5281/zenodo.20771542)
+Processed data + code: [Zenodo DOI: 10.5281/zenodo.20771541](https://doi.org/10.5281/zenodo.20771541)
 
 See [`DATA_AVAILABILITY.md`](DATA_AVAILABILITY.md) for the full statement.
 
@@ -252,7 +252,7 @@ If you use LunarAtlas in your research, please cite:
   title     = {{LunarAtlas: A Reproducible Data Processing and Interactive Visualization Infrastructure for Chandrayaan-3 LIBS Level-1 Archives}},
   year      = {2026},
   publisher = {Zenodo},
-  doi       = {10.5281/zenodo.20771542},
+  doi       = {10.5281/zenodo.20771541},
   url       = {https://github.com/LovekeshAnand/LunarAtlas}
 }
 ```

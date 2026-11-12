@@ -1,0 +1,11 @@
+measurement_id,species,group_id,group_nm,n_lines_in_group,matched_ref_nm,peak_nm,offset_nm,n_competitors,competitors,unresolved_interference
+1,H I,H I#0,656.28,1,656.28,656.3,0.02,0,none,False
+1,Mg I,Mg I#1,517.27,1,517.27,517.0,-0.27,0,none,False
+3,Al I,Al I#0,308.745,2,309.27,309.01,-0.26,0,none,False
+3,Al I,Al I#1,394.4,1,394.4,394.33,-0.07,1,Ca II 393.37,True
+3,Fe I,Fe I#2,385.99,1,385.99,385.68,-0.31,0,none,False
+3,Fe I,Fe I#5,495.76,1,495.76,495.78,0.02,0,none,False
+3,H I,H I#0,656.28,1,656.28,656.62,0.34,0,none,False
+3,Ti II,Ti II#0,334.94,1,334.94,334.77,-0.17,0,none,False
+4,Fe I,Fe I#0,274.95,1,274.95,274.78,-0.17,0,none,False
+4,Mg II,Mg II#0,279.91,2,280.27,280.39,0.12,0,none,False

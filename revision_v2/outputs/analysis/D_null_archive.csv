@@ -1,3 +1,0 @@
-set,n_spectra,n_peaks,observed_matched_peaks,observed_line_hits,null_draws,null_mean,null_p95,p_drop
-all_paired,613,33825,1572,1648,1000,1437.073,1603.0,0.0959040959040959
-clip_frac_full<=0.5,357,21678,959,1006,1000,863.89,980.0,0.07992007992007992

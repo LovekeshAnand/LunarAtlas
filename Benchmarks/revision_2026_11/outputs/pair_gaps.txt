@@ -1,0 +1,6 @@
+﻿paired plasma acquisitions: 613
+timestamp resolution: values like 2023-09-02 07:50:02
+gap (s) -> count: {0: 206, 1: 264, 2: 53, 3: 27, 4: 10, 5: 10, 6: 9, 7: 8, 8: 8, 9: 8, 10: 5, 11: 3, 12: 1, 13: 1}
+gap 0 s: 206, 1 s: 264, 2+ s: 143, max: 13 s
+paired with the immediately preceding row: 416
+PRR (Hz) of paired plasma rows: {5: 613}

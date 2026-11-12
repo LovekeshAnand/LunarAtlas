@@ -1,0 +1,9 @@
+measurement_id,species,ref_nm,nist_full_nm,ref_has_Aki,detected_nm,offset_nm,n_strong_competitors,competitor_species,expected_partner_features,partners_found,distinct_peaks_used,null_mean_found,p_shift
+1,Al I,396.15,396.152,True,395.99,0.16,3,Cr I; Ti I,0,0,0,,
+3,Al I,309.27,309.271,True,309.14,0.13,1,Ti II,0,0,0,,
+3,Fe I,385.99,385.9911,True,385.52,0.47,2,Si II,16,2,2,2.1,0.573
+3,Al I,396.15,396.152,True,395.99,0.16,3,Cr I; Ti I,0,0,0,,
+3,H I,656.28,656.2852,True,656.23,0.05,0,,0,0,0,,
+3,O I,777.19,777.194,True,776.89,0.3,0,,0,0,0,,
+4,Al I,309.27,309.271,True,309.14,0.13,1,Ti II,0,0,0,,
+4,Fe I,495.76,495.7596,True,495.43,0.33,0,,45,6,6,7.7,0.7873

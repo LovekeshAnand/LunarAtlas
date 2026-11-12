@@ -1,0 +1,8 @@
+evaluation,spectra,peaks,draws,observed,null_mean,k,p
+ID 1,1,42,10000,2,1.28,3419,0.342
+ID 3,1,59,10000,8,2.4,0,0.0001
+ID 4,1,73,10000,5,2.31,617,0.0618
+"Archive, all paired",613,33834,1000,1572,1437.7,94,0.0949
+"Archive, clip <= 0.5",357,21686,1000,959,864.5,84,0.0849
+"Archive, parent axis (axis comparison)",613,33834,300,1572,1440.5,30,0.103
+"Archive, single-shot axis",613,33834,300,1384,1452.5,222,0.7409

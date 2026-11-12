@@ -94,13 +94,13 @@ class CacheLayer:
             logger.error(f"Cache DELETE error: {e}")
             return False
     
-    async def clear_pattern(self, pattern: str):
-        """Clear all keys matching pattern"""
+    async def clear_pattern(self, pattern: str = "*"):
+        """Clear all keys matching pattern (keys are lunaratlas_v2:<md5>, so "*" is the useful pattern)"""
         if not self.redis:
             return False
         
         try:
-            async for key in self.redis.scan_iter(match=f"lunaratlas:{pattern}*"):
+            async for key in self.redis.scan_iter(match=f"lunaratlas_v2:{pattern}"):
                 await self.redis.delete(key)
             logger.info(f"Cache CLEARED: pattern={pattern}")
             return True

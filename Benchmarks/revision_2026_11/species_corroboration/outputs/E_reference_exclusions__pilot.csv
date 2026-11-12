@@ -1,0 +1,4 @@
+species,obs_nm,intensity,aki,acc,unc_nm,source_file,intensity_raw,exclusion_rule
+Ca II,849.8,,,,,step4_nist_verification_logs.py::NIST_DB,,U2 outside 220.0-800.0 nm
+Ca II,854.21,,,,,step4_nist_verification_logs.py::NIST_DB,,U2 outside 220.0-800.0 nm
+Ca II,866.21,,,,,step4_nist_verification_logs.py::NIST_DB,,U2 outside 220.0-800.0 nm

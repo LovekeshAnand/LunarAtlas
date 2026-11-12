@@ -1,0 +1,20 @@
+species,groups,max_supported,distinct_supported,uncontested,recurring,recurring_and_uncontested,best_p_raw,best_p_holm,C1,C2,C3,C4,candidate,fingerprint
+Al I,21,3,5,1,1,0,0.5463,1.0,True,True,True,True,True,multi-line-supported with unresolved interference
+Ca I,21,3,5,0,1,0,0.3343,1.0,True,True,True,False,False,"multi-line-supported, ALL features contested"
+Ca II,17,3,6,0,2,0,0.2759,1.0,True,True,True,False,False,"multi-line-supported, ALL features contested"
+Cr I,30,8,13,1,1,0,0.4363,1.0,True,True,True,True,True,multi-line-supported with unresolved interference
+Cr II,30,5,9,0,3,0,0.5254,1.0,True,True,True,False,False,"multi-line-supported, ALL features contested"
+Fe I,30,9,14,0,6,0,0.1753,1.0,True,True,True,False,False,"multi-line-supported, ALL features contested"
+Fe II,30,6,11,1,4,1,0.259,1.0,True,True,True,True,True,multi-line-supported with unresolved interference
+H I,9,2,2,0,1,0,0.3042,1.0,True,True,True,False,False,"multi-line-supported, ALL features contested"
+K I,21,4,5,0,2,0,0.2423,1.0,True,True,True,False,False,"multi-line-supported, ALL features contested"
+Mg I,28,6,11,2,3,0,0.0996,1.0,True,True,True,True,True,multi-line-supported with unresolved interference
+Mg II,30,6,9,3,3,0,0.3657,1.0,True,True,True,True,True,multi-line-supported with unresolved interference
+Mn I,30,5,10,0,2,0,0.4374,1.0,True,True,True,False,False,"multi-line-supported, ALL features contested"
+Mn II,30,7,16,0,2,0,0.1266,1.0,True,True,True,False,False,"multi-line-supported, ALL features contested"
+Na I,18,4,7,2,2,0,0.1108,1.0,True,True,True,True,True,multi-line-supported with unresolved interference
+O I,20,5,8,1,2,1,0.0256,1.0,True,True,True,True,True,multi-line-supported with unresolved interference
+Si I,21,4,8,2,0,0,0.3377,1.0,True,True,False,True,False,multi-line-supported with unresolved interference
+Si II,25,3,6,1,1,1,0.5628,1.0,True,True,True,True,True,multi-line-supported with unresolved interference
+Ti I,30,7,11,1,4,0,0.3516,1.0,True,True,True,True,True,multi-line-supported with unresolved interference
+Ti II,30,6,11,4,1,1,0.4157,1.0,True,True,True,True,True,multi-line-supported with unresolved interference

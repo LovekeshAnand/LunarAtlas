@@ -1,0 +1,14 @@
+[check] delivered candidates == table8 (15 rows): True (15 rows)
+      variant  candidates  testable  no_partner_found  partner_found_not_chance  confirmed_p_lt_005  caii_ratio_id3
+    delivered          15         9                 3                         6                   0            0.99
+         temp           8         2                 0                         2                   0            0.79
+     response          26        14                 2                        11                   1            1.23
+temp+response          21        12                 2                        10                   0            0.86
+
+delivered: ID1 Ca II 396.85; ID1 O I 777.19; ID3 Fe I 274.95; ID3 Fe I 385.99; ID3 Ca II 393.37; ID3 Ca II 396.85; ID3 Fe I 495.76; ID3 Mg I 517.27; ID3 Na I 588.99; ID3 O I 777.19; ID4 Fe I 274.95; ID4 Mg I 285.21; ID4 Si I 288.16; ID4 Mg I 517.27; ID4 O I 777.19
+
+temp: ID1 Al I 396.15; ID3 Al I 309.27; ID3 Fe I 385.99; ID3 Al I 396.15; ID3 H I 656.28; ID3 O I 777.19; ID4 Al I 309.27; ID4 Fe I 495.76
+
+response: ID1 Mg I 285.21; ID1 Al I 308.22; ID1 Al I 309.27; ID1 Ca II 396.85; ID1 Fe I 404.58; ID1 O I 777.19; ID3 Fe I 274.95; ID3 Ti II 334.94; ID3 Fe I 385.99; ID3 Ca II 393.37; ID3 Fe I 404.58; ID3 Ca I 422.67; ID3 Fe I 495.76; ID3 Mg I 517.27; ID3 Na I 588.99; ID3 O I 777.19; ID4 Fe I 274.95; ID4 Mg I 285.21; ID4 Si I 288.16; ID4 Fe I 385.99; ID4 Ca II 393.37; ID4 Ca II 396.85; ID4 Fe I 404.58; ID4 Ca I 422.67; ID4 Mg I 517.27; ID4 O I 777.19
+
+temp+response: ID1 Fe I 274.95; ID1 Mg II 279.55; ID1 Al I 309.27; ID1 Ti II 334.94; ID1 Fe I 373.49; ID1 Al I 394.4; ID1 Al I 396.15; ID1 Fe I 438.36; ID3 Al I 309.27; ID3 Fe I 373.49; ID3 Fe I 385.99; ID3 Al I 394.4; ID3 Ca II 396.85; ID3 H I 656.28; ID3 O I 777.19; ID4 Al I 309.27; ID4 Fe I 373.49; ID4 Si I 390.55; ID4 Ca I 422.67; ID4 Fe I 438.36; ID4 Fe I 495.76

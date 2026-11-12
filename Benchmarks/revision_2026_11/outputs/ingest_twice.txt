@@ -1,0 +1,5 @@
+﻿run 1: newly ingested 613 measurements, 1283622 points; table counts {'observation': 230, 'observation_file_info': 230, 'measurement_raw': 1125, 'spectral_data_raw': 2355750, 'measurement_clean': 613, 'spectral_data_clean': 1283622}
+run 2: newly ingested 0 measurements, 0 points; table counts {'observation': 230, 'observation_file_info': 230, 'measurement_raw': 1125, 'spectral_data_raw': 2355750, 'measurement_clean': 613, 'spectral_data_clean': 1283622}
+duplicate (measurement, wavelength): 0
+not subtracted / missing quality fields: (0, 0)
+SQL recomputation (points, max |diff|): (1283622, 0.0)

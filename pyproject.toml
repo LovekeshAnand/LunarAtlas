@@ -4,7 +4,7 @@ build-backend = "setuptools.backends.legacy:build"
 
 [project]
 name = "lunaratlas"
-version = "1.0.0"
+version = "1.1.0"
 description = "Reproducible LIBS spectral data processing and visualization infrastructure for Chandrayaan-3"
 readme = "README.md"
 license = {file = "LICENSE"}
@@ -70,7 +70,7 @@ Homepage = "https://github.com/LovekeshAnand/LunarAtlas"
 Repository = "https://github.com/LovekeshAnand/LunarAtlas"
 Documentation = "https://github.com/LovekeshAnand/LunarAtlas/tree/main/docs"
 "Bug Tracker" = "https://github.com/LovekeshAnand/LunarAtlas/issues"
-Paper = "https://doi.org/10.5281/zenodo.20771542"
+Paper = "https://doi.org/10.5281/zenodo.20771541"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

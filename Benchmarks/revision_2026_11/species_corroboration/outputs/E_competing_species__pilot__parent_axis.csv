@@ -1,0 +1,4 @@
+measurement_id,species,group_id,group_nm,bin,n_lines_in_group,matched_ref_nm,peak_nm,offset_nm,n_competitors,competitors,unresolved_interference
+1,Ca II,Ca II#1,396.85,300-400,1,396.85,396.94,0.09,1,Al I 396.15,True
+3,Ca II,Ca II#0,393.37,300-400,1,393.37,393.33,-0.04,1,Al I 394.40,True
+3,Ca II,Ca II#1,396.85,300-400,1,396.85,396.94,0.09,1,Al I 396.15,True

@@ -1,0 +1,20 @@
+[parent] as delivered               ID1 2 p=0.3420 | ID3 8 p=0.0001 | ID4 5 p=0.0618 | archive 1572 (null 1437.1) p=0.0959 [1000 shifts]
+[parent] corrected (manual sign)    ID1 1 p=0.8054 | ID3 5 p=0.0489 | ID4 2 p=0.6838 | archive 1865 (null 1437.7) p=0.0010 [1000 shifts]
+[parent] corrected (opposite sign)  ID1 1 p=0.8277 | ID3 3 p=0.4571 | ID4 2 p=0.7342 | archive 1515 (null 1447.3) p=0.2008 [1000 shifts]
+[single] as delivered               ID1 2 p=0.3121 | ID3 5 p=0.0771 | ID4 2 p=0.6624 | archive 1386 (null 1451.8) p=0.7176 [300 shifts]
+[single] corrected (manual sign)    ID1 1 p=0.8039 | ID3 2 p=0.7175 | ID4 4 p=0.1602 | archive 1372 (null 1452.4) p=0.7841 [300 shifts]
+[single] corrected (opposite sign)  ID1 2 p=0.2966 | ID3 3 p=0.4618 | ID4 2 p=0.6538 | archive 1489 (null 1454.0) p=0.2558 [300 shifts]
+
+per species, Holm (step4 list), parent axis, Table 7 archive shifts (1,000)
+-- as delivered: significant after Holm: ['O I']
+species  obs  null_mean        p   p_holm
+    O I  112       58.6 0.000999 0.010989
+  Ca II  187      129.8 0.029970 0.299700
+   Al I  370      273.4 0.042957 0.386613
+   Na I  106       98.2 0.264735 1.000000
+-- corrected (manual sign): significant after Holm: ['Al I', 'Mg II', 'O I']
+species  obs  null_mean        p   p_holm
+   Al I  394      269.6 0.000999 0.010989
+  Mg II  296      126.6 0.000999 0.010989
+    O I  157       58.4 0.000999 0.010989
+  Ca II  178      130.0 0.035964 0.287712

@@ -1,0 +1,16 @@
+measurement_id,species,group_id,group_nm,n_lines_in_group,matched_ref_nm,peak_nm,offset_nm,n_competitors,competitors,unresolved_interference
+1,Ca II,Ca II#1,396.85,1,396.85,396.94,0.09,1,Al I 396.15,True
+1,O I,O I#0,777.19,1,777.19,777.05,-0.14,0,none,False
+3,Ca II,Ca II#0,393.37,1,393.37,393.33,-0.04,1,Al I 394.40,True
+3,Ca II,Ca II#1,396.85,1,396.85,396.94,0.09,1,Al I 396.15,True
+3,Fe I,Fe I#0,274.95,1,274.95,274.86,-0.09,0,none,False
+3,Fe I,Fe I#2,385.99,1,385.99,386.47,0.48,0,none,False
+3,Fe I,Fe I#5,495.76,1,495.76,496.01,0.25,0,none,False
+3,Mg I,Mg I#1,517.27,1,517.27,517.25,-0.02,0,none,False
+3,Na I,Na I#0,589.29,2,588.99,589.15,0.16,0,none,False
+3,O I,O I#0,777.19,1,777.19,777.67,0.48,0,none,False
+4,Fe I,Fe I#0,274.95,1,274.95,274.86,-0.09,0,none,False
+4,Mg I,Mg I#0,285.21,1,285.21,284.9,-0.31,0,none,False
+4,Mg I,Mg I#1,517.27,1,517.27,516.9,-0.37,0,none,False
+4,O I,O I#0,777.19,1,777.19,777.05,-0.14,0,none,False
+4,Si I,Si I#0,288.16,1,288.16,288.25,0.09,0,none,False

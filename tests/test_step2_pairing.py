@@ -84,6 +84,29 @@ def test_background_row_records_last_preceding_background(tmp_path):
     assert m1 == [30, 30, 30]
 
 
+def test_label_checksum_verified_and_mismatch_skips_file(tmp_path):
+    import hashlib
+    csv, xml = write_l1(tmp_path / "raw", [(1, 0, [10, 10, 10]), (0, 1, [50, 50, 50])])
+    data = csv.read_bytes()
+    md5 = hashlib.md5(data).hexdigest().lstrip("0")   # archive labels may drop leading zeros
+    label = ('<Product_Observational xmlns="http://pds.nasa.gov/pds4/pds/v1"><File>'
+             f'<file_size unit="byte">{len(data)}</file_size><md5_checksum>{md5}</md5_checksum>'
+             '</File></Product_Observational>')
+    xml.write_text(label, encoding="utf-8")
+    out = tmp_path / "out"
+    proc = L1DataProcessor(tmp_path / "raw", out)
+    proc.clean_libs_pair(csv, xml, out)
+    assert proc.stats["label_checksum_verified"] == 1
+    assert (out / f"{csv.stem}_cleaned.csv").exists()
+
+    csv.write_bytes(data.replace(b"50", b"51", 1))     # same size, different content
+    out2 = tmp_path / "out2"
+    proc2 = L1DataProcessor(tmp_path / "raw", out2)
+    proc2.clean_libs_pair(csv, xml, out2)
+    assert proc2.stats["label_checksum_mismatch"] == 1
+    assert not (out2 / f"{csv.stem}_cleaned.csv").exists()
+
+
 def test_ambiguous_flags_are_skipped_and_do_not_consume_plasma_index(tmp_path):
     proc, df = run(tmp_path, [(1, 0, [10, 10, 10]),
                               (1, 1, [99, 99, 99]),   # ambiguous

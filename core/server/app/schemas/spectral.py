@@ -54,6 +54,10 @@ class MeasurementInfo(BaseModel):
     integration_time_us: Optional[int] = None
     number_of_pulses: Optional[int] = None
     laser_energy_v: Optional[int] = None
+    # Provenance of the cleaned spectrum: paired background row and share of channels negative before clamping
+    background_subtracted: Optional[bool] = None
+    background_row: Optional[int] = None
+    clip_fraction: Optional[float] = None
 
 class HealthResponse(BaseModel):
     """API health check response"""

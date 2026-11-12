@@ -19,8 +19,10 @@ Edge cases handled:
   - Wrong number of trailing metadata columns
   - Missing XML file for a session CSV
   - Background intensity higher than plasma (>50% channels with negative residual: warning only)
+  - Data file whose MD5 or size differs from its PDS4 label (logged, skipped)
 """
 
+import hashlib
 import os
 import re
 import json
@@ -60,6 +62,8 @@ class L1DataProcessor:
             'nan_status_rows': 0,
             'plasma_no_background': 0,
             'high_zero_clip_warnings': 0,
+            'label_checksum_verified': 0,
+            'label_checksum_mismatch': 0,
         }
 
     # ------------------------------------------------------------------
@@ -77,9 +81,10 @@ class L1DataProcessor:
             'stop_time': None,
             'file_name': None,
             'file_size': 0,
+            'md5_checksum': None,
             'records': 0,
             'column_descriptions': {},
-            'instrument_description': 'ChaSTE-LIBS compact active spectrometer',
+            'instrument_description': 'Chandrayaan-3 LIBS compact spectrometer',
             'information_model_version': '1.20.0.0',
             'processing_level': 'calibrated'
         }
@@ -115,6 +120,10 @@ class L1DataProcessor:
             elem = root.find('.//pds:File/pds:records', ns)
             if elem is not None: metadata['records'] = int(elem.text)
 
+            # Some archive labels print the checksum without leading zeros: left-pad to 32 hex digits
+            elem = root.find('.//pds:File/pds:md5_checksum', ns)
+            if elem is not None: metadata['md5_checksum'] = elem.text.strip().lower().zfill(32)
+
             columns_info = {}
             for field in root.findall('.//pds:Field_Delimited', ns):
                 field_name = field.find('pds:name', ns).text
@@ -138,6 +147,19 @@ class L1DataProcessor:
         metadata = self.extract_metadata_from_xml(xml_path)
         metadata['source_file'] = fname
         metadata['processing_timestamp'] = self.timestamp
+
+        # Edge case 12: data file must match the MD5 checksum and size declared in its PDS4 label
+        if metadata['md5_checksum']:
+            data = csv_path.read_bytes()
+            if (hashlib.md5(data).hexdigest() != metadata['md5_checksum']
+                    or (metadata['file_size'] and len(data) != metadata['file_size'])):
+                print(f"  [ERROR] {fname} does not match the MD5/size in its PDS4 label — skipped")
+                self.stats['label_checksum_mismatch'] += 1
+                self.stats['errors'] += 1
+                return
+            self.stats['label_checksum_verified'] += 1
+        else:
+            print(f"  [WARNING] No MD5 checksum in label for {fname} — integrity not verified")
 
         # ── Load CSV ──────────────────────────────────────────────────
         df = pd.read_csv(csv_path)

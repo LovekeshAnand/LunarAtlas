@@ -77,7 +77,7 @@ export interface HealthResponse {
  * API response → apiService mapping → useDownsampling hook → SpectralGraph.
  *
  * @property wavelength    - Wavelength in nm (X-axis).
- * @property intensity     - Cleaned (L2) intensity in counts (primary Y-axis).
+ * @property intensity     - Cleaned (L1-derived) intensity in counts (primary Y-axis).
  * @property rawPlasma     - Uncleaned plasma counts (for L1 / overlay mode).
  * @property rawBackground - Background counts (for L1 mode).
  * @property measurementId - Foreign key linking back to the measurement record.

@@ -582,7 +582,7 @@ async def list_spectra(
             results.append(
                 PublicSpectrumDetail(
                     measurement_id=m_id,
-                    processing_level=proc_levels.get(m_id, "Cleaned (L2)"),
+                    processing_level=proc_levels.get(m_id, "Cleaned (L1-derived)"),
                     points_count=len(data_points),
                     wavelength_range={"min": wavelength_min, "max": wavelength_max},
                     data=data_points
@@ -706,7 +706,7 @@ async def get_spectrum_detail(
             LIMIT 1
         """
         session_row = await db.fetch_one(session_query, measurement_id)
-        proc_level = session_row['processing_level'] if session_row else "Cleaned (L2)"
+        proc_level = session_row['processing_level'] if session_row else "Cleaned (L1-derived)"
         
         wavelength_min = float(rows[0]['wavelength_nm'])
         wavelength_max = float(rows[-1]['wavelength_nm'])

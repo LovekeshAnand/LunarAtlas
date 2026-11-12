@@ -1,0 +1,51 @@
+﻿run1: exit 0
+ STAGE 2: L1 DATA PROCESSING & AUTHENTIC STORAGE
+Processing date directory: 20230825
+Processing date directory: 20230826
+Processing date directory: 20230827
+Processing date directory: 20230828
+Processing date directory: 20230829
+Processing date directory: 20230830
+Processing date directory: 20230831
+Processing date directory: 20230901
+Processing date directory: 20230902
+Folders processed          : 301
+Cleaned CSV files saved    : 230
+Total spectral points      : 1,283,622
+Errors                     : 0
+Empty files skipped        : 0
+Background-only files      : 33
+Plasma-only files (no bg)  : 38
+Missing XML skipped        : 0
+Ambiguous status rows      : 0
+NaN status rows            : 0
+Plasma shots without bg    : 132
+High zero-clip warnings    : 256
+label checksum errors in log: 0 | labels without checksum: 0
+run2: exit 0
+ STAGE 2: L1 DATA PROCESSING & AUTHENTIC STORAGE
+Processing date directory: 20230825
+Processing date directory: 20230826
+Processing date directory: 20230827
+Processing date directory: 20230828
+Processing date directory: 20230829
+Processing date directory: 20230830
+Processing date directory: 20230831
+Processing date directory: 20230901
+Processing date directory: 20230902
+Folders processed          : 301
+Cleaned CSV files saved    : 230
+Total spectral points      : 1,283,622
+Errors                     : 0
+Empty files skipped        : 0
+Background-only files      : 33
+Plasma-only files (no bg)  : 38
+Missing XML skipped        : 0
+Ambiguous status rows      : 0
+NaN status rows            : 0
+Plasma shots without bg    : 132
+High zero-clip warnings    : 256
+label checksum errors in log: 0 | labels without checksum: 0
+files per kind: {'.xml': 230, '_cleaned.csv': 230, '_instrument_params.csv': 230, '_metadata.json': 230}
+differing between runs: {'_metadata.json': 230} | differing JSON fields: {'processing_timestamp': 230}
+cleaned CSVs vs datasets/processed: compared 230, differing 0

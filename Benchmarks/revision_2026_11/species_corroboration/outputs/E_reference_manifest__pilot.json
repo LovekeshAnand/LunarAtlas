@@ -1,0 +1,42 @@
+{
+  "tag": "pilot",
+  "mode": "pilot",
+  "group_nm": 1.1,
+  "cal_min": 220.0,
+  "cal_max": 800.0,
+  "max_unc_nm": 0.05,
+  "min_grade": "C",
+  "cap_groups": 30,
+  "per_bin": 5,
+  "bins": [
+    "220-300",
+    "300-400",
+    "400-500",
+    "500-600",
+    "600-700",
+    "700-800"
+  ],
+  "cap_rule": "A3 stratified: <=5 groups per 100 nm bin per species; rank intensity > Aki > uncertainty(neutral if absent) > median Ritz",
+  "n_exported": 27,
+  "n_usable_lines": 24,
+  "n_excluded": 3,
+  "n_groups": 21,
+  "groups_per_species": {
+    "Al I": 3,
+    "Ca I": 1,
+    "Ca II": 2,
+    "Fe I": 6,
+    "H I": 1,
+    "Mg I": 2,
+    "Mg II": 1,
+    "Na I": 1,
+    "O I": 1,
+    "Si I": 2,
+    "Ti II": 1
+  },
+  "sha256": {
+    "E_reference_lines__pilot.csv": "2d8a49e4d2228624",
+    "E_line_groups__pilot.csv": "128cf16b40f67aae",
+    "E_reference_exclusions__pilot.csv": "3e5247673389876f"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "tag": "expanded_v4_A4rep",
+  "mode": "expanded",
+  "group_nm": 1.1,
+  "cal_min": 220.0,
+  "cal_max": 800.0,
+  "max_unc_nm": 0.05,
+  "min_grade": "C",
+  "cap_groups": 30,
+  "per_bin": 5,
+  "bins": [
+    "220-300",
+    "300-400",
+    "400-500",
+    "500-600",
+    "600-700",
+    "700-800"
+  ],
+  "cap_rule": "A3 stratified: <=5 groups per 100 nm bin per species; rank intensity > Aki > uncertainty(neutral if absent) > median Ritz",
+  "n_exported": 27656,
+  "n_usable_lines": 2261,
+  "n_excluded": 25395,
+  "n_groups": 471,
+  "groups_per_species": {
+    "Al I": 21,
+    "Ca I": 21,
+    "Ca II": 17,
+    "Cr I": 30,
+    "Cr II": 30,
+    "Fe I": 30,
+    "Fe II": 30,
+    "H I": 9,
+    "K I": 21,
+    "Mg I": 28,
+    "Mg II": 30,
+    "Mn I": 30,
+    "Mn II": 30,
+    "Na I": 18,
+    "O I": 20,
+    "Si I": 21,
+    "Si II": 25,
+    "Ti I": 30,
+    "Ti II": 30
+  },
+  "sha256": {
+    "E_reference_lines__expanded_v4_A4rep.csv": "f7e5d6e1f0085af7",
+    "E_line_groups__expanded_v4_A4rep.csv": "04917231ce7daf30",
+    "E_reference_exclusions__expanded_v4_A4rep.csv": "7e0d89a1395917fc"
+  }
+}

@@ -1,0 +1,18 @@
+﻿spectra: 613
+clip_new: >0.25: 372 (60.7%), >0.5: 256 (41.8%), >0.75: 157 (25.6%)
+  histogram (0-1, 10 bins): [159, 61, 44, 51, 42, 42, 41, 35, 46, 92]
+clip_old: >0.25: 377 (61.5%), >0.5: 258 (42.1%), >0.75: 159 (25.9%)
+  histogram (0-1, 10 bins): [156, 61, 43, 49, 46, 41, 43, 34, 48, 92]
+median clip_new: 0.3854
+clip_new [0,0.25): n=241  median mean intensity 220-800 nm = 174.3
+clip_new [0.25,0.5): n=116  median mean intensity 220-800 nm = 45.0
+clip_new [0.5,0.75): n=99  median mean intensity 220-800 nm = 20.9
+clip_new [0.75,1.01): n=157  median mean intensity 220-800 nm = 2.6
+Spearman(clip_new, mean intensity 220-800 nm): -0.928
+
+Table 4 (2,094 channels):
+  mid  mean_all  std_all  max_all  clip_old  clip_new
+   1      61.0     56.9    321.0      23.0      22.5
+   2       9.4     23.8    261.0      77.4      76.8
+   3     416.9     95.0    684.0       0.5       0.5
+   4      54.1     62.4    637.0      28.7      28.1

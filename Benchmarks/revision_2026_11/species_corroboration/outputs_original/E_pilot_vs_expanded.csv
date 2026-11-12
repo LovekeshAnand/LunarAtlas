@@ -1,0 +1,58 @@
+measurement_id,species,n_groups_pilot,n_supported_pilot,null_mean_pilot,p_raw_pilot,p_holm_pilot,n_groups_exp,n_supported_exp,null_mean_exp,p_raw_exp,p_holm_exp,verdict,sig_pilot,sig_exp
+1,Al I,3.0,0.0,0.142,1.0,1.0,21,0,1.728,1.0,1.0,unchanged,False,False
+3,Al I,3.0,0.0,0.523,1.0,1.0,21,3,2.688,0.5463453654634537,1.0,stronger,False,False
+4,Al I,3.0,0.0,0.243,1.0,1.0,21,3,3.284,0.6546345365463454,1.0,stronger,False,False
+1,Ca I,1.0,0.0,0.058,1.0,1.0,21,2,1.18,0.3342665733426657,1.0,stronger,False,False
+3,Ca I,1.0,0.0,0.087,1.0,1.0,21,3,2.472,0.4676532346765323,1.0,stronger,False,False
+4,Ca I,1.0,0.0,0.083,1.0,1.0,21,1,2.787,0.9762023797620238,1.0,stronger,False,False
+1,Ca II,2.0,1.0,0.138,0.137986201379862,1.0,17,2,1.651,0.4784521547845215,1.0,weaker,False,False
+3,Ca II,2.0,2.0,0.314,0.0441955804419558,1.0,17,3,1.884,0.2758724127587241,1.0,weaker,False,False
+4,Ca II,2.0,0.0,0.111,1.0,1.0,17,3,2.376,0.4028597140285971,1.0,stronger,False,False
+1,Cr I,,,,,,30,2,3.204,0.9037096290370964,1.0,new species (not in pilot),False,False
+3,Cr I,,,,,,30,4,5.033,0.714928507149285,1.0,new species (not in pilot),False,False
+4,Cr I,,,,,,30,8,7.524,0.4362563743625637,1.0,new species (not in pilot),False,False
+1,Cr II,,,,,,30,3,2.881,0.5527447255274472,1.0,new species (not in pilot),False,False
+3,Cr II,,,,,,30,5,4.954,0.5254474552544746,1.0,new species (not in pilot),False,False
+4,Cr II,,,,,,30,4,6.219,0.9031096890310968,1.0,new species (not in pilot),False,False
+1,Fe I,6.0,0.0,0.281,1.0,1.0,30,3,4.041,0.8204179582041796,1.0,stronger,False,False
+3,Fe I,6.0,3.0,0.627,0.0300969903009699,0.9631036896310368,30,8,5.275,0.1752824717528247,1.0,weaker,False,False
+4,Fe I,6.0,1.0,0.618,0.5468453154684532,1.0,30,9,6.171,0.2187781221877812,1.0,stronger,False,False
+1,Fe II,,,,,,30,5,3.581,0.258974102589741,1.0,new species (not in pilot),False,False
+3,Fe II,,,,,,30,5,5.599,0.7390260973902609,1.0,new species (not in pilot),False,False
+4,Fe II,,,,,,30,6,8.033,0.8368163183681632,1.0,new species (not in pilot),False,False
+1,H I,1.0,0.0,0.12,1.0,1.0,9,1,0.538,0.4282571742825717,1.0,stronger,False,False
+3,H I,1.0,0.0,0.051,1.0,1.0,9,2,1.121,0.3041695830416958,1.0,stronger,False,False
+4,H I,1.0,0.0,0.026,1.0,1.0,9,0,0.711,1.0,1.0,unchanged,False,False
+1,K I,,,,,,21,1,1.855,0.8633136686331366,1.0,new species (not in pilot),False,False
+3,K I,,,,,,21,4,2.603,0.2422757724227577,1.0,new species (not in pilot),False,False
+4,K I,,,,,,21,2,3.5,0.8697130286971303,1.0,new species (not in pilot),False,False
+1,Mg I,2.0,0.0,0.108,1.0,1.0,28,2,2.499,0.7612238776122388,1.0,stronger,False,False
+3,Mg I,2.0,1.0,0.164,0.1641835816418358,1.0,28,6,3.636,0.0995900409959004,1.0,stronger,False,False
+4,Mg I,2.0,2.0,0.288,0.0160983901609839,0.5312468753124687,28,6,4.646,0.2726727327267273,1.0,weaker,False,False
+1,Mg II,1.0,0.0,0.0,1.0,1.0,30,3,2.686,0.5304469553044695,1.0,stronger,False,False
+3,Mg II,1.0,0.0,0.132,1.0,1.0,30,3,3.559,0.6508349165083491,1.0,stronger,False,False
+4,Mg II,1.0,0.0,0.287,1.0,1.0,30,6,4.879,0.3656634336566343,1.0,stronger,False,False
+1,Mn I,,,,,,30,3,2.856,0.5713428657134286,1.0,new species (not in pilot),False,False
+3,Mn I,,,,,,30,4,4.308,0.6935306469353064,1.0,new species (not in pilot),False,False
+4,Mn I,,,,,,30,5,4.586,0.4373562643735626,1.0,new species (not in pilot),False,False
+1,Mn II,,,,,,30,4,2.456,0.3095690430956904,1.0,new species (not in pilot),False,False
+3,Mn II,,,,,,30,7,4.413,0.1265873412658734,1.0,new species (not in pilot),False,False
+4,Mn II,,,,,,30,7,5.43,0.2913708629137086,1.0,new species (not in pilot),False,False
+1,Na I,1.0,0.0,0.234,1.0,1.0,18,1,1.308,0.7718228177182281,1.0,stronger,False,False
+3,Na I,1.0,1.0,0.135,0.134986501349865,1.0,18,4,1.983,0.1107889211078892,1.0,stronger,False,False
+4,Na I,1.0,0.0,0.095,1.0,1.0,18,4,2.91,0.3686631336866313,1.0,stronger,False,False
+1,O I,1.0,1.0,0.165,0.1646835316468353,1.0,20,1,2.01,0.9116088391160884,1.0,weaker,False,False
+3,O I,1.0,1.0,0.087,0.0871912808719128,1.0,20,5,2.208,0.0255974402559744,1.0,stronger,False,False
+4,O I,1.0,1.0,0.221,0.2210778922107789,1.0,20,5,2.312,0.0491950804919508,1.0,stronger,False,False
+1,Si I,2.0,0.0,0.058,1.0,1.0,21,2,2.245,0.6494350564943505,1.0,stronger,False,False
+3,Si I,2.0,0.0,0.225,1.0,1.0,21,2,2.7,0.8441155884411559,1.0,stronger,False,False
+4,Si I,2.0,1.0,0.2,0.1887811218878112,1.0,21,4,2.941,0.3376662333766623,1.0,weaker,False,False
+1,Si II,,,,,,25,1,1.72,0.815918408159184,1.0,new species (not in pilot),False,False
+3,Si II,,,,,,25,3,3.027,0.5628437156284372,1.0,new species (not in pilot),False,False
+4,Si II,,,,,,25,3,3.127,0.6953304669533047,1.0,new species (not in pilot),False,False
+1,Ti I,,,,,,30,2,3.574,0.9178082191780822,1.0,new species (not in pilot),False,False
+3,Ti I,,,,,,30,6,5.106,0.3515648435156484,1.0,new species (not in pilot),False,False
+4,Ti I,,,,,,30,7,6.423,0.4861513848615138,1.0,new species (not in pilot),False,False
+1,Ti II,1.0,0.0,0.0,1.0,1.0,30,1,3.027,0.9945005499450056,1.0,unchanged,False,False
+3,Ti II,1.0,0.0,0.122,1.0,1.0,30,5,4.136,0.4156584341565843,1.0,stronger,False,False
+4,Ti II,1.0,0.0,0.154,1.0,1.0,30,6,5.25,0.4402559744025597,1.0,stronger,False,False

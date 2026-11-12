@@ -1,0 +1,16 @@
+== pilot: 33 tests; supported counts identical to hers: True (0 differ); significant after Holm: 0
+ mid species  n_supported        p   p_holm  n_supported_hers    p_raw
+   4    Mg I            2 0.015492 0.511244                 2 0.016098
+   3    Fe I            3 0.031484 1.000000                 3 0.030097
+   3   Ca II            2 0.057971 1.000000                 2 0.044196
+   3     O I            1 0.082959 1.000000                 1 0.087191
+== expanded_v4_A4rep: 57 tests; supported counts identical to hers: True (0 differ); significant after Holm: 0
+ mid species  n_supported        p  p_holm  n_supported_hers    p_raw
+   3     O I            5 0.027486     1.0                 5 0.025597
+   4     O I            5 0.046977     1.0                 5 0.049195
+   3    Mg I            6 0.108946     1.0                 6 0.099590
+   3    Na I            4 0.113943     1.0                 4 0.110789
+
+89% check: supported features 210, with another species within 1.1 nm 186 (89%); species with no uncontested feature: 8
+859 check: blocked pairs 859; passing pairs (candidate file) 0
+['species', 'upper_level_Ek_cm1', 'lambda_a_nm', 'lambda_b_nm', 'separation_nm', 'Aki_a', 'Aki_b', 'acquisitions_both_supported', 'response_available', 'optical_depth_assessable', 'status', 'blocking_reasons']

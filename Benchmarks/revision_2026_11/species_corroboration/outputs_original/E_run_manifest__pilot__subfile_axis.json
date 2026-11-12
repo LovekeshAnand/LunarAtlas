@@ -1,0 +1,16 @@
+{
+  "tag": "pilot",
+  "axis": "subfile",
+  "draws": 10000,
+  "seed": 20261021,
+  "tol_nm": 0.5,
+  "fwhm_nm": 1.1,
+  "eval_ids": [
+    1,
+    3,
+    4
+  ],
+  "holm_family": "global: species x acquisition",
+  "n_tests": 33,
+  "n_significant": 0
+}

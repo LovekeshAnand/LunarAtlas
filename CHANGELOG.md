@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased] — revision v2 (branch `revision/audit-v2`)
+## [1.1.0] — 2026-10-28 — revision for the SoftwareX resubmission
 
 ### Fixed
 - Stage 2: plasma acquisitions without a preceding background are excluded from cleaned output
@@ -18,22 +18,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (the old `L=1 or Laser Energy>0` rule mislabelled 35 background rows and shifted raw IDs);
   raw directory configurable (default `datasets/uploads`); `background_subtracted`,
   `background_row`, `clip_fraction` stored in `measurement_clean`; NIST seed not duplicated.
+- `/api/v1/cache/clear` now clears the keys the server writes (`lunaratlas_v2:*`; it previously matched
+  `lunaratlas:*` and deleted nothing) and requires the `X-Admin-Token` header to equal the new
+  `CACHE_CLEAR_TOKEN` setting (endpoint disabled when unset).
 
 ### Added
 - `revision_v2/`: archive audit (label checksums, counts), determinism run, isolated ingestion
   check, analysis, figures, local benchmark; `tests/test_ingestion_db.py`; step-2 regression tests.
 - `revision_v2/`: web-viewer downsampling evaluation with the client's own TypeScript; null-model
   summary table; reversible database migration tool (`migrate_db.py`) and its rehearsal; clean-checkout
-  reproduction test; manuscript sources (`revision_v2/paper/`).
+  reproduction test; WAN benchmark of the public deployment.
+- `/api/v1/measurements` returns `background_subtracted`, `background_row` and `clip_fraction`.
+- `revision_v2/migrate_schema_swap.py`: migration for hosted databases that cannot be renamed
+  (schema swap in one transaction, grants/RLS carried over); used for the production migration
+  (`revision_v2/outputs/migration_production/`).
 
 ### Changed
 - Web viewer: denoise option "None (L2 Clean)" relabelled "None (L1-processed)".
 
-### Not yet done
-- Production database not re-ingested or migrated; no new archived release.
-- API responses do not include `clip_fraction` / `background_row` / `background_subtracted`.
-- `/api/v1/cache/clear` matches `lunaratlas:*` while cache keys are `lunaratlas_v2:*`, so it deletes
-  nothing; the endpoint is also unauthenticated.
+### Deployment
+- Public database migrated to the corrected records on 2026-10-28 (613 cleaned acquisitions,
+  230 products), verified before and after the swap; application data unchanged.
 
 ---
 
@@ -42,7 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Initial Public Release
 
 This is the first public, citable release of LunarAtlas, archived at
-[Zenodo DOI: 10.5281/zenodo.20771542].
+[Zenodo version DOI: 10.5281/zenodo.20771542; concept DOI for all versions: 10.5281/zenodo.20771541].
 
 #### Pipeline (Steps 1–8)
 

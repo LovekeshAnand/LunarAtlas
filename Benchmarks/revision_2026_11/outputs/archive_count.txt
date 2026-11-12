@@ -1,0 +1,13 @@
+﻿day folders: 9 20230825 ... 20230902
+acquisitions: 1281
+background: 536
+data_files: 1582
+paired: 613
+plasma: 745
+products: 301
+unpaired: 132
+rows_with_nan: 0
+wavelength axes (n, first, last): {(2094, '164.35', '878.26')}
+md5 mismatch vs label (after zero-pad): 0 []
+size mismatch vs label: 0 []
+products by kind: {'with paired plasma': 230, 'plasma, none paired': 38, 'background only': 33}

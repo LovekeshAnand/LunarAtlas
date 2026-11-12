@@ -1,0 +1,32 @@
+{
+  "tag": "pilot",
+  "mode": "pilot",
+  "group_nm": 1.1,
+  "cal_min": 220.0,
+  "cal_max": 800.0,
+  "max_unc_nm": 0.05,
+  "min_grade": "C",
+  "cap_groups": 30,
+  "n_exported": 27,
+  "n_usable_lines": 24,
+  "n_excluded": 3,
+  "n_groups": 21,
+  "groups_per_species": {
+    "Al I": 3,
+    "Ca I": 1,
+    "Ca II": 2,
+    "Fe I": 6,
+    "H I": 1,
+    "Mg I": 2,
+    "Mg II": 1,
+    "Na I": 1,
+    "O I": 1,
+    "Si I": 2,
+    "Ti II": 1
+  },
+  "sha256": {
+    "E_reference_lines__pilot.csv": "020fdcc2451cbc78",
+    "E_line_groups__pilot.csv": "9704716b86c04f1b",
+    "E_reference_exclusions__pilot.csv": "d0d1a702c542e7cc"
+  }
+}
